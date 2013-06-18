@@ -1,0 +1,35 @@
+include head.jade
+body 
+	.container
+		header
+			h1 Add a Section 
+				input.inline
+		//- h2.fl.w25.p10 Fields/Properties
+		//- .clear
+		ul.organize-properties#class-list.m10
+			li.clickme.new-data-type Add Data Type +
+			script(type='text/template')#data-type
+				div.hide-properties.fl.w6
+					span.icon p
+					|<%=name%> data type
+				span.add-property.fr.clickme  Add Property + 
+				.clear
+				ul.draggable
+					//- <% for (var prop in properties) { %>
+					//- <li class='property p0'>
+					//- div(contentEditable)
+					//- 	| <%= properties[prop].charAt(0).toUpperCase() + properties[prop].slice(1).replace("_"," ") %>
+					//- //- span.close.fr.icon g
+					//- <% } %>
+			script(type='text/template')#property
+			script(type='text/template')#add-property
+				li.property.p0
+					div(contentEditable)
+					span.close.fr.icon g
+		div.fl.w15.icon.center.right-arrow
+			span s
+			span s
+			span s
+		ul.property-editor.fl.w45.m10
+			li 
+				h2 Selected Properties

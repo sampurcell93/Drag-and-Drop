@@ -1,0 +1,15 @@
+include head.jade
+body
+    .container.p10
+        //- ul.element-adder
+        //-   li A
+        //-   li B
+        ul.organize-elements.draggable(data-inner-tag="<li/>")
+          //- li.no-icon No elements in this section yet.
+          li Element A
+          li Element B
+          li Element C
+          li Element D
+          li Element E
+          li Element F
+        section.builder.drag-container#sect
