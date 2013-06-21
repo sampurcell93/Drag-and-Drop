@@ -2,11 +2,14 @@
 (function() {
   $(document).ready(function() {
     /* 
-    		MUST be bound to the window, so as not to leak into 
-    		global namespace and still have access to other scripts
+        MUST be bound to the window, so as not to leak into 
+        global namespace and still have access to other scripts
     */
 
-    window.PropertyOrganizer = Backbone.View.extend({
+    window.models = {};
+    window.views = {};
+    window.collections = {};
+    window.views.PropertyOrganizer = Backbone.View.extend({
       el: '#organize-properties',
       initialize: function() {
         /* Render the list, then apply the drag and drop, and sortable functions.*/
@@ -19,8 +22,8 @@
           axis: 'y',
           tolerance: 'touch',
           connectWith: 'ul',
-          item: 'li',
           handle: '.sort-element',
+          items: '> li',
           cursorAt: {
             top: 50
           },
@@ -39,7 +42,7 @@
         that = this;
         return _.each(this.collection.models, function(prop) {
           var itemView;
-          itemView = new PropertyItem({
+          itemView = new views.PropertyItem({
             model: prop,
             draggable: true,
             editable: false,
@@ -59,33 +62,53 @@
       }
     });
     /* A configurable element bound to a property or page element
-    		Draggable, droppable, nestable.
+        Draggable, droppable, nestable.
     */
 
-    window.draggableElement = Backbone.View.extend({
+    window.views.draggableElement = Backbone.View.extend({
       template: $("#draggable-element").html(),
-      innerTemplate: $("#inner-element").html(),
-      tagName: 'div class="builder-element"',
+      tagName: function() {
+        var child, options, width;
+        options = this.options;
+        child = this.options.child === true ? "child " : "";
+        width = options.width != null ? options.width + " " : "";
+        return 'div class="builder-element"' + child + width;
+      },
       initialize: function() {
-        var that;
+        return _.bindAll(this, "render", "bindDrop", "bindDrag");
+      },
+      render: function() {
+        this.$el.append(_.template(this.template, this.model.attributes));
+        this.bindDrop();
+        this.bindDrag();
+        return this;
+      },
+      bindDrag: function() {
+        var cancel, that;
         that = this;
-        this.$el.draggable({
-          cancel: ".sort-element, .set-options",
+        cancel = ".sort-element, .set-options";
+        cancel += this.options.child ? "" : ", .child";
+        return this.$el.draggable({
+          cancel: cancel,
           revert: "invalid",
-          connectToSortable: "#organize-properties",
           cursor: "move",
-          delay: 50,
           start: function() {
-            console.log("starting drag");
-            if (window.builder != null) {
-              return window.builder.currentModel = that.model;
+            if (typeof builder !== "undefined" && builder !== null) {
+              return builder.currentModel = that.model;
             }
           },
           stop: function(e, ui) {
-            var $t;
-            return $t = $(e.target);
+            if (ui.helper.data('dropped') === true) {
+              return $(e.target).remove();
+            } else {
+              return console.log("bad drop");
+            }
           }
         });
+      },
+      bindDrop: function() {
+        var that;
+        that = this;
         return this.$el.droppable({
           greedy: true,
           tolerance: 'pointer',
@@ -93,18 +116,22 @@
           over: function(e) {
             return $(e.target).addClass("over");
           },
+          out: function(e) {
+            return $(e.target).removeClass("over");
+          },
           drop: function(e, ui) {
-            var curr, temp;
-            curr = window.builder.currentModel;
-            temp = _.template(that.innerTemplate, curr.attributes);
-            $(e.target).append(temp);
-            return $(ui.item).remove();
+            var addTo, curr;
+            $(e.target).removeClass("over");
+            addTo = that.model;
+            curr = builder.currentModel;
+            $(e.target).append(new views.draggableElement({
+              child: true,
+              model: curr
+            }).render().el);
+            $(ui.item).remove();
+            return ui.draggable.data('dropped', true);
           }
         });
-      },
-      render: function() {
-        this.$el.append(_.template(this.template, this.model.attributes));
-        return this;
       },
       events: {
         "click .config-panel": function() {
@@ -118,33 +145,40 @@
           var $t, dropdown;
           $t = $(e.currentTarget);
           dropdown = $t.find(".dropdown");
-          $(".dropdown").not(dropdown).hide();
           return dropdown.fadeToggle(100);
         }
       }
     });
-    window.SectionBuilder = Backbone.View.extend({
+    window.collections.Elements = Backbone.Collection.extend({
+      model: Element
+    });
+    window.models.Element = Backbone.Model.extend({});
+    window.views.SectionBuilder = Backbone.View.extend({
       el: 'section.builder-container',
       initialize: function() {
         var $el, that;
-        console.log(this.collection);
         this.render();
         that = this;
         $el = this.$el;
-        return $el.droppable({
-          accept: 'li',
+        $el.droppable({
+          accept: 'li, .child',
           hoverClass: "dragging",
           activeClass: "dragging",
           tolerance: 'pointer',
           drop: function(event, ui) {
-            var $temp, $theid;
-            $temp = $(new draggableElement({
-              model: that.currentModel
-            }).render().el);
-            $theid = that.appendnow($temp, $el);
-            return that.setLayout();
+            var newEl, prop, temp;
+            prop = that.currentModel.attributes;
+            newEl = new models.Element({
+              properties: prop,
+              name: prop.name
+            });
+            temp = new views.draggableElement({
+              model: newEl
+            }).render().el;
+            return that.$el.append(temp);
           }
         });
+        return this.currentModel = null;
       },
       render: function() {
         var that;
@@ -152,35 +186,11 @@
         this.$el.empty();
         return _.each(this.collection.models, function(element) {
           if (element.selected === true) {
-            return that.$el.append(new draggableElement({
-              model: element
+            return that.$el.append(new views.draggableElement({
+              model: element,
+              name: element.get("name")
             }).render().el);
           }
-        });
-      },
-      appendnow: function($item, $whereto) {
-        var item, temp, that;
-        that = this;
-        ({
-          drop: function(e, ui) {
-            var curr;
-            return curr = window.builder.currentModel;
-          }
-        });
-        temp = _.template(that.innerTemplate, curr.attributes);
-        $(e.target).append(temp);
-        $(ui.item).remove();
-        item = $item.appendTo($whereto);
-        item.droppable({
-          greedy: true,
-          tolerance: 'pointer',
-          accept: '*',
-          drop: drop
-        });
-        return that.$el.find().liveDraggable({
-          revert: 'invalid',
-          cancel: '.set-options',
-          containment: 'parent'
         });
       },
       setLayout: function() {}

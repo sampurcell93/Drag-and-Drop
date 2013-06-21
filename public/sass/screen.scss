@@ -333,7 +333,8 @@ ul.generic-elements {
 .over {
 	// @include transform(scale(.98));
 	@include border-radius(3px);
-	border: 1px dotted $lightblue;
+	border: 1px dashed $lightblue !important;
+	background: $fadedblue !important;
 }
 
 .dragging { 
@@ -347,24 +348,27 @@ section.builder-container {
 	position: relative;
 	border: 1px solid #ddd;
 	margin: 0px 10px 10px;
-	padding: 0 5px;
-
-	> div, > ul, > li, > a, > label {
-		position: relative;
-		margin-top: 10px;
-		padding: 10px;
-		@include transition(width .2s ease-in-out);
-		border: 1px solid $lightblue;
-		@include border-radius(3px);
-	}
+	padding: 0 5px 40px;
 
 	.sort-element {
 		top: 0;
 		right: 0;
 	}
+
+
 }
 .builder-element {
 	position: relative;
+	margin-top: 10px;
+	padding: 10px;
+	@include transition(width .2s ease-in-out);
+	border: 1px solid $lightblue;
+	@include border-radius(3px);
+	background: #fff;
+
+	&.child { 
+		border: 1px dashed $fadedblue !important;
+	}
 }
 .set-options {
 		position: absolute;

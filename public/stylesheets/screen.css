@@ -738,26 +738,33 @@ ul.generic-elements li {
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
-  border: 1px dotted #2092cc;
+  border: 1px dashed #2092cc !important;
+  background: #dee9f2 !important;
 }
 
-/* line 339, ../sass/screen.scss */
+/* line 340, ../sass/screen.scss */
 .dragging {
   color: #2092cc;
   border: 1px dotted #2092cc;
 }
 
-/* line 344, ../sass/screen.scss */
+/* line 345, ../sass/screen.scss */
 section.builder-container {
   min-height: 100px;
   float: right;
   position: relative;
   border: 1px solid #ddd;
   margin: 0px 10px 10px;
-  padding: 0 5px;
+  padding: 0 5px 40px;
 }
-/* line 352, ../sass/screen.scss */
-section.builder-container > div, section.builder-container > ul, section.builder-container > li, section.builder-container > a, section.builder-container > label {
+/* line 353, ../sass/screen.scss */
+section.builder-container .sort-element {
+  top: 0;
+  right: 0;
+}
+
+/* line 360, ../sass/screen.scss */
+.builder-element {
   position: relative;
   margin-top: 10px;
   padding: 10px;
@@ -771,19 +778,14 @@ section.builder-container > div, section.builder-container > ul, section.builder
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
+  background: #fff;
 }
-/* line 361, ../sass/screen.scss */
-section.builder-container .sort-element {
-  top: 0;
-  right: 0;
-}
-
-/* line 366, ../sass/screen.scss */
-.builder-element {
-  position: relative;
-}
-
 /* line 369, ../sass/screen.scss */
+.builder-element.child {
+  border: 1px dashed #dee9f2 !important;
+}
+
+/* line 373, ../sass/screen.scss */
 .set-options {
   position: absolute;
   top: 0px;
@@ -799,7 +801,7 @@ section.builder-container .sort-element {
   -o-border-radius: 0 3px 0 3px;
   border-radius: 0 3px 0 3px;
 }
-/* line 382, ../sass/screen.scss */
+/* line 386, ../sass/screen.scss */
 .set-options .dropdown {
   position: absolute;
   top: 100%;
@@ -819,20 +821,20 @@ section.builder-container .sort-element {
   z-index: 111;
   background: #fff;
 }
-/* line 396, ../sass/screen.scss */
+/* line 400, ../sass/screen.scss */
 .set-options .dropdown li {
   display: block;
   padding: 4px;
   cursor: pointer;
 }
-/* line 401, ../sass/screen.scss */
+/* line 405, ../sass/screen.scss */
 .set-options .dropdown li:hover {
   background: #2092cc;
   color: #fff;
   text-shadow: none;
 }
 
-/* line 409, ../sass/screen.scss */
+/* line 413, ../sass/screen.scss */
 button {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;

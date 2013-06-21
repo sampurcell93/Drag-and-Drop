@@ -11,22 +11,22 @@ $(document).ready ->
 	###################
 
 	# IE Customer
-	window.DataType = Backbone.Model.extend({
+	window.models.DataType = Backbone.Model.extend({
 		url: ->
 			"/class/"
 	});
 
 	# A single property - pulled from the db with only a name, but returned to a new section
 	# with many more options configured.
-	window.Property = Backbone.Model.extend({
+	window.models.Property = Backbone.Model.extend({
 		initialize: ->
 			# randomized testing
 			if Math.random() > .6
-				properties.add @
 				@selected = true
+				properties.add @
 	})
 
-	window.Element = Backbone.Model.extend {
+	window.models.Element = Backbone.Model.extend {
 
 	}
 
@@ -34,12 +34,8 @@ $(document).ready ->
 	### COLLECTIONS ###
 	###################
 
-	window.Elements = Backbone.Collection.extend {
-		model: Element
-	}
-
 	# Collection of all properties being used in the section.
-	window.Properties = Backbone.Collection.extend {
+	window.collections.Properties = Backbone.Collection.extend {
 		initialize: ->
 			@on("remove", ->
 				console.log "removing element from collection"
@@ -49,20 +45,20 @@ $(document).ready ->
 			@models[index1] = @models[index2]
 			@models[index2] = temp
 		
-		model: Property
+		model: models.Property
 	}
 
 	# Collection of all classes in the system
-	window.ClassList = Backbone.Collection.extend({
+	window.collections.ClassList = Backbone.Collection.extend({
 		url: "/class",
-		model: DataType,
+		model: models.DataType,
 		initialize: ->
 			that = this
 			@fetch({
 				success: ->
-					dataview = new DataView({collection: that})
-					selectedData = new SelectedDataList({collection: properties})
-					sectionController = new SectionController()
+					dataview = new views.DataView({collection: that})
+					selectedData = new views.SelectedDataList({collection: properties})
+					sectionController = new views.SectionController()
 				failure: ->
 					alert("could not get data from URL " + that.url)	
 			})
@@ -74,7 +70,7 @@ $(document).ready ->
 	###################
 
 	# A View wrapper with functions that manipulate the other data.
-	window.SectionController = Backbone.View.extend {
+	window.views.SectionController = Backbone.View.extend {
 		el: '.control-section'
 		wrap: '.section-builder-wrap'
 
@@ -91,12 +87,12 @@ $(document).ready ->
 					$t.text "View Configuration" 
 				else $t.text "View Section Builder"
 			$(@wrap).slideToggle('fast')
-			window.builder = new SectionBuilder({collection: @selected})
-			@organizer = new PropertyOrganizer({collection: @selected})
+			window.builder = new views.SectionBuilder({collection: @selected})
+			@organizer = new views.PropertyOrganizer({collection: @selected})
 	}
 
 	# A View of all Classes
-	window.DataView = Backbone.View.extend({
+	window.views.DataView = Backbone.View.extend({
 		el: '#class-list'
 		initialize: ->
 			_.bindAll(this,'render')
@@ -106,7 +102,7 @@ $(document).ready ->
 			_.each(this.collection.models, (prop) -> 
 				unless prop.rendered
 					prop.rendered = true;
-					$(that.el).append new DataSingle({model: prop}).render().el
+					$(that.el).append new views.DataSingle({model: prop}).render().el
 			)
 		events: 
 			"click .new-data-type": ->
@@ -116,7 +112,7 @@ $(document).ready ->
 	});
 
 	# A Single Class, with controls for adding properties
-	window.DataSingle = Backbone.View.extend({
+	window.views.DataSingle = Backbone.View.extend({
 		template: $("#data-type").html(),
 		updateTemplate: $("#add-property").html()
 		tagName: 'li'
@@ -128,14 +124,14 @@ $(document).ready ->
 			props = @model.get "properties"
 			# Loop through all properties returned by the datatype, and create a model for each.
 			for prop, i in props
-				newProperty = new Property(prop)
+				newProperty = new models.Property(prop)
 				# Then append a new view for that model
-				$el.append new PropertyItem({model: newProperty}).render().el
+				$el.append new views.PropertyItem({model: newProperty}).render().el
 			this
 		events:
 			"click .add-property": (e) ->
-				newProp = new Property({name: 'Change Me'})
-				$(@el).append new PropertyItem({model: newProp}).render().el
+				newProp = new models.Property({name: 'Change Me'})
+				$(@el).append new views.PropertyItem({model: newProp}).render().el
 				properties.add(newProp)
 			"click .close": (e) ->
 				that = this
@@ -149,7 +145,7 @@ $(document).ready ->
 	})
 
 	# A list of all the properties a user wants in their application view.
-	window.SelectedDataList = Backbone.View.extend({
+	window.views.SelectedDataList = Backbone.View.extend({
 		el: '.property-editor'
 		template: $("#configure-property").html()
 		initialize: ->
@@ -159,12 +155,12 @@ $(document).ready ->
 			$el = $(@el)
 			$el.empty()
 			_.each  @collection.models, (prop) ->
-				$el.append new PropertyItemEditor({model: prop}).render().el
+				$el.append new views.PropertyItemEditor({model: prop}).render().el
 				this
 	})
 
 	# An editing bar where a user may configure the logic of the particular view.
-	window.PropertyItemEditor = Backbone.View.extend({
+	window.views.PropertyItemEditor = Backbone.View.extend({
 		template: $("#property-item-editor").html()
 		tagName: 'li'
 		render: ->
@@ -174,7 +170,7 @@ $(document).ready ->
 
 	# A list item which a user may select by clicking, 
 	# in order to add it to their application view.
-	window.PropertyItem = Backbone.View.extend({
+	window.views.PropertyItem = Backbone.View.extend({
 		template: $("#property-item").html()
 		tagName: ->
 			# If the properties are stored as selected, mark the view as such.
@@ -195,9 +191,6 @@ $(document).ready ->
 			        start: ->
 			        	if window.builder?
 			        		window.builder.currentModel = that.model
-			        stop: (e, ui) ->
-			        	console.log e.target, ui
-		        		$(document.body).append()
 		        }
 			$(@el).append _.template @template, item
 			this
@@ -223,9 +216,9 @@ $(document).ready ->
 	})
 
 	# A list of all selected properties.
-	properties = new Properties()
+	properties = new collections.Properties()
 
-	elements = new Elements()
+	elements = new collections.Elements()
 
 	# Call the collection and render the page.
-	classes = new ClassList()
+	classes = new collections.ClassList()

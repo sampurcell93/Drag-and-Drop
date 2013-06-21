@@ -5,26 +5,23 @@
     dataview = null;
     selectedData = null;
     sectionController = null;
-    window.DataType = Backbone.Model.extend({
+    window.models.DataType = Backbone.Model.extend({
       url: function() {
         return "/class/";
       }
     });
-    window.Property = Backbone.Model.extend({
+    window.models.Property = Backbone.Model.extend({
       initialize: function() {
         if (Math.random() > .6) {
-          properties.add(this);
-          return this.selected = true;
+          this.selected = true;
+          return properties.add(this);
         }
       }
     });
-    window.Element = Backbone.Model.extend({});
+    window.models.Element = Backbone.Model.extend({});
     /* COLLECTIONS*/
 
-    window.Elements = Backbone.Collection.extend({
-      model: Element
-    });
-    window.Properties = Backbone.Collection.extend({
+    window.collections.Properties = Backbone.Collection.extend({
       initialize: function() {
         return this.on("remove", function() {
           return console.log("removing element from collection");
@@ -36,23 +33,23 @@
         this.models[index1] = this.models[index2];
         return this.models[index2] = temp;
       },
-      model: Property
+      model: models.Property
     });
-    window.ClassList = Backbone.Collection.extend({
+    window.collections.ClassList = Backbone.Collection.extend({
       url: "/class",
-      model: DataType,
+      model: models.DataType,
       initialize: function() {
         var that;
         that = this;
         this.fetch({
           success: function() {
-            dataview = new DataView({
+            dataview = new views.DataView({
               collection: that
             });
-            selectedData = new SelectedDataList({
+            selectedData = new views.SelectedDataList({
               collection: properties
             });
-            return sectionController = new SectionController();
+            return sectionController = new views.SectionController();
           },
           failure: function() {
             return alert("could not get data from URL " + that.url);
@@ -61,7 +58,7 @@
         return this;
       }
     });
-    window.SectionController = Backbone.View.extend({
+    window.views.SectionController = Backbone.View.extend({
       el: '.control-section',
       wrap: '.section-builder-wrap',
       initialize: function() {
@@ -82,15 +79,15 @@
           }
         }
         $(this.wrap).slideToggle('fast');
-        window.builder = new SectionBuilder({
+        window.builder = new views.SectionBuilder({
           collection: this.selected
         });
-        return this.organizer = new PropertyOrganizer({
+        return this.organizer = new views.PropertyOrganizer({
           collection: this.selected
         });
       }
     });
-    window.DataView = Backbone.View.extend({
+    window.views.DataView = Backbone.View.extend({
       el: '#class-list',
       initialize: function() {
         _.bindAll(this, 'render');
@@ -102,7 +99,7 @@
         return _.each(this.collection.models, function(prop) {
           if (!prop.rendered) {
             prop.rendered = true;
-            return $(that.el).append(new DataSingle({
+            return $(that.el).append(new views.DataSingle({
               model: prop
             }).render().el);
           }
@@ -120,7 +117,7 @@
         }
       }
     });
-    window.DataSingle = Backbone.View.extend({
+    window.views.DataSingle = Backbone.View.extend({
       template: $("#data-type").html(),
       updateTemplate: $("#add-property").html(),
       tagName: 'li',
@@ -134,8 +131,8 @@
         props = this.model.get("properties");
         for (i = _i = 0, _len = props.length; _i < _len; i = ++_i) {
           prop = props[i];
-          newProperty = new Property(prop);
-          $el.append(new PropertyItem({
+          newProperty = new models.Property(prop);
+          $el.append(new views.PropertyItem({
             model: newProperty
           }).render().el);
         }
@@ -144,10 +141,10 @@
       events: {
         "click .add-property": function(e) {
           var newProp;
-          newProp = new Property({
+          newProp = new models.Property({
             name: 'Change Me'
           });
-          $(this.el).append(new PropertyItem({
+          $(this.el).append(new views.PropertyItem({
             model: newProp
           }).render().el);
           return properties.add(newProp);
@@ -168,7 +165,7 @@
         }
       }
     });
-    window.SelectedDataList = Backbone.View.extend({
+    window.views.SelectedDataList = Backbone.View.extend({
       el: '.property-editor',
       template: $("#configure-property").html(),
       initialize: function() {
@@ -180,14 +177,14 @@
         $el = $(this.el);
         $el.empty();
         return _.each(this.collection.models, function(prop) {
-          $el.append(new PropertyItemEditor({
+          $el.append(new views.PropertyItemEditor({
             model: prop
           }).render().el);
           return this;
         });
       }
     });
-    window.PropertyItemEditor = Backbone.View.extend({
+    window.views.PropertyItemEditor = Backbone.View.extend({
       template: $("#property-item-editor").html(),
       tagName: 'li',
       render: function() {
@@ -195,7 +192,7 @@
         return this;
       }
     });
-    window.PropertyItem = Backbone.View.extend({
+    window.views.PropertyItem = Backbone.View.extend({
       template: $("#property-item").html(),
       tagName: function() {
         var id, selected;
@@ -222,10 +219,6 @@
               if (window.builder != null) {
                 return window.builder.currentModel = that.model;
               }
-            },
-            stop: function(e, ui) {
-              console.log(e.target, ui);
-              return $(document.body).append();
             }
           });
         }
@@ -255,9 +248,9 @@
         }
       }
     });
-    properties = new Properties();
-    elements = new Elements();
-    return classes = new ClassList();
+    properties = new collections.Properties();
+    elements = new collections.Elements();
+    return classes = new collections.ClassList();
   });
 
 }).call(this);
