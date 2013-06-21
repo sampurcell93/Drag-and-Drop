@@ -27,7 +27,7 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="icon-"] {
 */
-.icon-pushpin, .icon-tag, .icon-folder, .icon-stack, .icon-cog, .icon-move, .icon-close, .icon-layout, .icon-grid, .icon-list, .icon-list-2, .icon-list-3, .icon-refresh, .icon-repeat, .icon-cancel, .icon-arrow-down, .icon-arrow-up, .icon-arrow-left, .icon-arrow-right {
+.icon-pushpin, .icon-tag, .icon-folder, .icon-stack, .icon-cog, .icon-move, .icon-close, .icon-layout, .icon-grid, .icon-list, .icon-list-2, .icon-list-3, .icon-refresh, .icon-repeat, .icon-cancel, .icon-arrow-down, .icon-arrow-up, .icon-arrow-left, .icon-arrow-right, .icon-resize-vertical {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -93,4 +93,7 @@ you can use the generic selector below, but it's slower:
 }
 .icon-arrow-right:before {
 	content: "\73";
+}
+.icon-resize-vertical:before {
+	content: "\74";
 }

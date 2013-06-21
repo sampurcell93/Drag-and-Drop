@@ -3,6 +3,27 @@
 input, textarea {
 	display: block;
 	vertical-align: middle;
-	border: 1px solid #ddd;
+	border: 1px solid #c5c5c5;
+	padding: 8px 10px;
+	font-size: 1em;
 }
 
+.add-section-title {
+	margin: 10px 0 0px 20px;
+}
+
+button {
+	position: relative;
+	background: $lightblue;
+
+	&[data-icon]::after {
+		content: attr(data-icon);
+		left: 10px;
+		font-family: 'icons';
+		color: #f9f9f9;
+		position: absolute;
+	}
+	&[data-icon] {
+		padding-left: 40px;
+	}
+}

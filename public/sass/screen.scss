@@ -8,7 +8,6 @@
 @import "compass/utilities/general/clearfix";
 @import "build";
 
-$lightblue : #2092CC;
 @font-face {
   font-family: 'icons';
   src: url("../icomoon/fonts/icomoon.eot") format("eot"), 
@@ -17,6 +16,7 @@ $lightblue : #2092CC;
 }
 
 $opensans: 'Open Sans', sans-serif;
+$fadedblue: #DEE9F2;
 
 .bs { border: 1px solid red; }
 .clickme { 
@@ -31,10 +31,15 @@ $opensans: 'Open Sans', sans-serif;
 }
 
 body {
-	background: #ddd;
+	background: #444;
 	font-family: $opensans;
 	text-shadow: 0px 1px 0px #fff;
 	color: #444;
+}
+
+h1 { 
+	font-size: 2.1em;
+
 }
 
 h2 {
@@ -43,13 +48,15 @@ h2 {
 }
 
 header {
-	padding: 15px !important;
 // needs latest Compass, add '@import "compass"' to your scss
+	border-bottom: 1px solid #ccc;
 	background-color: #ffffff; // Old browsers
 	@include filter-gradient(#ffffff, #e5e5e5, vertical); // IE6-9
 	@include background-image(linear-gradient(top,  #ffffff 0%,#e5e5e5 100%));
-	border-bottom: 1px solid #ccc;
 	@include box-shadow(inset 0px 0px 11px #fff);
+	@include clearfix();
+
+	button { margin: 10px; }
 }
 
 .container {
@@ -58,18 +65,17 @@ header {
 	max-width: 100%;
 	margin: 40px auto;
 	border: 1px solid #ccc;
-	@include clearfix();
 	background: #f9f9f9;
-	@include box-shadow(0px 0px 10px #ccc);
+	@include box-shadow(0px 0px 10px #333);
 }
 
-ul.organize-properties {
+ul.select-properties {
 	display: block;
-	width: 33%;
+	width: 35%;
 	float: left;
 	// min-height: 200px;
 	position: relative;
-	margin-top: 50px !important;
+	// margin-top: 50px !important;
 
 	.add-property {
 		font-size: .88em;
@@ -83,9 +89,10 @@ ul.organize-properties {
 		min-height: 40px;
 		line-height: 40px;
 		position: relative;
+		padding: 0 !important;
 		border-top: 1px solid #fff;
-		border-bottom: 1px solid #ddd;
-		@include box-shadow(0px -2px 6px #d5d5d5);
+		@include box-shadow(0px -2px 6px #ccc);
+		padding-bottom: 10px;
 
 		&:first-child {
 			@include border-radius(3px 3px 0 0);
@@ -146,7 +153,8 @@ ul.organize-properties {
 		margin: 0 !important;
 	}
 
-	li ul li, .property {
+	li li, .property {
+
 		@include box-shadow(none);
 		text-align: left;
 		padding-left: 60px;
@@ -156,12 +164,13 @@ ul.organize-properties {
 		min-height: 25px;
 		line-height: 25px;
 		font-size: 1em;
+		border-bottom: none;
 
 		&:after, &:before { display: none; }
 
 		&.selected { 
 			color: #f9f9f9; 
-			background: $lightblue;
+			background: $lightblue !important;
 			text-shadow: none;
 
 			&:hover { color: #fff; }
@@ -183,6 +192,10 @@ ul.organize-properties {
 		&:focus {
 			outline: 1px solid #fff;
 		}
+
+		&:nth-child(even) {
+			background: $fadedblue;
+		}
 	}
 
 	div[contentEditable] {
@@ -191,6 +204,75 @@ ul.organize-properties {
 			outline: 1px solid #fff;
 		}
 	}
+}
+
+ul.property-editor {
+	li {
+		padding: 6px 14px 6px 60px;
+
+		&:nth-child(odd) {
+			background: $fadedblue;
+		}
+
+		.icon {
+			font-size: .9em;
+			padding: 0 5px;
+			color: #555;
+			position: relative;
+
+			&:before {
+				content: attr(data-tooltip);
+				background: rgba(0,0,0,.8);
+				position: absolute;
+				display: none;
+				bottom: 100%;
+				left: -50%;
+				padding: 4px 6px;
+				text-shadow: 0;
+				font-family: $opensans; 
+				@include border-radius(3px);
+				color: #eee;
+			}
+
+			&:hover { color: $lightblue; }
+			// &:hover::before { display: block; }
+		}
+	}
+}
+
+#organize-properties {
+	
+	min-height: 100px;
+	border: 1px solid $fadedblue;
+	margin: 10px;
+
+	li {
+		position: relative;
+		padding-left: 40px;
+		min-height: 30px;
+		line-height: 30px;
+		display: block;
+
+		&:nth-child(even) {
+			background: $fadedblue;
+		}
+
+		.sort-element {
+			left: 0px;
+			top: 0px;
+		}
+	}
+}
+.sort-element {
+	background: $fadedblue;
+	font-family: 'icons';
+	position: absolute;
+	height: 100%;
+	width: 30px;
+	text-align: center;
+	display: block;
+	color: #444;
+	font-size: .8em;
 }
 
 .right-arrow {
@@ -229,25 +311,21 @@ ul.organize-properties {
       to { @include opacity(0); }
 }
 
-ul.element-adder {
+ul.generic-elements {
 	display: block;
-	width: 75%;
 	height: 30px;
 	border: none;
-	float: right;
-
+	margin: 10px 10px 0 0;
+	border: 1px solid #ddd;
+	border-bottom: none;
+	background: $fadedblue;
+	
 	li {
 		display: inline-block;
 		line-height: 30px;
 		border-right: 1px solid #ddd;
-		border-left: 1px solid #ddd;
-		padding: 2px 5px;
-		background: #ccc;
-		// needs latest Compass, add '@import "compass"' to your scss
-		background-color: #ffffff; // Old browsers
-		@include filter-gradient(#ffffff, #e5e5e5, vertical); // IE6-9
-		// @include transition(all .2s ease-in-out);
-		@include background-image(linear-gradient(top,  #ffffff 0%,#e5e5e5 100%));
+		padding: 0px 5px;
+		height: 100%;
 	}
 }
 
@@ -255,20 +333,79 @@ ul.element-adder {
 .over {
 	// @include transform(scale(.98));
 	@include border-radius(3px);
-	border: 1px solid $lightblue;
+	border: 1px dotted $lightblue;
 }
 
-.dragging { color: $lightblue; border: 1px solid red; }
+.dragging { 
+	color: $lightblue;
+	border: 1px dotted $lightblue;
+}
 
-section {
-	width: 73%;
+section.builder-container {
 	min-height: 100px;
 	float: right;
 	position: relative;
-	border: 1px solid #ccc;
+	border: 1px solid #ddd;
+	margin: 0px 10px 10px;
+	padding: 0 5px;
 
-	div, ul, li, a, label {
+	> div, > ul, > li, > a, > label {
+		position: relative;
+		margin-top: 10px;
+		padding: 10px;
 		@include transition(width .2s ease-in-out);
 		border: 1px solid $lightblue;
+		@include border-radius(3px);
 	}
+
+	.sort-element {
+		top: 0;
+		right: 0;
+	}
+}
+.builder-element {
+	position: relative;
+}
+.set-options {
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		display: block;
+		cursor: pointer;
+		text-align: center;
+		background: $fadedblue;
+		padding: 6px;
+		// border-left: 1px solid #ddd;
+		// border-bottom: 1px solid #ddd;
+		@include border-radius( 0 3px 0 3px);
+
+		.dropdown {
+			position: absolute;
+			top: 100%;
+			right: 1px;
+			display: none;
+			font-family: $opensans;
+			width: 170px;			
+			border: 1px solid #bbb;
+			@include border-radius(3px);
+			@include box-shadow(0px 1px 3px #999);
+			z-index: 111;
+			background: #fff;
+		}
+
+		.dropdown li {
+			display: block;
+			padding: 4px;
+			cursor: pointer;
+
+			&:hover { 
+				background: $lightblue;
+				color: #fff;
+				text-shadow: none;
+			}
+		}
+	}
+
+button {
+	@include border-radius(2px);
 }

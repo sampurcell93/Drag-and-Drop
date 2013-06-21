@@ -1,18 +1,7 @@
 @import "compass/css3";
 
-@mixin sharp($dist: 5px, $color: $darkblue, $extra: none) {
-	@include box-shadow(-#{$dist} #{$dist} 0 0 #{$color}, #{$extra})
-}
+$lightblue : #2092CC;
 
-$open-sans: 'Open Sans', sans-serif;
-$lato: "Lato", sans-serif;
-$darkblue: #34383c;
-$lightblue: #697785;
-$lighterblue: #809FBF;
-$darkerblue: #2C2F32;
-$lightred:  #e05b5b;
-$darkred:  #cd4534;
-$darkerred: #AA2C2C;
 
 .center { text-align: center; }
 .relative { position: relative; display: block; }

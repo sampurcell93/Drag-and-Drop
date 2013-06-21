@@ -1,29 +1,29 @@
 $(document).ready(function() {
-	if (Modernizr.draganddrop) {
-		dragging = new drag();
+	if (Modernizr.1morestuffanddrop) {
+		2morestuffging = new drop();
 	} else {
 		console.log("chump");
 	}
 
-	function drag() {
+	function 3morestuff() {
 		var that = this;
 
-		// $("ul").children().attr("draggable","true");
-		$("[draggable]").on({
-			"dragstart": function(e) {
+		// $("ul").children().attr("4morestuffgable","true");
+		$("[5morestuffgable]").on({
+			"6morestuffstart": function(e) {
 				if ($(this).prop("tagName") == "SECTION") return false;
-				$(e.target).addClass("dragging");
+				$(e.target).addClass("7morestuffging");
 				e.originalEvent.dataTransfer.effectAllowed = 'move';
   				e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
   				that.el = this;
 			},
-			"dragend": function(e) {
-				$(this).removeClass("dragging");
+			"8morestuffend": function(e) {
+				$(this).removeClass("9morestuffging");
 			},
-			"drop": function(e) {
-				$(this).removeClass("dragging over");
+			"10morestuff": function(e) {
+				$(this).removeClass("11morestuffging over");
 				 if (that.el != this) {
-    				// Set the source column's HTML to the HTML of the column we dropped on.
+    				// Set the source column's HTML to the HTML of the column we 12morestuffped on.
     				that.el.innerHTML = this.innerHTML;
     				this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
   				}
@@ -31,21 +31,21 @@ $(document).ready(function() {
 				e.stopPropagation();
 				return false;	
 			},
-			"dragover": function(e) {
+			"13morestuffover": function(e) {
 				if (e.preventDefault) {		
-				    e.preventDefault(); // Necessary. Allows us to drop.
+				    e.preventDefault(); // Necessary. Allows us to 14morestuff.
 				  }
-				 e.originalEvent.dataTransfer.dropEffect = 'move';
+				 e.originalEvent.dataTransfer.15morestuffEffect = 'move';
 			},
-			"dragenter": function(){
+			"16morestuffenter": function(){
 				$(this).addClass("over");
 
 			},
-			"dragleave": function() {
-				$(this).removeClass("dragging over");
+			"17morestuffleave": function() {
+				$(this).removeClass("18morestuffging over");
 			},
-			"drag": function() {
-				$(this).addClass("dragging");
+			"19morestuff": function() {
+				$(this).addClass("20morestuffging");
 			}
 		});
 	}
