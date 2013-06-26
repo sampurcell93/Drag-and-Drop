@@ -4,7 +4,7 @@ $(document).ready ->
 	# All selected properties
 	selectedData = null
 	# A central hub which binds other data
-	sectionController = null
+	window.sectionController = null
 
 	###################
 	##### MODELS ######ƒ
@@ -25,10 +25,6 @@ $(document).ready ->
 				@selected = true
 				properties.add @
 	})
-
-	window.models.Element = Backbone.Model.extend {
-
-	}
 
 	###################
 	### COLLECTIONS ###
@@ -53,7 +49,7 @@ $(document).ready ->
 		url: "/class",
 		model: models.DataType,
 		initialize: ->
-			that = this
+			that = @
 			@fetch({
 				success: ->
 					dataview = new views.DataView({collection: that})
@@ -73,12 +69,16 @@ $(document).ready ->
 	window.views.SectionController = Backbone.View.extend {
 		el: '.control-section'
 		wrap: '.section-builder-wrap'
-
 		initialize: ->
 			@selected = properties
-			# @generateSection()
 		events: 
 			'click .generate-section': 'generateSection'
+			'click .save-section': 'saveSection'
+			'click .view-layouts': ->
+   				window.layoutCollection = new collections.Layouts()
+   				# else 
+   					# views.layoutList.render()
+
 		generateSection: (e) ->
 			if e?
 				$t = $(e.currentTarget)
@@ -87,8 +87,27 @@ $(document).ready ->
 					$t.text "View Configuration" 
 				else $t.text "View Section Builder"
 			$(@wrap).slideToggle('fast')
-			window.builder = new views.SectionBuilder({collection: @selected})
-			@organizer = new views.PropertyOrganizer({collection: @selected})
+			# If we are initializing a new section, do:
+			if !builder?
+				# Make a new, empty collection of elements. Needs to be accessible for application to add to it.
+				window.currentSection = @constructElementCollection()
+				# Link this collection to the builder, and populate it with properties. A scaffolding.
+				window.builder = new views.SectionBuilder({collection: currentSection})
+				# Link this controller to the scaffolding - which is linked to the collection itself.
+				# Through this narrow channel, the controller gains access to the architecture of the section,
+				# and also to the intricacies of the build.
+				window.organizer = @organizer = new views.ElementOrganizer({collection: currentSection})
+			# Otherwise, we need to append to the collection and rerender, not reinitialize.
+			else 
+				console.log "nope, shit is there"
+		saveSection: ->
+			_.each currentSection.models, (model) ->
+				console.log model.toJSON()
+		constructElementCollection: ->
+			elements = new collections.Elements()
+			_.each @selected.models, (prop) ->
+				elements.add(new models.Element({property_name: prop.get "name"}))
+			elements
 	}
 
 	# A View of all Classes
@@ -98,7 +117,7 @@ $(document).ready ->
 			_.bindAll(this,'render')
 			@render()
 		render: ->
-			that = this
+			that = @
 			_.each(this.collection.models, (prop) -> 
 				unless prop.rendered
 					prop.rendered = true;
@@ -107,8 +126,8 @@ $(document).ready ->
 		events: 
 			"click .new-data-type": ->
 				mod = new DataType {name: 'Private', properties: []}
-				this.collection.add(mod)
-				this.render()
+				@collection.add(mod)
+				@ender()
 	});
 
 	# A Single Class, with controls for adding properties
@@ -120,7 +139,7 @@ $(document).ready ->
 			_.bindAll(this,'render')
 		render: ->
 			$el = $(@el)
-			$el.prepend _.template @template, @model.attributes
+			$el.prepend _.template @template, @model.toJSON()
 			props = @model.get "properties"
 			# Loop through all properties returned by the datatype, and create a model for each.
 			for prop, i in props
@@ -134,7 +153,7 @@ $(document).ready ->
 				$(@el).append new views.PropertyItem({model: newProp}).render().el
 				properties.add(newProp)
 			"click .close": (e) ->
-				that = this
+				that = @
 				$(e.currentTarget).closest("li").fadeOut "fast", ->
 					$(this).remove()
 					that.model.destroy()
@@ -164,7 +183,7 @@ $(document).ready ->
 		template: $("#property-item-editor").html()
 		tagName: 'li'
 		render: ->
-			$(@el).append _.template @template, @model.attributes
+			$(@el).append _.template @template, @model.toJSON()
 			this
 	})
 
@@ -178,21 +197,7 @@ $(document).ready ->
 			id = if @options.sortable is true then properties.indexOf(@model) else ""
 			'li class="property ' + selected + '" data-prop-id="' + id + '"'
 		render: ->
-			that = this
-			item = @model.attributes;
-			for opt, i of @options
-				item[opt] = i
-			if @options.draggable is true
-				@$el.draggable {
-			        cancel: ".sort-element", 
-			        revert: "invalid", 
-			        helper: "clone",
-			        cursor: "move",
-			        start: ->
-			        	if window.builder?
-			        		window.builder.currentModel = that.model
-		        }
-			$(@el).append _.template @template, item
+			$(@el).append _.template @template, @model.toJSON()
 			this
 		events:
 			"click": (e) -> 

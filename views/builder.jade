@@ -1,0 +1,43 @@
+include head.jade
+body 
+    .container.control-section
+        header
+            label.fl.w5.add-section-title Section Title:
+                input.inline(placeholder='Enter the Section title', name='section-title', value='Section Builder Demo!')#section-title.w7.m10
+            button.fr.generate-section(data-icon='h') View Section Builder
+            button.fr.save-section(data-icon='m') Save Section
+        include configure.jade
+        //- The section containing the UI Builder.
+        .section-builder-wrap.hidden
+            //-  Generic elements to drag into the builder
+            ul.fr.w7.generic-elements
+                li Text
+                li Buttons
+            //- The UI architecture panel, which shows the overall structure of the section.
+            ul#organize-elements.w25.fl
+            //- An item in a list of sortable elements.
+            script(type='text/template')#element-sortable-item
+                .sort-element t
+                div
+                    | <%= property_name.clean() %>
+                ul.child-list
+            //- The container for the builder itself.
+            section.w7.builder-container
+            //-  A template for each draggable element. Because rendering is recursive,
+            //-  more complex templates are unnecessary.
+            script(type='text/template')#draggable-element
+                <%= typeof(customText)!== 'undefined' ?  customText : '' %>
+                label
+                    <%= property_name.clean() %>:
+                <input placeholder='<%= property_name.clean() %>'>
+                ul.config-menu-wrap
+                    li.icon.set-options e
+                        ul.dropdown
+                            li.config-panel Styling
+                    li.icon.remove-from-flow g
+        include element-editor.jade
+        include layout-picker.jade
+        .clear
+        footer
+            button.fr.view-layouts View Layouts
+            button.fr.view-sections(data-icon='d') View Sections

@@ -14,7 +14,7 @@ input, textarea {
 
 button {
 	position: relative;
-	background: $lightblue;
+	background: $strongblue;
 
 	&[data-icon]::after {
 		content: attr(data-icon);
@@ -26,4 +26,8 @@ button {
 	&[data-icon] {
 		padding-left: 40px;
 	}
+}
+
+label {
+	font-weight: bold;
 }

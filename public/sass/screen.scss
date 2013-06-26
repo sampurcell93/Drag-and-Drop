@@ -15,12 +15,9 @@
   url("../icomoon/fonts/icomoon.ttf") format("truetype");
 }
 
-$opensans: 'Open Sans', sans-serif;
-$fadedblue: #DEE9F2;
-
 .bs { border: 1px solid red; }
 .clickme { 
-		color: $lightblue;
+		color: $strongblue;
 		cursor: pointer;
 }
 
@@ -30,11 +27,33 @@ $fadedblue: #DEE9F2;
 	padding: 0;
 }
 
+html { height: 100%; }
+
 body {
 	background: #444;
 	font-family: $opensans;
 	text-shadow: 0px 1px 0px #fff;
 	color: #444;
+	position: relative;
+	min-height: 100%;
+	padding-top: 40px;
+
+	&:after {
+		content: "";
+		position: absolute;
+		display: none;
+		left: 0;
+		top: 0px;
+		width: 100%; 
+		height: 100%;
+		background: rgba(0,0,0,.5);
+		z-index: 9911;
+	}
+
+	&.active-modal::after {
+		display: block;
+	}
+
 }
 
 h1 { 
@@ -47,7 +66,7 @@ h2 {
 	text-align: center;
 }
 
-header {
+header, footer {
 // needs latest Compass, add '@import "compass"' to your scss
 	border-bottom: 1px solid #ccc;
 	background-color: #ffffff; // Old browsers
@@ -56,17 +75,42 @@ header {
 	@include box-shadow(inset 0px 0px 11px #fff);
 	@include clearfix();
 
-	button { margin: 10px; }
+	button { 
+		margin: 15px 5px 0;
+		font-size: .9em;
+	}
 }
 
 .container {
 	display: block;
 	width: 1200px;
 	max-width: 100%;
-	margin: 40px auto;
+	margin: 0px auto;
 	border: 1px solid #ccc;
 	background: #f9f9f9;
 	@include box-shadow(0px 0px 10px #333);
+}
+
+.modal {
+	display: block;
+	width: 900px;
+	position: fixed;
+	left: 50%;
+	z-index: 9912;
+	margin-left: -400px;
+	top: 100px;
+	background: #fff;
+	background: rgba(255,255,255,.89);
+	padding: 20px;
+	@include box-shadow(0px 0px 7px #222);
+	
+	.close-modal {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		cursor: pointer;
+	}
+
 }
 
 ul.select-properties {
@@ -170,7 +214,7 @@ ul.select-properties {
 
 		&.selected { 
 			color: #f9f9f9; 
-			background: $lightblue !important;
+			background: $strongblue !important;
 			text-shadow: none;
 
 			&:hover { color: #fff; }
@@ -179,7 +223,7 @@ ul.select-properties {
 		}
 
 		&:hover {
-			color: $lightblue;
+			color: $strongblue;
 		}
 
 		&:first-child {
@@ -202,6 +246,21 @@ ul.select-properties {
 		padding-left: 60px;
 		&:focus {
 			outline: 1px solid #fff;
+		}
+	}
+}
+
+.layout-list {
+	li {
+		display: inline-block;
+		width: 30%;
+		padding: 10px;
+		margin: 10px 1.5%;
+		text-align: center;
+		&.selected-layout {
+			background: $strongblue;
+			color: #fff;
+			text-shadow: none;
 		}
 	}
 }
@@ -234,13 +293,13 @@ ul.property-editor {
 				color: #eee;
 			}
 
-			&:hover { color: $lightblue; }
+			&:hover { color: $strongblue; }
 			// &:hover::before { display: block; }
 		}
 	}
 }
 
-#organize-properties {
+#organize-elements {
 	
 	min-height: 100px;
 	border: 1px solid $fadedblue;
@@ -261,6 +320,16 @@ ul.property-editor {
 			left: 0px;
 			top: 0px;
 		}
+
+		.child-list { 
+			margin-left: -12px !important;
+		}
+
+		&.out-of-flow {
+			background: #ddd;
+
+			.sort-element {background: #ccc; }
+		}
 	}
 }
 .sort-element {
@@ -278,7 +347,7 @@ ul.property-editor {
 .right-arrow {
 	line-height: 300px;
 	font-size: 3rem;
-	color: $lightblue;
+	color: $strongblue;
 	@include opacity(.3);
 
 	// span:first-of-type {
@@ -333,17 +402,20 @@ ul.generic-elements {
 .over {
 	// @include transform(scale(.98));
 	@include border-radius(3px);
-	border: 1px dashed $lightblue !important;
+	border: 1px dashed $strongblue !important;
 	background: $fadedblue !important;
 }
 
 .dragging { 
-	color: $lightblue;
-	border: 1px dotted $lightblue;
+	opacity: .7;
+	z-index: 1111;
+}
+
+.moving-sort .sort-element {
+	background: $lightblue;
 }
 
 section.builder-container {
-	min-height: 100px;
 	float: right;
 	position: relative;
 	border: 1px solid #ddd;
@@ -354,34 +426,79 @@ section.builder-container {
 		top: 0;
 		right: 0;
 	}
-
-
 }
+
+
+// Represents a draggable item. Using custom clearfix to avoid overflow hidden problem
 .builder-element {
 	position: relative;
-	margin-top: 10px;
+	margin: 10px 0 0;
 	padding: 10px;
 	@include transition(width .2s ease-in-out);
-	border: 1px solid $lightblue;
+	border: 1px solid $medblue;
 	@include border-radius(3px);
 	background: #fff;
+ 	*zoom: 1;
 
 	&.child { 
-		border: 1px dashed $fadedblue !important;
+		border: 1px dashed $medblue !important;
+	}
+
+	input { 
+		margin: 10px 0;
+		width: 65%;
+	}
+
+	&.selected-element {
+		border: 1px dashed #FF6100 !important;
+	}
+
+	&:before,
+	&:after {
+    	content: " "; /* 1 */
+    	display: table; /* 2 */
+	}
+	&:after {
+    	clear: both;
+	}
+
+}
+
+.ui-selectable-helper { 
+	position: absolute;
+	z-index: 100;
+	border:1px dotted $strongblue; 
+	background: rgba(125,185,232,.4);
+}
+
+.config-menu-wrap {
+
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	display: block;
+	cursor: pointer;
+	text-align: center;
+	background: $fadedblue;
+	width: 30px;
+	// border-left: 1px solid #ddd;
+	// border-bottom: 1px solid #ddd;
+	@include border-radius(3px);
+
+	li {
+		padding: 6px;
+		display: block;
+		width: 100%;
+		line-height: 20px;
+		position: relative;
+
+		&:hover {
+			background: $lightblue;
+		}
 	}
 }
+
 .set-options {
-		position: absolute;
-		top: 0px;
-		right: 0px;
-		display: block;
-		cursor: pointer;
-		text-align: center;
-		background: $fadedblue;
-		padding: 6px;
-		// border-left: 1px solid #ddd;
-		// border-bottom: 1px solid #ddd;
-		@include border-radius( 0 3px 0 3px);
 
 		.dropdown {
 			position: absolute;
@@ -400,10 +517,11 @@ section.builder-container {
 		.dropdown li {
 			display: block;
 			padding: 4px;
+			height: 33px;
 			cursor: pointer;
 
 			&:hover { 
-				background: $lightblue;
+				background: $strongblue;
 				color: #fff;
 				text-shadow: none;
 			}

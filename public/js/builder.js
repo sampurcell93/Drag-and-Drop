@@ -9,56 +9,150 @@
     window.models = {};
     window.views = {};
     window.collections = {};
-    window.views.PropertyOrganizer = Backbone.View.extend({
-      el: '#organize-properties',
+    window.collections.Elements = Backbone.Collection.extend({
+      model: Element,
+      url: function() {
+        return '/section/' + this.id;
+      },
+      initialize: function() {
+        return this.id = this._id;
+      }
+    });
+    window.models.Element = Backbone.Model.extend({
+      url: function() {
+        var url;
+        url = "/section/";
+        url += this.id != null ? this.id : "";
+        return url;
+      },
+      initialize: function() {
+        this.set("child_els", new collections.Elements());
+        return this.set("inFlow", true);
+      }
+    });
+    window.views.ElementOrganizer = Backbone.View.extend({
+      el: '#organize-elements',
       initialize: function() {
         /* Render the list, then apply the drag and drop, and sortable functions.*/
 
         var that;
-        _.bindAll(this, "sortProperties");
+        _.bindAll(this, "reorderCollection", "render");
+        this.collection.on("change", this.render, this);
         this.render();
         that = this;
         return this.$el.sortable({
           axis: 'y',
           tolerance: 'touch',
           connectWith: 'ul',
+          containment: 'parent',
           handle: '.sort-element',
-          items: '> li',
-          cursorAt: {
-            top: 50
-          },
+          items: 'li',
           start: function(e, ui) {
-            return that.origIndex = $(ui.item).index();
+            return that.origIndex = $(ui.item).addClass("moving-sort").index();
           },
           stop: function(e, ui) {
-            return that.sortProperties($(ui.item).index());
+            return that.reorderCollection($(ui.item).removeClass("moving-sort").index(), that.origIndex);
           }
         });
       },
       render: function() {
-        var $el, that;
+        var $el, outOfFlow, that;
         $el = this.$el;
         $el.empty();
         that = this;
-        return _.each(this.collection.models, function(prop) {
+        outOfFlow = [];
+        _.each(this.collection.models, function(el) {
           var itemView;
-          itemView = new views.PropertyItem({
-            model: prop,
-            draggable: true,
-            editable: false,
-            sortable: true
+          if (el.get("inFlow") === false) {
+            outOfFlow.push(el);
+            return;
+          }
+          itemView = new views.SortableElementItem({
+            model: el
+          });
+          return $el.append(itemView.render().el);
+        });
+        return _.each(outOfFlow, function(out, i) {
+          var itemView;
+          if (i === 0) {
+            $("<li/>").addClass("out-of-flow center").text("Elements Out of Flow").appendTo($el);
+          }
+          itemView = new views.SortableElementItem({
+            model: out,
+            outOfFlow: true
           });
           return $el.append(itemView.render().el);
         });
       },
-      sortProperties: function(newIndex) {
+      reorderCollection: function(newIndex, originalIndex, collection) {
         var temp;
-        temp = this.collection.at(this.origIndex);
-        this.collection.remove(temp);
-        this.collection.add(temp, {
+        collection = collection || this.collection;
+        temp = collection.at(originalIndex);
+        collection.remove(temp);
+        collection.add(temp, {
           at: newIndex
         });
-        return window.builder.render();
+        return builder.render();
+      }
+    });
+    window.views.SortableElementItem = Backbone.View.extend({
+      tagName: 'li class="property"',
+      template: $("#element-sortable-item").html(),
+      initialize: function() {
+        var that;
+        that = this;
+        this.listenTo(this.model, 'change', this.render);
+        return this.$el.draggable({
+          cancel: ".sort-element",
+          revert: "invalid",
+          helper: "clone",
+          cursor: "move",
+          cursorAt: {
+            top: 50
+          },
+          start: function() {
+            if (typeof builder !== "undefined" && builder !== null) {
+              builder.currentModel = that.model;
+              return builder.fromSideBar = true;
+            }
+          }
+        });
+      },
+      render: function() {
+        var $el, childList, that;
+        $el = this.$el;
+        $el.html(_.template(this.template, this.model.toJSON()));
+        if (this.options.outOfFlow === true) {
+          $el.addClass("out-of-flow");
+        }
+        childList = $el.children(".child-list");
+        that = this;
+        _.each(this.model.get("child_els").models, function(el) {
+          return childList.append(new views.SortableElementItem({
+            model: el,
+            child: true
+          }).render().el);
+        });
+        if (childList.children().length > 1) {
+          childList.sortable({
+            items: 'li',
+            axis: 'y',
+            containment: 'parent',
+            start: function(e, ui) {
+              return that.origIndex = $(ui.item).index();
+            },
+            stop: function(e, ui) {
+              return organizer.reorderCollection($(ui.item).index(), that.origIndex, that.model.get("child_els"));
+            }
+          });
+        }
+        return this;
+      },
+      events: {
+        "click .sort-element": function(e) {
+          console.log($(e.target));
+          return e.stopImmediatePropagation();
+        }
       }
     });
     /* A configurable element bound to a property or page element
@@ -67,44 +161,77 @@
 
     window.views.draggableElement = Backbone.View.extend({
       template: $("#draggable-element").html(),
-      tagName: function() {
-        var child, options, width;
-        options = this.options;
-        child = this.options.child === true ? "child " : "";
-        width = options.width != null ? options.width + " " : "";
-        return 'div class="builder-element"' + child + width;
-      },
+      tagName: 'div class="builder-element"',
       initialize: function() {
-        return _.bindAll(this, "render", "bindDrop", "bindDrag");
+        _.bindAll(this, "render", "bindDrop", "bindDrag", "blendModels", "distance", "setStyles");
+        return this.listenTo(this.model, 'change', this.render);
       },
       render: function() {
-        this.$el.append(_.template(this.template, this.model.attributes));
+        var $el, children, that;
+        that = this;
+        children = this.model.get("child_els");
+        $el = this.$el;
+        this.setStyles();
+        $el.html(_.template(this.template, {
+          property_name: this.model.get("property_name")
+        }));
+        if (children != null) {
+          _.each(children.models, function(el) {
+            var draggable;
+            draggable = new views.draggableElement({
+              model: el
+            }).render().el;
+            return that.$el.append(draggable);
+          });
+        }
+        if ($el.prev(".builder-element").css("float") === "none") {
+          $el.before("<div class='clear'></div>");
+        }
         this.bindDrop();
         this.bindDrag();
         return this;
       },
+      setStyles: function() {
+        var styles;
+        styles = this.model.get("styles");
+        if (styles != null) {
+          return this.$el.css(styles);
+        }
+      },
       bindDrag: function() {
         var cancel, that;
         that = this;
-        cancel = ".sort-element, .set-options";
-        cancel += this.options.child ? "" : ", .child";
+        cancel = ".config-menu-wrap";
+        cancel += this.options.child != null ? "" : ", .child";
         return this.$el.draggable({
           cancel: cancel,
           revert: "invalid",
           cursor: "move",
-          start: function() {
+          start: function(e, ui) {
+            $(ui.helper).addClass("dragging");
             if (typeof builder !== "undefined" && builder !== null) {
-              return builder.currentModel = that.model;
+              builder.currentModel = that.model;
+              builder.fromSideBar = false;
+              return console.log;
             }
           },
           stop: function(e, ui) {
+            $(ui.helper).removeClass("dragging");
             if (ui.helper.data('dropped') === true) {
               return $(e.target).remove();
-            } else {
-              return console.log("bad drop");
             }
           }
         });
+      },
+      distance: function(point1, point2) {
+        var xs, ys;
+        xs = 0;
+        ys = 0;
+        xs = point2.left - point1.left;
+        xs = xs * xs;
+        ys = point2.top - point1.top;
+        ys = ys * ys;
+        return Math.sqrt(xs + ys);
       },
       bindDrop: function() {
         var that;
@@ -120,89 +247,164 @@
             return $(e.target).removeClass("over");
           },
           drop: function(e, ui) {
+            /* Deals with the actual layout changes*/
+
             var addTo, curr;
             $(e.target).removeClass("over");
             addTo = that.model;
             curr = builder.currentModel;
-            $(e.target).append(new views.draggableElement({
-              child: true,
-              model: curr
-            }).render().el);
-            $(ui.item).remove();
-            return ui.draggable.data('dropped', true);
+            if (curr.get("inFlow") === false || builder.fromSideBar === false) {
+              curr.set("inFlow", true);
+              $(ui.item).remove();
+              ui.draggable.data('dropped', true);
+              /* Now, we must consolidate models*/
+
+              that.blendModels(curr);
+              return that.render();
+            } else {
+              return alert("That element is already in the section. Until you set duplicates to true, none are allowed.");
+            }
           }
         });
       },
+      blendModels: function(dropped) {
+        var c, children, wrap;
+        c = dropped.collection;
+        if (c != null) {
+          c.remove(dropped);
+        }
+        wrap = this.model;
+        children = wrap.get("child_els");
+        if (children != null) {
+          wrap.set("child_els", children.add(dropped));
+          return organizer.render();
+        }
+      },
       events: {
         "click .config-panel": function() {
-          return console.log("yolo");
+          var editor;
+          return editor = new views.ElementEditor({
+            model: this.model,
+            view: this
+          }).render();
+        },
+        "click .set-options": function(e) {
+          var $t, dropdown;
+          $t = $(e.currentTarget);
+          dropdown = $t.children(".dropdown");
+          dropdown.fadeToggle(100);
+          return e.stopPropagation();
         },
         "click .set-options li": function(e) {
           e.preventDefault();
           return e.stopPropagation();
         },
-        "click .set-options": function(e) {
-          var $t, dropdown;
-          $t = $(e.currentTarget);
-          dropdown = $t.find(".dropdown");
-          return dropdown.fadeToggle(100);
+        "click .remove-from-flow": function(e) {
+          var self;
+          self = this;
+          return this.$el.slideUp("fast", function() {
+            self.remove();
+            return self.model.set("inFlow", false);
+          });
+        },
+        "select": function(e) {
+          return this.model.set("layout-item", true, {
+            silent: true
+          });
+        },
+        "deselect": function() {
+          console.log("deselecting");
+          return this.model.set("layout-item", false, {
+            silent: true
+          });
         }
       }
     });
-    window.collections.Elements = Backbone.Collection.extend({
-      model: Element
-    });
-    window.models.Element = Backbone.Model.extend({});
-    window.views.SectionBuilder = Backbone.View.extend({
+    return window.views.SectionBuilder = Backbone.View.extend({
       el: 'section.builder-container',
       initialize: function() {
         var $el, that;
         this.render();
+        this.collection.on("change:inFlow", this.render, this);
         that = this;
         $el = this.$el;
         $el.droppable({
-          accept: 'li, .child',
+          accept: 'li',
           hoverClass: "dragging",
           activeClass: "dragging",
           tolerance: 'pointer',
           drop: function(event, ui) {
-            var newEl, prop, temp;
-            prop = that.currentModel.attributes;
-            newEl = new models.Element({
-              properties: prop,
-              name: prop.name
-            });
-            temp = new views.draggableElement({
-              model: newEl
-            }).render().el;
-            return that.$el.append(temp);
+            var curr, temp;
+            curr = that.currentModel;
+            if (curr.get("inFlow") === false) {
+              temp = new views.draggableElement({
+                model: curr
+              }).render().el;
+              that.$el.append(temp);
+              return curr.set("inFlow", true);
+            } else {
+              return alert("That element is already on the page!");
+            }
+          }
+        });
+        $el.sortable({
+          axis: 'y',
+          tolerance: 'touch',
+          handle: '.sort-element',
+          items: '.builder-element',
+          cursorAt: {
+            top: 50
+          },
+          stop: function(e) {
+            return e.stopPropagation();
+          }
+        });
+        this.$el.selectable({
+          filter: '.builder-element',
+          tolerance: 'touch',
+          cancel: '.builder-element',
+          selecting: function(e, ui) {
+            return $(".ui-selecting").addClass("selected-element").trigger("select");
+          },
+          unselecting: function(e, ui) {
+            $(".ui-unselecting").removeClass("selected-element").trigger("deselect");
+            e.stopPropagation();
+            e.preventDefault();
+            return e.stopImmediatePropagation();
+          },
+          selected: function(e, ui) {
+            $(".ui-selected").addClass("selected-element").trigger("select");
+            e.stopPropagation();
+            e.preventDefault();
+            return e.stopImmediatePropagation();
+          },
+          unselected: function(e, ui) {
+            $(".ui-unselecting").removeClass("selected-element").trigger("deselect");
+            e.stopPropagation();
+            e.preventDefault();
+            return e.stopImmediatePropagation();
           }
         });
         return this.currentModel = null;
       },
       render: function() {
-        var that;
+        var $el, container, that;
+        $el = this.$el;
         that = this;
-        this.$el.empty();
-        return _.each(this.collection.models, function(element) {
-          if (element.selected === true) {
-            return that.$el.append(new views.draggableElement({
-              model: element,
-              name: element.get("name")
-            }).render().el);
+        $el.empty();
+        container = document.createDocumentFragment();
+        _.each(this.collection.models, function(element) {
+          if (element.get("inFlow") === false) {
+            return;
           }
+          return container.appendChild(new views.draggableElement({
+            model: element
+          }).render().el);
         });
+        return $el.append(container);
       },
       setLayout: function() {}
     });
-    $.fn.liveDraggable = function(opts) {
-      return $("section").delegate("div", "mouseover", function() {
-        if (!$(this).data("init")) {
-          return $(this).data("init", true).draggable(opts);
-        }
-      });
-    };
-    return this;
   });
 
 }).call(this);
