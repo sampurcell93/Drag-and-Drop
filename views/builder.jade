@@ -1,25 +1,31 @@
 include head.jade
 body 
+    ul.tabs.mauto
+        li Current Section
+        li Test Section
     .container.control-section
         header
-            label.fl.w5.add-section-title Section Title:
-                input.inline(placeholder='Enter the Section title', name='section-title', value='Section Builder Demo!')#section-title.w7.m10
+            input.inline(placeholder='Enter the Section title', name='section-title')#section-title.w4
+            button.fr.view-sections(data-icon='i') View Sections
             button.fr.generate-section(data-icon='h') View Section Builder
             button.fr.save-section(data-icon='m') Save Section
+        include existing-sections.jade
         include configure.jade
         //- The section containing the UI Builder.
         .section-builder-wrap.hidden
             //-  Generic elements to drag into the builder
             ul.fr.w7.generic-elements
-                li Text
-                li Buttons
+                script(type='text/template')#generic-element
+                    <%= type %>
+                include generic-templates.jade
+
             //- The UI architecture panel, which shows the overall structure of the section.
-            ul#organize-elements.w25.fl
+            ul#organize-elements
             //- An item in a list of sortable elements.
             script(type='text/template')#element-sortable-item
                 .sort-element t
                 div
-                    | <%= property_name.clean() %>
+                    | <%=  typeof type !== "undefined" ? type.clean() : title.clean() %>
                 ul.child-list
             //- The container for the builder itself.
             section.w7.builder-container
@@ -27,9 +33,15 @@ body
             //-  more complex templates are unnecessary.
             script(type='text/template')#draggable-element
                 <%= typeof(customText)!== 'undefined' ?  customText : '' %>
+                <% if (typeof property_name !== "undefined") { %>
                 label
                     <%= property_name.clean() %>:
                 <input placeholder='<%= property_name.clean() %>'>
+                <% }  else {%>
+                h2.title-bar
+                    <%= title.clean() %>
+                <% } %>
+            script(type='text/template')#drag-controls
                 ul.config-menu-wrap
                     li.icon.set-options e
                         ul.dropdown
@@ -39,5 +51,4 @@ body
         include layout-picker.jade
         .clear
         footer
-            button.fr.view-layouts View Layouts
-            button.fr.view-sections(data-icon='d') View Sections
+            button.fr.view-layouts(data-icon='d') View Layouts

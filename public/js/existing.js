@@ -2,18 +2,91 @@
 (function() {
   $(document).ready(function() {
     var sectionCollection;
-    window.models.Section = Backbone.Model.extend({});
-    window.collections.ExistingSections = Backbone.Collection.extend({
-      url: "/section",
+    window.existingSectionsList = null;
+    window.views.ExistingSectionsList = Backbone.View.extend({
+      el: '#existing-sections',
       initialize: function() {
-        return this.fetch({
-          success: function(collection, models) {}
+        return this.render();
+      },
+      render: function() {
+        var $el;
+        $el = this.$el;
+        return _.each(this.collection.models, function(section) {
+          section.set("inFlow", false);
+          return $el.append(new views.SingleSection({
+            model: section
+          }).render().el);
         });
       }
     });
-    window.views.ExistingSectionsList = Backbone.View.extend({});
-    window.views.SingleSection = Backbone.View.extend({});
-    return sectionCollection = new collections.ExistingSections();
+    window.views.SingleSection = Backbone.View.extend({
+      tagName: 'li',
+      template: $("#single-section").html(),
+      initialize: function() {
+        var self;
+        self = this;
+        return this.$el.draggable({
+          cancel: '.view-section',
+          revert: "invalid",
+          cursor: "move",
+          start: function(e, ui) {
+            $(ui.helper).addClass("dragging");
+            if (typeof builder !== "undefined" && builder !== null) {
+              builder.currentModel = self.model;
+              builder.fromSideBar = false;
+              return console.log;
+            }
+          },
+          stop: function(e, ui) {
+            $(ui.helper).removeClass("dragging");
+            if (ui.helper.data('dropped') === true) {
+              return $(e.target).remove();
+            }
+          }
+        });
+      },
+      render: function() {
+        var $el;
+        $el = this.$el;
+        $el.html(_.template(this.template, this.model.toJSON()));
+        _.each(this.model.get("child_els").models, function(child, i) {
+          if (i < 4) {
+            return $el.append(new views.SectionThumbnail({
+              model: child
+            }).render().el);
+          }
+        });
+        return this;
+      }
+    });
+    window.views.SectionThumbnail = Backbone.View.extend({
+      tagName: 'div',
+      render: function() {
+        var $el, styles;
+        $el = this.$el.addClass("thumb-object");
+        styles = this.model.get("styles");
+        if (styles != null) {
+          this.$el.css(styles);
+        }
+        _.each(this.model.get("child_els").models, function(child, i) {
+          if (i < 4) {
+            return $el.append(new views.SectionThumbnail({
+              model: child
+            }).render().el);
+          }
+        });
+        return this;
+      }
+    });
+    sectionCollection = new collections.Elements();
+    return sectionCollection.fetch({
+      success: function(coll) {
+        var existingSectionsList;
+        return existingSectionsList = new views.ExistingSectionsList({
+          collection: sectionCollection
+        });
+      }
+    });
   });
 
 }).call(this);

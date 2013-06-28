@@ -6,6 +6,7 @@ $(document).ready ->
 	# A central hub which binds other data
 	window.sectionController = null
 
+
 	###################
 	##### MODELS ######ƒ
 	###################
@@ -15,6 +16,12 @@ $(document).ready ->
 		url: ->
 			"/class/"
 	});
+
+	window.models.ElementWrapSaver = Backbone.Model.extend {
+		url: "/section",
+		toJSON: ->
+			@attributes.model.toJSON()
+	}
 
 	# A single property - pulled from the db with only a name, but returned to a new section
 	# with many more options configured.
@@ -76,8 +83,9 @@ $(document).ready ->
 			'click .save-section': 'saveSection'
 			'click .view-layouts': ->
    				window.layoutCollection = new collections.Layouts()
-   				# else 
-   					# views.layoutList.render()
+   			'click .view-sections': (e)->
+   				$(e.currentTarget).toggleClass("active")
+   				$("#existing-sections").animate({height: 'toggle'}, 200)
 
 		generateSection: (e) ->
 			if e?
@@ -90,7 +98,7 @@ $(document).ready ->
 			# If we are initializing a new section, do:
 			if !builder?
 				# Make a new, empty collection of elements. Needs to be accessible for application to add to it.
-				window.currentSection = @constructElementCollection()
+				@collection = window.currentSection = @constructElementCollection()
 				# Link this collection to the builder, and populate it with properties. A scaffolding.
 				window.builder = new views.SectionBuilder({collection: currentSection})
 				# Link this controller to the scaffolding - which is linked to the collection itself.
@@ -101,12 +109,29 @@ $(document).ready ->
 			else 
 				console.log "nope, shit is there"
 		saveSection: ->
-			_.each currentSection.models, (model) ->
-				console.log model.toJSON()
+			title = $("#section-title").val()
+			if title == ""
+				alert "You need to enter a title"
+				return
+			_.each @collection.models, (model) ->
+				model.set "section_name", title
+				model.unset "inFlow", {silent: true}
+			el = new models.ElementWrapSaver({model:@collection})
+			el.save(null, {
+				success: ->
+					$("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
+					$(document.body).addClass("active-modal")
+					$(".modal").delay(2000).fadeOut "fast", ->
+						$(@).remove()
+						$(document.body).removeClass("active-modal")
+			})
+
 		constructElementCollection: ->
 			elements = new collections.Elements()
 			_.each @selected.models, (prop) ->
-				elements.add(new models.Element({property_name: prop.get "name"}))
+				newEl = new models.Element({property_name: prop.get "name"})
+				newEl.set "title", prop.get("name")
+				elements.add(newEl)
 			elements
 	}
 

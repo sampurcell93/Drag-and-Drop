@@ -63,22 +63,97 @@ h1 {
 
 h2 {
 	font-size: 1.6em;
-	text-align: center;
+
+	&.title-bar {
+		background: $fadedblue;
+		border-bottom: 1px solid $lightblue;
+		padding: 5px 15px;
+		margin-bottom: 10px;
+		width: 95%;
+	}
+}
+
+.tabs {
+	height: 40px;
+	background: none;
+	display: block;
+	width: 1200px;
+	max-width: 100%;
+	margin: 0px auto;
+
+
+	li {
+		display: inline-block;
+		height: 100%;
+		@include border-radius(2px 2px 0 0);
+		line-height: 40px;
+		padding: 0 10px;
+		background: #333;
+		margin: 0 1px;
+		color: #f9f9f9;
+		text-shadow: 0px -1px 3px #000;
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 }
 
 header, footer {
-// needs latest Compass, add '@import "compass"' to your scss
-	border-bottom: 1px solid #ccc;
-	background-color: #ffffff; // Old browsers
-	@include filter-gradient(#ffffff, #e5e5e5, vertical); // IE6-9
-	@include background-image(linear-gradient(top,  #ffffff 0%,#e5e5e5 100%));
-	@include box-shadow(inset 0px 0px 11px #fff);
+	// needs latest Compass, add '@import "compass"' to your scss
+	background-color: #424141; // Old browsers
+	@include filter-gradient(#424141, #262626, vertical); // IE6-9
+	@include background-image(linear-gradient(top,  #424141 0%,#262626 100%));
+	//needs latest Compass, add '@import "compass"' to your scss
+	// background-color: #aebcbf; // Old browsers
+	// @include filter-gradient(#aebcbf, #0a0809, vertical); // IE6-9
+	// @include background-image(linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%));
 	@include clearfix();
+	@include border-radius(3px 3px 0 0 );
+	color: #f9f9f9;
+	text-shadow: 0px -1px 0px #111;
+	padding: 10px 5px 10px 10px;
+	border-bottom: 1px solid #252525;
+	border-top: 1px solid #666;
 
-	button { 
-		margin: 15px 5px 0;
-		font-size: .9em;
+	input { margin-top: 1px;
+
+		&:focus {
+			outline: none;
+			@include box-shadow(0px 0px 6px 3px $strongblue);
+		}
 	}
+	
+	button { 
+		font-size: .9em;
+		margin: 0 0 0 8px;
+	}	
+
+	.view-sections {
+		margin: 0 5px 0 15px;
+		position: relative;
+
+		&:before {
+			content: "";
+			position: absolute;
+			left: 50%;
+			display: none;
+			width: 0;
+			height: 0;
+			border: 10px solid transparent;
+			border-top-color: $strongblue;
+			top: 100%;
+			left: 45%;
+		}
+		&.active:before { display: block; }
+		&:hover::before {border-top-color: #2184A1; }
+
+	}
+}
+
+footer {	
+	@include border-radius(0 0 3px 3px);
 }
 
 .container {
@@ -86,9 +161,10 @@ header, footer {
 	width: 1200px;
 	max-width: 100%;
 	margin: 0px auto;
-	border: 1px solid #ccc;
 	background: #f9f9f9;
+	position: relative;
 	@include box-shadow(0px 0px 10px #333);
+	@include border-radius(4px);
 }
 
 .modal {
@@ -299,39 +375,6 @@ ul.property-editor {
 	}
 }
 
-#organize-elements {
-	
-	min-height: 100px;
-	border: 1px solid $fadedblue;
-	margin: 10px;
-
-	li {
-		position: relative;
-		padding-left: 40px;
-		min-height: 30px;
-		line-height: 30px;
-		display: block;
-
-		&:nth-child(even) {
-			background: $fadedblue;
-		}
-
-		.sort-element {
-			left: 0px;
-			top: 0px;
-		}
-
-		.child-list { 
-			margin-left: -12px !important;
-		}
-
-		&.out-of-flow {
-			background: #ddd;
-
-			.sort-element {background: #ccc; }
-		}
-	}
-}
 .sort-element {
 	background: $fadedblue;
 	font-family: 'icons';
@@ -387,14 +430,21 @@ ul.generic-elements {
 	margin: 10px 10px 0 0;
 	border: 1px solid #ddd;
 	border-bottom: none;
-	background: $fadedblue;
+	background: $strongblue;
+	color: #fff;
 	
 	li {
+		text-shadow: nonee;
 		display: inline-block;
 		line-height: 30px;
-		border-right: 1px solid #ddd;
-		padding: 0px 5px;
+		padding: 0px 15px;
 		height: 100%;
+		margin: 0 3px;
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 }
 
@@ -402,7 +452,7 @@ ul.generic-elements {
 .over {
 	// @include transform(scale(.98));
 	@include border-radius(3px);
-	border: 1px dashed $strongblue !important;
+	border: 2px dotted $strongblue !important;
 	background: $fadedblue !important;
 }
 
@@ -415,12 +465,115 @@ ul.generic-elements {
 	background: $lightblue;
 }
 
+#existing-sections {
+	position: absolute;
+	top: 60px;
+	right: -1px;
+	width: 182px;
+	@include box-shadow(-1px 1px 3px #666);
+	background: #555;
+	z-index: 111;
+	max-height: 80%;
+	overflow-y: scroll;
+
+	li {
+		// for smoother animations
+		background: #555;
+		white-space: nowrap;
+		text-align: center;
+		cursor: move;
+		padding: 5px 10px;
+		border-top: 1px solid #888;
+		border-bottom: 1px solid #333;
+		color: #f9f9f9;
+		text-shadow: 0px -1px 0px #222;
+		max-height: 182px;
+
+		.thumb-object {
+			border: 1px solid $medstrongblue;
+			padding: 5px;
+			margin: 2px;
+		}
+	}
+}
+
+#organize-elements {
+	
+	min-height: 100%;
+	margin: 10px;
+	padding: 5px;
+	width: 26.5%;
+	float: left;
+	@include border-radius(3px);
+	@include box-shadow(0px 2px 4px #ccc);
+	border: 1px solid #ccc;
+
+
+	li {
+		position: relative;
+		padding-left: 40px;
+		min-height: 30px;
+		line-height: 30px;
+		display: block;
+		cursor: move;
+
+		&:first-child {
+			@include border-radius(2px 2px 0 0);
+			.sort-element {
+				@include border-radius(2px 0 0 0);
+			}
+		}
+		&:last-child {
+			@include border-radius(0 0 2px 2px);
+			.sort-element {
+				@include border-radius(0 0 0 2px);
+			}
+			
+		}
+
+		&:nth-child(odd) {
+			background: $fadedblue;
+		}
+
+		.sort-element {
+			left: 0px;
+			top: 0px;
+			cursor: pointer;
+			cursor: hand;
+		}
+
+		.child-list { 
+			margin-left: -12px !important;
+		}
+
+		&.out-of-flow {
+			background: #ddd !important;
+
+			.sort-element {background: #ccc; }
+		}
+
+		.activate-element, .destroy-element {
+			position: absolute;
+			right: 10px;
+			font-family: 'icons';
+			color: #7FBA50;
+			cursor: pointer;
+		}
+		.destroy-element {
+			right: 33px;
+			color: #666;
+		}
+	}
+}
+
 section.builder-container {
 	float: right;
 	position: relative;
-	border: 1px solid #ddd;
 	margin: 0px 10px 10px;
 	padding: 0 5px 40px;
+	@include border-radius(3px);
+	@include box-shadow(0px 2px 4px #ccc);
+	border: 1px solid #ccc;
 
 	.sort-element {
 		top: 0;
@@ -435,10 +588,25 @@ section.builder-container {
 	margin: 10px 0 0;
 	padding: 10px;
 	@include transition(width .2s ease-in-out);
-	border: 1px solid $medblue;
+	border: 2px dotted $strongblue;
 	@include border-radius(3px);
 	background: #fff;
  	*zoom: 1;
+ 	cursor: move;
+
+ 	ul, ol, dl {
+ 		list-style-position: inside;
+ 		list-style-type: bullet;
+ 	}
+
+ 	&:hover { 
+		border: 2px solid $strongblue;
+		@include box-shadow(0px 0px 4px $medblue);
+
+		> .config-menu-wrap {
+			@include opacity(1);
+		}
+ 	}
 
 	&.child { 
 		border: 1px dashed $medblue !important;
@@ -450,7 +618,7 @@ section.builder-container {
 	}
 
 	&.selected-element {
-		border: 1px dashed #FF6100 !important;
+		border: 2px dashed #FF6100 !important;
 	}
 
 	&:before,
@@ -472,7 +640,8 @@ section.builder-container {
 }
 
 .config-menu-wrap {
-
+	@include transition(all .1s ease-in-out);
+	@include opacity(0);
 	position: absolute;
 	top: 0px;
 	right: 0px;
@@ -486,6 +655,7 @@ section.builder-container {
 	@include border-radius(3px);
 
 	li {
+		@include transition(all .1s ease-in-out);
 		padding: 6px;
 		display: block;
 		width: 100%;

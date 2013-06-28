@@ -10,6 +10,12 @@
         return "/class/";
       }
     });
+    window.models.ElementWrapSaver = Backbone.Model.extend({
+      url: "/section",
+      toJSON: function() {
+        return this.attributes.model.toJSON();
+      }
+    });
     window.models.Property = Backbone.Model.extend({
       initialize: function() {
         if (Math.random() > .6) {
@@ -69,6 +75,12 @@
         'click .save-section': 'saveSection',
         'click .view-layouts': function() {
           return window.layoutCollection = new collections.Layouts();
+        },
+        'click .view-sections': function(e) {
+          $(e.currentTarget).toggleClass("active");
+          return $("#existing-sections").animate({
+            height: 'toggle'
+          }, 200);
         }
       },
       generateSection: function(e) {
@@ -84,7 +96,7 @@
         }
         $(this.wrap).slideToggle('fast');
         if (typeof builder === "undefined" || builder === null) {
-          window.currentSection = this.constructElementCollection();
+          this.collection = window.currentSection = this.constructElementCollection();
           window.builder = new views.SectionBuilder({
             collection: currentSection
           });
@@ -96,17 +108,42 @@
         }
       },
       saveSection: function() {
-        return _.each(currentSection.models, function(model) {
-          return console.log(model.toJSON());
+        var el, title;
+        title = $("#section-title").val();
+        if (title === "") {
+          alert("You need to enter a title");
+          return;
+        }
+        _.each(this.collection.models, function(model) {
+          model.set("section_name", title);
+          return model.unset("inFlow", {
+            silent: true
+          });
+        });
+        el = new models.ElementWrapSaver({
+          model: this.collection
+        });
+        return el.save(null, {
+          success: function() {
+            $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
+            $(document.body).addClass("active-modal");
+            return $(".modal").delay(2000).fadeOut("fast", function() {
+              $(this).remove();
+              return $(document.body).removeClass("active-modal");
+            });
+          }
         });
       },
       constructElementCollection: function() {
         var elements;
         elements = new collections.Elements();
         _.each(this.selected.models, function(prop) {
-          return elements.add(new models.Element({
+          var newEl;
+          newEl = new models.Element({
             property_name: prop.get("name")
-          }));
+          });
+          newEl.set("title", prop.get("name"));
+          return elements.add(newEl);
         });
         return elements;
       }
