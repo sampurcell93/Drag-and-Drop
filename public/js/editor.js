@@ -12,9 +12,7 @@
         return $(document.body).append(this.$el).addClass("active-modal");
       },
       events: {
-        "click .close-modal": function() {
-          return this.remove();
-        },
+        "click .close-modal": this.remove,
         "click .save-changes": "bind"
       },
       bind: function() {

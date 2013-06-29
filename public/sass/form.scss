@@ -6,6 +6,16 @@ input, textarea {
 	border: 1px solid #bbb;
 	padding: 8px 10px 8px 20px;
 	font-size: 1em;
+
+	&.big-input {
+		font-size: 1.3em;
+	}
+}
+
+textarea {
+	width: 75%;
+	max-width: 85%;
+	margin:5px 0;
 }
 
 .add-section-title {

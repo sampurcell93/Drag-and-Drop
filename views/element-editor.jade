@@ -1,6 +1,6 @@
 script#element-editor(type='text/template')
     div.close-modal.icon g 
-    <input class='w7' placeholder='<%= property_name.clean() %>' name ='name' />
+    <input class='w7' placeholder='<%= typeof type !== "undefined" ? type.clean() : title.clean() %>' name ='name' />
     label(for='set-width') Set width: 
         <select name='width' data-style-generator='width' id='set-width'>
         option(value='16.6667%') 1/6

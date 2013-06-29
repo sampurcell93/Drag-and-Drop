@@ -63,6 +63,7 @@
         var that;
         _.bindAll(this, "reorderCollection", "render");
         this.collection.on("change", this.render, this);
+        this.collection.on("add", this.render, this);
         this.render();
         that = this;
         return this.$el.sortable({
@@ -110,9 +111,12 @@
         var temp;
         collection = collection || this.collection;
         temp = collection.at(originalIndex);
-        collection.remove(temp);
+        collection.remove(temp, {
+          silent: true
+        });
         collection.add(temp, {
-          at: newIndex
+          at: newIndex,
+          silent: true
         });
         return builder.render();
       }
@@ -210,13 +214,14 @@
         return this.listenTo(this.model.get("child_els"), 'change', this.render);
       },
       render: function() {
-        var $el, children, template, that;
+        var $el, children, model, template, that;
         that = this;
-        children = this.model.get("child_els");
+        model = this.model;
+        children = model.get("child_els");
         $el = this.$el;
         this.setStyles();
-        template = $(this.model.get("template")).html() || this.template;
-        $el.html(_.template(template, this.model.toJSON())).append(_.template(this.controls, {}));
+        template = $(model.get("template")).html() || this.template;
+        $el.html(_.template(template, model.toJSON())).append(_.template(this.controls, {}));
         if (children != null) {
           _.each(children.models, function(el) {
             var draggable;
@@ -245,7 +250,7 @@
       bindDrag: function() {
         var cancel, that;
         that = this;
-        cancel = ".config-menu-wrap";
+        cancel = ".config-menu-wrap, input, textarea";
         cancel += this.options.child != null ? "" : ", .child";
         return this.$el.draggable({
           cancel: cancel,
@@ -312,17 +317,9 @@
         });
       },
       events: {
-        "click .config-panel": function(e) {
-          var editor;
-          editor = new views.ElementEditor({
-            model: this.model,
-            view: this
-          }).render();
-          console.log(this.model);
-          return e.stopPropagation();
-        },
         "click .set-options": function(e) {
           var $t, dropdown;
+          console.log(this.model.get("type"));
           $t = $(e.currentTarget);
           dropdown = $t.children(".dropdown");
           dropdown.fadeToggle(100);
@@ -335,12 +332,20 @@
         "click .remove-from-flow": function(e) {
           var self;
           self = this;
-          console.log(this.model);
+          console.log(this.model.get("type"));
           this.$el.slideUp("fast", function() {
             self.remove();
             return self.model.set("inFlow", false);
           });
           return e.stopPropagation();
+        },
+        "click .config-panel": function(e) {
+          var editor;
+          console.log(this.model.get("type"));
+          return editor = new views.ElementEditor({
+            model: this.model,
+            view: this
+          }).render();
         },
         "select": function(e) {
           return this.model.set("layout-item", true, {
@@ -352,6 +357,10 @@
           return this.model.set("layout-item", false, {
             silent: true
           });
+        },
+        "change input": function(e) {
+          this.model.set('customText', $(e.currentTarget).val());
+          return e.stopImmediatePropagation();
         }
       }
     });
@@ -362,6 +371,7 @@
         this.render();
         that = this;
         $el = this.$el;
+        this.collection.on("add", this.render, this);
         this.collection.on("change:inFlow", this.render, this);
         $el.droppable({
           accept: 'li, .builder-element',
@@ -373,8 +383,14 @@
             curr = that.currentModel;
             if ((curr.get("inFlow") === false || typeof curr.get("inFlow" === "undefined")) || that.fromSideBar === false) {
               c = curr.collection;
-              c.remove(curr);
-              that.collection.add(curr);
+              if (c != null) {
+                c.remove(curr, {
+                  silent: true
+                });
+              }
+              that.collection.add(curr, {
+                silent: true
+              });
               temp = new views.draggableElement({
                 model: curr
               }).render().el;

@@ -5,7 +5,7 @@ $(document).ready ->
 	selectedData = null
 	# A central hub which binds other data
 	window.sectionController = null
-
+	window.currentSection = new collections.Elements()
 
 	###################
 	##### MODELS ######ƒ
@@ -26,11 +26,6 @@ $(document).ready ->
 	# A single property - pulled from the db with only a name, but returned to a new section
 	# with many more options configured.
 	window.models.Property = Backbone.Model.extend({
-		initialize: ->
-			# randomized testing
-			if Math.random() > .6
-				@selected = true
-				properties.add @
 	})
 
 	###################
@@ -86,6 +81,8 @@ $(document).ready ->
    			'click .view-sections': (e)->
    				$(e.currentTarget).toggleClass("active")
    				$("#existing-sections").animate({height: 'toggle'}, 200)
+   			'click .configure-interface': ->
+   				builder.$el.toggleClass("no-grid")
 
 		generateSection: (e) ->
 			if e?
@@ -98,7 +95,8 @@ $(document).ready ->
 			# If we are initializing a new section, do:
 			if !builder?
 				# Make a new, empty collection of elements. Needs to be accessible for application to add to it.
-				@collection = window.currentSection = @constructElementCollection()
+				@collection = currentSection
+				console.log @collection
 				# Link this collection to the builder, and populate it with properties. A scaffolding.
 				window.builder = new views.SectionBuilder({collection: currentSection})
 				# Link this controller to the scaffolding - which is linked to the collection itself.
@@ -125,14 +123,6 @@ $(document).ready ->
 						$(@).remove()
 						$(document.body).removeClass("active-modal")
 			})
-
-		constructElementCollection: ->
-			elements = new collections.Elements()
-			_.each @selected.models, (prop) ->
-				newEl = new models.Element({property_name: prop.get "name"})
-				newEl.set "title", prop.get("name")
-				elements.add(newEl)
-			elements
 	}
 
 	# A View of all Classes
@@ -193,6 +183,7 @@ $(document).ready ->
 		el: '.property-editor'
 		template: $("#configure-property").html()
 		initialize: ->
+			@listenTo @collection, "add", @render
 			_.bindAll(this,'render')
 			@render()
 		render: ->
@@ -222,7 +213,10 @@ $(document).ready ->
 			id = if @options.sortable is true then properties.indexOf(@model) else ""
 			'li class="property ' + selected + '" data-prop-id="' + id + '"'
 		render: ->
-			$(@el).append _.template @template, @model.toJSON()
+			@$el.append _.template @template, @model.toJSON()
+			if Math.random() > .6
+				@selected = true
+				@$el.trigger "click"
 			this
 		events:
 			"click": (e) -> 
@@ -232,17 +226,23 @@ $(document).ready ->
 				@model.selected = if selected then false else true
 				if @model.selected is true
 					properties.add @model
+					model = @model.toJSON()
+					model.title = model.name
+					model.linkage = "property"
+					if !@elementModel?
+						@elementModel = new models.Element(model)
+					currentSection.add @elementModel
 				else 
 					properties.remove @model
-				selectedData.render()
+					currentSection.remove @elementModel
+					if builder?
+						builder.render()
 			"keyup": (e) ->
 				$t =  $(e.currentTarget)
 				# Get the new name of the property
 				val = $t.find("div").text()
 				# Set the model name
 				@model.set("name", val)
-				# Render the selection list
-				selectedData.render()
 	})
 
 	# A list of all selected properties.

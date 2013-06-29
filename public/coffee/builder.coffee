@@ -54,6 +54,7 @@ $(document).ready ->
             ### Render the list, then apply the drag and drop, and sortable functions. ###
             _.bindAll(this,"reorderCollection","render")
             @collection.on "change", @render, @
+            @collection.on "add", @render, @
             @render()
             that = this
             @$el.sortable {
@@ -94,9 +95,9 @@ $(document).ready ->
             collection = collection || @collection
             temp = collection.at(originalIndex)
             # Remove it from the collection
-            collection.remove(temp)
+            collection.remove(temp, {silent: true})
             # Reinsert it at its new index
-            collection.add(temp, {at: newIndex})
+            collection.add(temp, {at: newIndex, silent: true})
             # Render shit
             builder.render()
     });
@@ -174,15 +175,16 @@ $(document).ready ->
             # console.log @ instanceof views.draggableElement 
         render: ->
             that = @
-            children = @model.get "child_els" 
+            model = @model
+            children = model.get "child_els" 
             $el =  @$el
             # Get model layout properties and set applicable as classes
             @setStyles()
             # Here, we either use the default template for a draggable, or we use the model's custom template
             # This is useful for generic elements like buttons, lists, and others who do not fit the property model
             # Because tagName is preserved, so is styling.
-            template = $(@model.get("template")).html() || @template
-            $el.html(_.template template, @model.toJSON()).append(_.template @controls, {})
+            template = $(model.get("template")).html() || @template
+            $el.html(_.template template, model.toJSON()).append(_.template @controls, {})
             if children?
                 _.each children.models , (el) ->
                     # Necessary to filter sub elements.
@@ -192,7 +194,6 @@ $(document).ready ->
             # Check if previous element is floated - if not, clearfix.
             if $el.prev(".builder-element").css("float") == "none"
                 $el.before $("<div />").addClass("clear")
-
             # Ordinarily, the following would be part of the native template but with multiple 
             # templates being applied to this generic view, we can just append it.
 
@@ -208,7 +209,7 @@ $(document).ready ->
                 @$el.css styles
         bindDrag: ->
             that = this
-            cancel = ".config-menu-wrap"            
+            cancel = ".config-menu-wrap, input, textarea"            
             # if draggable element is a child of another, do not cancel on .child selection
             cancel += if @options.child? then "" else ", .child"
             # Set the element to be draggable.
@@ -276,11 +277,8 @@ $(document).ready ->
                 else alert "That item is already in the page flow."
             }
         events: 
-            "click .config-panel": (e) ->
-                editor = new views.ElementEditor({model: @model, view: @}).render()
-                console.log @model
-                e.stopPropagation()
             "click .set-options": (e) ->
+                console.log @model.get "type"
                 $t = $(e.currentTarget)
                 dropdown = $t.children(".dropdown")
                 dropdown.fadeToggle(100);
@@ -291,18 +289,24 @@ $(document).ready ->
                 e.stopPropagation()
             "click .remove-from-flow": (e) ->
                 self = @
-                console.log @model
+                console.log @model.get "type"
                 @$el.slideUp "fast", ->
                     self.remove()
                     self.model.set "inFlow", false
                 # Stop the click event from bubbling up to the parent model, if there is one.
                 e.stopPropagation()
+            "click .config-panel": (e) ->
+                console.log @model.get "type"
+                editor = new views.ElementEditor({model: @model, view: @}).render()
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
                 @model.set("layout-item", true, {silent: true})
             "deselect": ->
                 console.log "deselecting"
                 @model.set("layout-item", false, {silent: true})
+            "change input": (e) ->
+                @model.set 'customText', $(e.currentTarget).val()
+                e.stopImmediatePropagation()
     })
 
     window.views.SectionBuilder = Backbone.View.extend {
@@ -311,6 +315,7 @@ $(document).ready ->
             @render()
             that = @
             $el = @$el
+            @collection.on "add", @render, @
             @collection.on "change:inFlow", @render, @
             $el.droppable {
                 accept: 'li, .builder-element'
@@ -326,8 +331,9 @@ $(document).ready ->
                     if (curr.get("inFlow") is false or typeof curr.get "inFlow" is "undefined") or that.fromSideBar is false
                         # Render a new draggable element and append it to the list
                         c = curr.collection
-                        c.remove curr
-                        that.collection.add curr
+                        if c?
+                            c.remove curr, {silent: true }
+                        that.collection.add curr, {silent: true}
                         temp = new views.draggableElement({model: curr}).render().el
                         # It is not in the flow again.
                         that.$el.append(temp)

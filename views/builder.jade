@@ -9,6 +9,7 @@ body
             button.fr.view-sections(data-icon='i') View Sections
             button.fr.generate-section(data-icon='h') View Section Builder
             button.fr.save-section(data-icon='m') Save Section
+            button.fr.configure-interface.icon e
         include existing-sections.jade
         include configure.jade
         //- The section containing the UI Builder.
@@ -24,23 +25,21 @@ body
             //- An item in a list of sortable elements.
             script(type='text/template')#element-sortable-item
                 .sort-element t
-                div
-                    | <%=  typeof type !== "undefined" ? type.clean() : title.clean() %>
+                <% flag = false %>
+                <%= (typeof customText !== "undefined" && !flag) ? flag = customText.clean(true) : "" %>
+                <%= (typeof type !== "undefined" && !flag) ? flag = type.clean(true) : "" %>
+                <%= (typeof title !== "undefined" && !flag) ? flag = title.clean(true) : "" %>
                 ul.child-list
             //- The container for the builder itself.
             section.w7.builder-container
             //-  A template for each draggable element. Because rendering is recursive,
             //-  more complex templates are unnecessary.
             script(type='text/template')#draggable-element
-                <%= typeof(customText)!== 'undefined' ?  customText : '' %>
-                <% if (typeof property_name !== "undefined") { %>
-                label
-                    <%= property_name.clean() %>:
-                <input placeholder='<%= property_name.clean() %>'>
-                <% }  else {%>
-                h2.title-bar
-                    <%= title.clean() %>
-                <% } %>
+                //- <% if (typeof property_name !== "undefined") { %>
+                //- label
+                //-     <%= property_name.clean() %>:
+                //- <input placeholder='<%= property_name.clean() %>' value='<%= typeof(customText)!== 'undefined' ?  customText.clean() : '' %>'>
+                h3 <%= title.clean() %>
             script(type='text/template')#drag-controls
                 ul.config-menu-wrap
                     li.icon.set-options e

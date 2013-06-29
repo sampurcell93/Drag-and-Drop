@@ -5,6 +5,7 @@
     dataview = null;
     selectedData = null;
     window.sectionController = null;
+    window.currentSection = new collections.Elements();
     window.models.DataType = Backbone.Model.extend({
       url: function() {
         return "/class/";
@@ -16,14 +17,7 @@
         return this.attributes.model.toJSON();
       }
     });
-    window.models.Property = Backbone.Model.extend({
-      initialize: function() {
-        if (Math.random() > .6) {
-          this.selected = true;
-          return properties.add(this);
-        }
-      }
-    });
+    window.models.Property = Backbone.Model.extend({});
     /* COLLECTIONS*/
 
     window.collections.Properties = Backbone.Collection.extend({
@@ -81,6 +75,9 @@
           return $("#existing-sections").animate({
             height: 'toggle'
           }, 200);
+        },
+        'click .configure-interface': function() {
+          return builder.$el.toggleClass("no-grid");
         }
       },
       generateSection: function(e) {
@@ -96,7 +93,8 @@
         }
         $(this.wrap).slideToggle('fast');
         if (typeof builder === "undefined" || builder === null) {
-          this.collection = window.currentSection = this.constructElementCollection();
+          this.collection = currentSection;
+          console.log(this.collection);
           window.builder = new views.SectionBuilder({
             collection: currentSection
           });
@@ -133,19 +131,6 @@
             });
           }
         });
-      },
-      constructElementCollection: function() {
-        var elements;
-        elements = new collections.Elements();
-        _.each(this.selected.models, function(prop) {
-          var newEl;
-          newEl = new models.Element({
-            property_name: prop.get("name")
-          });
-          newEl.set("title", prop.get("name"));
-          return elements.add(newEl);
-        });
-        return elements;
       }
     });
     window.views.DataView = Backbone.View.extend({
@@ -230,6 +215,7 @@
       el: '.property-editor',
       template: $("#configure-property").html(),
       initialize: function() {
+        this.listenTo(this.collection, "add", this.render);
         _.bindAll(this, 'render');
         return this.render();
       },
@@ -262,29 +248,42 @@
         return 'li class="property ' + selected + '" data-prop-id="' + id + '"';
       },
       render: function() {
-        $(this.el).append(_.template(this.template, this.model.toJSON()));
+        this.$el.append(_.template(this.template, this.model.toJSON()));
+        if (Math.random() > .6) {
+          this.selected = true;
+          this.$el.trigger("click");
+        }
         return this;
       },
       events: {
         "click": function(e) {
-          var $t, selected;
+          var $t, model, selected;
           $t = $(e.currentTarget);
           $t.toggleClass("selected");
           selected = this.model.selected;
           this.model.selected = selected ? false : true;
           if (this.model.selected === true) {
             properties.add(this.model);
+            model = this.model.toJSON();
+            model.title = model.name;
+            model.linkage = "property";
+            if (this.elementModel == null) {
+              this.elementModel = new models.Element(model);
+            }
+            return currentSection.add(this.elementModel);
           } else {
             properties.remove(this.model);
+            currentSection.remove(this.elementModel);
+            if (typeof builder !== "undefined" && builder !== null) {
+              return builder.render();
+            }
           }
-          return selectedData.render();
         },
         "keyup": function(e) {
           var $t, val;
           $t = $(e.currentTarget);
           val = $t.find("div").text();
-          this.model.set("name", val);
-          return selectedData.render();
+          return this.model.set("name", val);
         }
       }
     });

@@ -295,18 +295,29 @@ input, textarea {
   padding: 8px 10px 8px 20px;
   font-size: 1em;
 }
+/* line 10, ../sass/form.scss */
+input.big-input, textarea.big-input {
+  font-size: 1.3em;
+}
 
-/* line 11, ../sass/form.scss */
+/* line 15, ../sass/form.scss */
+textarea {
+  width: 75%;
+  max-width: 85%;
+  margin: 5px 0;
+}
+
+/* line 21, ../sass/form.scss */
 .add-section-title {
   margin: 10px 0 0px 20px;
 }
 
-/* line 15, ../sass/form.scss */
+/* line 25, ../sass/form.scss */
 button {
   position: relative;
   background: #2092cc;
 }
-/* line 19, ../sass/form.scss */
+/* line 29, ../sass/form.scss */
 button[data-icon]::after {
   content: attr(data-icon);
   left: 10px;
@@ -314,12 +325,12 @@ button[data-icon]::after {
   color: #f9f9f9;
   position: absolute;
 }
-/* line 26, ../sass/form.scss */
+/* line 36, ../sass/form.scss */
 button[data-icon] {
   padding-left: 40px;
 }
 
-/* line 31, ../sass/form.scss */
+/* line 41, ../sass/form.scss */
 label {
   font-weight: bold;
 }

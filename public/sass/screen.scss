@@ -30,7 +30,7 @@
 html { height: 100%; }
 
 body {
-	background: #444;
+	background: url("../images/tweed.png");
 	font-family: $opensans;
 	text-shadow: 0px 1px 0px #fff;
 	color: #444;
@@ -71,6 +71,11 @@ h2 {
 		margin-bottom: 10px;
 		width: 95%;
 	}
+}
+
+h3 { 
+	font-size: 1.2em;
+	padding: 5px 3px;
 }
 
 .tabs {
@@ -434,7 +439,7 @@ ul.generic-elements {
 	color: #fff;
 	
 	li {
-		text-shadow: nonee;
+		text-shadow: none;
 		display: inline-block;
 		line-height: 30px;
 		padding: 0px 15px;
@@ -452,7 +457,7 @@ ul.generic-elements {
 .over {
 	// @include transform(scale(.98));
 	@include border-radius(3px);
-	border: 2px dotted $strongblue !important;
+	border: 1px dotted $strongblue !important;
 	background: $fadedblue !important;
 }
 
@@ -511,11 +516,12 @@ ul.generic-elements {
 
 	li {
 		position: relative;
-		padding-left: 40px;
+		padding-left: 25px;
 		min-height: 30px;
 		line-height: 30px;
 		display: block;
 		cursor: move;
+		text-overflow: ellipsis !important;
 
 		&:first-child {
 			@include border-radius(2px 2px 0 0);
@@ -540,6 +546,8 @@ ul.generic-elements {
 			top: 0px;
 			cursor: pointer;
 			cursor: hand;
+			width: 20px;
+			text-align: center;
 		}
 
 		.child-list { 
@@ -579,28 +587,40 @@ section.builder-container {
 		top: 0;
 		right: 0;
 	}
+
+	&.no-grid .builder-element {
+		border-color: transparent;
+	}
 }
 
 
 // Represents a draggable item. Using custom clearfix to avoid overflow hidden problem
 .builder-element {
 	position: relative;
-	margin: 10px 0 0;
-	padding: 10px;
+	margin: 3px 0 3px;
+	padding: 4px 10px;
 	@include transition(width .2s ease-in-out);
-	border: 2px dotted $strongblue;
+	border: 1px dotted $strongblue;
 	@include border-radius(3px);
 	background: #fff;
  	*zoom: 1;
  	cursor: move;
 
+ 	[contentEditable], [contenteditable] {
+		// background: $lightblue;
+		// padding: 5px;
+		// border: 1px dotted $medstrongblue;
+		@extend input;
+ 	}
+
  	ul, ol, dl {
- 		list-style-position: inside;
- 		list-style-type: bullet;
+ 		list-style-position: inside !important;
+ 		list-style-type: bullet !important;
+ 		margin-left: 30px;
  	}
 
  	&:hover { 
-		border: 2px solid $strongblue;
+		border: 1px solid $strongblue;
 		@include box-shadow(0px 0px 4px $medblue);
 
 		> .config-menu-wrap {
@@ -618,7 +638,7 @@ section.builder-container {
 	}
 
 	&.selected-element {
-		border: 2px dashed #FF6100 !important;
+		border: 1px dashed #FF6100 !important;
 	}
 
 	&:before,
@@ -648,23 +668,28 @@ section.builder-container {
 	display: block;
 	cursor: pointer;
 	text-align: center;
-	background: $fadedblue;
-	width: 30px;
-	// border-left: 1px solid #ddd;
-	// border-bottom: 1px solid #ddd;
-	@include border-radius(3px);
+	background: #444;
+	width: 60px;
+	z-index: 999;
+	height: 100%;
+	max-height: 38px;
+	@include border-radius(0 2px 0 2px);
 
 	li {
 		@include transition(all .1s ease-in-out);
-		padding: 6px;
-		display: block;
-		width: 100%;
-		line-height: 20px;
+		display: inline-block;
+		text-shadow: none;
+		padding: 0 6px;
+		width: 50%;
+		line-height: 38px;
+		color: #f9f9f9;
 		position: relative;
 
 		&:hover {
-			background: $lightblue;
+			background: #777;
 		}
+
+		li { color: #333; }
 	}
 }
 
@@ -686,9 +711,12 @@ section.builder-container {
 
 		.dropdown li {
 			display: block;
-			padding: 4px;
 			height: 33px;
 			cursor: pointer;
+			text-align: center;
+			display: block;
+			width: 100%;
+			line-height: 33px;
 
 			&:hover { 
 				background: $strongblue;

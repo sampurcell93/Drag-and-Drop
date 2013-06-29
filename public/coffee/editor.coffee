@@ -9,8 +9,7 @@ $(document).ready ->
             @$el.append(_.template @template, @model.toJSON())
             $(document.body).append(@$el).addClass("active-modal")
         events: 
-            "click .close-modal": ->
-                @remove()
+            "click .close-modal": @remove
             "click .save-changes": "bind"
         bind: ->
             $classes = @$el.find("[data-style-generator]")
