@@ -184,7 +184,8 @@ $(document).ready ->
             # This is useful for generic elements like buttons, lists, and others who do not fit the property model
             # Because tagName is preserved, so is styling.
             template = $(model.get("template")).html() || @template
-            $el.html(_.template template, model.toJSON()).append(_.template @controls, {})
+            console.log template, model.get("template")
+            $el.html(_.template template, model.toJSON()).append(_.template @controls, {title: 'yo'})
             if children?
                 _.each children.models , (el) ->
                     # Necessary to filter sub elements.
@@ -305,8 +306,11 @@ $(document).ready ->
                 console.log "deselecting"
                 @model.set("layout-item", false, {silent: true})
             "change input": (e) ->
-                @model.set 'customText', $(e.currentTarget).val()
+                @model.set 'customHeader', $(e.currentTarget).val()
                 e.stopImmediatePropagation()
+            "keyup textarea": (e) ->
+                @model.set 'customText', $(e.currentTarget).val()
+                $(e.currentTarget).focus()
     })
 
     window.views.SectionBuilder = Backbone.View.extend {

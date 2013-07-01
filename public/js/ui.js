@@ -6,8 +6,9 @@
       return $("body").removeClass("active-modal");
     });
     return $(this).delegate(".tabs li", "click", function() {
-      $(".tab-container").hide();
-      return $("#" + $(this).attr("rel")).show();
+      console.log("gsfg");
+      $(".control-section").hide();
+      return new views.SectionController();
     });
   });
 

@@ -1,0 +1,44 @@
+include generic-templates.jade
+include existing-sections.jade
+include configure.jade
+include element-editor.jade
+include layout-picker.jade
+include builder.jade
+.container.control-section
+    //- The template for rendering a single instance of the builder - allows multiple builder tabs to be open at once.
+    script(type='text/template')#controller-wrap
+           header
+                input.inline(placeholder='Enter the Section title', name='section-title')#section-title.w4
+                button.fr.view-sections(data-icon='i') View Sections
+                button.fr.generate-section(data-icon='h') View Section Builder
+                button.fr.save-section(data-icon='m') Save Section
+                button.fr.configure-interface.icon e
+                ul#existing-sections.hidden
+            .section-builder-wrap
+                h2.w35.fl.m10.center Add Content to this Section
+                .clear
+                input.w35.fl.m10#search-data-types(placeholder='Search Data Types')
+                .clear  
+                ul.select-properties#class-list.m10
+                 //- Simple UI pointer to selected items.
+                div.fl.w15.icon.center.right-arrow
+                    span s
+                    span s
+                    span s
+                //-  Part of the configuration panel, allows backend editing of properties.
+                ul.property-editor.fl.w45.m10
+                .clear
+
+            .section-builder-wrap.hidden
+                //-  Generic elements to drag into the builder
+                ul.fr.w7.generic-elements
+                //- The UI architecture panel, which shows the overall structure of the section.
+                ul#organize-elements
+                //- The container for the builder itself.
+                section.w7.builder-container
+                //-  A template for each draggable element. Because rendering is recursive,
+                //-  more complex templates are unnecessary.
+                .clear
+            footer
+                button.fr.view-layouts(data-icon='d') View Layouts
+

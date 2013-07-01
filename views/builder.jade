@@ -1,53 +1,15 @@
-include head.jade
-body 
-    ul.tabs.mauto
-        li Current Section
-        li Test Section
-    .container.control-section
-        header
-            input.inline(placeholder='Enter the Section title', name='section-title')#section-title.w4
-            button.fr.view-sections(data-icon='i') View Sections
-            button.fr.generate-section(data-icon='h') View Section Builder
-            button.fr.save-section(data-icon='m') Save Section
-            button.fr.configure-interface.icon e
-        include existing-sections.jade
-        include configure.jade
-        //- The section containing the UI Builder.
-        .section-builder-wrap.hidden
-            //-  Generic elements to drag into the builder
-            ul.fr.w7.generic-elements
-                script(type='text/template')#generic-element
-                    <%= type %>
-                include generic-templates.jade
-
-            //- The UI architecture panel, which shows the overall structure of the section.
-            ul#organize-elements
-            //- An item in a list of sortable elements.
-            script(type='text/template')#element-sortable-item
-                .sort-element t
-                <% flag = false %>
-                <%= (typeof customText !== "undefined" && !flag) ? flag = customText.clean(true) : "" %>
-                <%= (typeof type !== "undefined" && !flag) ? flag = type.clean(true) : "" %>
-                <%= (typeof title !== "undefined" && !flag) ? flag = title.clean(true) : "" %>
-                ul.child-list
-            //- The container for the builder itself.
-            section.w7.builder-container
-            //-  A template for each draggable element. Because rendering is recursive,
-            //-  more complex templates are unnecessary.
-            script(type='text/template')#draggable-element
-                //- <% if (typeof property_name !== "undefined") { %>
-                //- label
-                //-     <%= property_name.clean() %>:
-                //- <input placeholder='<%= property_name.clean() %>' value='<%= typeof(customText)!== 'undefined' ?  customText.clean() : '' %>'>
-                h3 <%= title.clean() %>
-            script(type='text/template')#drag-controls
-                ul.config-menu-wrap
-                    li.icon.set-options e
-                        ul.dropdown
-                            li.config-panel Styling
-                    li.icon.remove-from-flow g
-        include element-editor.jade
-        include layout-picker.jade
-        .clear
-        footer
-            button.fr.view-layouts(data-icon='d') View Layouts
+script(type='text/template')#element-sortable-item
+    .sort-element t
+    <% flag = false %>
+    <%= (typeof customText !== "undefined" && !flag) ? flag = customText.clean(true) : "" %>
+    <%= (typeof type !== "undefined" && !flag) ? flag = type.clean(true) : "" %>
+    <%= (typeof title !== "undefined" && !flag) ? flag = title.clean(true) : "" %>
+    ul.child-list
+script(type='text/template')#draggable-element
+    h3 <%= typeof title !== "undefined" ? title.clean() : type.clean() %>
+script(type='text/template')#drag-controls
+    ul.config-menu-wrap
+        li.icon.set-options e
+            ul.dropdown
+                li.config-panel Styling
+        li.icon.remove-from-flow g

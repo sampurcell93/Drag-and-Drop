@@ -3,5 +3,7 @@ $(document).ready ->
         $(@).closest(".modal").remove()
         $("body").removeClass("active-modal")
     $(@).delegate ".tabs li", "click", ->
-        $(".tab-container").hide()
-        $("#" + $(@).attr("rel")).show()
+        console.log "gsfg"
+        $(".control-section").hide()
+        new views.SectionController()
+        # $("#" + $(@).attr("rel")).show()

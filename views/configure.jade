@@ -1,36 +1,22 @@
-.section-builder-wrap
-    h2.w35.fl.m10.center Add Content to this Section
+script(type='text/template')#data-type
+    div.hide-properties.fl.w6
+        span.icon p
+        |<%= name %>
+    span.add-property.fr.clickme  Add Property + 
     .clear
-    input.w35.fl.m10#search-data-types(placeholder='Search Data Types')
-    .clear
-    ul.select-properties#class-list.m10
-        //- li.clickme.new-data-type Add Data Type +
-        script(type='text/template')#data-type
-            div.hide-properties.fl.w6
-                span.icon p
-                |<%= name %>
-            span.add-property.fr.clickme  Add Property + 
-            .clear
-        script(type='text/template')#property-item
-            <% if (typeof editable == "undefined") { %>
-            <div contentEditable>
-            <% } %>
-            //- Sorry for the shitty formatting - jade is bad at indents.
-            <% String.prototype.clean = function(trim) { var cutoff = 10000000; var appendMe = ""; if (typeof trim !== "undefined" && trim == true) { if (this.length > 27){ appendMe = "...."; cutoff = 27} }return this.charAt(0).toUpperCase() + this.slice(1).replace("_"," ")} %>
-            | <%= name.clean() %>
-
-    //- Simple UI pointer to selected items.
-    div.fl.w15.icon.center.right-arrow
-        span s
-        span s
-        span s
-
-    //- Template to edit properties
-    script(type='text/template')#property-item-editor
-        <%= name.clean() %>
-        span.icon.fr.edit.clickme(data-tooltip='instruction') e
-        span.icon.fr.edit.clickme f
-        span.icon.fr.edit.clickme g
-        span.icon.fr.edit.clickme h
-    //-  Part of the configuration panel, allows backend editing of properties.
-    ul.property-editor.fl.w45.m10
+script(type='text/template')#property-item
+    <% if (typeof editable == "undefined") { %>
+    <div contentEditable>
+    <% } %>
+    //- Sorry for the shitty formatting - jade is bad at indents.
+    <% String.prototype.clean = function(trim) { var cutoff = 10000000; var appendMe = ""; if (typeof trim !== "undefined" && trim == true) { if (this.length > 27){ appendMe = "...."; cutoff = 27} }return this.charAt(0).toUpperCase() + this.slice(1).replace("_"," ")} %>
+    | <%= name.clean() %>
+//- Template to edit properties
+script(type='text/template')#property-item-editor
+    <%= name.clean() %>
+    span.icon.fr.edit.clickme(data-tooltip='instruction') e
+    span.icon.fr.edit.clickme f
+    span.icon.fr.edit.clickme g
+    span.icon.fr.edit.clickme h
+script(type='text/template')#generic-element
+    <%= type %>

@@ -221,7 +221,10 @@
         $el = this.$el;
         this.setStyles();
         template = $(model.get("template")).html() || this.template;
-        $el.html(_.template(template, model.toJSON())).append(_.template(this.controls, {}));
+        console.log(template, model.get("template"));
+        $el.html(_.template(template, model.toJSON())).append(_.template(this.controls, {
+          title: 'yo'
+        }));
         if (children != null) {
           _.each(children.models, function(el) {
             var draggable;
@@ -359,8 +362,12 @@
           });
         },
         "change input": function(e) {
-          this.model.set('customText', $(e.currentTarget).val());
+          this.model.set('customHeader', $(e.currentTarget).val());
           return e.stopImmediatePropagation();
+        },
+        "keyup textarea": function(e) {
+          this.model.set('customText', $(e.currentTarget).val());
+          return $(e.currentTarget).focus();
         }
       }
     });

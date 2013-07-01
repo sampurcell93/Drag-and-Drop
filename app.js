@@ -7,6 +7,8 @@ app.configure(function (){
   app.use(express.logger('dev'));
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(express.errorHandler());
+  app.locals.pretty = true;
   app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -48,7 +50,7 @@ app.post("/section", function(req,res) {
 });
 
 app.get("/builder", function(req,res) {
-    res.render("builder")
+    res.render("main")
 }) 
 
 app.get("/class", function(req,res) {

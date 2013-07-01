@@ -39,7 +39,7 @@ $(document).ready ->
                         builder.currentModel = toAdd
                         builder.fromSideBar = false
                         # Weird bug fix - need a blank log for it to register - probably coffeescript stupidity.
-                        console.log
+                        console.log self.model.get "template"
                 stop: (e, ui) ->
                     $(ui.helper).removeClass("dragging")
                     # If the drop was a success, remove the original and preserve the clone

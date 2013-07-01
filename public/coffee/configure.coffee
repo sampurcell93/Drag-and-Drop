@@ -34,15 +34,6 @@ $(document).ready ->
 
 	# Collection of all properties being used in the section.
 	window.collections.Properties = Backbone.Collection.extend {
-		initialize: ->
-			@on("remove", ->
-				console.log "removing element from collection"
-			)
-		swapItems: (index1, index2) ->
-			temp = @models[index1]
-			@models[index1] = @models[index2]
-			@models[index2] = temp
-		
 		model: models.Property
 	}
 
@@ -54,9 +45,9 @@ $(document).ready ->
 			that = @
 			@fetch({
 				success: ->
+					sectionController = new views.SectionController()
 					dataview = new views.DataView({collection: that})
 					selectedData = new views.SelectedDataList({collection: properties})
-					sectionController = new views.SectionController()
 				failure: ->
 					alert("could not get data from URL " + that.url)	
 			})
@@ -71,8 +62,14 @@ $(document).ready ->
 	window.views.SectionController = Backbone.View.extend {
 		el: '.control-section'
 		wrap: '.section-builder-wrap'
+		template: $("#controller-wrap").html()
 		initialize: ->
 			@selected = properties
+			@render()
+		render: ->
+			console.log @template
+			@$el.html _.template @template, {}
+			this
 		events: 
 			'click .generate-section': 'generateSection'
 			'click .save-section': 'saveSection'
@@ -228,7 +225,7 @@ $(document).ready ->
 					properties.add @model
 					model = @model.toJSON()
 					model.title = model.name
-					model.linkage = "property"
+					model.linkage = model
 					if !@elementModel?
 						@elementModel = new models.Element(model)
 					currentSection.add @elementModel
@@ -245,10 +242,9 @@ $(document).ready ->
 				@model.set("name", val)
 	})
 
-	# A list of all selected properties.
-	properties = new collections.Properties()
-
-	elements = new collections.Elements()
 
 	# Call the collection and render the page.
 	classes = new collections.ClassList()
+
+	# A list of all selected properties.
+	properties = new collections.Properties()

@@ -39,7 +39,7 @@
             if (typeof builder !== "undefined" && builder !== null) {
               builder.currentModel = toAdd;
               builder.fromSideBar = false;
-              return console.log;
+              return console.log(self.model.get("template"));
             }
           },
           stop: function(e, ui) {
