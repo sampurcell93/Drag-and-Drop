@@ -32,14 +32,15 @@
           helper: "clone",
           cursor: "move",
           start: function(e, ui) {
-            var toAdd;
+            var builder, toAdd;
             $(ui.helper).addClass("dragging");
             toAdd = new models.Element(self.model.toJSON());
             toAdd.set("child_els", new collections.Elements());
-            if (typeof builder !== "undefined" && builder !== null) {
+            builder = allSections.at(sectionIndex).get("builder");
+            if (builder != null) {
               builder.currentModel = toAdd;
               builder.fromSideBar = false;
-              return console.log(self.model.get("template"));
+              return console.log;
             }
           },
           stop: function(e, ui) {

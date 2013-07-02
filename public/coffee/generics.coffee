@@ -35,11 +35,12 @@ $(document).ready ->
                     # Give the builder an acceptable element.
                     toAdd = new models.Element self.model.toJSON()
                     toAdd.set "child_els", new collections.Elements()
+                    builder = allSections.at(sectionIndex).get("builder")
                     if builder?
                         builder.currentModel = toAdd
                         builder.fromSideBar = false
                         # Weird bug fix - need a blank log for it to register - probably coffeescript stupidity.
-                        console.log self.model.get "template"
+                        console.log
                 stop: (e, ui) ->
                     $(ui.helper).removeClass("dragging")
                     # If the drop was a success, remove the original and preserve the clone

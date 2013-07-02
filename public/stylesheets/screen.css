@@ -936,7 +936,7 @@ ul.generic-elements li:hover {
 }
 
 /* line 505, ../sass/screen.scss */
-#organize-elements {
+.organize-elements {
   min-height: 100%;
   margin: 10px;
   padding: 5px;
@@ -953,7 +953,7 @@ ul.generic-elements li:hover {
   border: 1px solid #ccc;
 }
 /* line 517, ../sass/screen.scss */
-#organize-elements li {
+.organize-elements li {
   position: relative;
   padding-left: 25px;
   min-height: 30px;
@@ -963,7 +963,7 @@ ul.generic-elements li:hover {
   text-overflow: ellipsis !important;
 }
 /* line 526, ../sass/screen.scss */
-#organize-elements li:first-child {
+.organize-elements li:first-child {
   -webkit-border-radius: 2px 2px 0 0;
   -moz-border-radius: 2px 2px 0 0;
   -ms-border-radius: 2px 2px 0 0;
@@ -971,7 +971,7 @@ ul.generic-elements li:hover {
   border-radius: 2px 2px 0 0;
 }
 /* line 528, ../sass/screen.scss */
-#organize-elements li:first-child .sort-element {
+.organize-elements li:first-child .sort-element {
   -webkit-border-radius: 2px 0 0 0;
   -moz-border-radius: 2px 0 0 0;
   -ms-border-radius: 2px 0 0 0;
@@ -979,7 +979,7 @@ ul.generic-elements li:hover {
   border-radius: 2px 0 0 0;
 }
 /* line 532, ../sass/screen.scss */
-#organize-elements li:last-child {
+.organize-elements li:last-child {
   -webkit-border-radius: 0 0 2px 2px;
   -moz-border-radius: 0 0 2px 2px;
   -ms-border-radius: 0 0 2px 2px;
@@ -987,7 +987,7 @@ ul.generic-elements li:hover {
   border-radius: 0 0 2px 2px;
 }
 /* line 534, ../sass/screen.scss */
-#organize-elements li:last-child .sort-element {
+.organize-elements li:last-child .sort-element {
   -webkit-border-radius: 0 0 0 2px;
   -moz-border-radius: 0 0 0 2px;
   -ms-border-radius: 0 0 0 2px;
@@ -995,11 +995,11 @@ ul.generic-elements li:hover {
   border-radius: 0 0 0 2px;
 }
 /* line 540, ../sass/screen.scss */
-#organize-elements li:nth-child(odd) {
+.organize-elements li:nth-child(odd) {
   background: #dee9f2;
 }
 /* line 544, ../sass/screen.scss */
-#organize-elements li .sort-element {
+.organize-elements li .sort-element {
   left: 0px;
   top: 0px;
   cursor: pointer;
@@ -1008,19 +1008,19 @@ ul.generic-elements li:hover {
   text-align: center;
 }
 /* line 553, ../sass/screen.scss */
-#organize-elements li .child-list {
+.organize-elements li .child-list {
   margin-left: -12px !important;
 }
 /* line 557, ../sass/screen.scss */
-#organize-elements li.out-of-flow {
+.organize-elements li.out-of-flow {
   background: #ddd !important;
 }
 /* line 560, ../sass/screen.scss */
-#organize-elements li.out-of-flow .sort-element {
+.organize-elements li.out-of-flow .sort-element {
   background: #ccc;
 }
 /* line 563, ../sass/screen.scss */
-#organize-elements li .activate-element, #organize-elements li .destroy-element {
+.organize-elements li .activate-element, .organize-elements li .destroy-element {
   position: absolute;
   right: 10px;
   font-family: 'icons';
@@ -1028,7 +1028,7 @@ ul.generic-elements li:hover {
   cursor: pointer;
 }
 /* line 570, ../sass/screen.scss */
-#organize-elements li .destroy-element {
+.organize-elements li .destroy-element {
   right: 33px;
   color: #666;
 }
@@ -1096,8 +1096,8 @@ section.builder-container.no-grid .builder-element {
 }
 /* line 629, ../sass/screen.scss */
 .builder-element:hover > .config-menu-wrap {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
-  opacity: 1;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
+  opacity: 0.6;
 }
 /* line 634, ../sass/screen.scss */
 .builder-element.child {
@@ -1172,15 +1172,16 @@ section.builder-container.no-grid .builder-element {
   position: relative;
 }
 /* line 691, ../sass/screen.scss */
-.config-menu-wrap li:hover {
-  background: #777;
-}
-/* line 695, ../sass/screen.scss */
 .config-menu-wrap li li {
   color: #333;
 }
+/* line 693, ../sass/screen.scss */
+.config-menu-wrap:hover {
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=150);
+  opacity: 1.5;
+}
 
-/* line 701, ../sass/screen.scss */
+/* line 700, ../sass/screen.scss */
 .set-options .dropdown {
   position: absolute;
   top: 100%;
@@ -1200,7 +1201,7 @@ section.builder-container.no-grid .builder-element {
   z-index: 111;
   background: #fff;
 }
-/* line 715, ../sass/screen.scss */
+/* line 714, ../sass/screen.scss */
 .set-options .dropdown li {
   display: block;
   height: 33px;
@@ -1210,18 +1211,23 @@ section.builder-container.no-grid .builder-element {
   width: 100%;
   line-height: 33px;
 }
-/* line 724, ../sass/screen.scss */
+/* line 723, ../sass/screen.scss */
 .set-options .dropdown li:hover {
   background: #2092cc;
   color: #fff;
   text-shadow: none;
 }
 
-/* line 732, ../sass/screen.scss */
+/* line 731, ../sass/screen.scss */
 button {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   -ms-border-radius: 2px;
   -o-border-radius: 2px;
   border-radius: 2px;
+}
+
+/* line 735, ../sass/screen.scss */
+.view-section {
+  cursor: pointer;
 }

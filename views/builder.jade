@@ -2,11 +2,12 @@ script(type='text/template')#element-sortable-item
     .sort-element t
     <% flag = false %>
     <%= (typeof customText !== "undefined" && !flag) ? flag = customText.clean(true) : "" %>
-    <%= (typeof type !== "undefined" && !flag) ? flag = type.clean(true) : "" %>
-    <%= (typeof title !== "undefined" && !flag) ? flag = title.clean(true) : "" %>
+    <%= (!flag && typeof type !== "undefined") ? flag = type.clean(true) : "" %>
+    <%= (!flag && typeof title !== "undefined") ? flag = title.clean(true) : "" %>
     ul.child-list
 script(type='text/template')#draggable-element
     h3 <%= typeof title !== "undefined" ? title.clean() : type.clean() %>
+    <% if (typeof property !== "undefined") { %> <input type='text' /> <%}%>
 script(type='text/template')#drag-controls
     ul.config-menu-wrap
         li.icon.set-options e

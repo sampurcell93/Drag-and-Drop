@@ -30,8 +30,10 @@
           revert: "invalid",
           cursor: "move",
           start: function(e, ui) {
+            var builder;
+            builder = allSections.at(sectionIndex).get("builder");
             $(ui.helper).addClass("dragging");
-            if (typeof builder !== "undefined" && builder !== null) {
+            if (builder != null) {
               builder.currentModel = self.model;
               builder.fromSideBar = false;
               return console.log;
@@ -57,6 +59,13 @@
           }
         });
         return this;
+      },
+      events: {
+        "click .view-section": function() {
+          var sectionIndex;
+          sectionIndex = allSections.length;
+          return new views.SectionController();
+        }
       }
     });
     window.views.SectionThumbnail = Backbone.View.extend({

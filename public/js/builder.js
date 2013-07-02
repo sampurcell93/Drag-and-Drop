@@ -38,33 +38,33 @@
         self = this;
         response.child_els = this.modelify(response.child_els);
         return response;
-      }
-    });
-    window.collections.Elements = Backbone.Collection.extend({
-      model: models.Element,
-      url: '/section/',
-      blendModels: function(addTo, putIn) {
+      },
+      blendModels: function(putIn) {
         var children;
         if (putIn.collection != null) {
           putIn.collection.remove(putIn);
         }
-        children = addTo.get("child_els");
+        children = this.get("child_els");
         if (children != null) {
-          addTo.set("child_els", children.add(putIn));
-          return organizer.render();
+          return this.set("child_els", children.add(putIn));
         }
       }
     });
+    window.collections.Elements = Backbone.Collection.extend({
+      model: models.Element,
+      url: '/section/'
+    });
     window.views.ElementOrganizer = Backbone.View.extend({
-      el: '#organize-elements',
+      el: '.organize-elements',
       initialize: function() {
         /* Render the list, then apply the drag and drop, and sortable functions.*/
 
         var that;
         _.bindAll(this, "reorderCollection", "render");
-        this.collection.on("change", this.render, this);
-        this.collection.on("add", this.render, this);
-        this.render();
+        this.listenTo(this.collection, {
+          "remove": this.render,
+          "add": this.render
+        });
         that = this;
         return this.$el.sortable({
           axis: 'y',
@@ -81,28 +81,31 @@
           }
         });
       },
-      render: function() {
-        var $el, outOfFlow, that;
+      render: function(e) {
+        var $el, index, outOfFlow, that;
         $el = this.$el;
         $el.empty();
         that = this;
         outOfFlow = [];
+        index = that.options.index || sectionIndex;
         _.each(this.collection.models, function(el) {
-          var itemView;
+          var data, itemView;
           if (el.get("inFlow") === false) {
             outOfFlow.push(el);
             return;
           }
           itemView = new views.SortableElementItem({
-            model: el
+            model: el,
+            index: index
           });
-          return $el.append(itemView.render().el);
+          return $el.append(data = itemView.render().el);
         });
         return _.each(outOfFlow, function(out, i) {
           var itemView;
           itemView = new views.SortableElementItem({
             model: out,
-            outOfFlow: true
+            outOfFlow: true,
+            index: index
           });
           return $el.append(itemView.render().el);
         });
@@ -114,11 +117,9 @@
         collection.remove(temp, {
           silent: true
         });
-        collection.add(temp, {
-          at: newIndex,
-          silent: true
+        return collection.add(temp, {
+          at: newIndex
         });
-        return builder.render();
       }
     });
     window.views.SortableElementItem = Backbone.View.extend({
@@ -127,22 +128,11 @@
       initialize: function() {
         var that;
         that = this;
-        this.listenTo(this.model, 'change', this.render);
-        this.listenTo(this.model.get("child_els"), 'change', this.render);
-        return this.$el.draggable({
-          cancel: ".sort-element, .destroy-element, .activate-element",
-          revert: "invalid",
-          helper: "clone",
-          cursor: "move",
-          cursorAt: {
-            top: 50
-          },
-          start: function() {
-            if (typeof builder !== "undefined" && builder !== null) {
-              builder.currentModel = that.model;
-              return builder.fromSideBar = true;
-            }
-          }
+        return this.listenTo(this.model.get("child_els"), {
+          'add': this.render,
+          'remove': this.render,
+          destroy: this.render,
+          "change": this.render
         });
       },
       render: function() {
@@ -152,25 +142,28 @@
         childList = $el.children(".child-list");
         that = this;
         this.outOfFlow = [];
-        _.each(this.model.get("child_els").models, function(el) {
-          if (el.get("inFlow") === true) {
-            return childList.append(new views.SortableElementItem({
-              model: el,
-              child: true
-            }).render().el);
-          } else {
-            return childList.append(new views.SortableElementItem({
-              model: el,
-              child: true,
-              outOfFlow: true
-            }).render().el);
-          }
-        });
-        if (this.options.outOfFlow === true) {
+        if (this.model.get("inFlow") === false) {
           $el.addClass("out-of-flow");
           $("<div />").addClass("activate-element").text("m").prependTo($el);
           $("<div />").addClass("destroy-element").text("g").prependTo($el);
+        } else {
+          $el.removeClass("out-of-flow");
         }
+        _.each(this.model.get("child_els").models, function(el) {
+          var opts;
+          opts = {
+            model: el,
+            child: true,
+            index: that.options.index || sectionIndex
+          };
+          if (el.get("inFlow") === false) {
+            opts.outOfFlow = true;
+            $el.addClass("out-of-flow");
+            $("<div />").addClass("activate-element").text("m").prependTo($el);
+            $("<div />").addClass("destroy-element").text("g").prependTo($el);
+          }
+          return childList.append(new views.SortableElementItem(opts).render().el);
+        });
         if (childList.children().length > 1) {
           childList.sortable({
             items: 'li',
@@ -180,7 +173,7 @@
               return that.origIndex = $(ui.item).index();
             },
             stop: function(e, ui) {
-              return organizer.reorderCollection($(ui.item).index(), that.origIndex, that.model.get("child_els"));
+              return allSections.at(that.options.index).get("organizer").reorderCollection($(ui.item).index(), that.origIndex, that.model.get("child_els"));
             }
           });
         }
@@ -188,15 +181,13 @@
       },
       events: {
         "click .sort-element": function(e) {
-          console.log($(e.target));
           return e.stopImmediatePropagation();
         },
         "click .activate-element": function() {
           return this.model.set("inFlow", true);
         },
         "click .destroy-element": function() {
-          this.model.destroy();
-          return this.remove();
+          return this.model.destroy();
         }
       }
     });
@@ -209,9 +200,11 @@
       controls: $("#drag-controls").html(),
       tagName: 'div class="builder-element"',
       initialize: function() {
+        this.index = this.options.index;
+        this.builder = this.options.builder;
         _.bindAll(this, "render", "bindDrop", "bindDrag", "distance", "setStyles");
         this.listenTo(this.model, 'change', this.render);
-        return this.listenTo(this.model.get("child_els"), 'change', this.render);
+        return this.listenTo(this.model.get("child_els"), 'add', this.render);
       },
       render: function() {
         var $el, children, model, template, that;
@@ -221,16 +214,17 @@
         $el = this.$el;
         this.setStyles();
         template = $(model.get("template")).html() || this.template;
-        console.log(template, model.get("template"));
         $el.html(_.template(template, model.toJSON())).append(_.template(this.controls, {
           title: 'yo'
         }));
         if (children != null) {
           _.each(children.models, function(el) {
-            var draggable;
+            var draggable, i;
             if (el.get("inFlow") === true) {
+              i = that.index || sectionIndex;
               draggable = new views.draggableElement({
-                model: el
+                model: el,
+                index: that.index
               }).render().el;
               return that.$el.append(draggable);
             }
@@ -260,8 +254,12 @@
           revert: "invalid",
           cursor: "move",
           start: function(e, ui) {
+            var builder, sect_interface, section;
+            sect_interface = allSections.at(that.index || sectionIndex);
+            section = sect_interface.get("currentSection");
+            builder = sect_interface.get("builder");
             $(ui.helper).addClass("dragging");
-            if (typeof builder !== "undefined" && builder !== null) {
+            if (builder != null) {
               builder.currentModel = that.model;
               builder.fromSideBar = false;
               return console.log;
@@ -299,20 +297,25 @@
             return $(e.target).removeClass("over");
           },
           drop: function(e, ui) {
+            var builder, curr, flow, model, sect_interface, section;
+            sect_interface = allSections.at(that.index || sectionIndex);
+            section = sect_interface.get("currentSection");
+            builder = sect_interface.get("builder");
             /* Deals with the actual layout changes*/
 
-            var curr, flow;
             $(e.target).removeClass("over");
             curr = builder.currentModel;
             flow = curr.get("inFlow");
             if ((flow === false || typeof flow === "undefined") || builder.fromSideBar === false) {
-              curr.set("inFlow", true);
+              model = that.model;
+              curr.set("inFlow", true, {
+                silent: true
+              });
               $(ui.item).remove();
               ui.draggable.data('dropped', true);
               /* Now, we must consolidate models*/
 
-              builder.collection.blendModels(that.model, curr);
-              return that.render();
+              return model.blendModels(curr);
             } else {
               return alert("That item is already in the page flow.");
             }
@@ -375,38 +378,27 @@
       el: 'section.builder-container',
       initialize: function() {
         var $el, that;
-        this.render();
         that = this;
         $el = this.$el;
-        this.collection.on("add", this.render, this);
-        this.collection.on("change:inFlow", this.render, this);
+        this.collection.on("remove", this.render, this);
+        this.listenTo(this.collection, "add", this.render, this);
         $el.droppable({
           accept: 'li, .builder-element',
           hoverClass: "dragging",
           activeClass: "dragging",
           tolerance: 'pointer',
           drop: function(event, ui) {
-            var c, curr, temp;
+            var c, curr;
             curr = that.currentModel;
             if ((curr.get("inFlow") === false || typeof curr.get("inFlow" === "undefined")) || that.fromSideBar === false) {
               c = curr.collection;
               if (c != null) {
-                c.remove(curr, {
-                  silent: true
-                });
+                c.remove(curr);
               }
-              that.collection.add(curr, {
-                silent: true
-              });
-              temp = new views.draggableElement({
-                model: curr
-              }).render().el;
-              that.$el.append(temp);
-              console.log("dropping in main builder");
               curr.set("inFlow", true);
+              that.collection.add(curr);
               ui.draggable.data('dropped', true);
-              $(ui.item).remove();
-              return organizer.render();
+              return $(ui.item).remove();
             } else {
               return alert("That element is already on the page!");
             }
@@ -456,7 +448,8 @@
             return;
           }
           return container.appendChild(new views.draggableElement({
-            model: element
+            model: element,
+            index: that.options.index
           }).render().el);
         });
         return $el.append(container);

@@ -40,7 +40,7 @@ $(document).ready ->
                 if !@selected? 
                     alert "you must choose a layout"
                 else
-                    @applyLayout(currentSection)
+                    @applyLayout(allSections.at(sectionIndex).get("currentSection"))
         applyLayout: (collection) ->
             styling = @selected.get "styling"
             _.each collection.models, (el) ->

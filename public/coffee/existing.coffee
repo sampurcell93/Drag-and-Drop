@@ -28,6 +28,7 @@ $(document).ready ->
                 # helper: "clone",
                 cursor: "move"
                 start: (e, ui) ->
+                    builder = allSections.at(sectionIndex).get("builder")
                     $(ui.helper).addClass("dragging")
                     # When a drag starts, give the builder the model so it can render on drop
                     if builder?
@@ -48,6 +49,10 @@ $(document).ready ->
                 if i < 4
                     $el.append new views.SectionThumbnail({model: child}).render().el
             this
+        events: 
+            "click .view-section": ->
+                sectionIndex = allSections.length
+                new views.SectionController()
     }
 
     window.views.SectionThumbnail = Backbone.View.extend {
