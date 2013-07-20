@@ -28,7 +28,7 @@
         var self;
         self = this;
         return this.$el.draggable({
-          revert: "invalid",
+          revert: true,
           helper: "clone",
           cursor: "move",
           start: function(e, ui) {
@@ -44,7 +44,7 @@
             }
           },
           stop: function(e, ui) {
-            $(ui.helper).removeClass("dragging");
+            $(ui.item).removeClass("dragging").remove();
             if (ui.helper.data('dropped') === true) {
               return $(e.target).remove();
             }

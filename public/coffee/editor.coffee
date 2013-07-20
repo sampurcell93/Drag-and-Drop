@@ -3,8 +3,6 @@ $(document).ready ->
     window.views.ElementEditor = Backbone.View.extend {
         template: $("#element-editor").html()
         tagName: 'div class="modal"'
-        initialize: ->
-            _.bind(@,"render", "promptSave")
         render: ->
             @$el.append(_.template @template, @model.toJSON())
             $(document.body).append(@$el).addClass("active-modal")

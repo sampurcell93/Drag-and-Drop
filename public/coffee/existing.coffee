@@ -10,13 +10,14 @@ $(document).ready ->
         render: ->
             $el = @$el
             _.each @collection.models, (section) ->
+                console.log(section)
                 section.set "inFlow", false
-                $el.append new views.SingleSection({model: section}).render().el
+                $el.append new views.SingleSectionWireFrame({model: section}).render().el
     }
 
 
     # Single list item view for existing section
-    window.views.SingleSection = Backbone.View.extend {
+    window.views.SingleSectionWireFrame = Backbone.View.extend {
         tagName: 'li'
         template: $("#single-section").html()
         initialize: ->
@@ -63,6 +64,7 @@ $(document).ready ->
             if styles?
                 @$el.css styles
             _.each @model.get("child_els").models, (child, i) ->
+                console.log child
                 if i < 4
                     $el.append new views.SectionThumbnail({model: child}).render().el
             this

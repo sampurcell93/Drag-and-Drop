@@ -86,21 +86,40 @@ h3 {
 	max-width: 100%;
 	margin: 0px auto;
 
+	.add-section {
+		float: left;
+	}
 
 	li {
-		display: inline-block;
+		line-height: 40px; 
 		height: 100%;
-		@include border-radius(2px 2px 0 0);
-		line-height: 40px;
+		max-width: 200px;
 		padding: 0 10px;
+		text-overflow: ellipsis;
+		display: inline-block;
+		white-space: nowrap;
+		overflow: hidden;
+		position: relative;
+		@include border-radius(2px 2px 0 0);
 		background: #333;
-		margin: 0 1px;
+		background: rgba(0,0,0,.5);
+		margin: 0 3px;
 		color: #f9f9f9;
 		text-shadow: 0px -1px 3px #000;
 		cursor: pointer;
 
 		&:hover {
 			text-decoration: underline;
+		}
+		.remove {
+			position: absolute;
+			right: 2px;
+			top: -14px;
+			color: #f7f7f7;
+		}
+		&.current-tab {
+			outline: 1px solid $strongblue;
+			outline-bottom: none
 		}
 	}
 }
@@ -122,11 +141,20 @@ header, footer {
 	border-bottom: 1px solid #252525;
 	border-top: 1px solid #666;
 
-	input { margin-top: 1px;
+	input { 
+		margin-top: 1px;
+		background: #555;
+		border: 1px solid #222;
+		border-top-color: #222;
+		@include border-radius(20px);
+		@include transition(all .2s ease-in-out);
+		@include box-shadow(inset 0px 1px 3px #222);
+		color: #f9f9f9;
 
 		&:focus {
 			outline: none;
-			@include box-shadow(0px 0px 6px 3px $strongblue);
+			// @include box-shadow(0px 0px 6px 3px $strongblue);
+			background: #707070;
 		}
 	}
 	
@@ -168,7 +196,7 @@ footer {
 	margin: 0px auto;
 	background: #f9f9f9;
 	position: relative;
-	@include box-shadow(0px 0px 10px #333);
+	@include box-shadow(0px 0px 9px #333);
 	@include border-radius(4px);
 }
 
@@ -507,10 +535,13 @@ ul.generic-elements {
 	min-height: 100%;
 	margin: 10px;
 	padding: 5px;
-	width: 26.5%;
+	width: 27.5%;
 	float: left;
+	position: relative;
+	margin-left: -5%;
+	background: #fff;
 	@include border-radius(3px);
-	@include box-shadow(0px 2px 4px #ccc);
+	@include box-shadow(0px 1px 2px #aaa);
 	border: 1px solid #ccc;
 
 
@@ -521,6 +552,8 @@ ul.generic-elements {
 		line-height: 30px;
 		display: block;
 		cursor: move;
+		width: 100%;
+		overflow-x: hidden;
 		text-overflow: ellipsis !important;
 
 		&:first-child {
@@ -541,6 +574,8 @@ ul.generic-elements {
 			background: $fadedblue;
 		}
 
+		.destroy-element, .activate-element { display: none;}
+
 		.sort-element {
 			left: 0px;
 			top: 0px;
@@ -557,6 +592,7 @@ ul.generic-elements {
 		&.out-of-flow {
 			background: #ddd !important;
 
+			.destroy-element, .activate-element { display: block;}
 			.sort-element {background: #ccc; }
 		}
 
@@ -593,6 +629,11 @@ section.builder-container {
 		padding: 5px 0;
 		margin-left: 0;
 		margin-right: 0;
+
+		textarea, .big-input {
+			border: none;
+			resize: none;
+		}
 	}
 }
 
@@ -619,14 +660,19 @@ section.builder-container {
  	ul, ol, dl {
  		list-style-position: inside !important;
  		list-style-type: bullet !important;
- 		margin-left: 30px;
+ 		// margin-left: 30px;
+
+ 		li {
+ 			list-style-position: inside !important;
+ 			list-style: bullet !important;
+ 		}
  	}
 
  	&:hover { 
 		border: 1px solid $strongblue;
 		@include box-shadow(0px 0px 4px $medblue);
 
-		> .config-menu-wrap {
+		.config-menu-wrap {
 			@include opacity(.6);
 		}
  	}
@@ -652,6 +698,10 @@ section.builder-container {
 	&:after {
     	clear: both;
 	}
+	
+	textarea { 
+		margin-left: 30px;
+	}
 
 }
 
@@ -673,7 +723,6 @@ section.builder-container {
 	text-align: center;
 	background: $strongblue;
 	width: 65px;
-	z-index: 999;
 	height: 100%;
 	max-height: 38px;
 	@include border-radius(0 2px 0 2px);
@@ -691,7 +740,8 @@ section.builder-container {
 		li { color: #333; }
 	}
 	&:hover {
-		@include opacity(1.5);
+		opacity: 1 !important;
+
 	}
 }
 

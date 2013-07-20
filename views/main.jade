@@ -1,6 +1,8 @@
 include head.jade
 body 
     ul.tabs.mauto
-        li Current Section
-        li Test Section
+        li.add-section +
+    script(type='text/template')#tab-item
+        <%= typeof title !== "undefined" ? title : "New Section" %>
+        div.remove.hidden x
 include builder-instance.jade

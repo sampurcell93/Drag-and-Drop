@@ -26,7 +26,7 @@ $(document).ready ->
             self = @
             @$el.draggable {
                 # When the drop is bad, do nothing
-                revert: "invalid"
+                revert: true
                 # Since elements are generic, the can be dragged infinitely.
                 helper: "clone"
                 cursor: "move"
@@ -42,7 +42,7 @@ $(document).ready ->
                         # Weird bug fix - need a blank log for it to register - probably coffeescript stupidity.
                         console.log
                 stop: (e, ui) ->
-                    $(ui.helper).removeClass("dragging")
+                    $(ui.item).removeClass("dragging").remove()
                     # If the drop was a success, remove the original and preserve the clone
                     if ui.helper.data('dropped') is true
                         $(e.target).remove()

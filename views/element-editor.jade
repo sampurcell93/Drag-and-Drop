@@ -1,6 +1,8 @@
 script#element-editor(type='text/template')
     div.close-modal.icon g 
-    <input class='w7' placeholder='<%= typeof type !== "undefined" ? type.clean() : title.clean() %>' name ='name' />
+    <% if (typeof property !== "undefined") { %>   
+
+    <% } %>
     label(for='set-width') Set width: 
         <select name='width' data-style-generator='width' id='set-width'>
         option(value='16.6667%') 1/6
@@ -11,10 +13,10 @@ script#element-editor(type='text/template')
         option(value='100%') 1
         </select>
     | Float: 
-    <select name='float' data-style-generator='float' id='set-width'>
+    <select name='display' data-style-generator='float'>
     option(value='none') None
-    option(value='left') Left
-    option(value='right') Right
+    option(value='inline-block') Left
+    option(value='inline-block') Right
     </select>
     button.fr.m10.save-changes Save Changes
     .clear

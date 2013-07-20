@@ -40,7 +40,7 @@ app.get("/generic", function(req,res) {
 
 app.post("/section", function(req,res) {
     var model = req.body
-    var name = model[0].section_name
+    var name = model.section_title
     console.log(model)
     console.log(name)
     db.sections.update({title: name}, {'$set': {child_els: model}}, {upsert: true}, function(err, updated) {

@@ -62,7 +62,7 @@
         var styling;
         styling = this.selected.get("styling");
         return _.each(collection.models, function(el) {
-          if (el.get("layout-item") === true) {
+          if (el["layout-item"] === true) {
             return el.set("styles", styling);
           }
         });

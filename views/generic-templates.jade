@@ -1,5 +1,5 @@
 script(type='text/template')#button-template
-    button(contentEditable='true') Button Text
+    button(contentEditable) Button Text
 script(type='text/template')#bulleted-list
     ul
         li Item1 
@@ -12,7 +12,7 @@ script(type='text/template')#numbered-list
         li Item3
 script(type='text/template')#custom-text
     <% var value = typeof customText !== "undefined" ? customText.clean() : null %>
-    <textarea placeholder="Enter your text here" ><%= value %></textarea>
+    <textarea class='generic-text' placeholder="Enter your text here" ><%= value %></textarea>
 script(type='text/template')#custom-header
     <% var value = typeof customText !== "undefined" ? customText.clean() : null  %>
-    <input placeholder="Enter your header here" value ="<%= value %>" class='big-input' />
+    <input placeholder="Enter your header here" value ="<%= value %>" class='big-input generic-header' />

@@ -12,14 +12,15 @@
         var $el;
         $el = this.$el;
         return _.each(this.collection.models, function(section) {
+          console.log(section);
           section.set("inFlow", false);
-          return $el.append(new views.SingleSection({
+          return $el.append(new views.SingleSectionWireFrame({
             model: section
           }).render().el);
         });
       }
     });
-    window.views.SingleSection = Backbone.View.extend({
+    window.views.SingleSectionWireFrame = Backbone.View.extend({
       tagName: 'li',
       template: $("#single-section").html(),
       initialize: function() {
@@ -78,6 +79,7 @@
           this.$el.css(styles);
         }
         _.each(this.model.get("child_els").models, function(child, i) {
+          console.log(child);
           if (i < 4) {
             return $el.append(new views.SectionThumbnail({
               model: child

@@ -45,7 +45,7 @@ $(document).ready ->
             styling = @selected.get "styling"
             _.each collection.models, (el) ->
                 # Only apply layout to selected models.
-                if el.get("layout-item") is true    
+                if el["layout-item"] is true    
                     el.set("styles", styling)
    }        
 

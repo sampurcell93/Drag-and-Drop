@@ -1,13 +1,17 @@
 script(type='text/template')#element-sortable-item
     .sort-element t
+    div.activate-element m
+    div.destroy-element g
     <% flag = false %>
-    <%= (typeof customText !== "undefined" && !flag) ? flag = customText.clean(true) : "" %>
-    <%= (!flag && typeof type !== "undefined") ? flag = type.clean(true) : "" %>
-    <%= (!flag && typeof title !== "undefined") ? flag = title.clean(true) : "" %>
+    <span class='element-title'>
+    <%= (typeof customText !== "undefined" && customText !== "" && !flag) ? flag = customText.clean(true) : "" %>
+    <%= (!flag && typeof type !== "undefined" && type !== "") ? flag = type.clean(true) : "" %>
+    <%= (!flag && typeof property !== "undefined" && property !== "") ? flag =  className + "." + title.clean(true) : "" %>
+    </span>
     ul.child-list
 script(type='text/template')#draggable-element
     h3 <%= typeof title !== "undefined" ? title.clean() : type.clean() %>
-    <% if (typeof property !== "undefined") { %> <input type='text' /> <%}%>
+    <% if (typeof property !== "undefined") { %> <input placeholder='<%= className + "." + property.name.clean() %>' /> <%}%>
 script(type='text/template')#drag-controls
     ul.config-menu-wrap
         li.icon.set-options e

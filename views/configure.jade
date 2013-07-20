@@ -13,7 +13,7 @@ script(type='text/template')#property-item
     | <%= name.clean() %>
 //- Template to edit properties
 script(type='text/template')#property-item-editor
-    <%= name.clean() %>
+    <%= className + "." + name.clean() %>
     span.icon.fr.edit.clickme(data-tooltip='instruction') e
     span.icon.fr.edit.clickme f
     span.icon.fr.edit.clickme g
