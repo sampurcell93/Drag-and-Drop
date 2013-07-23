@@ -1458,9 +1458,9 @@ button, .button {
   button, .button {
     -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
-    -webkit-transition: background-color 300ms ease-out;
+    /*-webkit-transition: background-color 300ms ease-out;
     -moz-transition: background-color 300ms ease-out;
-    transition: background-color 300ms ease-out; }
+    transition: background-color 300ms ease-out; */}
     button:active, .button:active {
       -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) inset;
       box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) inset; }

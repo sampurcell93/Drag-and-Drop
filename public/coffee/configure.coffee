@@ -114,6 +114,11 @@ $(document).ready ->
                 failure: ->
                     alert("could not get data from URL " + that.url)    
             })
+            @genericCollection = new collections.GenericElements()
+            @genericCollection.fetch {
+                success: (coll) ->
+                    that.genericList = new views.GenericList {collection: coll, controller: that.model}
+            }
             @model.set({
                 builder: @builder
                 organizer: @organizer
@@ -195,6 +200,9 @@ $(document).ready ->
                     clone = $(ui.item).clone()
                     if $t.hasClass("over")
                         $t.trigger("click")
+                        toSection = $(".control-section").eq(currIndex).find(".generate-section")
+                        if !toSection.hasClass("viewing-layout")
+                            toSection.trigger("click")
                     console.log(currIndex)
                 window.setTimeout(checkHover,500)
               out: (e)->
@@ -298,7 +306,7 @@ $(document).ready ->
                 newProperty = new models.Property(prop)
                 newProperty.set("className", @model.get("name"))
                 # Then append a new view for that model
-                $el.append new views.PropertyItem({model: newProperty, index:@options.index}).render().el
+                $el.append new views.PropertyItem({model: newProperty, index:@options.index, editable: true}).render().el
             this
         events:
             "click .add-property": (e) ->
@@ -323,21 +331,32 @@ $(document).ready ->
             @controller = @options.controller
             @wrapper = $(".control-section").eq(@controller.index)
             @$el = @wrapper.find(".property-editor")
-            @listenTo @collection, "add", @render
+            @listenTo @collection,  {
+                "add": @append
+            }
             _.bindAll(this,'render')
             @render()
         render: ->
             $el = @$el
             $el.empty()
+            self = @
             _.each  @collection.models, (prop) ->
-                $el.append new views.PropertyItemEditor({model: prop}).render().el
-                this
+                self.append(prop)
+        append: (prop) ->
+            @$el.append new views.PropertyItemEditor({model: prop}).render().el
     })
 
     # An editing bar where a user may configure the logic of the particular view.
     window.views.PropertyItemEditor = Backbone.View.extend({
         template: $("#property-item-editor").html()
         tagName: 'li'
+        initialize: ->
+            self = @
+            @listenTo @model, {
+                "remove": ->
+                    self.$el.fadeOut "fast", ->
+                        do self.remove
+            }
         render: ->
             $(@el).append _.template @template, @model.toJSON()
             this
@@ -347,13 +366,10 @@ $(document).ready ->
     # in order to add it to their application view.
     window.views.PropertyItem = Backbone.View.extend({
         template: $("#property-item").html()
-        tagName: ->
-            # If the properties are stored as selected, mark the view as such.
-            selected = if @model.selected is true then "selected" else ""
-            id = if @options.sortable is true then allSections.at(@options.index).get("properties").indexOf(@model) else ""
-            'li class="property ' + selected + '" data-prop-id="' + id + '"'
+        tagName: 'li class="property" '
         render: ->
-            @$el.append _.template @template, @model.toJSON()
+            item = $.extend({}, @model.toJSON(), @options)
+            @$el.append _.template @template,item
             @selected = true
             @$el.trigger "click"
             this
@@ -367,7 +383,7 @@ $(document).ready ->
                 if @model.selected is true
                     allSections.at(@options.index).get("properties").add @model
                     model = @model.toJSON()
-                    model.title = model.name
+                    model.title = model.className + "." + model.name
                     model.property = {}
                     model.property.name = model.name
                     if !@elementModel?

@@ -107,6 +107,15 @@
             return alert("could not get data from URL " + that.url);
           }
         });
+        this.genericCollection = new collections.GenericElements();
+        this.genericCollection.fetch({
+          success: function(coll) {
+            return that.genericList = new views.GenericList({
+              collection: coll,
+              controller: that.model
+            });
+          }
+        });
         this.model.set({
           builder: this.builder,
           organizer: this.organizer,
@@ -206,10 +215,14 @@
             var $t, checkHover;
             $t = $(e.target).addClass("over");
             checkHover = function() {
-              var clone;
+              var clone, toSection;
               clone = $(ui.item).clone();
               if ($t.hasClass("over")) {
                 $t.trigger("click");
+                toSection = $(".control-section").eq(currIndex).find(".generate-section");
+                if (!toSection.hasClass("viewing-layout")) {
+                  toSection.trigger("click");
+                }
               }
               return console.log(currIndex);
             };
@@ -343,7 +356,8 @@
           newProperty.set("className", this.model.get("name"));
           $el.append(new views.PropertyItem({
             model: newProperty,
-            index: this.options.index
+            index: this.options.index,
+            editable: true
           }).render().el);
         }
         return this;
@@ -383,25 +397,41 @@
         this.controller = this.options.controller;
         this.wrapper = $(".control-section").eq(this.controller.index);
         this.$el = this.wrapper.find(".property-editor");
-        this.listenTo(this.collection, "add", this.render);
+        this.listenTo(this.collection, {
+          "add": this.append
+        });
         _.bindAll(this, 'render');
         return this.render();
       },
       render: function() {
-        var $el;
+        var $el, self;
         $el = this.$el;
         $el.empty();
+        self = this;
         return _.each(this.collection.models, function(prop) {
-          $el.append(new views.PropertyItemEditor({
-            model: prop
-          }).render().el);
-          return this;
+          return self.append(prop);
         });
+      },
+      append: function(prop) {
+        return this.$el.append(new views.PropertyItemEditor({
+          model: prop
+        }).render().el);
       }
     });
     window.views.PropertyItemEditor = Backbone.View.extend({
       template: $("#property-item-editor").html(),
       tagName: 'li',
+      initialize: function() {
+        var self;
+        self = this;
+        return this.listenTo(this.model, {
+          "remove": function() {
+            return self.$el.fadeOut("fast", function() {
+              return self.remove();
+            });
+          }
+        });
+      },
       render: function() {
         $(this.el).append(_.template(this.template, this.model.toJSON()));
         return this;
@@ -409,14 +439,11 @@
     });
     window.views.PropertyItem = Backbone.View.extend({
       template: $("#property-item").html(),
-      tagName: function() {
-        var id, selected;
-        selected = this.model.selected === true ? "selected" : "";
-        id = this.options.sortable === true ? allSections.at(this.options.index).get("properties").indexOf(this.model) : "";
-        return 'li class="property ' + selected + '" data-prop-id="' + id + '"';
-      },
+      tagName: 'li class="property" ',
       render: function() {
-        this.$el.append(_.template(this.template, this.model.toJSON()));
+        var item;
+        item = $.extend({}, this.model.toJSON(), this.options);
+        this.$el.append(_.template(this.template, item));
         this.selected = true;
         this.$el.trigger("click");
         return this;
@@ -432,7 +459,7 @@
           if (this.model.selected === true) {
             allSections.at(this.options.index).get("properties").add(this.model);
             model = this.model.toJSON();
-            model.title = model.name;
+            model.title = model.className + "." + model.name;
             model.property = {};
             model.property.name = model.name;
             if (this.elementModel == null) {

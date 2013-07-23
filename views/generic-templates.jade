@@ -1,18 +1,19 @@
 script(type='text/template')#button-template
-    button(contentEditable) Button Text
-script(type='text/template')#bulleted-list
-    ul
-        li Item1 
-        li Item2
-        li Item3
-script(type='text/template')#numbered-list
-    ol(contentEditable)
-        li Item1 
-        li Item2
-        li Item3
+    button(contentEditable).title-setter  Button Text (edit me!)
+script(type='text/template')#generic-list
+    <% if (typeof tagName === "undefined") tagName = "ul"; %>
+    <<%= tagName %> class='generic-list'>
+    <% var items = typeof listItems !== "undefined" ? listItems : [{text: 1}, {text: 2}, {text: 3}] %>
+    <% for (var num in listItems) {%>
+    li(contentEditable='true')
+        <%= items[num].text  %>
+    <% } %>
+
+    </<%= tagName %>>
+    span.add-list-item + Add Item
 script(type='text/template')#custom-text
     <% var value = typeof customText !== "undefined" ? customText.clean() : null %>
-    <textarea class='generic-text' placeholder="Enter your text here" ><%= value %></textarea>
+    <textarea class='title-setter generic-text' placeholder="Enter your text here" ><%= value %></textarea>
 script(type='text/template')#custom-header
-    <% var value = typeof customText !== "undefined" ? customText.clean() : null  %>
-    <input placeholder="Enter your header here" value ="<%= value %>" class='big-input generic-header' />
+    <% var value = typeof customHeader !== "undefined" ? customHeader : ""  %>
+    <input placeholder="Enter your header here" value ="<%= value %>" class='title-setter big-input generic-header' />

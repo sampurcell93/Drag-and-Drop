@@ -59,12 +59,14 @@
         }
       },
       applyLayout: function(collection) {
-        var styling;
+        var self, styling;
+        self = this;
         styling = this.selected.get("styling");
         return _.each(collection.models, function(el) {
           if (el["layout-item"] === true) {
-            return el.set("styles", styling);
+            el.set("styles", styling);
           }
+          return self.applyLayout(el.get("child_els"));
         });
       }
     });

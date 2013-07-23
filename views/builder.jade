@@ -1,12 +1,10 @@
+
 script(type='text/template')#element-sortable-item
     .sort-element t
     div.activate-element m
     div.destroy-element g
-    <% flag = false %>
     <span class='element-title'>
-    <%= (typeof customText !== "undefined" && customText !== "" && !flag) ? flag = customText.clean(true) : "" %>
-    <%= (!flag && typeof type !== "undefined" && type !== "") ? flag = type.clean(true) : "" %>
-    <%= (!flag && typeof property !== "undefined" && property !== "") ? flag =  className + "." + title.clean(true) : "" %>
+    <%= (typeof title !== "undefined" && title !== "") ? flag = title.clean(true) : "Default Title" %>
     </span>
     ul.child-list
 script(type='text/template')#draggable-element
@@ -18,3 +16,6 @@ script(type='text/template')#drag-controls
             ul.dropdown
                 li.config-panel Styling
         li.icon.remove-from-flow g
+script(type='text/template')#property-link
+    span(contentEditable='false').property-link <%= property_name  %> 
+        i.icon.remove-property-link g

@@ -88,6 +88,7 @@ h3 {
 
 	.add-section {
 		float: left;
+		color: #f9f9f9;
 	}
 
 	li {
@@ -104,8 +105,8 @@ h3 {
 		background: #333;
 		background: rgba(0,0,0,.5);
 		margin: 0 3px;
-		color: #f9f9f9;
 		text-shadow: 0px -1px 3px #000;
+		color: #f9f9f9;
 		cursor: pointer;
 
 		&:hover {
@@ -118,8 +119,7 @@ h3 {
 			color: #f7f7f7;
 		}
 		&.current-tab {
-			outline: 1px solid $strongblue;
-			outline-bottom: none
+			text-decoration: underline;
 		}
 	}
 }
@@ -458,25 +458,35 @@ ul.property-editor {
 
 ul.generic-elements {
 	display: block;
-	height: 30px;
-	border: none;
 	margin: 10px 10px 0 0;
-	border: 1px solid #ddd;
-	border-bottom: none;
+	border-top: 1px solid #fff;
+	border-bottom: 1px solid #777;
+	@include border-radius(3px 3px 0 0);
 	background: $strongblue;
 	color: #fff;
 	
 	li {
+		@extend button;
 		text-shadow: none;
 		display: inline-block;
 		line-height: 30px;
-		padding: 0px 15px;
+		padding: 5px 15px;
 		height: 100%;
 		margin: 0 3px;
 		cursor: pointer;
 
 		&:hover {
 			text-decoration: underline;
+		}
+
+		&.dragging {
+			border: 1px dotted $strongblue;
+			@include opacity(1);
+			@include border-radius(2px);
+			@include box-shadow(0px 0px 3px #aaa);
+			height: 40px;
+			background: #fff;
+			color: #313131;
 		}
 	}
 }
@@ -544,6 +554,11 @@ ul.generic-elements {
 	@include box-shadow(0px 1px 2px #aaa);
 	border: 1px solid #ccc;
 
+	.ui-sortable-placeholder {
+		border: 1px dotted $strongblue;
+		visibility: visible !important;
+		background: #fff !important;
+	}
 
 	li {
 		position: relative;
@@ -553,7 +568,7 @@ ul.generic-elements {
 		display: block;
 		cursor: move;
 		width: 100%;
-		overflow-x: hidden;
+		overflow: hidden;
 		text-overflow: ellipsis !important;
 
 		&:first-child {
@@ -572,6 +587,9 @@ ul.generic-elements {
 
 		&:nth-child(odd) {
 			background: $fadedblue;
+		}
+		&:nth-child(even) {
+			background: #fff;
 		}
 
 		.destroy-element, .activate-element { display: none;}
@@ -592,8 +610,8 @@ ul.generic-elements {
 		&.out-of-flow {
 			background: #ddd !important;
 
-			.destroy-element, .activate-element { display: block;}
-			.sort-element {background: #ccc; }
+			> .destroy-element, > .activate-element { display: block;}
+			 .sort-element {background: #ccc; }
 		}
 
 		.activate-element, .destroy-element {
@@ -614,8 +632,8 @@ section.builder-container {
 	float: right;
 	position: relative;
 	margin: 0px 10px 10px;
-	padding: 0 5px 40px;
-	@include border-radius(3px);
+	padding: 15px;
+	@include border-radius(0 0 3px 3px);
 	@include box-shadow(0px 2px 4px #ccc);
 	border: 1px solid #ccc;
 
@@ -630,10 +648,12 @@ section.builder-container {
 		margin-left: 0;
 		margin-right: 0;
 
-		textarea, .big-input {
+		textarea, .big-input, .generic-list li {
 			border: none;
 			resize: none;
 		}
+
+		.add-list-item { display: none; }
 	}
 }
 
@@ -641,7 +661,7 @@ section.builder-container {
 // Represents a draggable item. Using custom clearfix to avoid overflow hidden problem
 .builder-element {
 	position: relative;
-	margin: 3px 0 3px;
+	margin: 6px 0 6px;
 	padding: 4px 10px;
 	@include transition(width .2s ease-in-out);
 	border: 1px dotted $strongblue;
@@ -650,21 +670,11 @@ section.builder-container {
  	*zoom: 1;
  	cursor: move;
 
- 	[contentEditable], [contenteditable] {
-		// background: $lightblue;
-		// padding: 5px;
-		// border: 1px dotted $medstrongblue;
-		@extend input;
- 	}
-
  	ul, ol, dl {
  		list-style-position: inside !important;
- 		list-style-type: bullet !important;
- 		// margin-left: 30px;
 
  		li {
  			list-style-position: inside !important;
- 			list-style: bullet !important;
  		}
  	}
 
@@ -672,7 +682,7 @@ section.builder-container {
 		border: 1px solid $strongblue;
 		@include box-shadow(0px 0px 4px $medblue);
 
-		.config-menu-wrap {
+		> .config-menu-wrap {
 			@include opacity(.6);
 		}
  	}
@@ -688,6 +698,7 @@ section.builder-container {
 
 	&.selected-element {
 		border: 1px dashed #FF6100 !important;
+		// background: #FFCA8E;
 	}
 
 	&:before,
@@ -701,6 +712,10 @@ section.builder-container {
 	
 	textarea { 
 		margin-left: 30px;
+	}
+
+	&.active-sorting { 
+		background: #aaa;
 	}
 
 }
@@ -784,4 +799,40 @@ button {
 
 .view-section {
 	cursor: pointer;
+}
+
+.generic-list {
+	width: 80%;
+	li {
+		border: 1px dotted $strongblue;
+		padding: 6px 4px;
+		border-bottom-color: transparent;
+
+		&:last-of-type {
+			border-bottom-color: $strongblue;
+		}
+	}
+}
+
+ul.generic-list {
+	list-style: circle;
+}
+ol.generic-list {
+	list-style: decimal;
+}
+
+.add-list-item {
+	display: block;
+	padding: 6px;
+	cursor: pointer;
+}
+
+.property-link {
+	outline: 1px solid #ccc;
+	@include border-radius(3px);
+	background: #e5e5e5;
+	text-align: center;
+	display: inline-block;
+	padding: 0px 4px;
+	margin: 0px 6px;
 }

@@ -3,9 +3,10 @@ $(document).ready ->
         MUST be bound to the window, so as not to leak into 
         global namespace and still have access to other scripts 
     ###
-    window.models = {}
-    window.views = {}
-    window.collections = {} 
+
+    $("body").droppable
+        accept: '*'
+        greedy: true
 
     window.models.Element = Backbone.Model.extend {
         defaults: ->
@@ -29,13 +30,31 @@ $(document).ready ->
             response.child_els = @modelify(response.child_els)
             response
         blendModels: (putIn) ->
+            # If put in is a collection
+            if $.isArray(putIn) is true
+                if putIn.indexOf(@) != -1
+                    alert("you may not drag shit into itself. DIVIDE BY ZERO")
+                    return false
+                # Remove each model from its collection so that events are triggered
+                _.each putIn, (model) ->
+                    model.collection.remove model
             # Remove the model from its current collection, if there is such.
-            if putIn.collection?
+            else if putIn.collection?
                 putIn.collection.remove putIn
-            # Get all current child elements, add the dropped one, and put the collection back in
+            # Get all current child elements, add the dropped element(s)
+            # and put the collection back in
             children = @get "child_els"
             if children?
                 @set "child_els", children.add(putIn)
+            true
+        updateListItems: (text, index) ->
+             if (@get("type") == "Numbered List" || @get("type") == "Bulleted List")
+                listItems = @get("listItems")
+                if listItems?
+                    listItems[index] = {}
+                    listItems[index].text = text
+                else listItems.splice(index,0, {text: text})
+                @set("listItems", listItems)
     }
 
 
@@ -50,143 +69,22 @@ $(document).ready ->
             collection = collection || @
             temp = collection.at(originalIndex)
             # Remove it from the collection
-            collection.remove(temp, {sortableItemRender: false})
+            collection.remove(temp, {organizer: {itemRender: false}})
             # Reinsert it at its new index
-            collection.add(temp, {at: newIndex})
+            collection.add(temp, {at: newIndex, organizer: {itemRender: false}})
             this
+        # Returns an array of all models that match the property, recursively. Defaults to layout item search
+        gather: (prop) ->
+            # Normally would use _.find() here but we are looking for model properties - not their .get()/.set() attributes
+            prop = prop || "layout-item"
+            models = []
+            self = @
+            _.each @models, (model) -> 
+                if (model[prop] is true)
+                    models.push model
+                models.concat(model.get("child_els").gather())
+            models
     }
-    # A list of elements which can be reordered. Basically, the overarching section architecture.
-    window.views.ElementOrganizer = Backbone.View.extend({
-        initialize: ->
-            @controller = @options.controller
-            @wrapper = $(".control-section").eq(@controller.index)
-            @$el = @wrapper.find(".organize-elements")
-            @collection = @options.collection
-            @listenTo(@collection, {
-                "add": (model, collection, options) -> 
-                    that.append(model, options)
-            })
-            ### Render the list, then apply the drag and drop, and sortable functions. ###
-            _.bindAll(this,"append","render")
-            that = this
-            @$el.sortable {
-                axis: 'y'
-                tolerance: 'touch'
-                connectWith: 'ul'
-                containment: 'parent'
-                handle: '.sort-element'
-                items: 'li'
-                start: (e,ui)->
-                    that.origIndex = $(ui.item).addClass("moving-sort").index()
-                stop: (e, ui) ->
-                    that.collection.reorder $(ui.item).removeClass("moving-sort").index(), that.origIndex
-            }
-            this
-        render: (e) ->
-            console.log("rendering organizer")
-            $el = @$el
-            $el.children().remove()
-            that = this
-            outOfFlow = []
-            index = that.options.index || sectionIndex
-            _.each @collection.models, (el) ->
-                # If the element has been removed, we want to display it
-                # as an option at the bottom of the architecture panel
-                if el.get("inFlow") is false
-                    outOfFlow.push el
-                    return
-                that.append(el, {index: index, outOfFlow: false})
-            # Once every element still in flow has been rendered, render those not, 
-            # at bottom, with an option to distinguish them.
-            _.each outOfFlow, (out, i) ->
-                that.append(out, { outOfFlow: true, index: index})
-            this
-        # Method to avoid having ot rerender an entire list on add
-        append: ( element, options ) -> 
-            # Because the only mechanism of sorting is the sortable ui itself,
-            # no method should insert elements into the list, aside from appending at the end.
-            if options.at? then return this
-            opts = this.options
-            opts.model = element
-            $.extend(opts,options)
-            itemView = new views.SortableElementItem(opts)
-            this.$el.append(itemView.render().el)
-    });
-
-    window.views.SortableElementItem = Backbone.View.extend {
-        tagName: 'li class="property"'
-        template: $("#element-sortable-item").html()
-        initialize: ->
-            that = this
-            # When the linked model is removed from a collection, rerender this
-            # @listenTo @model, "change:inFlow", @render
-            @listenTo @model,  {
-                "render": @render
-                "destroy": @remove
-                "remove": (model, collection, opts) ->
-                    if opts.sortableItemRender is false then return 
-                    do that.remove
-                "change:customText": (model) ->
-                    that.$el.children(".element-title").first().text(model.get("customText"))
-                "change:customHeader": (model) ->
-                    that.$el.children(".element-title").first().text(model.get("customHeader"))
-                "change:inFlow": (model) ->
-                    if (model.get("inFlow") is false)
-                        @$el.addClass("out-of-flow")
-                    else @$el.removeClass("out-of-flow")
-
-            }
-            @listenTo @model.get("child_els"), {"add": @render, "remove": @render, "change:inFlow": @render}
-        render: ->
-            console.log "rendering item in organizer"
-            $el = @$el
-            $el.html _.template @template, @model.toJSON()
-            that = this
-            # Same recursion as draggable element.
-            if @model.get("inFlow") is false
-                $el.addClass("out-of-flow")
-                $("<div />").addClass("activate-element").text("m").prependTo($el)
-                $("<div />").addClass("destroy-element").text("g").prependTo($el)
-            else 
-                $el.removeClass("out-of-flow") 
-            @outOfFlow = []
-            _.each @model.get("child_els").models, (el) ->
-                that.append el
-            childList = $el.children(".child-list")
-            # Only make element draggable if there is more than one at a certain level of hierarchy
-            if childList.children().length > 1
-                childList.sortable {
-                    items: 'li'
-                    axis: 'y'
-                    containment: 'parent'
-                    start: (e,ui)->
-                        that.origIndex = $(ui.item).index()
-                    stop: (e, ui) ->
-                        console.log that.options.index
-                        that.model.get("child_els").reorder $(ui.item).index(), that.origIndex
-                }   
-            this
-        append: ( child, opts )->
-            $el = @$el
-            childList = $el.children(".child-list")
-            opts = {model: child, child: true, index: @options.index || sectionIndex}
-            if child.get("inFlow") is false  
-                opts.outOfFlow = true
-                $el.addClass("out-of-flow")
-                $("<div />").addClass("activate-element").text("m").prependTo($el)
-                $("<div />").addClass("destroy-element").text("g").prependTo($el)
-            childList.append new views.SortableElementItem(opts).render().el
-        events:
-            "mousedown .sort-element": (e) ->
-                @model.trigger("dragging")
-            "mouseup .sort-element": (e) ->
-                @model.trigger("dropped")
-            "click .activate-element": ->
-                @model.set "inFlow", true
-            "click .destroy-element": ->
-                @model.destroy()
-    }
-
 
     ### A configurable element bound to a property or page element
         Draggable, droppable, nestable. ###
@@ -198,54 +96,54 @@ $(document).ready ->
             self = @
             @index = @options.index
             @builder = @options.builder
-            _.bindAll(this, "render", "bindDrop", "bindDrag","setStyles")
+            _.bindAll(this, "render", "bindDrop", "bindDrag","setStyles","appendChild")
             @listenTo @model.get("child_els"), 'add', (m,c,o) ->
-                console.log(o)
                 self.appendChild(m,o)
             @listenTo @model, { 
-                "change:styles": @render
+                "change:styles": @setStyles
                 "change:inFlow": ( model ) ->
                     if model.get("inFlow") is true
                          self.$el.slideDown("fast")
                     else self.$el.slideUp("fast")
-                "remove": @remove
-                "dragging": (e) ->
+                "remove": ->
+                    do self.remove
+                "sorting": ->
+                    do self.events["sorting"]
+                "end-sorting": ->
+                    do self.events["end-sorting"]
             }
-            # Gets the model type
-            # console.log @ instanceof views.draggableElement 
-            @bindDrop()
-            @bindDrag()
+            do @bindDrop
+            do @bindDrag
         render: ->
-            console.log "rendering draggable"
+            # For inherited views that don't want to overwrite render entirely, we have 
+            # custom methods to accompany it.
+            (@beforeRender || -> {})(@)
             that = @
             model = @model
             children = model.get "child_els" 
             $el =  @$el
             # Get model layout properties and set applicable as classes
             @setStyles()
-            # Here, we either use the default template for a draggable, or we use the model's custom template
-            # This is useful for generic elements like buttons, lists, and others who do not fit the property model
-            # Because tagName is preserved, so is styling.
-            template = $(model.get("template")).html() || @template
-            $el.html(_.template template, model.toJSON()).append(_.template @controls, {})
+            $el.html(_.template @template, model.toJSON()).append(_.template @controls, {})
             if children?
                 _.each children.models , (el) ->
                     that.appendChild el, {}
-            # Check if previous element is floated - if not, clearfix.
-            # Ordinarily, the following would be part of the native template but with multiple 
-            # templates being applied to this generic view, we can just append it.
+            (@afterRender || -> {})(@)
             this
         appendChild: ( child , opts ) ->
-            # Necessary to filter sub elements.
+            # We choose a view to render based on the model's specification, 
+            # or default to a standard draggable.
+            view = child.get("view") || "draggableElement"
             if child.get("inFlow") is true
                 i = @index || sectionIndex
-                draggable = new views.draggableElement({model: child, index: i}).render().el
+                draggable = $(new views[view]({model: child, index: i}).render().el).addClass("builder-child")
                 if (opts? and !opts.at?)
                     @$el.append(draggable)
                 else 
-                    if @$el.children(".builder-element").eq(opts.at).length 
-                        @$el.children(".builder-element").eq(opts.at).before(draggable)
-                    else @$el.children(".builder-element").eq(opts.at - 1).after(draggable)
+                    builderChildren = @$el.children(".builder-element")
+                    if builderChildren.eq(opts.at).length 
+                        builderChildren.eq(opts.at).before(draggable)
+                    else @$el.append(draggable)
 
         setStyles: ->
             # Get all styling information associated with model
@@ -256,40 +154,45 @@ $(document).ready ->
                 @$el.css styles
         bindDrag: ->
             that = this
-            cancel = ".config-menu-wrap, input, textarea"            
-            # if draggable element is a child of another, do not cancel on .child selection
-            cancel += if @options.child? then "" else ", .child"
+            cancel = ".config-menu-wrap, input, textarea, [contentEditable], [contenteditable], .add-list-item, .generic-list li, .no-drag"            
             # Set the element to be draggable.
-            @$el.draggable {
+            @$el.draggable
                 cancel: cancel
-                # When the drop is bad, do nothing
-                revert: "invalid"
-                # helper: "clone",
+                revert: true
+                helper: ->
+                    # Get all selecged elements
+                    selected = $(".ui-selected, .selected-element")
+                    self = $(this)
+                    # Make a wrapper for all elements
+                    wrap = $("<div />").html(self.clone()).css("width", "100%")
+                    # Append each selected item to the wrapper so the user can see what they drag
+                    selected.each -> 
+                        # Do not reappend the direct dragged item - it need not be selected, per se
+                        # but may still be the subject of a drag. Do not reappend children.
+                        unless self.is(this) or $(this).hasClass("builder-child")
+                            wrap.append $(this).clone()
+                    wrap
                 cursor: "move"
                 start: (e, ui) ->
+                    if e.shiftKey is true
+                        return false
                     sect_interface = allSections.at(that.index || sectionIndex)
                     section = sect_interface.get("currentSection")
-                    builder = sect_interface.get("builder")
-                    $(ui.helper).addClass("dragging")
-                    # When a drag starts, give the builder the model so it can render on drop
-                    if builder?
-                        builder.currentModel = that.model
-                        builder.fromSideBar = false
-                        # Weird bug fix - need a blank log for it to register - probably coffeescript stupidity.
-                        console.log
+                    ui.helper.addClass("dragging")
+                    allDraggingModels = section.gather()
+                    # When a drag starts, give the builder the model (or collection of such) so it can render on drop
+                    if allDraggingModels.length > 1
+                        window.currentDraggingModel = allDraggingModels
+                    else window.currentDraggingModel = that.model
                 stop: (e, ui) ->
                     $(ui.helper).removeClass("dragging")
-                }
         bindDrop: ->
             that = this
             @$el.droppable {
-            # this droppable should be greedy to intercept events from the section wrapper
-              greedy:true
-            # only the location of the mouse determines drop zone.
-              tolerance: 'pointer'
-              revert: 'invalid'
-            # accepts all draggables
-              accept: '*'
+              greedy:true                                          # intercepts events from parent
+              tolerance: 'pointer'                                 # only the location of the mouse determines drop zone.
+              revert: 'invalid'                                    # If the drop is bad, revert the draggable
+              accept: '.builder-element, .generic-elements li'
               over: (e) ->
                 $(e.target).addClass("over")
               out: (e)->
@@ -298,27 +201,19 @@ $(document).ready ->
                 sect_interface = allSections.at(that.index || sectionIndex)
                 section = sect_interface.get("currentSection")
                 builder = sect_interface.get("builder")
-                ### Deals with the actual layout changes ###
                 $(e.target).removeClass("over")
-                # Get the model currently being dragged
-                draggingModel = builder.currentModel
-                flow = draggingModel.get("inFlow")
-                # If it's not in the flow, then it can be dragged in.
-                #  If it's not from the sidebar, it can be dragged in.
-                if (flow is false or typeof flow is "undefined") or builder.fromSideBar is false
-                    model = that.model
-                    # if the dragged element is a direct child of its new parent, do nothing
-                    if draggingModel.collection is that.model.get("child_els") 
-                        console.log "same parent"
-                        return
+                model = that.model
+                draggingModel = window.currentDraggingModel
+                # if the dragged element is a direct child of its new parent, do nothing
+                unless draggingModel.collection is model.get("child_els")
+                 if model.blendModels(draggingModel) is true
                     $(ui.helper).remove()
                     # Lets the drag element know that it was a success
-                    # This event fires before the drag stop event
                     ui.draggable.data('dropped', true)
-                    ### Now, we must consolidate models ###
-                    model.blendModels(draggingModel)
-                else alert "That item is already in the page flow."
+                    delete window.currentDraggingModel
+                    window.currentDraggingModel = null
             }
+        # Default 
         events: 
             "click": (e) ->
                 layout = @model["layout-item"]
@@ -327,39 +222,37 @@ $(document).ready ->
                         @$el.trigger("select")
                     else 
                         @$el.trigger("deselect")
-                    e.preventDefault()
+                    e.stopPropagation()
+                    e.stopImmediatePropagation()
             "click .set-options": (e) ->
-                console.log @model.get "type"
                 $t = $(e.currentTarget)
                 dropdown = $t.children(".dropdown")
                 dropdown.fadeToggle(100);
                 e.stopPropagation()
             "click .set-options li": (e) ->
-                # So as to stop the parent list from closing
                 e.preventDefault()
-                e.stopPropagation()
-            "click .remove-from-flow": (e) ->
+                e.stopPropagation()                  # So as to stop the parent list from closing
+            "click .remove-from-flow": (e) ->        #  When they click the "X" in the config - remove the el from the builder
                 @model.set("inFlow", false)
-                # Stop the click event from bubbling up to the parent model, if there is one.
                 e.stopPropagation()
-                e.stopImmediatePropagation()
-            "click .config-panel": (e) ->
-                console.log @model.get "type"
+                e.stopImmediatePropagation()         # Stop the click event from bubbling up to the parent model, if there is one.
+            "click .config-panel": (e) ->            #  On click of the panel in the top right
                 editor = new views.ElementEditor({model: @model, view: @}).render()
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
                 @model["layout-item"] = true
                 @$el.addClass("selected-element")
-            "deselect": ->
+                e.stopPropagation()
+                e.stopImmediatePropagation()
+            "deselect": (e) ->
                 @model["layout-item"] = false
                 @$el.removeClass("selected-element")
-            "keyup .generic-header": (e) ->
-                @model.set 'customHeader', $(e.currentTarget).val()
                 e.stopPropagation()
-            "keyup .generic-text": (e) ->
-                @model.set 'customText', $(e.currentTarget).val()
-                # Stop event from bubbling to parent model.
-                e.stopPropagation()
+                e.stopImmediatePropagation()
+            "sorting": ->
+                @$el.addClass("active-sorting")
+            "end-sorting": ->
+                @$el.removeClass("active-sorting")
     })
 
     window.views.SectionBuilder = Backbone.View.extend {
@@ -375,42 +268,39 @@ $(document).ready ->
                     that.append(m, opts)
             }
             $el.droppable {
-                accept: '.builder-element, li'
+                accept: '.builder-element, .generic-elements li'
                 hoverClass: "dragging"
                 activeClass: "dragging" 
                 helper: 'clone'
                 revert: 'invalid'
                 tolerance: 'pointer'
                 drop: ( event, ui ) -> 
-                    curr = that.currentModel
-                    # If the element is not already on the page,
-                    if (curr.get("inFlow") is false or typeof curr.get "inFlow" is "undefined") or that.fromSideBar is false
-                        c = curr.collection
-                        # If the model is in a collection, and it's not the same one as the builder,
-                        # IE not top level
-                        if c? and c is not that.collection
-                            c.remove curr
-                            curr.set "inFlow", true
-                            that.collection.add curr 
-                            ui.draggable.data('dropped', true)  
-                    # Otherwise, we do not want duplicates
-                    else alert "That element is already on the page!"
+                    curr = window.currentDraggingModel
+                    c = curr.collection
+                    # If the model is in a collection, and it's not the same one as the builder,
+                    # IE not top level
+                    console.log("dff")
+                    if c? and c != that.collection
+                        c.remove curr
+                        curr.set "inFlow", true
+                        that.collection.add curr 
+                        delete window.currentDraggingModel
+                        window.currentDraggingModel = null
+                    else 
+                        that.collection.add curr
             }
-            $el.selectable {
-                filter: '.builder-element'
-                tolerance: 'touch'
-                cancel: '.builder-element'
-                selecting: (e,ui) ->
-                    $(".ui-selecting"). trigger "select"
-                unselecting: (e,ui) ->
-                    console.log "unselecting"
-                    $(".ui-selecting").trigger "deselect"
-                selected: (e,ui) ->
-                    $(".ui-selected").trigger "select"
-                unselected: (e,ui) ->
-                    $(".ui-selectee").trigger("deselect")
-            }
-            @currentModel = null
+            # $el.selectable {
+            #     filter: '.builder-element'
+            #     tolerance: 'touch'
+            #     selecting: (e,ui) ->
+            #         console.log e
+            #         $(ui.selecting). trigger "select"
+            #     unselecting: (e,ui) ->
+            #         console.log ui
+            #         if (e.shiftKey is true) then return 
+            #         $item = $(ui.unselecting)
+            #         $item.trigger "deselect"
+            # }
         render: ->
             $el = @$el
             that = this
@@ -419,10 +309,11 @@ $(document).ready ->
                 that.append(element, {})
 
         append: (element, opts) ->
+            view = element.get("view") || "draggableElement"
             #If the element has been taken out of the flow, don't render it.
             if element.get("inFlow") is false
                     return null
-            draggable = new views.draggableElement({model: element, index: @options.index}).render().el
+            draggable = new views[view]({model: element, index: @options.index}).render().el
             if opts? && !opts.at?
                 @$el.append draggable
             else 

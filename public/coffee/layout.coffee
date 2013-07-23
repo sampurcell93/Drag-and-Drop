@@ -42,11 +42,13 @@ $(document).ready ->
                 else
                     @applyLayout(allSections.at(sectionIndex).get("currentSection"))
         applyLayout: (collection) ->
+            self = @
             styling = @selected.get "styling"
             _.each collection.models, (el) ->
                 # Only apply layout to selected models.
                 if el["layout-item"] is true    
                     el.set("styles", styling)
+                self.applyLayout(el.get("child_els"))
    }        
 
    window.layoutList = null
