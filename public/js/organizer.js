@@ -27,9 +27,11 @@
             that.origIndex = $(ui.item).addClass("moving-sort").index();
             return that.collection.at(that.origIndex).trigger("sorting");
           },
-          stop: function(e, ui) {
+          change: function(e, ui) {
+            console.log(e, ui);
             that.collection.at(that.origIndex).trigger("end-sorting");
-            return that.collection.reorder($(ui.item).removeClass("moving-sort").index(), that.origIndex);
+            that.collection.reorder($(ui.placeholder).removeClass("moving-sort").index(), that.origIndex);
+            return ui.item.removeClass("moving-sort");
           }
         });
         return this;

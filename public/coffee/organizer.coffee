@@ -22,9 +22,11 @@ $(document).ready ->
                 start: (e,ui)->
                     that.origIndex = $(ui.item).addClass("moving-sort").index()
                     that.collection.at(that.origIndex).trigger("sorting")
-                stop: (e, ui) ->
+                change: (e, ui) ->
+                    console.log e,ui
                     that.collection.at(that.origIndex).trigger("end-sorting")
-                    that.collection.reorder $(ui.item).removeClass("moving-sort").index(), that.origIndex
+                    that.collection.reorder $(ui.placeholder).removeClass("moving-sort").index(), that.origIndex
+                    ui.item.removeClass("moving-sort")
             }
             this
         render: (e) ->

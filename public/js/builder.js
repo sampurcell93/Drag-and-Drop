@@ -153,10 +153,12 @@
             return self.remove();
           },
           "sorting": function() {
-            return self.events["sorting"]();
+            return self.$el.addClass("selected-element");
           },
           "end-sorting": function() {
-            return self.events["end-sorting"]();
+            if (self.$el.hasClass("ui-selected") === false) {
+              return self.$el.removeClass(".selected-element");
+            }
           }
         });
         this.bindDrop();
@@ -340,6 +342,7 @@
           return e.stopImmediatePropagation();
         },
         "sorting": function() {
+          console.log(this);
           return this.$el.addClass("active-sorting");
         },
         "end-sorting": function() {

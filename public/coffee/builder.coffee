@@ -109,9 +109,10 @@ $(document).ready ->
                 "remove": ->
                     do self.remove
                 "sorting": ->
-                    do self.events["sorting"]
+                    self.$el.addClass("selected-element")
                 "end-sorting": ->
-                    do self.events["end-sorting"]
+                    if (self.$el.hasClass("ui-selected") is false)
+                        self.$el.removeClass(".selected-element")
             }
             do @bindDrop
             do @bindDrag
@@ -251,6 +252,7 @@ $(document).ready ->
                 e.stopPropagation()
                 e.stopImmediatePropagation()
             "sorting": ->
+                console.log @
                 @$el.addClass("active-sorting")
             "end-sorting": ->
                 @$el.removeClass("active-sorting")
