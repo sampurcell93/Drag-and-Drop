@@ -5,12 +5,10 @@ $(document).ready ->
     ###
 
     window.globals =
-        setPlaceholders: (draggable, collection) ->
-            console.log "next one ", draggable.next(".droppable-placeholder"), " prev one", draggable.prev(".droppable-placeholder")
-            if draggable.next(".droppable-placeholder").length is 0
-                draggable.after(new window.views.droppablePlaceholder({collection: collection}).render())
-            if draggable.prev(".droppable-placeholder").length is 0
-                draggable.before(new window.views.droppablePlaceholder({collection: collection}).render())
+         setPlaceholders: (draggable, collection) ->
+            console.log "next one ", draggable.next(".droppable-placeholder").length, " prev one", draggable.prev(".droppable-placeholder").length
+            draggable.before(new window.views.droppablePlaceholder({collection: collection}).render())
+            draggable.after(new window.views.droppablePlaceholder({collection: collection}).render())
             # extra = new window.views.droppablePlaceholder({collection: collection}).render()
             # if (draggable.index() is 0 and !draggable.hasClass("builder-child"))
             #     draggable.before(extra)
@@ -73,7 +71,7 @@ $(document).ready ->
         url: '/section/'
          # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
-        reorder: (newIndex, originalIndex, collection) ->
+        reorder: (newIndex, originalIndex, collection, options) ->
             console.log originalIndex, newIndex
             # Get the original index of the moved item, and save the item
             collection = collection || @
@@ -81,7 +79,7 @@ $(document).ready ->
             # Remove it from the collection
             collection.remove(temp, {organizer: {itemRender: false}})
             # Reinsert it at its new index
-            collection.add(temp, {at: newIndex, organizer: {itemRender: false}})
+            collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}})
             this
         # Returns an array of all models that match the property, recursively. Defaults to layout item search
         gather: (prop) ->
@@ -109,14 +107,13 @@ $(document).ready ->
                 out: (e, ui) ->
                     $(e.target).css("opacity", 0)
                 drop: (e,ui) ->
+                    $(".over").removeClass("over")
                     dropZone = $(e.target)
-                    ui.helper.fadeOut(300)
                     if (dropZone.closest(".builder-element").length)
-                        insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev()) + 1
+                        insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev())
                     else 
-                        insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev()) + 1
-                    if insertAt is -1 then insertAt = 0
-                    console.log insertAt
+                        insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev())
+                    insertAt += 1
                     curr = window.currentDraggingModel
                     c = curr.collection
                     # If the model is in a collection, and it's not the same one as the builder,
@@ -124,11 +121,11 @@ $(document).ready ->
                     if c? and c != self.collection
                         c.remove curr
                         curr.set "inFlow", true
-
                     self.collection.add curr, {at: insertAt}
                     delete window.currentDraggingModel
                     window.currentDraggingModel = null
-                    e.target.remove()
+                    $(e.target).css("opacity", 0)
+                    # e.target.remove()
 
     ### A configurable element bound to a property or page element
         Draggable, droppable, nestable. ###
@@ -157,10 +154,11 @@ $(document).ready ->
                     self.$el.addClass("selected-element")
                 "end-sorting": ->
                     if (self.$el.hasClass("ui-selected") is false)
-                        self.$el.removeClass(".selected-element")
+                        self.$el.removeClass("selected-element")
             }
             do @bindDrop
             do @bindDrag
+            console.log @events
         render: ->
             # For inherited views that don't want to overwrite render entirely, we have 
             # custom methods to accompany it.
@@ -175,6 +173,7 @@ $(document).ready ->
             if children?
                 _.each children.models , (el) ->
                     that.appendChild el, {}
+            $el.hide().fadeIn(325)
             (@afterRender || -> {})()
             @
         appendChild: ( child , opts ) ->
@@ -192,6 +191,7 @@ $(document).ready ->
                         builderChildren.eq(opts.at).before(draggable)
                     else @$el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
+                allSections.at(@index).get("builder").removeExtras()
         setStyles: ->
             # Get all styling information associated with model
             styles = @model.get "styles"
@@ -247,7 +247,7 @@ $(document).ready ->
                 $(e.target).addClass("over")
               out: (e)->
                 $(e.target).removeClass("over")
-              drop: (e,ui) ->
+              drop: (e,ui) ->   
                 sect_interface = allSections.at(that.index || currIndex)
                 section = sect_interface.get("currentSection")
                 builder = sect_interface.get("builder")
@@ -387,4 +387,12 @@ $(document).ready ->
                 else @$el.children(".builder-element").eq(opts.at - 1).after(draggable)
             console.log @controller.get("currentSection")
             globals.setPlaceholders($(draggable), @controller.get("currentSection"))
+            @removeExtras()
+        removeExtras: ->
+            @$el.find(".droppable-placeholder").each ->
+                $t = $(this)
+                if $t.next().hasClass("droppable-placeholder")
+                    $t.next().remove()  
+                if $t.prev().hasClass("droppable-placeholder")
+                    $t.prev().remove()
     }

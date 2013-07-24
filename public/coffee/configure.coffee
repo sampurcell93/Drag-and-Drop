@@ -59,7 +59,7 @@ $(document).ready ->
         render: (i) ->
             @$el.addClass("control-section").attr("id","section-" + i).html _.template @template, @model.toJSON()
             @$el.droppable
-                accept: '*'
+                accept: '.builder-element'
                 over: (e,ui) ->
                     console.log ui
                 out: (e, ui) ->
@@ -397,8 +397,10 @@ $(document).ready ->
                     allSections.at(@options.index).get("properties").add @model
                     model = @model.toJSON()
                     model.title = model.className + "." + model.name
-                    model.property = {}
+                    # model.property = {}
+                    model.property = @model
                     model.property.name = model.name
+                    model.type = "Property"
                     if !@elementModel?
                         @elementModel = new models.Element(model)
                     currentSection.add @elementModel

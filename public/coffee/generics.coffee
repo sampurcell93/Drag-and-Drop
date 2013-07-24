@@ -60,20 +60,18 @@ $(document).ready ->
     class window.views.genericElement extends window.views.draggableElement
         # Calls the parent initialize function - mimicry of classical inheritance.
         initialize: (options) -> 
-            _.bindAll(@, "afterRender")
             super
-        afterRender: (self) ->
-            @$el.hide().fadeIn(350)
-        events:
-            # When they edit an input, update the model's display title.
-            "keyup .title-setter": (e) ->
-                console.log "title"
-                @model.set {
-                    # Modularize this ; todo
-                    'customHeader': $(e.currentTarget).val()
-                    'title': $(e.currentTarget).val()
-                }
-                e.stopPropagation()
+            $.extend(@events, {
+                # When they edit an input, update the model's display title.
+                "keyup .title-setter": (e) ->
+                    console.log "title"
+                    @model.set {
+                        # Modularize this ; todo
+                        'customHeader': $(e.currentTarget).val()
+                        'title': $(e.currentTarget).val()
+                    }
+                    e.stopPropagation()
+            })
 
     # For clarity's sake, we will store the variety of generic templates and their
     # event binders with hash notation. View specifications can be stored on server.
@@ -85,25 +83,29 @@ $(document).ready ->
         template: $("#generic-list").html()
         initialize: (options) ->
             super
-        events:
-            # Append a new dummy list item to the scaffold
-            "click .add-list-item":  (e) ->
-                genericList = @$el.find(".generic-list")
-                index = genericList.children().length
-                innerText = "Item " + (index + 1)
-                $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList)
-                @model.updateListItems(innerText, index)
-                e.stopPropagation()
-            "keyup .generic-list li": (e) ->
-                keyCode = e.keyCode || e.which
-                target = $(e.currentTarget)
-                index = target.index()
-                if target.index() is 0
-                    @model.set("title", target.text())
-                @model.updateListItems(target.html(), index)
-            "click .remove-property-link": (e) ->
-                $(e.currentTarget).closest(".property-link").slideUp "fast", ->
-                    $(@).remove()
+            console.log @events
+            $.extend(@events, {
+                # Append a new dummy list item to the scaffold
+                "click .add-list-item":  (e) ->
+                    genericList = @$el.find(".generic-list")
+                    index = genericList.children().length
+                    innerText = "Item " + (index + 1)
+                    $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList)
+                    @model.updateListItems(innerText, index)
+                    e.stopPropagation()
+                    console.log @events
+                "keyup .generic-list li": (e) ->
+                    keyCode = e.keyCode || e.which
+                    target = $(e.currentTarget)
+                    index = target.index()
+                    if target.index() is 0
+                        @model.set("title", target.text())
+                    @model.updateListItems(target.html(), index)
+                "click .remove-property-link": (e) ->
+                    $(e.currentTarget).closest(".property-link").slideUp "fast", ->
+                        $(@).remove()
+            })
+
     class window.views['Button'] extends window.views.genericElement
         template: $("#button-template").html()
         initialize: (options) ->
@@ -118,7 +120,9 @@ $(document).ready ->
         template: $("#custom-header").html()
         initialize: (options) ->
             super
+
     class window.views['CustomText'] extends window.views.genericElement
         template: $("#custom-text").html()
         initialize: (options) ->
             super 
+            console.log("making customtext")

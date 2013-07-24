@@ -1296,24 +1296,27 @@ section.builder-container.no-grid .builder-element .add-list-item {
 /* line 699, ../sass/screen.scss */
 .builder-element.selected-element {
   border: 1px dashed #FF6100 !important;
+  -webkit-box-shadow: 0px 0px 30px #cccccc;
+  -moz-box-shadow: 0px 0px 30px #cccccc;
+  box-shadow: 0px 0px 30px #cccccc;
 }
-/* line 705, ../sass/screen.scss */
+/* line 706, ../sass/screen.scss */
 .builder-element:before, .builder-element:after {
   content: " ";
   /* 1 */
   display: table;
   /* 2 */
 }
-/* line 709, ../sass/screen.scss */
+/* line 710, ../sass/screen.scss */
 .builder-element:after {
   clear: both;
 }
-/* line 713, ../sass/screen.scss */
+/* line 714, ../sass/screen.scss */
 .builder-element textarea {
   margin-left: 30px;
 }
 
-/* line 718, ../sass/screen.scss */
+/* line 719, ../sass/screen.scss */
 .droppable-placeholder {
   width: 100;
   position: relative;
@@ -1328,7 +1331,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   border-top: 4px solid orange;
   border-bottom: 4px solid orange;
 }
-/* line 728, ../sass/screen.scss */
+/* line 729, ../sass/screen.scss */
 .droppable-placeholder:after, .droppable-placeholder:before {
   content: "";
   position: absolute;
@@ -1338,18 +1341,18 @@ section.builder-container.no-grid .builder-element .add-list-item {
   height: 0;
   border: 4px solid transparent;
 }
-/* line 737, ../sass/screen.scss */
+/* line 738, ../sass/screen.scss */
 .droppable-placeholder:before {
   right: 100%;
   border-right-color: orange;
 }
-/* line 741, ../sass/screen.scss */
+/* line 742, ../sass/screen.scss */
 .droppable-placeholder:after {
   left: 100%;
   border-left-color: orange;
 }
 
-/* line 747, ../sass/screen.scss */
+/* line 748, ../sass/screen.scss */
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
@@ -1357,7 +1360,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   background: rgba(125, 185, 232, 0.4);
 }
 
-/* line 754, ../sass/screen.scss */
+/* line 755, ../sass/screen.scss */
 .config-menu-wrap {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1381,7 +1384,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   -o-border-radius: 0 2px 0 2px;
   border-radius: 0 2px 0 2px;
 }
-/* line 769, ../sass/screen.scss */
+/* line 770, ../sass/screen.scss */
 .config-menu-wrap li {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1395,16 +1398,16 @@ section.builder-container.no-grid .builder-element .add-list-item {
   color: #f9f9f9;
   position: relative;
 }
-/* line 779, ../sass/screen.scss */
+/* line 780, ../sass/screen.scss */
 .config-menu-wrap li li {
   color: #333;
 }
-/* line 781, ../sass/screen.scss */
+/* line 782, ../sass/screen.scss */
 .config-menu-wrap:hover {
   opacity: 1 !important;
 }
 
-/* line 789, ../sass/screen.scss */
+/* line 790, ../sass/screen.scss */
 .set-options .dropdown {
   position: absolute;
   top: 100%;
@@ -1424,7 +1427,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   z-index: 111;
   background: #fff;
 }
-/* line 803, ../sass/screen.scss */
+/* line 804, ../sass/screen.scss */
 .set-options .dropdown li {
   display: block;
   height: 33px;
@@ -1434,14 +1437,14 @@ section.builder-container.no-grid .builder-element .add-list-item {
   width: 100%;
   line-height: 33px;
 }
-/* line 812, ../sass/screen.scss */
+/* line 813, ../sass/screen.scss */
 .set-options .dropdown li:hover {
   background: #2092cc;
   color: #fff;
   text-shadow: none;
 }
 
-/* line 820, ../sass/screen.scss */
+/* line 821, ../sass/screen.scss */
 button, ul.generic-elements li {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1450,44 +1453,44 @@ button, ul.generic-elements li {
   border-radius: 2px;
 }
 
-/* line 824, ../sass/screen.scss */
+/* line 825, ../sass/screen.scss */
 .view-section {
   cursor: pointer;
 }
 
-/* line 828, ../sass/screen.scss */
+/* line 829, ../sass/screen.scss */
 .generic-list {
   width: 80%;
 }
-/* line 830, ../sass/screen.scss */
+/* line 831, ../sass/screen.scss */
 .generic-list li {
   border: 1px dotted #2092cc;
   padding: 6px 4px;
   border-bottom-color: transparent;
 }
-/* line 835, ../sass/screen.scss */
+/* line 836, ../sass/screen.scss */
 .generic-list li:last-of-type {
   border-bottom-color: #2092cc;
 }
 
-/* line 841, ../sass/screen.scss */
+/* line 842, ../sass/screen.scss */
 ul.generic-list {
   list-style: circle;
 }
 
-/* line 844, ../sass/screen.scss */
+/* line 845, ../sass/screen.scss */
 ol.generic-list {
   list-style: decimal;
 }
 
-/* line 848, ../sass/screen.scss */
+/* line 849, ../sass/screen.scss */
 .add-list-item {
   display: block;
   padding: 6px;
   cursor: pointer;
 }
 
-/* line 854, ../sass/screen.scss */
+/* line 855, ../sass/screen.scss */
 .property-link {
   outline: 1px solid #ccc;
   -webkit-border-radius: 3px;

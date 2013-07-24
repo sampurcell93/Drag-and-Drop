@@ -12,17 +12,13 @@
     var _ref, _ref1;
     window.globals = {
       setPlaceholders: function(draggable, collection) {
-        console.log("next one ", draggable.next(".droppable-placeholder"), " prev one", draggable.prev(".droppable-placeholder"));
-        if (draggable.next(".droppable-placeholder").length === 0) {
-          draggable.after(new window.views.droppablePlaceholder({
-            collection: collection
-          }).render());
-        }
-        if (draggable.prev(".droppable-placeholder").length === 0) {
-          return draggable.before(new window.views.droppablePlaceholder({
-            collection: collection
-          }).render());
-        }
+        console.log("next one ", draggable.next(".droppable-placeholder").length, " prev one", draggable.prev(".droppable-placeholder").length);
+        draggable.before(new window.views.droppablePlaceholder({
+          collection: collection
+        }).render());
+        return draggable.after(new window.views.droppablePlaceholder({
+          collection: collection
+        }).render());
       }
     };
     window.models.Element = Backbone.Model.extend({
@@ -91,7 +87,7 @@
     window.collections.Elements = Backbone.Collection.extend({
       model: models.Element,
       url: '/section/',
-      reorder: function(newIndex, originalIndex, collection) {
+      reorder: function(newIndex, originalIndex, collection, options) {
         var temp;
         console.log(originalIndex, newIndex);
         collection = collection || this;
@@ -104,7 +100,8 @@
         collection.add(temp, {
           at: newIndex,
           organizer: {
-            itemRender: false
+            itemRender: false,
+            render: false
           }
         });
         return this;
@@ -147,17 +144,14 @@
           },
           drop: function(e, ui) {
             var c, curr, dropZone, insertAt;
+            $(".over").removeClass("over");
             dropZone = $(e.target);
-            ui.helper.fadeOut(300);
             if ((dropZone.closest(".builder-element").length)) {
-              insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev()) + 1;
+              insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev());
             } else {
-              insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev()) + 1;
+              insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev());
             }
-            if (insertAt === -1) {
-              insertAt = 0;
-            }
-            console.log(insertAt);
+            insertAt += 1;
             curr = window.currentDraggingModel;
             c = curr.collection;
             if ((c != null) && c !== self.collection) {
@@ -169,7 +163,7 @@
             });
             delete window.currentDraggingModel;
             window.currentDraggingModel = null;
-            return e.target.remove();
+            return $(e.target).css("opacity", 0);
           }
         });
       };
@@ -222,12 +216,13 @@
           },
           "end-sorting": function() {
             if (self.$el.hasClass("ui-selected") === false) {
-              return self.$el.removeClass(".selected-element");
+              return self.$el.removeClass("selected-element");
             }
           }
         });
         this.bindDrop();
-        return this.bindDrag();
+        this.bindDrag();
+        return console.log(this.events);
       };
 
       draggableElement.prototype.render = function() {
@@ -246,6 +241,7 @@
             return that.appendChild(el, {});
           });
         }
+        $el.hide().fadeIn(325);
         (this.afterRender || function() {
           return {};
         })();
@@ -271,7 +267,8 @@
               this.$el.append(draggable);
             }
           }
-          return globals.setPlaceholders($(draggable), this.model.get("child_els"));
+          globals.setPlaceholders($(draggable), this.model.get("child_els"));
+          return allSections.at(this.index).get("builder").removeExtras();
         }
       };
 
@@ -529,7 +526,20 @@
           }
         }
         console.log(this.controller.get("currentSection"));
-        return globals.setPlaceholders($(draggable), this.controller.get("currentSection"));
+        globals.setPlaceholders($(draggable), this.controller.get("currentSection"));
+        return this.removeExtras();
+      },
+      removeExtras: function() {
+        return this.$el.find(".droppable-placeholder").each(function() {
+          var $t;
+          $t = $(this);
+          if ($t.next().hasClass("droppable-placeholder")) {
+            $t.next().remove();
+          }
+          if ($t.prev().hasClass("droppable-placeholder")) {
+            return $t.prev().remove();
+          }
+        });
       }
     });
   });

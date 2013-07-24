@@ -34,7 +34,7 @@
       render: function(i) {
         this.$el.addClass("control-section").attr("id", "section-" + i).html(_.template(this.template, this.model.toJSON()));
         this.$el.droppable({
-          accept: '*',
+          accept: '.builder-element',
           over: function(e, ui) {
             return console.log(ui);
           },
@@ -480,8 +480,9 @@
             allSections.at(this.options.index).get("properties").add(this.model);
             model = this.model.toJSON();
             model.title = model.className + "." + model.name;
-            model.property = {};
+            model.property = this.model;
             model.property.name = model.name;
+            model.type = "Property";
             if (this.elementModel == null) {
               this.elementModel = new models.Element(model);
             }

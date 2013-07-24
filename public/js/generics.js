@@ -78,23 +78,17 @@
       }
 
       genericElement.prototype.initialize = function(options) {
-        _.bindAll(this, "afterRender");
-        return genericElement.__super__.initialize.apply(this, arguments);
-      };
-
-      genericElement.prototype.afterRender = function(self) {
-        return this.$el.hide().fadeIn(350);
-      };
-
-      genericElement.prototype.events = {
-        "keyup .title-setter": function(e) {
-          console.log("title");
-          this.model.set({
-            'customHeader': $(e.currentTarget).val(),
-            'title': $(e.currentTarget).val()
-          });
-          return e.stopPropagation();
-        }
+        genericElement.__super__.initialize.apply(this, arguments);
+        return $.extend(this.events, {
+          "keyup .title-setter": function(e) {
+            console.log("title");
+            this.model.set({
+              'customHeader': $(e.currentTarget).val(),
+              'title': $(e.currentTarget).val()
+            });
+            return e.stopPropagation();
+          }
+        });
       };
 
       return genericElement;
@@ -111,34 +105,35 @@
       _Class.prototype.template = $("#generic-list").html();
 
       _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
-
-      _Class.prototype.events = {
-        "click .add-list-item": function(e) {
-          var genericList, index, innerText;
-          genericList = this.$el.find(".generic-list");
-          index = genericList.children().length;
-          innerText = "Item " + (index + 1);
-          $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList);
-          this.model.updateListItems(innerText, index);
-          return e.stopPropagation();
-        },
-        "keyup .generic-list li": function(e) {
-          var index, keyCode, target;
-          keyCode = e.keyCode || e.which;
-          target = $(e.currentTarget);
-          index = target.index();
-          if (target.index() === 0) {
-            this.model.set("title", target.text());
+        _Class.__super__.initialize.apply(this, arguments);
+        console.log(this.events);
+        return $.extend(this.events, {
+          "click .add-list-item": function(e) {
+            var genericList, index, innerText;
+            genericList = this.$el.find(".generic-list");
+            index = genericList.children().length;
+            innerText = "Item " + (index + 1);
+            $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList);
+            this.model.updateListItems(innerText, index);
+            e.stopPropagation();
+            return console.log(this.events);
+          },
+          "keyup .generic-list li": function(e) {
+            var index, keyCode, target;
+            keyCode = e.keyCode || e.which;
+            target = $(e.currentTarget);
+            index = target.index();
+            if (target.index() === 0) {
+              this.model.set("title", target.text());
+            }
+            return this.model.updateListItems(target.html(), index);
+          },
+          "click .remove-property-link": function(e) {
+            return $(e.currentTarget).closest(".property-link").slideUp("fast", function() {
+              return $(this).remove();
+            });
           }
-          return this.model.updateListItems(target.html(), index);
-        },
-        "click .remove-property-link": function(e) {
-          return $(e.currentTarget).closest(".property-link").slideUp("fast", function() {
-            return $(this).remove();
-          });
-        }
+        });
       };
 
       return _Class;
@@ -195,7 +190,8 @@
       _Class.prototype.template = $("#custom-text").html();
 
       _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
+        _Class.__super__.initialize.apply(this, arguments);
+        return console.log("making customtext");
       };
 
       return _Class;

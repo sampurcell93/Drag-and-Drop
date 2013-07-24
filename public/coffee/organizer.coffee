@@ -8,7 +8,8 @@ $(document).ready ->
             @collection = @options.collection
             @listenTo(@collection, {
                 "add": (model, collection, options) -> 
-                    that.append(model, options)
+                    unless (options.organizer? and options.organizer.render is false)
+                        that.append(model, options)
             })
             ### Render the list, then apply the drag and drop, and sortable functions. ###
             _.bindAll(this,"append","render")
@@ -33,7 +34,6 @@ $(document).ready ->
             }
             this
         render: (e) ->
-            console.log("rendering organizer")
             $el = @$el
             $el.children().remove()
             that = this
@@ -157,8 +157,9 @@ $(document).ready ->
             pos = opts.at
             opts.model = child
             $el = @$el.children(".child-list")
+            console.log pos, @model.get("child_els").length
             itemView = new views.SortableElementItem(opts).render().el
-            if pos >= @collection.length
+            if @model.get("child_els")? and pos >= @model.get("child_els").length - 1
                 $el.append(itemView)
             else if pos is 0
                 $el.prepend(itemView)
@@ -173,4 +174,9 @@ $(document).ready ->
                 @model.set "inFlow", true, {e: e}
             "click .destroy-element": ->
                 @model.destroy()
+            "mouseover": ->
+                @model.trigger("sorting")
+            "mouseout": ->
+                if !@$el.hasClass("moving-sort")
+                   @model.trigger("end-sorting")
     }

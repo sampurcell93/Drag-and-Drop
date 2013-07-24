@@ -10,7 +10,9 @@
         this.collection = this.options.collection;
         this.listenTo(this.collection, {
           "add": function(model, collection, options) {
-            return that.append(model, options);
+            if (!((options.organizer != null) && options.organizer.render === false)) {
+              return that.append(model, options);
+            }
           }
         });
         /* Render the list, then apply the drag and drop, and sortable functions.*/
@@ -42,7 +44,6 @@
       },
       render: function(e) {
         var $el, index, outOfFlow, that;
-        console.log("rendering organizer");
         $el = this.$el;
         $el.children().remove();
         that = this;
@@ -198,8 +199,9 @@
         pos = opts.at;
         opts.model = child;
         $el = this.$el.children(".child-list");
+        console.log(pos, this.model.get("child_els").length);
         itemView = new views.SortableElementItem(opts).render().el;
-        if (pos >= this.collection.length) {
+        if ((this.model.get("child_els") != null) && pos >= this.model.get("child_els").length - 1) {
           return $el.append(itemView);
         } else if (pos === 0) {
           return $el.prepend(itemView);
@@ -221,6 +223,14 @@
         },
         "click .destroy-element": function() {
           return this.model.destroy();
+        },
+        "mouseover": function() {
+          return this.model.trigger("sorting");
+        },
+        "mouseout": function() {
+          if (!this.$el.hasClass("moving-sort")) {
+            return this.model.trigger("end-sorting");
+          }
         }
       }
     });
