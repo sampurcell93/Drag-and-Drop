@@ -19,13 +19,16 @@ $(document).ready ->
                 connectWith: 'ul'
                 handle: '.sort-element'
                 items: '> li'
+                cancel: ".out-of-flow"
                 start: (e,ui)->
                     that.origIndex = $(ui.item).addClass("moving-sort").index()
                     that.collection.at(that.origIndex).trigger("sorting")
                 change: (e, ui) ->
-                    console.log e,ui
+                    console.log "changing sort"
+                    console.log ui
+                stop: (e, ui) ->
                     that.collection.at(that.origIndex).trigger("end-sorting")
-                    that.collection.reorder $(ui.placeholder).removeClass("moving-sort").index(), that.origIndex
+                    that.collection.reorder $(ui.item).removeClass("moving-sort").index(), that.origIndex
                     ui.item.removeClass("moving-sort")
             }
             this
@@ -52,13 +55,26 @@ $(document).ready ->
         append: ( element, options ) -> 
             # Because the only mechanism of sorting is the sortable ui itself,
             # no method should insert elements into the list, aside from appending at the end.
-            if options.at? then return this
-            opts = this.options
+            if options? and options.at? then @appendAt element, options
+            else 
+                opts = this.options
+                opts.model = element
+                $.extend(opts,options)
+                itemView = new views.SortableElementItem(opts)
+                this.$el.append(itemView.render().el)
+        appendAt: (element, opts) ->
+            console.log "Appending AT"
+            pos = opts.at
             opts.model = element
-            $.extend(opts,options)
-            itemView = new views.SortableElementItem(opts)
-            this.$el.append(itemView.render().el)
-    });
+            itemView = new views.SortableElementItem(opts).render().el
+            if pos >= @collection.length
+                this.$el.append(itemView)
+            else if pos is 0
+                this.$el.prepend(itemView)
+            else 
+                this.$el.children().eq(pos).before(itemView)
+
+    }); 
 
     window.views.SortableElementItem = Backbone.View.extend {
         tagName: 'li class="property"'
@@ -93,7 +109,7 @@ $(document).ready ->
             $el.html _.template @template, @model.toJSON()
             $el.draggable
                 zIndex: 11111
-                cancel: '.sort-element'
+                cancel: '.sort-element, .activate-element, .destroy-element'
                 revert: 'invalid'
                 helper: 'clone'
             that = this
@@ -121,6 +137,9 @@ $(document).ready ->
             this
         append: ( child, opts )->
             $el = @$el
+            if opts? and opts.at?
+                @appendAt(child, opts)
+                return this
             childList = $el.children(".child-list")
             elementItem = new views.SortableElementItem({model: child, index: @options.index}).render().el
             if (opts? and opts.at?) 
@@ -134,6 +153,17 @@ $(document).ready ->
                 $("<div />").addClass("activate-element").text("m").prependTo($el)
                 $("<div />").addClass("destroy-element").text("g").prependTo($el)
             childList.append elementItem
+        appendAt: (child, opts) ->
+            pos = opts.at
+            opts.model = child
+            $el = @$el.children(".child-list")
+            itemView = new views.SortableElementItem(opts).render().el
+            if pos >= @collection.length
+                $el.append(itemView)
+            else if pos is 0
+                $el.prepend(itemView)
+            else 
+                $el.children().eq(pos).before(itemView)
         events:
             "mousedown .sort-element": (e) ->
                 @model.trigger("dragging")

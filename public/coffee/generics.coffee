@@ -58,16 +58,18 @@ $(document).ready ->
     }
 
     class window.views.genericElement extends window.views.draggableElement
-        afterRender: (self) ->
-            self.$el.hide().fadeIn(350)
         # Calls the parent initialize function - mimicry of classical inheritance.
-        initialize: (options) ->
-            console.log "making a generic element"
+        initialize: (options) -> 
+            _.bindAll(@, "afterRender")
             super
+        afterRender: (self) ->
+            @$el.hide().fadeIn(350)
         events:
-            # When they edit an input  for a header update the model
+            # When they edit an input, update the model's display title.
             "keyup .title-setter": (e) ->
+                console.log "title"
                 @model.set {
+                    # Modularize this ; todo
                     'customHeader': $(e.currentTarget).val()
                     'title': $(e.currentTarget).val()
                 }
@@ -82,7 +84,6 @@ $(document).ready ->
     class window.views['listElement'] extends window.views.genericElement
         template: $("#generic-list").html()
         initialize: (options) ->
-            console.log "initing a lisr"
             super
         events:
             # Append a new dummy list item to the scaffold
@@ -106,10 +107,11 @@ $(document).ready ->
     class window.views['Button'] extends window.views.genericElement
         template: $("#button-template").html()
         initialize: (options) ->
+            console.log(@events)
             super
             # Key line which binds all parent views to this, the descendant!
             _.bindAll(@, "beforeRender")
-        beforeRender: (self) ->
+        beforeRender: () ->
             @$el.addClass("max-w3")
 
     class window.views['CustomHeader'] extends window.views.genericElement

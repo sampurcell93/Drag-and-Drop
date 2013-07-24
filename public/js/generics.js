@@ -77,17 +77,18 @@
         return _ref;
       }
 
-      genericElement.prototype.afterRender = function(self) {
-        return self.$el.hide().fadeIn(350);
+      genericElement.prototype.initialize = function(options) {
+        _.bindAll(this, "afterRender");
+        return genericElement.__super__.initialize.apply(this, arguments);
       };
 
-      genericElement.prototype.initialize = function(options) {
-        console.log("making a generic element");
-        return genericElement.__super__.initialize.apply(this, arguments);
+      genericElement.prototype.afterRender = function(self) {
+        return this.$el.hide().fadeIn(350);
       };
 
       genericElement.prototype.events = {
         "keyup .title-setter": function(e) {
+          console.log("title");
           this.model.set({
             'customHeader': $(e.currentTarget).val(),
             'title': $(e.currentTarget).val()
@@ -110,7 +111,6 @@
       _Class.prototype.template = $("#generic-list").html();
 
       _Class.prototype.initialize = function(options) {
-        console.log("initing a lisr");
         return _Class.__super__.initialize.apply(this, arguments);
       };
 
@@ -155,11 +155,12 @@
       _Class.prototype.template = $("#button-template").html();
 
       _Class.prototype.initialize = function(options) {
+        console.log(this.events);
         _Class.__super__.initialize.apply(this, arguments);
         return _.bindAll(this, "beforeRender");
       };
 
-      _Class.prototype.beforeRender = function(self) {
+      _Class.prototype.beforeRender = function() {
         return this.$el.addClass("max-w3");
       };
 

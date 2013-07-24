@@ -23,14 +23,18 @@
           connectWith: 'ul',
           handle: '.sort-element',
           items: '> li',
+          cancel: ".out-of-flow",
           start: function(e, ui) {
             that.origIndex = $(ui.item).addClass("moving-sort").index();
             return that.collection.at(that.origIndex).trigger("sorting");
           },
           change: function(e, ui) {
-            console.log(e, ui);
+            console.log("changing sort");
+            return console.log(ui);
+          },
+          stop: function(e, ui) {
             that.collection.at(that.origIndex).trigger("end-sorting");
-            that.collection.reorder($(ui.placeholder).removeClass("moving-sort").index(), that.origIndex);
+            that.collection.reorder($(ui.item).removeClass("moving-sort").index(), that.origIndex);
             return ui.item.removeClass("moving-sort");
           }
         });
@@ -64,14 +68,29 @@
       },
       append: function(element, options) {
         var itemView, opts;
-        if (options.at != null) {
-          return this;
+        if ((options != null) && (options.at != null)) {
+          return this.appendAt(element, options);
+        } else {
+          opts = this.options;
+          opts.model = element;
+          $.extend(opts, options);
+          itemView = new views.SortableElementItem(opts);
+          return this.$el.append(itemView.render().el);
         }
-        opts = this.options;
+      },
+      appendAt: function(element, opts) {
+        var itemView, pos;
+        console.log("Appending AT");
+        pos = opts.at;
         opts.model = element;
-        $.extend(opts, options);
-        itemView = new views.SortableElementItem(opts);
-        return this.$el.append(itemView.render().el);
+        itemView = new views.SortableElementItem(opts).render().el;
+        if (pos >= this.collection.length) {
+          return this.$el.append(itemView);
+        } else if (pos === 0) {
+          return this.$el.prepend(itemView);
+        } else {
+          return this.$el.children().eq(pos).before(itemView);
+        }
       }
     });
     return window.views.SortableElementItem = Backbone.View.extend({
@@ -117,7 +136,7 @@
         $el.html(_.template(this.template, this.model.toJSON()));
         $el.draggable({
           zIndex: 11111,
-          cancel: '.sort-element',
+          cancel: '.sort-element, .activate-element, .destroy-element',
           revert: 'invalid',
           helper: 'clone'
         });
@@ -150,6 +169,10 @@
       append: function(child, opts) {
         var $el, childList, elementItem;
         $el = this.$el;
+        if ((opts != null) && (opts.at != null)) {
+          this.appendAt(child, opts);
+          return this;
+        }
         childList = $el.children(".child-list");
         elementItem = new views.SortableElementItem({
           model: child,
@@ -169,6 +192,20 @@
           $("<div />").addClass("destroy-element").text("g").prependTo($el);
         }
         return childList.append(elementItem);
+      },
+      appendAt: function(child, opts) {
+        var $el, itemView, pos;
+        pos = opts.at;
+        opts.model = child;
+        $el = this.$el.children(".child-list");
+        itemView = new views.SortableElementItem(opts).render().el;
+        if (pos >= this.collection.length) {
+          return $el.append(itemView);
+        } else if (pos === 0) {
+          return $el.prepend(itemView);
+        } else {
+          return $el.children().eq(pos).before(itemView);
+        }
       },
       events: {
         "mousedown .sort-element": function(e) {

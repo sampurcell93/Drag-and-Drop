@@ -33,6 +33,26 @@
       template: $("#controller-wrap").html(),
       render: function(i) {
         this.$el.addClass("control-section").attr("id", "section-" + i).html(_.template(this.template, this.model.toJSON()));
+        this.$el.droppable({
+          accept: '*',
+          over: function(e, ui) {
+            return console.log(ui);
+          },
+          out: function(e, ui) {
+            return console.log(ui);
+          },
+          drop: function(e, ui) {
+            var models;
+            models = window.currentDraggingModel;
+            if ($.isArray(models) === true) {
+              return _.each(models, function(model) {
+                return model.set("inFlow", false);
+              });
+            } else {
+              return models.set("inFlow", false);
+            }
+          }
+        });
         return this;
       },
       events: {

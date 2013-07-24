@@ -2,7 +2,7 @@
  * In this file you should write your main styles. (or centralize your imports)
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
-/* line 17, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -24,45 +24,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../Users/sampurcell/.rvm/gems/ruby-1.9.3-p194/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block;
 }
@@ -1248,7 +1248,6 @@ section.builder-container.no-grid .builder-element .add-list-item {
 /* line 662, ../sass/screen.scss */
 .builder-element {
   position: relative;
-  margin: 6px 0 6px;
   padding: 4px 10px;
   -webkit-transition: width 0.2s ease-in-out;
   -moz-transition: width 0.2s ease-in-out;
@@ -1261,6 +1260,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   -o-border-radius: 3px;
   border-radius: 3px;
   background: #fff;
+  vertical-align: top;
   *zoom: 1;
   cursor: move;
 }
@@ -1314,6 +1314,42 @@ section.builder-container.no-grid .builder-element .add-list-item {
 }
 
 /* line 718, ../sass/screen.scss */
+.droppable-placeholder {
+  width: 100;
+  position: relative;
+  left: 0;
+  margin: 0 auto;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  opacity: 0;
+  -webkit-transition: opacity 0.2s linear;
+  -moz-transition: opacity 0.2s linear;
+  -o-transition: opacity 0.2s linear;
+  transition: opacity 0.2s linear;
+  border-top: 4px solid orange;
+  border-bottom: 4px solid orange;
+}
+/* line 728, ../sass/screen.scss */
+.droppable-placeholder:after, .droppable-placeholder:before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  display: black;
+  width: 0;
+  height: 0;
+  border: 4px solid transparent;
+}
+/* line 737, ../sass/screen.scss */
+.droppable-placeholder:before {
+  right: 100%;
+  border-right-color: orange;
+}
+/* line 741, ../sass/screen.scss */
+.droppable-placeholder:after {
+  left: 100%;
+  border-left-color: orange;
+}
+
+/* line 747, ../sass/screen.scss */
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
@@ -1321,7 +1357,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   background: rgba(125, 185, 232, 0.4);
 }
 
-/* line 725, ../sass/screen.scss */
+/* line 754, ../sass/screen.scss */
 .config-menu-wrap {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1345,7 +1381,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   -o-border-radius: 0 2px 0 2px;
   border-radius: 0 2px 0 2px;
 }
-/* line 740, ../sass/screen.scss */
+/* line 769, ../sass/screen.scss */
 .config-menu-wrap li {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1359,16 +1395,16 @@ section.builder-container.no-grid .builder-element .add-list-item {
   color: #f9f9f9;
   position: relative;
 }
-/* line 750, ../sass/screen.scss */
+/* line 779, ../sass/screen.scss */
 .config-menu-wrap li li {
   color: #333;
 }
-/* line 752, ../sass/screen.scss */
+/* line 781, ../sass/screen.scss */
 .config-menu-wrap:hover {
   opacity: 1 !important;
 }
 
-/* line 760, ../sass/screen.scss */
+/* line 789, ../sass/screen.scss */
 .set-options .dropdown {
   position: absolute;
   top: 100%;
@@ -1388,7 +1424,7 @@ section.builder-container.no-grid .builder-element .add-list-item {
   z-index: 111;
   background: #fff;
 }
-/* line 774, ../sass/screen.scss */
+/* line 803, ../sass/screen.scss */
 .set-options .dropdown li {
   display: block;
   height: 33px;
@@ -1398,14 +1434,14 @@ section.builder-container.no-grid .builder-element .add-list-item {
   width: 100%;
   line-height: 33px;
 }
-/* line 783, ../sass/screen.scss */
+/* line 812, ../sass/screen.scss */
 .set-options .dropdown li:hover {
   background: #2092cc;
   color: #fff;
   text-shadow: none;
 }
 
-/* line 791, ../sass/screen.scss */
+/* line 820, ../sass/screen.scss */
 button, ul.generic-elements li {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1414,44 +1450,44 @@ button, ul.generic-elements li {
   border-radius: 2px;
 }
 
-/* line 795, ../sass/screen.scss */
+/* line 824, ../sass/screen.scss */
 .view-section {
   cursor: pointer;
 }
 
-/* line 799, ../sass/screen.scss */
+/* line 828, ../sass/screen.scss */
 .generic-list {
   width: 80%;
 }
-/* line 801, ../sass/screen.scss */
+/* line 830, ../sass/screen.scss */
 .generic-list li {
   border: 1px dotted #2092cc;
   padding: 6px 4px;
   border-bottom-color: transparent;
 }
-/* line 806, ../sass/screen.scss */
+/* line 835, ../sass/screen.scss */
 .generic-list li:last-of-type {
   border-bottom-color: #2092cc;
 }
 
-/* line 812, ../sass/screen.scss */
+/* line 841, ../sass/screen.scss */
 ul.generic-list {
   list-style: circle;
 }
 
-/* line 815, ../sass/screen.scss */
+/* line 844, ../sass/screen.scss */
 ol.generic-list {
   list-style: decimal;
 }
 
-/* line 819, ../sass/screen.scss */
+/* line 848, ../sass/screen.scss */
 .add-list-item {
   display: block;
   padding: 6px;
   cursor: pointer;
 }
 
-/* line 825, ../sass/screen.scss */
+/* line 854, ../sass/screen.scss */
 .property-link {
   outline: 1px solid #ccc;
   -webkit-border-radius: 3px;

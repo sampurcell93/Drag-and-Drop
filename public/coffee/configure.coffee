@@ -58,6 +58,19 @@ $(document).ready ->
         template: $("#controller-wrap").html()
         render: (i) ->
             @$el.addClass("control-section").attr("id","section-" + i).html _.template @template, @model.toJSON()
+            @$el.droppable
+                accept: '*'
+                over: (e,ui) ->
+                    console.log ui
+                out: (e, ui) ->
+                    console.log ui
+                drop: (e, ui) ->
+                    models = window.currentDraggingModel
+                    if $.isArray(models) is true
+                        _.each models, (model) ->
+                            model.set("inFlow", false)
+                    else 
+                        models.set("inFlow", false)
             this
         events: 
             'click .generate-section': 'generateSection'

@@ -661,12 +661,12 @@ section.builder-container {
 // Represents a draggable item. Using custom clearfix to avoid overflow hidden problem
 .builder-element {
 	position: relative;
-	margin: 6px 0 6px;
 	padding: 4px 10px;
 	@include transition(width .2s ease-in-out);
 	border: 1px dotted $strongblue;
 	@include border-radius(3px);
 	background: #fff;
+	vertical-align: top;
  	*zoom: 1;
  	cursor: move;
 
@@ -712,6 +712,35 @@ section.builder-container {
 	
 	textarea { 
 		margin-left: 30px;
+	}
+}
+
+.droppable-placeholder {
+	width: 100;
+	position: relative;
+	left: 0;
+	margin: 0 auto;
+	@include opacity(0);
+	@include transition(opacity .2s linear);
+	border-top: 4px solid orange;
+	border-bottom: 4px solid orange;
+
+	&:after, &:before {
+		content: "";
+		position: absolute;
+		top: -4px;
+		display: black;
+		width: 0;
+		height: 0;
+		border: 4px solid transparent;
+	}
+	&:before {
+		right: 100%;
+		border-right-color: orange;
+	}
+	&:after {
+		left: 100%;
+		border-left-color: orange;	
 	}
 }
 
