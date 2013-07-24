@@ -88,11 +88,12 @@ $(document).ready ->
 
     ### A configurable element bound to a property or page element
         Draggable, droppable, nestable. ###
-    window.views.draggableElement = Backbone.View.extend({
+    class window.views.draggableElement extends Backbone.View
         template: $("#draggable-element").html()
         controls: $("#drag-controls").html()
         tagName: 'div class="builder-element"'
         initialize: ->
+            console.log("initing the parent class")
             self = @
             @index = @options.index
             @builder = @options.builder
@@ -253,7 +254,6 @@ $(document).ready ->
                 @$el.addClass("active-sorting")
             "end-sorting": ->
                 @$el.removeClass("active-sorting")
-    })
 
     window.views.SectionBuilder = Backbone.View.extend {
         initialize: ->

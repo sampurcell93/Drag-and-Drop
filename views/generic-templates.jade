@@ -12,7 +12,7 @@ script(type='text/template')#generic-list
     </<%= tagName %>>
     span.add-list-item + Add Item
 script(type='text/template')#custom-text
-    <% var value = typeof customText !== "undefined" ? customText.clean() : null %>
+    <% var value = typeof customText !== "undefined" ? customText : null %>
     <textarea class='title-setter generic-text' placeholder="Enter your text here" ><%= value %></textarea>
 script(type='text/template')#custom-header
     <% var value = typeof customHeader !== "undefined" ? customHeader : ""  %>
