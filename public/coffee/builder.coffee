@@ -27,12 +27,12 @@ $(document).ready ->
             url += if @id? then @id else ""
             url
         # Recursively makes models out of the standard javascript objects returned by ajax
-        modelify: (child_els) ->
+        modelify: ->
             self = @
             temp = new collections.Elements()
-            _.each child_els, (model) ->
+            _.each @get("child_els"), (model) ->
                 temp.add tempModel = new models.Element(model)
-                tempModel.set "child_els", self.modelify(tempModel.get "child_els" )
+                tempModel.set "child_els", self.modelify()
             temp
         # JSON returns as a single model whose submodels are standard json objects, not backbone models.
         # MODELIFY each standard json object, and its children, recursively.
@@ -83,7 +83,7 @@ $(document).ready ->
          # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
         reorder: (newIndex, originalIndex, collection, options) ->
-            console.log originalIndex, newIndex
+            if newIndex is originalIndex then return this
             # Get the original index of the moved item, and save the item
             collection = collection || @
             temp = collection.at(originalIndex)
@@ -127,7 +127,7 @@ $(document).ready ->
                         insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev())
                     else 
                         insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev())
-                    if (ui.draggable.index() > dropZone.index())
+                    if (ui.draggable.index() > dropZone.index() or ui.draggable.hasClass("generic-item"))
                         insertAt += 1
                     curr = window.currentDraggingModel
                     parent = self.collection.model 
@@ -146,9 +146,9 @@ $(document).ready ->
         controls: $("#drag-controls").html()
         tagName: 'div class="builder-element"'
         initialize: ->
-            console.log("initing the parent class")
             self = @
             @index = @options.index
+            console.log("initing the parent class with index ref", @index)
             _.bindAll(this, "render", "bindDrop", "bindDrag","setStyles","appendChild")
             @listenTo @model.get("child_els"), 'add', (m,c,o) ->
                 self.appendChild(m,o)
@@ -197,7 +197,7 @@ $(document).ready ->
             # or default to a standard draggable.
             view = child.get("view") || "draggableElement"
             if child.get("inFlow") is true
-                i = @index || sectionIndex
+                i = @index || currIndex
                 draggable = $(new views[view]({model: child, index: i}).render().el).addClass("builder-child")
                 if (opts? and !opts.at?)
                     @$el.append(draggable)
@@ -207,7 +207,7 @@ $(document).ready ->
                         builderChildren.eq(opts.at).before(draggable)
                     else @$el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
-                allSections.at(@index).get("builder").removeExtraPlaceholders()
+                allSections.at(@index || currIndex).get("builder").removeExtraPlaceholders()
         setStyles: ->
             # Get all styling information associated with model
             styles = @model.get "styles"
@@ -367,6 +367,7 @@ $(document).ready ->
                         that.collection.add curr 
                         delete window.currentDraggingModel
                         window.currentDraggingModel = null
+                        ui.helper.fadeOut(350)
                     else 
                         that.collection.add curr
             }
@@ -392,8 +393,6 @@ $(document).ready ->
         append: (element, opts) ->
             view = element.get("view") || "draggableElement"
             #If the element has been taken out of the flow, don't render it.
-            if element.get("inFlow") is false
-                    return null
             draggable = new views[view]({model: element, index: @controller.index}).render().el
             if opts? && !opts.at?
                 @$el.append draggable
@@ -402,6 +401,8 @@ $(document).ready ->
                     @$el.children(".builder-element").eq(opts.at).before(draggable)
                 else @$el.children(".builder-element").eq(opts.at - 1).after(draggable)
             globals.setPlaceholders($(draggable), @controller.get("currentSection"))
+            if element.get("inFlow") is false
+                $(draggable).hide()
             @removeExtraPlaceholders()
         removeExtraPlaceholders: ->
             @$el.find(".droppable-placeholder").each ->
@@ -410,4 +411,5 @@ $(document).ready ->
                     $t.next().remove()  
                 if $t.prev().hasClass("droppable-placeholder") or $t.prev().length == 0
                     $t.prev().remove()
+
     }

@@ -20,7 +20,7 @@
       initialize: function() {
         this.controller = this.options.controller;
         this.wrapper = $(".control-section").eq(this.controller.index);
-        this.$el = this.wrapper.find(".generic-elements");
+        this.$el = this.wrapper.find(".generic-elements ul");
         console.log(this.controller.index);
         return this.render();
       },
@@ -37,14 +37,20 @@
     });
     window.views.GenericListItem = Backbone.View.extend({
       initialize: function() {
-        var self;
+        var child_els, self;
+        child_els = new collections.Elements();
+        child_els.model = this.model;
+        this.model.set("child_els", child_els);
         this.baseModel = this.model.toJSON();
         self = this;
         return this.$el.draggable({
           revert: true,
-          helper: "clone",
+          helper: function() {
+            return new window.views[self.model.get("view")]({
+              model: self.model
+            }).render().el;
+          },
           cursor: "move",
-          zIndex: 999999,
           start: function(e, ui) {
             var toAdd;
             $(ui.helper).addClass("dragging");
@@ -64,7 +70,7 @@
       tagName: 'li',
       render: function() {
         var $el;
-        $el = this.$el;
+        $el = this.$el.addClass("generic-item");
         $el.html(_.template(this.template, this.model.toJSON()));
         return this;
       }
@@ -191,7 +197,7 @@
 
       _Class.prototype.initialize = function(options) {
         _Class.__super__.initialize.apply(this, arguments);
-        return console.log("making customtext");
+        return console.log("making customtext with index", this.index);
       };
 
       return _Class;

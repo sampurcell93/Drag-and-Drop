@@ -35,14 +35,14 @@
         url += this.id != null ? this.id : "";
         return url;
       },
-      modelify: function(child_els) {
+      modelify: function() {
         var self, temp;
         self = this;
         temp = new collections.Elements();
-        _.each(child_els, function(model) {
+        _.each(this.get("child_els"), function(model) {
           var tempModel;
           temp.add(tempModel = new models.Element(model));
-          return tempModel.set("child_els", self.modelify(tempModel.get("child_els")));
+          return tempModel.set("child_els", self.modelify());
         });
         return temp;
       },
@@ -104,7 +104,9 @@
       },
       reorder: function(newIndex, originalIndex, collection, options) {
         var temp;
-        console.log(originalIndex, newIndex);
+        if (newIndex === originalIndex) {
+          return this;
+        }
         collection = collection || this;
         temp = collection.at(originalIndex);
         collection.remove(temp, {
@@ -172,7 +174,7 @@
             } else {
               insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev());
             }
-            if (ui.draggable.index() > dropZone.index()) {
+            if (ui.draggable.index() > dropZone.index() || ui.draggable.hasClass("generic-item")) {
               insertAt += 1;
             }
             curr = window.currentDraggingModel;
@@ -212,9 +214,9 @@
 
       draggableElement.prototype.initialize = function() {
         var self;
-        console.log("initing the parent class");
         self = this;
         this.index = this.options.index;
+        console.log("initing the parent class with index ref", this.index);
         _.bindAll(this, "render", "bindDrop", "bindDrag", "setStyles", "appendChild");
         this.listenTo(this.model.get("child_els"), 'add', function(m, c, o) {
           return self.appendChild(m, o);
@@ -273,7 +275,7 @@
         var builderChildren, draggable, i, view;
         view = child.get("view") || "draggableElement";
         if (child.get("inFlow") === true) {
-          i = this.index || sectionIndex;
+          i = this.index || currIndex;
           draggable = $(new views[view]({
             model: child,
             index: i
@@ -289,7 +291,7 @@
             }
           }
           globals.setPlaceholders($(draggable), this.model.get("child_els"));
-          return allSections.at(this.index).get("builder").removeExtraPlaceholders();
+          return allSections.at(this.index || currIndex).get("builder").removeExtraPlaceholders();
         }
       };
 
@@ -496,7 +498,8 @@
               curr.set("inFlow", true);
               that.collection.add(curr);
               delete window.currentDraggingModel;
-              return window.currentDraggingModel = null;
+              window.currentDraggingModel = null;
+              return ui.helper.fadeOut(350);
             } else {
               return that.collection.add(curr);
             }
@@ -532,9 +535,6 @@
       append: function(element, opts) {
         var draggable, view;
         view = element.get("view") || "draggableElement";
-        if (element.get("inFlow") === false) {
-          return null;
-        }
         draggable = new views[view]({
           model: element,
           index: this.controller.index
@@ -549,6 +549,9 @@
           }
         }
         globals.setPlaceholders($(draggable), this.controller.get("currentSection"));
+        if (element.get("inFlow") === false) {
+          $(draggable).hide();
+        }
         return this.removeExtraPlaceholders();
       },
       removeExtraPlaceholders: function() {

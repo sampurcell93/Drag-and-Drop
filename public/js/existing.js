@@ -63,9 +63,18 @@
       },
       events: {
         "click .view-section": function() {
-          var sectionIndex;
-          sectionIndex = allSections.length;
-          return new views.SectionController();
+          var coll;
+          coll = new collections.Elements();
+          _.each(this.model.get("currentSection"), function(obj) {
+            var model;
+            model = new models.Element(obj);
+            model.set("child_els", model.modelify(model.get("child_els")));
+            return coll.add(model);
+          });
+          this.model.set("currentSection", coll);
+          this.model.set("properties", new collections.Properties(this.model.get("properties")));
+          console.log(this.model.get("currentSection"));
+          return allSections.add(this.model);
         }
       }
     });
@@ -93,6 +102,7 @@
     return sectionCollection.fetch({
       success: function(coll) {
         var existingSectionsList;
+        console.log(coll.models[0]);
         return existingSectionsList = new views.ExistingSectionsList({
           collection: sectionCollection
         });

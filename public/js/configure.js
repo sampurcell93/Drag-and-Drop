@@ -140,6 +140,15 @@
         });
         return this;
       },
+      renderComponents: function(components) {
+        var component, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = components.length; _i < _len; _i++) {
+          component = components[_i];
+          _results.push(this[component].render());
+        }
+        return _results;
+      },
       generateSection: function(e) {
         var $t;
         if (e != null) {
@@ -207,7 +216,7 @@
           model: model
         });
         this.$el.append($(view.render(this.collection.models.length - 1).el));
-        view.setProps();
+        view.setProps().renderComponents(["builder", "organizer"]);
         return this;
       }
     });
@@ -295,15 +304,16 @@
         $el.children().not(".add-section").remove();
         len = allSections.models.length;
         return _.each(allSections.models, function(section, i) {
-          var tab;
+          var currIndex, tab;
           tab = new views.SectionTabItem({
             model: section
           }).render(i).el;
           $el.append(tab);
           if (i === len - 1) {
+            currIndex = 1;
             return $(tab).hide().animate({
               "width": "show"
-            }, 300).addClass("current-tab");
+            }, 300).addClass("current-tab").trigger("click");
           }
         });
       },
@@ -467,7 +477,6 @@
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
         this.$el.append(_.template(this.template, item));
-        this.$el.trigger("click");
         return this;
       },
       events: {
@@ -491,7 +500,7 @@
             }
             return currentSection.add(this.elementModel);
           } else {
-            allSections.at(this.options.index).get("properties").remove(this.model);
+            allSections.at(this.options.index || currIndex).get("properties").remove(this.model);
             return currentSection.remove(this.elementModel);
           }
         },

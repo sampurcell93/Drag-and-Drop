@@ -456,27 +456,30 @@ ul.property-editor {
       to { @include opacity(0); }
 }
 
-ul.generic-elements {
+ul.outside-draggables {
 	display: block;
 	margin: 10px 10px 0 0;
 	border-top: 1px solid #fff;
-	border-bottom: 1px solid #777;
 	@include border-radius(3px 3px 0 0);
 	background: $strongblue;
 	color: #fff;
 	
 	li {
-		@extend button;
 		text-shadow: none;
 		display: inline-block;
 		line-height: 30px;
 		padding: 5px 15px;
 		height: 100%;
 		margin: 0 3px;
+		position: relative;
 		cursor: pointer;
+		min-width: 100px;
+		text-align: center;
 
 		&:hover {
 			text-decoration: underline;
+
+			ul { display: block; }
 		}
 
 		&.dragging {
@@ -488,8 +491,37 @@ ul.generic-elements {
 			background: #fff;
 			color: #313131;
 		}
+
+		&.no-close ul { display: block; }
+
+		ul {
+			position:absolute;
+			width: 150%;
+			top: 100%;
+			left: -23px;
+			z-index: 9999;
+			border: 1px solid #aaa;
+			border-top: none;
+			display: none;
+
+			li {
+				width: 100%;
+				background: #fff;
+				color: $strongblue;
+				position: relative;
+				left: -3px;
+				min-width: 0%;
+			}
+
+			li:hover {
+				color: #f9f9f9;
+				background: $strongblue;
+			}
+		}
+
 	}
 }
+
 
 
 .over {
@@ -612,6 +644,10 @@ ul.generic-elements {
 
 			> .destroy-element, > .activate-element { display: block;}
 			 .sort-element {background: #ccc; }
+
+			 li {
+				background: #ddd !important;
+			 }
 		}
 
 		.activate-element, .destroy-element {
@@ -642,18 +678,25 @@ section.builder-container {
 		right: 0;
 	}
 
-	&.no-grid .builder-element {
-		border-color: transparent;
-		padding: 5px 0;
-		margin-left: 0;
-		margin-right: 0;
+	&.no-grid {
 
-		textarea, .big-input, .generic-list li {
-			border: none;
-			resize: none;
+		 .builder-element {
+			border-color: transparent;
+			padding: 5px 0;
+			margin-left: 0;
+			margin-right: 0;
+
+			textarea, .big-input, .generic-list li {
+				border: none;
+				resize: none;
+			}
+
+			.add-list-item { display: none; }
 		}
 
-		.add-list-item { display: none; }
+		.droppable-placeholder {
+			display: none
+		}
 	}
 }
 
@@ -720,29 +763,29 @@ section.builder-container {
 	width: 100;
 	position: relative;
 	left: 0;
-	margin: 0 auto;
+	margin: 2px auto;
 	@include opacity(0);
-	@include transition(opacity .2s linear);
-	border-top: 4px solid orange;
-	border-bottom: 4px solid orange;
+	@include transition(all .2s ease-in-out);
+	height: 14px;
+	border: 2px dashed orange;
 
-	&:after, &:before {
-		content: "";
-		position: absolute;
-		top: -4px;
-		display: black;
-		width: 0;
-		height: 0;
-		border: 4px solid transparent;
-	}
-	&:before {
-		right: 100%;
-		border-right-color: orange;
-	}
-	&:after {
-		left: 100%;
-		border-left-color: orange;	
-	}
+	// &:after, &:before {
+	// 	content: "";
+	// 	position: absolute;
+	// 	top: -4px;
+	// 	display: black;
+	// 	width: 0;
+	// 	height: 0;
+	// 	border: 4px solid transparent;
+	// }
+	// &:before {
+	// 	right: 100%;
+	// 	border-right-color: orange;
+	// }
+	// &:after {
+	// 	left: 100%;
+	// 	border-left-color: orange;	
+	// }
 }
 
 .ui-selectable-helper { 
@@ -860,4 +903,14 @@ ol.generic-list {
 	display: inline-block;
 	padding: 0px 4px;
 	margin: 0px 6px;
+}
+
+.layout-wrapper {
+	.droppable-placeholder {
+		display: inline-block;
+		height: auto;
+		width: 14px;
+	}
+
+
 }

@@ -54,7 +54,7 @@
           if (this.selected == null) {
             return alert("you must choose a layout");
           } else {
-            return this.applyLayout(allSections.at(sectionIndex).get("currentSection"));
+            return this.applyLayout(allSections.at(currIndex).get("currentSection"));
           }
         }
       },

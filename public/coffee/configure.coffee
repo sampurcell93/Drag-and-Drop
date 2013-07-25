@@ -132,6 +132,9 @@ $(document).ready ->
                 organizer: @organizer
             })
             this
+        renderComponents: (components) ->
+            for component in components
+                this[component].render()
         generateSection: (e) ->
             if e?
                 $t = $(e.currentTarget)
@@ -183,7 +186,7 @@ $(document).ready ->
             console.log("append tab")
             view = new views.SectionControllerView({model: model})
             @$el.append($(view.render(@collection.models.length - 1).el))
-            view.setProps()
+            view.setProps().renderComponents(["builder","organizer"])
             this
     }
 
@@ -254,7 +257,8 @@ $(document).ready ->
                 tab =  new views.SectionTabItem({ model: section }).render(i).el
                 $el.append tab
                 if i == len - 1
-                    $(tab).hide().animate({"width":"show"}, 300).addClass("current-tab")
+                    currIndex = 1
+                    $(tab).hide().animate({"width":"show"}, 300).addClass("current-tab").trigger("click")
         events: 
             "click .add-section": (e) ->
                 sectionIndex += 1
@@ -381,7 +385,7 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append _.template @template,item
-            @$el.trigger "click"
+            # @$el.trigger "click"
             this
         events:
             "click": (e) -> 
@@ -403,7 +407,7 @@ $(document).ready ->
                         @elementModel = new models.Element(model)
                     currentSection.add @elementModel
                 else 
-                    allSections.at(@options.index).get("properties").remove @model
+                    allSections.at(@options.index || currIndex).get("properties").remove @model
                     currentSection.remove @elementModel
             "keyup": (e) ->
                 $t =  $(e.currentTarget)

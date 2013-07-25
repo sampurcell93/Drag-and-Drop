@@ -43,7 +43,7 @@ app.post("/section", function(req,res) {
     var name = model.section_title
     console.log(model)
     console.log(name)
-    db.sections.update({title: name}, {'$set': {child_els: model}}, {upsert: true}, function(err, updated) {
+    db.sections.update({title: name}, {'$set':  model}, {upsert: true}, function(err, updated) {
         console.log(err, updated)
         res.json({success: true});
     })

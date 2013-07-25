@@ -8,7 +8,7 @@ include builder.jade
     //- The template for rendering a single instance of the builder - allows multiple builder tabs to be open at once.
     script(type='text/template')#controller-wrap
            header
-                input.inline(placeholder='Enter the Section title', name='section-title').section-title.w4
+                <input class='section-title w4 inline' placeholder='Enter the Section title' value='<%= typeof title !== "undefined" ? title : "" %>' name='section-title' />
                 button.fr.view-sections(data-icon='i') View Sections
                 button.fr.generate-section(data-icon='h') View Section Builder
                 button.fr.configure-interface.icon e
@@ -31,7 +31,16 @@ include builder.jade
 
             .section-builder-wrap.hidden
                 //-  Generic elements to drag into the builder
-                ul.fr.w75.generic-elements
+                ul.fr.w75.outside-draggables
+                    li.generic-elements
+                        | Basic
+                        ul
+                    li.layout-types
+                        | Layouts
+                        ul
+                    li.advanced 
+                        | Advanced
+                        ul
                 //- The UI architecture panel, which shows the overall structure of the section.
                 ul.organize-elements
                 //- The container for the builder itself.

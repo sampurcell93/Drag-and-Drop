@@ -4,7 +4,8 @@ script(type='text/template')#element-sortable-item
     div.activate-element m
     div.destroy-element g
     <span class='element-title'>
-    <%= (typeof title !== "undefined" && title !== "") ? flag = title.clean(true) : "Default Title" %>
+    <%= (typeof title !== "undefined" && title !== "") ?  title.clean(true) : "Default Title" %>
+    <%= (typeof type !== "undefined" && type !== "") ?  " - " + type : "" %>
     </span>
     ul.child-list
 script(type='text/template')#draggable-element

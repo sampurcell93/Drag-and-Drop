@@ -52,8 +52,15 @@ $(document).ready ->
             this
         events: 
             "click .view-section": ->
-                sectionIndex = allSections.length
-                new views.SectionController()
+                coll = new collections.Elements()
+                _.each @model.get("currentSection"), (obj) ->
+                    model = new models.Element(obj)
+                    model.set("child_els", model.modelify model.get("child_els"))
+                    coll.add model
+                @model.set("currentSection", coll)
+                @model.set("properties", new collections.Properties(@model.get("properties")))
+                console.log @model.get "currentSection"
+                allSections.add @model
     }
 
     window.views.SectionThumbnail = Backbone.View.extend {
@@ -74,6 +81,7 @@ $(document).ready ->
     sectionCollection = new collections.Elements()
     sectionCollection.fetch {
         success: (coll) ->
+            console.log coll.models[0]
             # Once the sections are pulled, generate the list.
             existingSectionsList = new views.ExistingSectionsList { collection : sectionCollection }
     }

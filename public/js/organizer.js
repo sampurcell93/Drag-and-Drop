@@ -50,19 +50,9 @@
         outOfFlow = [];
         index = that.options.index || sectionIndex;
         _.each(this.collection.models, function(el) {
-          if (el.get("inFlow") === false) {
-            outOfFlow.push(el);
-            return;
-          }
           return that.append(el, {
             index: index,
             outOfFlow: false
-          });
-        });
-        _.each(outOfFlow, function(out, i) {
-          return that.append(out, {
-            outOfFlow: true,
-            index: index
           });
         });
         return this;

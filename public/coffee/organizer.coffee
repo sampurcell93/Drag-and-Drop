@@ -41,16 +41,7 @@ $(document).ready ->
             outOfFlow = []
             index = that.options.index || sectionIndex
             _.each @collection.models, (el) ->
-                # If the element has been removed, we want to display it
-                # as an option at the bottom of the architecture panel
-                if el.get("inFlow") is false
-                    outOfFlow.push el
-                    return
                 that.append(el, {index: index, outOfFlow: false})
-            # Once every element still in flow has been rendered, render those not, 
-            # at bottom, with an option to distinguish them.
-            _.each outOfFlow, (out, i) ->
-                that.append(out, { outOfFlow: true, index: index})
             this
         # Method to avoid having ot rerender an entire list on add
         append: ( element, options ) -> 
@@ -74,6 +65,7 @@ $(document).ready ->
                 this.$el.prepend(itemView)
             else 
                 this.$el.children().eq(pos).before(itemView)
+
 
     }); 
 

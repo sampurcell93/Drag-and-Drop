@@ -15,7 +15,7 @@ $(document).ready ->
         initialize: ->
             @controller = @options.controller
             @wrapper = $(".control-section").eq(@controller.index)
-            @$el = @wrapper.find(".generic-elements")
+            @$el = @wrapper.find(".generic-elements ul")
             console.log @controller.index
             do @render
         render: ->
@@ -28,16 +28,18 @@ $(document).ready ->
     window.views.GenericListItem = Backbone.View.extend {
         initialize: ->
             # need to preserve default state of genericity
+            child_els = new collections.Elements()
+            child_els.model = @model
+            @model.set("child_els", child_els)
             @baseModel = @model.toJSON()
             self = @
             @$el.draggable {
                 # When the drop is bad, do nothing
                 revert: true
                 # Since elements are generic, the can be dragged infinitely.
-                helper: "clone"
-                    # $(new window.views[self.model.get("view")](self.model).render().el).clone()
+                helper: ->
+                    new window.views[self.model.get("view")]({model: self.model}).render().el
                 cursor: "move"
-                zIndex: 999999
                 start: (e, ui) ->
                     $(ui.helper).addClass("dragging")
                     # Give the builder an acceptable element.
@@ -53,7 +55,7 @@ $(document).ready ->
         template: $("#generic-element").html()
         tagName: 'li'
         render: ->
-            $el = @$el
+            $el = @$el.addClass("generic-item")
             $el.html _.template @template, @model.toJSON()
             this
     }
@@ -126,4 +128,4 @@ $(document).ready ->
         template: $("#custom-text").html()
         initialize: (options) ->
             super 
-            console.log("making customtext")
+            console.log("making customtext with index", @index)
