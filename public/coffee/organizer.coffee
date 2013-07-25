@@ -22,14 +22,15 @@ $(document).ready ->
                 items: '> li'
                 cancel: ".out-of-flow"
                 start: (e,ui)->
-                    that.origIndex = $(ui.item).addClass("moving-sort").index()
-                    that.collection.at(that.origIndex).trigger("sorting")
+                    that.oldIndex = ui.placeholder.index() - 1
+                    that.collection.at(that.oldIndex).trigger("sorting")
                 change: (e, ui) ->
-                    console.log "changing sort"
-                    console.log ui
+                    incrementer = 1
+                    # that.collection.at(that.origIndex)
+                    that.collection.reorder that.oldIndex+incrementer, that.oldIndex
+                    # ui.item.removeClass("moving-sort")
+                    that.oldIndex+incrementer
                 stop: (e, ui) ->
-                    that.collection.at(that.origIndex).trigger("end-sorting")
-                    that.collection.reorder $(ui.item).removeClass("moving-sort").index(), that.origIndex
                     ui.item.removeClass("moving-sort")
             }
             this
@@ -136,17 +137,13 @@ $(document).ready ->
             }   
             this
         append: ( child, opts )->
+            console.log "Appending child to org item", child
             $el = @$el
             if opts? and opts.at?
                 @appendAt(child, opts)
                 return this
             childList = $el.children(".child-list")
             elementItem = new views.SortableElementItem({model: child, index: @options.index}).render().el
-            if (opts? and opts.at?) 
-                if (childList.children().eq(opts.at).length)
-                    childList.children().eq(opts.at).before elementItem
-                else 
-                    childList.append elementItem
             if child.get("inFlow") is false  
                 opts.outOfFlow = true
                 $el.addClass("out-of-flow")
@@ -154,17 +151,23 @@ $(document).ready ->
                 $("<div />").addClass("destroy-element").text("g").prependTo($el)
             childList.append elementItem
         appendAt: (child, opts) ->
-            pos = opts.at
-            opts.model = child
-            $el = @$el.children(".child-list")
-            console.log pos, @model.get("child_els").length
-            itemView = new views.SortableElementItem(opts).render().el
-            if @model.get("child_els")? and pos >= @model.get("child_els").length - 1
-                $el.append(itemView)
-            else if pos is 0
-                $el.prepend(itemView)
+            self = @
+            if $.isArray(child)
+                console.log "THSI SHIT IS STILL AN ARRAY"
+                _.each child, (model) ->
+                    self.appendAt(model)
             else 
-                $el.children().eq(pos).before(itemView)
+                pos = opts.at
+                opts.model = child
+                $el = @$el.children(".child-list")
+                itemView = new views.SortableElementItem(opts).render().el
+                if @model.get("child_els")? and pos >= @model.get("child_els").length - 1
+                    $el.append(itemView)
+                else if pos is 0
+                    $el.prepend(itemView)
+                else 
+                    $el.children().eq(pos-1).after(itemView)
+                    $el.children().eq(pos).before(itemView)
         events:
             "mousedown .sort-element": (e) ->
                 @model.trigger("dragging")

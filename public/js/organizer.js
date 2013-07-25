@@ -27,16 +27,16 @@
           items: '> li',
           cancel: ".out-of-flow",
           start: function(e, ui) {
-            that.origIndex = $(ui.item).addClass("moving-sort").index();
-            return that.collection.at(that.origIndex).trigger("sorting");
+            that.oldIndex = ui.placeholder.index() - 1;
+            return that.collection.at(that.oldIndex).trigger("sorting");
           },
           change: function(e, ui) {
-            console.log("changing sort");
-            return console.log(ui);
+            var incrementer;
+            incrementer = 1;
+            that.collection.reorder(that.oldIndex + incrementer, that.oldIndex);
+            return that.oldIndex + incrementer;
           },
           stop: function(e, ui) {
-            that.collection.at(that.origIndex).trigger("end-sorting");
-            that.collection.reorder($(ui.item).removeClass("moving-sort").index(), that.origIndex);
             return ui.item.removeClass("moving-sort");
           }
         });
@@ -169,6 +169,7 @@
       },
       append: function(child, opts) {
         var $el, childList, elementItem;
+        console.log("Appending child to org item", child);
         $el = this.$el;
         if ((opts != null) && (opts.at != null)) {
           this.appendAt(child, opts);
@@ -179,13 +180,6 @@
           model: child,
           index: this.options.index
         }).render().el;
-        if ((opts != null) && (opts.at != null)) {
-          if ((childList.children().eq(opts.at).length)) {
-            childList.children().eq(opts.at).before(elementItem);
-          } else {
-            childList.append(elementItem);
-          }
-        }
         if (child.get("inFlow") === false) {
           opts.outOfFlow = true;
           $el.addClass("out-of-flow");
@@ -195,18 +189,26 @@
         return childList.append(elementItem);
       },
       appendAt: function(child, opts) {
-        var $el, itemView, pos;
-        pos = opts.at;
-        opts.model = child;
-        $el = this.$el.children(".child-list");
-        console.log(pos, this.model.get("child_els").length);
-        itemView = new views.SortableElementItem(opts).render().el;
-        if ((this.model.get("child_els") != null) && pos >= this.model.get("child_els").length - 1) {
-          return $el.append(itemView);
-        } else if (pos === 0) {
-          return $el.prepend(itemView);
+        var $el, itemView, pos, self;
+        self = this;
+        if ($.isArray(child)) {
+          console.log("THSI SHIT IS STILL AN ARRAY");
+          return _.each(child, function(model) {
+            return self.appendAt(model);
+          });
         } else {
-          return $el.children().eq(pos).before(itemView);
+          pos = opts.at;
+          opts.model = child;
+          $el = this.$el.children(".child-list");
+          itemView = new views.SortableElementItem(opts).render().el;
+          if ((this.model.get("child_els") != null) && pos >= this.model.get("child_els").length - 1) {
+            return $el.append(itemView);
+          } else if (pos === 0) {
+            return $el.prepend(itemView);
+          } else {
+            $el.children().eq(pos - 1).after(itemView);
+            return $el.children().eq(pos).before(itemView);
+          }
         }
       },
       events: {

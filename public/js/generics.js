@@ -48,7 +48,7 @@
           start: function(e, ui) {
             var toAdd;
             $(ui.helper).addClass("dragging");
-            toAdd = $.extend({}, self.model.toJSON());
+            toAdd = new models.Element(self.model.toJSON());
             console.log(toAdd);
             return window.currentDraggingModel = toAdd;
           },

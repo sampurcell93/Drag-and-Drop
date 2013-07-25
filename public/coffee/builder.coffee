@@ -6,9 +6,9 @@ $(document).ready ->
 
     window.globals =
          setPlaceholders: (draggable, collection) ->
-            console.log "next one ", draggable.next(".droppable-placeholder").length, " prev one", draggable.prev(".droppable-placeholder").length
-            draggable.before(new window.views.droppablePlaceholder({collection: collection}).render())
-            draggable.after(new window.views.droppablePlaceholder({collection: collection}).render())
+            draggable
+            .before(new window.views.droppablePlaceholder({collection: collection}).render())
+            .after(new window.views.droppablePlaceholder({collection: collection}).render())
             # extra = new window.views.droppablePlaceholder({collection: collection}).render()
             # if (draggable.index() is 0 and !draggable.hasClass("builder-child"))
             #     draggable.before(extra)
@@ -18,8 +18,10 @@ $(document).ready ->
 
     window.models.Element = Backbone.Model.extend {
         defaults: ->
-            "child_els": new collections.Elements()
-            "inFlow": true
+            child_els = new collections.Elements()
+            child_els.model = @
+            {"child_els": child_els
+            "inFlow": true}
         url: ->
             url = "/section/"
             url += if @id? then @id else ""
@@ -37,7 +39,7 @@ $(document).ready ->
         parse: (response) ->
             response.child_els = @modelify(response.child_els)
             response
-        blendModels: (putIn) ->
+        blend: (putIn, at) ->
             # If put in is a collection
             if $.isArray(putIn) is true and putIn.length > 1
                 if putIn.indexOf(@) != -1
@@ -52,8 +54,10 @@ $(document).ready ->
             # Get all current child elements, add the dropped element(s)
             # and put the collection back in
             children = @get "child_els"
-            if children?
-                @set "child_els", children.add(putIn)
+            # We don't need to validate "at" because backbone will simply append if "at" is undefined
+            console.log putIn instanceof models.Element
+            children.add(putIn, {at: at})
+            @set "child_els", children
             true
         updateListItems: (text, index) ->
              if (@get("type") == "Numbered List" || @get("type") == "Bulleted List")
@@ -69,6 +73,13 @@ $(document).ready ->
     window.collections.Elements = Backbone.Collection.extend {
         model: models.Element
         url: '/section/'
+        blend: (putIn, at) ->
+            if $.isArray(putIn) is true and putIn.length > 1
+                 _.each putIn, (model) ->
+                    model.collection.remove model
+            else if putIn.collection?
+                putIn.collection.remove putIn
+            @add putIn, {at: at}
          # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
         reorder: (newIndex, originalIndex, collection, options) ->
@@ -95,6 +106,9 @@ $(document).ready ->
     }
 
     class window.views.droppablePlaceholder extends Backbone.View
+        events:
+            "remove": ->
+                do @remove
         render: ->
             self = @
             ghostFragment = $("<div/>").addClass("droppable-placeholder").text("")
@@ -113,19 +127,17 @@ $(document).ready ->
                         insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev())
                     else 
                         insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev())
-                    insertAt += 1
+                    if (ui.draggable.index() > dropZone.index())
+                        insertAt += 1
                     curr = window.currentDraggingModel
-                    c = curr.collection
-                    # If the model is in a collection, and it's not the same one as the builder,
-                    # IE not top level
-                    if c? and c != self.collection
-                        c.remove curr
-                        curr.set "inFlow", true
-                    self.collection.add curr, {at: insertAt}
+                    parent = self.collection.model 
+                    if typeof parent is "function" or !parent? then parent = self.collection
+                    parent.blend(curr, insertAt)
+                    $(e.target).css("opacity", 0)
                     delete window.currentDraggingModel
                     window.currentDraggingModel = null
-                    $(e.target).css("opacity", 0)
-                    # e.target.remove()
+                    ui.helper.fadeOut(300)
+
 
     ### A configurable element bound to a property or page element
         Draggable, droppable, nestable. ###
@@ -144,9 +156,13 @@ $(document).ready ->
                 "change:styles": @setStyles
                 "change:inFlow": ( model ) ->
                     if model.get("inFlow") is true
-                         self.$el.slideDown("fast")
+                         self.$el.slideDown("fast").
+                         next(".droppable-placeholder").slideDown("fast").
+                         prev(".droppable-placeholder").slideDown("fast")
                     else 
-                        self.$el.slideUp("fast").prev(".droppable-placeholder").remove()
+                        self.$el.slideUp("fast").
+                        next(".droppable-placeholder").slideUp("fast").
+                        prev(".droppable-placeholder").slideUp("fast")
                 "remove": ->
                     self.$el.next(".droppable-placeholder").remove()
                     do self.remove
@@ -191,7 +207,7 @@ $(document).ready ->
                         builderChildren.eq(opts.at).before(draggable)
                     else @$el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
-                allSections.at(@index).get("builder").removeExtras()
+                allSections.at(@index).get("builder").removeExtraPlaceholders()
         setStyles: ->
             # Get all styling information associated with model
             styles = @model.get "styles"
@@ -219,7 +235,9 @@ $(document).ready ->
                         # Do not reappend the direct dragged item - it need not be selected, per se
                         # but may still be the subject of a drag. Do not reappend children.
                         unless self.is(this) or $(this).hasClass("builder-child")
-                            wrap.append $(this).clone()
+                            if $(this).index() > self.index()
+                                wrap.append $(this).clone()
+                            else wrap.prepend $(this).clone()
                     wrap.addClass("selected-element")
                 cursor: "move"
                 start: (e, ui) ->
@@ -256,7 +274,7 @@ $(document).ready ->
                 draggingModel = window.currentDraggingModel
                 # if the dragged element is a direct child of its new parent, do nothing
                 unless draggingModel.collection is model.get("child_els")
-                 if model.blendModels(draggingModel) is true
+                 if model.blend(draggingModel) is true
                     $(ui.helper).remove()
                     # Lets the drag element know that it was a success
                     ui.draggable.data('dropped', true)
@@ -357,10 +375,8 @@ $(document).ready ->
                 cancel: ".builder-element"
                 tolerance: 'touch'
                 selecting: (e,ui) ->
-                    console.log e
                     $(ui.selecting). trigger "select"
                 unselecting: (e,ui) ->
-                    console.log ui
                     if (e.shiftKey is true) then return 
                     $item = $(ui.unselecting)
                     $item.trigger "deselect"
@@ -385,14 +401,13 @@ $(document).ready ->
                 if @$el.children(".builder-element").eq(opts.at).length 
                     @$el.children(".builder-element").eq(opts.at).before(draggable)
                 else @$el.children(".builder-element").eq(opts.at - 1).after(draggable)
-            console.log @controller.get("currentSection")
             globals.setPlaceholders($(draggable), @controller.get("currentSection"))
-            @removeExtras()
-        removeExtras: ->
+            @removeExtraPlaceholders()
+        removeExtraPlaceholders: ->
             @$el.find(".droppable-placeholder").each ->
                 $t = $(this)
-                if $t.next().hasClass("droppable-placeholder")
+                if $t.next().hasClass("droppable-placeholder") or $t.next().length == 0
                     $t.next().remove()  
-                if $t.prev().hasClass("droppable-placeholder")
+                if $t.prev().hasClass("droppable-placeholder") or $t.prev().length == 0
                     $t.prev().remove()
     }

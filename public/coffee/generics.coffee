@@ -35,12 +35,13 @@ $(document).ready ->
                 revert: true
                 # Since elements are generic, the can be dragged infinitely.
                 helper: "clone"
+                    # $(new window.views[self.model.get("view")](self.model).render().el).clone()
                 cursor: "move"
                 zIndex: 999999
                 start: (e, ui) ->
                     $(ui.helper).addClass("dragging")
                     # Give the builder an acceptable element.
-                    toAdd = $.extend({}, self.model.toJSON())
+                    toAdd = new models.Element(self.model.toJSON())
                     console.log toAdd
                     window.currentDraggingModel = toAdd
                 stop: (e, ui) ->

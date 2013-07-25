@@ -98,18 +98,16 @@
         if (typeof opts === "undefined" || opts === null) {
           opts = {};
         }
-        this.model.index = opts.index || allSections.length - 1;
-        this.model.set("currentSection", opts.currentSection || new collections.Elements());
-        this.builder = opts.builder || new views.SectionBuilder({
+        this.model.index = allSections.length - 1;
+        this.builder = new views.SectionBuilder({
           controller: this.model,
           collection: this.model.get("currentSection")
         });
-        this.organizer = opts.organizer || new views.ElementOrganizer({
+        this.organizer = new views.ElementOrganizer({
           controller: this.model,
           collection: this.model.get("currentSection")
         });
-        this.properties = opts.properties || new collections.Properties();
-        this.classes = opts.classes || new collections.ClassList({
+        this.classes = new collections.ClassList({
           controller: this.model
         });
         this.classes.fetch({
@@ -119,7 +117,7 @@
               controller: that.model
             });
             return that.selectedData = new views.SelectedDataList({
-              collection: that.properties,
+              collection: that.model.get("properties"),
               controller: that.model
             });
           },
@@ -138,8 +136,7 @@
         });
         this.model.set({
           builder: this.builder,
-          organizer: this.organizer,
-          properties: this.properties
+          organizer: this.organizer
         });
         return this;
       },
@@ -167,8 +164,8 @@
         copy = new models.SectionController();
         copy.set({
           currentSection: this.model.get("currentSection"),
-          properties: this.model.get("properties"),
-          section_title: title
+          section_title: title,
+          properties: this.model.get("properties")
         });
         console.log(copy.get("currentSection").models);
         return copy.save(null, {
@@ -321,7 +318,13 @@
       }
     });
     window.models.SectionController = Backbone.Model.extend({
-      url: '/section'
+      url: '/section',
+      defaults: function() {
+        return {
+          "currentSection": new collections.Elements(),
+          "properties": new collections.Properties()
+        };
+      }
     });
     window.views.DataView = Backbone.View.extend({
       initialize: function() {
@@ -464,7 +467,6 @@
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
         this.$el.append(_.template(this.template, item));
-        this.selected = true;
         this.$el.trigger("click");
         return this;
       },
@@ -477,6 +479,7 @@
           currentSection = allSections.at(this.options.index).get("currentSection");
           this.model.selected = selected ? false : true;
           if (this.model.selected === true) {
+            console.log(allSections.at(this.options.index));
             allSections.at(this.options.index).get("properties").add(this.model);
             model = this.model.toJSON();
             model.title = model.className + "." + model.name;

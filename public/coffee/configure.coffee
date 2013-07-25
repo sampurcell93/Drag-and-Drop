@@ -99,31 +99,26 @@ $(document).ready ->
             that = this
             if !opts? 
                 opts = {}
-            @model.index = opts.index || allSections.length - 1 
+            @model.index = allSections.length - 1 
             # Render page scaffolding
-            # @render()
-            # Make a new, empty collection of elements.
-            @model.set "currentSection",  (opts.currentSection ||  new collections.Elements())
             # The controller now has a reference to the builder
-            @builder = opts.builder ||  new views.SectionBuilder({
+            @builder = new views.SectionBuilder({
                 controller: @model
                 collection: @model.get("currentSection")
             })
             # Link this controller to the scaffolding - which is linked to the collection itself.
             # Through this narrow channel, the controller gains access to the architecture of the section,
             # and also to the intricacies of the build.
-            @organizer = opts.organizer ||  new views.ElementOrganizer {
+            @organizer = new views.ElementOrganizer {
                 controller: @model
                 collection: @model.get("currentSection")
             }
-            # Collection of all selected properties
-            @properties = opts.properties || new collections.Properties()
             # All classes
-            @classes = opts.classes || new collections.ClassList({controller: @model})
+            @classes =  new collections.ClassList({controller: @model})
             @classes.fetch({
                 success: (coll) ->
                     that.dataview = new views.DataView({collection: coll, controller: that.model})
-                    that.selectedData = new views.SelectedDataList({collection: that.properties, controller: that.model})
+                    that.selectedData = new views.SelectedDataList({collection:that.model.get("properties"), controller: that.model})
                 failure: ->
                     alert("could not get data from URL " + that.url)    
             })
@@ -135,7 +130,6 @@ $(document).ready ->
             @model.set({
                 builder: @builder
                 organizer: @organizer
-                properties: @properties
             })
             this
         generateSection: (e) ->
@@ -157,8 +151,8 @@ $(document).ready ->
             copy = new models.SectionController()
             copy.set({
                 currentSection: @model.get("currentSection")
-                properties: @model.get("properties")
                 section_title: title
+                properties: @model.get("properties")
             })
             console.log copy.get("currentSection").models
             copy.save(null, {
@@ -277,6 +271,10 @@ $(document).ready ->
 
     window.models.SectionController = Backbone.Model.extend {
         url: '/section'
+        defaults: ->
+            "currentSection":  new collections.Elements()
+            "properties":  new collections.Properties()
+
     }
 
     # A View of all Classes
@@ -383,7 +381,6 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append _.template @template,item
-            @selected = true
             @$el.trigger "click"
             this
         events:
@@ -394,6 +391,7 @@ $(document).ready ->
                 currentSection = allSections.at(@options.index).get("currentSection")
                 @model.selected = if selected then false else true
                 if @model.selected is true
+                    console.log   allSections.at(@options.index)
                     allSections.at(@options.index).get("properties").add @model
                     model = @model.toJSON()
                     model.title = model.className + "." + model.name
