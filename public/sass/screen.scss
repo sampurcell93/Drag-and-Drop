@@ -1,3 +1,4 @@
+
 /* Welcome to Compass.
  * In this file you should write your main styles. (or centralize your imports)
  * Import this file using the following HTML or equivalent:
@@ -606,10 +607,9 @@ ul.outside-draggables {
 	min-height: 100%;
 	margin: 10px;
 	padding: 5px;
-	width: 27.5%;
+	width: 25.5%;
 	float: left;
 	position: relative;
-	margin-left: -5%;
 	background: #fff;
 	@include border-radius(3px);
 	@include box-shadow(0px 1px 2px #aaa);
@@ -753,9 +753,9 @@ section.builder-container {
  	&:hover { 
 		border: 1px dotted $strongblue;
 		@include box-shadow(0px 0px 4px $medblue);
-
-		> .config-menu-wrap {
-			@include opacity(.6);
+		
+		> .config-menu-wrap  {
+			@include opacity(1);
 		}
  	}
 
@@ -833,7 +833,6 @@ section.builder-container {
 	display: block;
 	cursor: pointer;
 	text-align: center;
-	background: $strongblue;
 	width: 65px;
 	height: 100%;
 	max-height: 38px;
@@ -846,7 +845,7 @@ section.builder-container {
 		padding: 0 6px;
 		width: 50%;
 		line-height: 38px;
-		color: #f9f9f9;
+		color: $strongblue;
 		position: relative;
 
 		li { color: #333; }
@@ -935,11 +934,16 @@ ol.generic-list {
 }
 
 .layout-wrapper {
-	.droppable-placeholder {
-		display: inline-block;
-		height: auto;
-		width: 14px;
+	border: 1px solid $medblue;
+	padding: 20px;
+	
+	&:hover {
+		@include box-shadow(none);
 	}
 
+}
 
+@media all and (min-width: 1000px) {
+	width: 27.5%;
+	margin-left: -5%;
 }
