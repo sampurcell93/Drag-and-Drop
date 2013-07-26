@@ -17,6 +17,12 @@ $(document).ready ->
             type: 'Accordion'
             view: 'accordion'
         }
+        {
+            type: 'Free Form'
+            view: 'Freeform'
+            columns: '2'
+            rows: '2'
+        }
     ]
     class window.models.Layout extends window.models.Element
 
@@ -74,3 +80,26 @@ $(document).ready ->
             _.bindAll @, "afterRender"
             super
         afterRender: ->
+
+    class window.views["Freeform"] extends window.views["genericElement"]
+        template: $("#freeform-layout").html()
+        configTemplate: $("#freeform-config").html()
+        initialize: ->
+            _.bindAll @, "afterRender", "beforeRender"
+            super
+        afterRender: ->
+        beforeRender: ->
+            self = @
+            if $(".modal").length is 0
+                modal = window.launchModal(_.template(@configTemplate, @model.toJSON()))
+            else 
+                modal = $(".modal").first()
+            modal.delegate ".submit", "click", ->
+                cols = parseInt($(".set-columns").val())
+                rows = parseInt($(".set-rows").val())
+                # Default to 2x2
+                if !validNumber(cols) then cols = 2
+                if !validNumber(rows) then rows = 2
+                self.model.set("rows", rows, {silent: true})
+                self.model.set("columns", cols, {silent: true})
+                self.model.trigger("renderBase")

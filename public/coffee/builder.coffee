@@ -171,10 +171,15 @@ $(document).ready ->
                 "end-sorting": ->
                     if (self.$el.hasClass("ui-selected") is false)
                         self.$el.removeClass("selected-element")
+                "change": ->
+                    @render(false)
+                "renderBase": ->
+                    @render(false)
             }
             do @bindDrop
             do @bindDrag
-        render: ->
+        render: (do_children) ->
+            if typeof do_children is "undefined" then do_children = true
             # For inherited views that don't want to overwrite render entirely, we have 
             # custom methods to accompany it.
             (@beforeRender || -> {})()
@@ -185,7 +190,7 @@ $(document).ready ->
             # Get model layout properties and set applicable as classes
             @setStyles()
             $el.html(_.template @template, model.toJSON()).append(_.template @controls, {})
-            if children?
+            if children? and do_children is true
                 _.each children.models , (el) ->
                     that.appendChild el, {}
             $el.hide().fadeIn(325)

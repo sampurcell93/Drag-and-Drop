@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4;
+    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     allLayouts = [
       {
         type: 'Dynamic Layout',
@@ -18,6 +18,11 @@
       }, {
         type: 'Accordion',
         view: 'accordion'
+      }, {
+        type: 'Free Form',
+        view: 'Freeform',
+        columns: '2',
+        rows: '2'
       }
     ];
     window.models.Layout = (function(_super) {
@@ -123,7 +128,7 @@
       return _Class;
 
     })(window.views["genericElement"]);
-    return window.views["tabs"] = (function(_super) {
+    window.views["tabs"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -139,6 +144,56 @@
       };
 
       _Class.prototype.afterRender = function() {};
+
+      return _Class;
+
+    })(window.views["genericElement"]);
+    return window.views["Freeform"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
+      }
+
+      _Class.prototype.template = $("#freeform-layout").html();
+
+      _Class.prototype.configTemplate = $("#freeform-config").html();
+
+      _Class.prototype.initialize = function() {
+        _.bindAll(this, "afterRender", "beforeRender");
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      _Class.prototype.afterRender = function() {};
+
+      _Class.prototype.beforeRender = function() {
+        var modal, self;
+        self = this;
+        if ($(".modal").length === 0) {
+          modal = window.launchModal(_.template(this.configTemplate, this.model.toJSON()));
+        } else {
+          modal = $(".modal").first();
+        }
+        return modal.delegate(".submit", "click", function() {
+          var cols, rows;
+          cols = parseInt($(".set-columns").val());
+          rows = parseInt($(".set-rows").val());
+          if (!validNumber(cols)) {
+            cols = 2;
+          }
+          if (!validNumber(rows)) {
+            rows = 2;
+          }
+          self.model.set("rows", rows, {
+            silent: true
+          });
+          self.model.set("columns", cols, {
+            silent: true
+          });
+          return self.model.trigger("renderBase");
+        });
+      };
 
       return _Class;
 

@@ -257,14 +257,23 @@
             if (self.$el.hasClass("ui-selected") === false) {
               return self.$el.removeClass("selected-element");
             }
+          },
+          "change": function() {
+            return this.render(false);
+          },
+          "renderBase": function() {
+            return this.render(false);
           }
         });
         this.bindDrop();
         return this.bindDrag();
       };
 
-      draggableElement.prototype.render = function() {
+      draggableElement.prototype.render = function(do_children) {
         var $el, children, model, that;
+        if (typeof do_children === "undefined") {
+          do_children = true;
+        }
         (this.beforeRender || function() {
           return {};
         })();
@@ -274,7 +283,7 @@
         $el = this.$el;
         this.setStyles();
         $el.html(_.template(this.template, model.toJSON())).append(_.template(this.controls, {}));
-        if (children != null) {
+        if ((children != null) && do_children === true) {
           _.each(children.models, function(el) {
             return that.appendChild(el, {});
           });

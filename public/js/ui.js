@@ -5,6 +5,15 @@
     window.views = {};
     window.collections = {};
     window.propertyLink = $("#property-link").html();
+    window.launchModal = function(content) {
+      var modal;
+      modal = $("<div />").addClass("modal").html(content).prepend("<div class='close-modal icon'>g</div>");
+      $(document.body).addClass("active-modal").append(modal);
+      return modal;
+    };
+    window.validNumber = function(num) {
+      return !isNaN(parseInt(num));
+    };
     return $(this).delegate(".close-modal", "click", function() {
       $(this).closest(".modal").remove();
       return $("body").removeClass("active-modal");

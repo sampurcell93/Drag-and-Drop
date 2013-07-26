@@ -13,3 +13,19 @@ script#tab-layout(type='text/template')
     p.p10.center.placeholder Tabs here    
 script#accordion-layout(type='text/template')
     p.p10.center.placeholder Accordion here!
+script#freeform-layout(type='text/template')
+    p.p10.center.placeholder Free form layout here!
+    <% for (var j = 0; j < rows; j++) { %>
+    div.builder-element
+        | ROW
+        <% for (var i = 0; i < columns; i++) { %>
+        div.builder-element
+            | COL
+    <% } %>
+    <% } %>
+    
+script#freeform-config(type='text/template')
+    input(data-property='columns', type='text', placeholder='Number of columns', value='2').set-columns
+    input(data-property='rows', type='text', placeholder='Number of rows', value='2').set-rows
+    button.submit.fr Ok
+
