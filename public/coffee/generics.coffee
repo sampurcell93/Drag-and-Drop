@@ -1,5 +1,46 @@
 $(document).ready ->
 
+    generics = [
+        {
+            "type" : "Button",
+            "view" : "Button"
+        },
+        {
+            "type" : "Custom Text",
+            "view" : "CustomText"
+        },
+        {
+            "type" : "Custom Header",
+            "view" : "CustomHeader"
+        },
+        {
+            "tagName" : "ol",
+            "type" : "Numbered List",
+            "view" : "listElement"
+        },
+        {
+            "tagName" : "ul",
+            "type" : "Bulleted List",
+            "view" : "listElement"
+        },
+        {
+            type: 'Date/Time'
+            view: 'DateTime'
+        },
+        {
+            type: 'Radio'
+            view: 'Radio'
+        },
+        {
+            type: 'Link'
+            view: 'Link'
+        },
+        {
+            type: 'Dropdown'
+            view: 'Dropdown'
+        },
+    ]
+
     window.models.GenericElement = Backbone.Model.extend {
         defaults: ->
             listItems: [1,2,3]
@@ -14,9 +55,10 @@ $(document).ready ->
     window.views.GenericList = Backbone.View.extend {
         initialize: ->
             @controller = @options.controller
+            @collection = new collections.GenericElements(generics)
             @wrapper = $(".control-section").eq(@controller.index)
             @$el = @wrapper.find(".generic-elements ul")
-            console.log @controller.index
+            @el = @$el.get()
             do @render
         render: ->
             $el = @$el
@@ -28,23 +70,22 @@ $(document).ready ->
     window.views.GenericListItem = Backbone.View.extend {
         initialize: ->
             # need to preserve default state of genericity
-            child_els = new collections.Elements()
-            child_els.model = @model
-            @model.set("child_els", child_els)
             @baseModel = @model.toJSON()
             self = @
             @$el.draggable {
                 # When the drop is bad, do nothing
                 revert: true
                 # Since elements are generic, the can be dragged infinitely.
-                helper: ->
-                    new window.views[self.model.get("view")]({model: self.model}).render().el
+                helper: "clone"
+                    # $(new window.views[self.model.get("view")]({model: self.model}).render().el).css("width","500px")
                 cursor: "move"
                 start: (e, ui) ->
                     $(ui.helper).addClass("dragging")
+                    child_els = new collections.Elements()
+                    toAdd = new models.Element(self.baseModel)
+                    child_els.model = toAdd
+                    toAdd.set("child_els", child_els)
                     # Give the builder an acceptable element.
-                    toAdd = new models.Element(self.model.toJSON())
-                    console.log toAdd
                     window.currentDraggingModel = toAdd
                 stop: (e, ui) ->
                     $(ui.item).removeClass("dragging").remove()
@@ -112,7 +153,6 @@ $(document).ready ->
     class window.views['Button'] extends window.views.genericElement
         template: $("#button-template").html()
         initialize: (options) ->
-            console.log(@events)
             super
             # Key line which binds all parent views to this, the descendant!
             _.bindAll(@, "beforeRender")
@@ -128,4 +168,21 @@ $(document).ready ->
         template: $("#custom-text").html()
         initialize: (options) ->
             super 
-            console.log("making customtext with index", @index)
+    class window.views['Radio'] extends window.views.genericElement
+        template: $("#custom-text").html()
+        initialize: (options) ->
+            super 
+    class window.views['Link'] extends window.views.genericElement
+        template: $("#custom-text").html()
+        initialize: (options) ->
+            super 
+
+    class window.views['DateTime'] extends window.views.genericElement
+        template: $("#custom-text").html()
+        initialize: (options) ->
+            super 
+
+    class window.views['Dropdown'] extends window.views.genericElement
+        template: $("#custom-text").html()
+        initialize: (options) ->
+            super 

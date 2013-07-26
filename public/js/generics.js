@@ -4,7 +4,39 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var _ref, _ref1, _ref2, _ref3, _ref4;
+    var generics, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+    generics = [
+      {
+        "type": "Button",
+        "view": "Button"
+      }, {
+        "type": "Custom Text",
+        "view": "CustomText"
+      }, {
+        "type": "Custom Header",
+        "view": "CustomHeader"
+      }, {
+        "tagName": "ol",
+        "type": "Numbered List",
+        "view": "listElement"
+      }, {
+        "tagName": "ul",
+        "type": "Bulleted List",
+        "view": "listElement"
+      }, {
+        type: 'Date/Time',
+        view: 'DateTime'
+      }, {
+        type: 'Radio',
+        view: 'Radio'
+      }, {
+        type: 'Link',
+        view: 'Link'
+      }, {
+        type: 'Dropdown',
+        view: 'Dropdown'
+      }
+    ];
     window.models.GenericElement = Backbone.Model.extend({
       defaults: function() {
         return {
@@ -19,9 +51,10 @@
     window.views.GenericList = Backbone.View.extend({
       initialize: function() {
         this.controller = this.options.controller;
+        this.collection = new collections.GenericElements(generics);
         this.wrapper = $(".control-section").eq(this.controller.index);
         this.$el = this.wrapper.find(".generic-elements ul");
-        console.log(this.controller.index);
+        this.el = this.$el.get();
         return this.render();
       },
       render: function() {
@@ -37,25 +70,20 @@
     });
     window.views.GenericListItem = Backbone.View.extend({
       initialize: function() {
-        var child_els, self;
-        child_els = new collections.Elements();
-        child_els.model = this.model;
-        this.model.set("child_els", child_els);
+        var self;
         this.baseModel = this.model.toJSON();
         self = this;
         return this.$el.draggable({
           revert: true,
-          helper: function() {
-            return new window.views[self.model.get("view")]({
-              model: self.model
-            }).render().el;
-          },
+          helper: "clone",
           cursor: "move",
           start: function(e, ui) {
-            var toAdd;
+            var child_els, toAdd;
             $(ui.helper).addClass("dragging");
-            toAdd = new models.Element(self.model.toJSON());
-            console.log(toAdd);
+            child_els = new collections.Elements();
+            toAdd = new models.Element(self.baseModel);
+            child_els.model = toAdd;
+            toAdd.set("child_els", child_els);
             return window.currentDraggingModel = toAdd;
           },
           stop: function(e, ui) {
@@ -156,7 +184,6 @@
       _Class.prototype.template = $("#button-template").html();
 
       _Class.prototype.initialize = function(options) {
-        console.log(this.events);
         _Class.__super__.initialize.apply(this, arguments);
         return _.bindAll(this, "beforeRender");
       };
@@ -185,7 +212,7 @@
       return _Class;
 
     })(window.views.genericElement);
-    return window.views['CustomText'] = (function(_super) {
+    window.views['CustomText'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -196,8 +223,75 @@
       _Class.prototype.template = $("#custom-text").html();
 
       _Class.prototype.initialize = function(options) {
-        _Class.__super__.initialize.apply(this, arguments);
-        return console.log("making customtext with index", this.index);
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      return _Class;
+
+    })(window.views.genericElement);
+    window.views['Radio'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
+      }
+
+      _Class.prototype.template = $("#custom-text").html();
+
+      _Class.prototype.initialize = function(options) {
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      return _Class;
+
+    })(window.views.genericElement);
+    window.views['Link'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
+      }
+
+      _Class.prototype.template = $("#custom-text").html();
+
+      _Class.prototype.initialize = function(options) {
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      return _Class;
+
+    })(window.views.genericElement);
+    window.views['DateTime'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
+      }
+
+      _Class.prototype.template = $("#custom-text").html();
+
+      _Class.prototype.initialize = function(options) {
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      return _Class;
+
+    })(window.views.genericElement);
+    return window.views['Dropdown'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref8 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref8;
+      }
+
+      _Class.prototype.template = $("#custom-text").html();
+
+      _Class.prototype.initialize = function(options) {
+        return _Class.__super__.initialize.apply(this, arguments);
       };
 
       return _Class;

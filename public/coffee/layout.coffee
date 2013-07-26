@@ -1,54 +1,76 @@
 $(document).ready ->
-   window.collections.Layouts = Backbone.Collection.extend {
-        url: '/layout'
-        initialize: ->
-            self = @
-            @fetch {
-                success: ->
-                    window.layoutList = new views.LayoutList {collection: self}
-            }
-   } 
 
-   window.models.Layout = Backbone.Model.extend {}
+    allLayouts =[
+        {
+            type: 'Dynamic Layout'
+            view: 'dynamicLayout'
+        },
+        {
+            type: 'Dynamic Container'
+            view: 'dynamicContainer'
+        },
+        {
+            type: 'Tabs'
+            view: 'tabs'
+        },
+        {
+            type: 'Accordion'
+            view: 'accordion'
+        }
+    ]
+    class window.models.Layout extends window.models.Element
 
-   window.views.LayoutItem = Backbone.View.extend {
-        tagName: 'li'
-        template: $("#layout-item").html()
-        render: ->
-            @$el.html(_.template @template, @model.toJSON())
-            this
-        events:
-            "click": (e)->
-                $(e.target).toggleClass("selected-layout").siblings().removeClass("selected-layout")
-                window.layoutList.selected = @model
-   }
-   window.views.LayoutList = Backbone.View.extend {
-        tagName: 'div class="modal"'
+
+    window.collections.Layouts = Backbone.Collection.extend {
+        model: models.Layout          
+    } 
+
+    window.views.LayoutList = Backbone.View.extend {
+        el: ".layout-types ul"
         template: $("#picker-interface").html()
         initialize: ->
-            _.bindAll this, "render"
-            @render()
+            @controller = @options.controller
+            @collection = new collections.Layouts(allLayouts)
+            @wrapper = $(".control-section").eq(@controller.index)
+            @$el = @wrapper.find(@el)
+            @el = @$el.get()
+            do @render
         render: ->
-            self = @
             $el = @$el
-            $el.append _.template @template, {}
             _.each @collection.models, (layout) ->
-                $el.find(".layout-list").append(new views.LayoutItem({model: layout}).render().el)
-            $(document.body).addClass("active-modal").append($el)
-        events: 
-            'click .try-layout': ->
-                if !@selected? 
-                    alert "you must choose a layout"
-                else
-                    @applyLayout(allSections.at(currIndex).get("currentSection"))
-        applyLayout: (collection) ->
-            self = @
-            styling = @selected.get "styling"
-            _.each collection.models, (el) ->
-                # Only apply layout to selected models.
-                if el["layout-item"] is true    
-                    el.set("styles", styling)
-                self.applyLayout(el.get("child_els"))
-   }        
+                $el.append new views.GenericListItem({model: layout}).render().el
+            this
+    }        
 
-   window.layoutList = null
+    class window.views["dynamicLayout"] extends window.views["genericElement"]
+        template: $("#dynamic-layout").html()
+        initialize: ->
+            _.bindAll @, "afterRender"
+            super
+        afterRender: ->
+
+    class window.views["dynamicContainer"] extends window.views["genericElement"]
+        template: $("#dynamic-container").html()
+        initialize: ->
+            _.bindAll @, "afterRender"
+            super
+        afterRender: ->
+
+
+    class window.views["accordion"] extends window.views["genericElement"]
+        template: $("#accordion-layout").html()
+        initialize: ->
+            _.bindAll @, "afterRender"
+            @listenTo @model.get("child_els"), 'add', (m,c,o) ->
+                console.log "added, overwrite"
+            super
+        afterRender: ->
+            if (@model.get("child_els").length)
+                @$el.children(".placeholder").remove()
+
+    class window.views["tabs"] extends window.views["genericElement"]
+        template: $("#tab-layout").html()
+        initialize: ->
+            _.bindAll @, "afterRender"
+            super
+        afterRender: ->

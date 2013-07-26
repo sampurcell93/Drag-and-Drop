@@ -71,7 +71,6 @@
       },
       appendAt: function(element, opts) {
         var itemView, pos;
-        console.log("Appending AT");
         pos = opts.at;
         opts.model = element;
         itemView = new views.SortableElementItem(opts).render().el;
@@ -92,10 +91,6 @@
         that = this;
         this.listenTo(this.model, {
           "render": this.render,
-          "destroy": function() {
-            var $el;
-            return $el = that.$el;
-          },
           "remove": function(model, collection, opts) {
             if (!((opts.organizer != null) && opts.organizer.itemRender === false)) {
               return that.remove();
@@ -159,7 +154,6 @@
       },
       append: function(child, opts) {
         var $el, childList, elementItem;
-        console.log("Appending child to org item", child);
         $el = this.$el;
         if ((opts != null) && (opts.at != null)) {
           this.appendAt(child, opts);
@@ -182,7 +176,6 @@
         var $el, itemView, pos, self;
         self = this;
         if ($.isArray(child)) {
-          console.log("THSI SHIT IS STILL AN ARRAY");
           return _.each(child, function(model) {
             return self.appendAt(model);
           });

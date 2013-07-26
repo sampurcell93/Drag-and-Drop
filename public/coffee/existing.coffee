@@ -10,7 +10,6 @@ $(document).ready ->
         render: ->
             $el = @$el
             _.each @collection.models, (section) ->
-                console.log(section)
                 section.set "inFlow", false
                 $el.append new views.SingleSectionWireFrame({model: section}).render().el
     }
@@ -81,7 +80,6 @@ $(document).ready ->
     sectionCollection = new collections.Elements()
     sectionCollection.fetch {
         success: (coll) ->
-            console.log coll.models[0]
             # Once the sections are pulled, generate the list.
             existingSectionsList = new views.ExistingSectionsList { collection : sectionCollection }
     }

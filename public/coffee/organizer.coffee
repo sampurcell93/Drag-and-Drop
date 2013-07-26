@@ -55,7 +55,6 @@ $(document).ready ->
                 itemView = new views.SortableElementItem(opts)
                 this.$el.append(itemView.render().el)
         appendAt: (element, opts) ->
-            console.log "Appending AT"
             pos = opts.at
             opts.model = element
             itemView = new views.SortableElementItem(opts).render().el
@@ -78,10 +77,9 @@ $(document).ready ->
             # @listenTo @model, "change:inFlow", @render
             @listenTo @model,  {
                 "render": @render
-                "destroy": ->
-                    $el = that.$el
                 "remove": (model, collection, opts) ->
                     unless (opts.organizer? and opts.organizer.itemRender is false)
+                        # @$el.toggle "puff",  0, ->
                         do that.remove
                 "change:title": (model) ->
                     that.$el.children(".element-title").first().text(model.get("title"))
@@ -129,7 +127,6 @@ $(document).ready ->
             }   
             this
         append: ( child, opts )->
-            console.log "Appending child to org item", child
             $el = @$el
             if opts? and opts.at?
                 @appendAt(child, opts)
@@ -145,7 +142,6 @@ $(document).ready ->
         appendAt: (child, opts) ->
             self = @
             if $.isArray(child)
-                console.log "THSI SHIT IS STILL AN ARRAY"
                 _.each child, (model) ->
                     self.appendAt(model)
             else 

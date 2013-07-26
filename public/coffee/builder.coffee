@@ -16,7 +16,9 @@ $(document).ready ->
             #     draggable.before(extra)
 
 
-    window.models.Element = Backbone.Model.extend {
+    class window.models.Element extends Backbone.Model
+        initialize: ->
+            console.log "making element"
         defaults: ->
             child_els = new collections.Elements()
             child_els.model = @
@@ -67,7 +69,6 @@ $(document).ready ->
                     listItems[index].text = text
                 else listItems.splice(index,0, {text: text})
                 @set("listItems", listItems)
-    }
 
 
     window.collections.Elements = Backbone.Collection.extend {
@@ -113,7 +114,7 @@ $(document).ready ->
             self = @
             ghostFragment = $("<div/>").addClass("droppable-placeholder").text("")
             ghostFragment.droppable
-                accept: ".builder-element, .generic-elements li"
+                accept: ".builder-element, .outside-draggables li"
                 greedy: true
                 tolerance: 'pointer' 
                 over: (e, ui) ->
@@ -127,8 +128,8 @@ $(document).ready ->
                         insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev())
                     else 
                         insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev())
-                    if (ui.draggable.index() > dropZone.index() or ui.draggable.hasClass("generic-item"))
-                        insertAt += 1
+                    # if (ui.draggable.index() > dropZone.index() or ui.draggable.hasClass("generic-item"))
+                    insertAt += 1
                     curr = window.currentDraggingModel
                     parent = self.collection.model 
                     if typeof parent is "function" or !parent? then parent = self.collection
@@ -148,7 +149,6 @@ $(document).ready ->
         initialize: ->
             self = @
             @index = @options.index
-            console.log("initing the parent class with index ref", @index)
             _.bindAll(this, "render", "bindDrop", "bindDrag","setStyles","appendChild")
             @listenTo @model.get("child_els"), 'add', (m,c,o) ->
                 self.appendChild(m,o)
@@ -174,7 +174,6 @@ $(document).ready ->
             }
             do @bindDrop
             do @bindDrag
-            console.log @events
         render: ->
             # For inherited views that don't want to overwrite render entirely, we have 
             # custom methods to accompany it.
@@ -260,18 +259,19 @@ $(document).ready ->
             @$el.droppable {
               greedy:true                                          # intercepts events from parent
               tolerance: 'pointer'                                 # only the location of the mouse determines drop zone.
-              accept: '.builder-element, .generic-elements li'
+              accept: '.builder-element, .outside-draggables li'
               over: (e) ->
                 $(e.target).addClass("over")
               out: (e)->
                 $(e.target).removeClass("over")
-              drop: (e,ui) ->   
+              drop: (e,ui) ->
+                draggingModel = window.currentDraggingModel
+                if typeof draggingModel is "undefined" or !draggingModel? then return
                 sect_interface = allSections.at(that.index || currIndex)
                 section = sect_interface.get("currentSection")
                 builder = sect_interface.get("builder")
                 $(e.target).removeClass("over")
                 model = that.model
-                draggingModel = window.currentDraggingModel
                 # if the dragged element is a direct child of its new parent, do nothing
                 unless draggingModel.collection is model.get("child_els")
                  if model.blend(draggingModel) is true
@@ -280,6 +280,8 @@ $(document).ready ->
                     ui.draggable.data('dropped', true)
                     delete window.currentDraggingModel
                     window.currentDraggingModel = null
+                e.stopPropagation()
+                e.stopImmediatePropagation()
             }
         removeFromFlow: (e) ->        #  When they click the "X" in the config - remove the el from the builder
             that = @
@@ -290,10 +292,7 @@ $(document).ready ->
             if e.type == "flowRemoveViaDrag"
                 @$el.toggle("clip",  300, destroy)
             else do destroy
-                
-        test: ->
-            console.log ("test")
-        # Default 
+        # Default events for any draggable - basically configuration settings.
         events: 
             "click": (e) ->
                 layout = @model["layout-item"]
@@ -346,9 +345,7 @@ $(document).ready ->
                     that.append(m, opts)
             }
             $el.droppable {
-                accept: '.builder-element, .generic-elements li'
-                hoverClass: "dragging"
-                activeClass: "dragging" 
+                accept: '.builder-element, .outside-draggables li'
                 greedy: true
                 helper: 'clone'
                 revert: 'invalid'

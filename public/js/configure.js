@@ -35,12 +35,6 @@
         this.$el.addClass("control-section").attr("id", "section-" + i).html(_.template(this.template, this.model.toJSON()));
         this.$el.droppable({
           accept: '.builder-element',
-          over: function(e, ui) {
-            return console.log(ui);
-          },
-          out: function(e, ui) {
-            return console.log(ui);
-          },
           drop: function(e, ui) {
             var models;
             models = window.currentDraggingModel;
@@ -125,14 +119,11 @@
             return alert("could not get data from URL " + that.url);
           }
         });
-        this.genericCollection = new collections.GenericElements();
-        this.genericCollection.fetch({
-          success: function(coll) {
-            return that.genericList = new views.GenericList({
-              collection: coll,
-              controller: that.model
-            });
-          }
+        this.genericList = new views.GenericList({
+          controller: this.model
+        });
+        this.layouts = new views.LayoutList({
+          controller: this.model
         });
         this.model.set({
           builder: this.builder,
@@ -176,7 +167,6 @@
           section_title: title,
           properties: this.model.get("properties")
         });
-        console.log(copy.get("currentSection").models);
         return copy.save(null, {
           success: function() {
             $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
@@ -211,7 +201,6 @@
       },
       append: function(model) {
         var view;
-        console.log("append tab");
         view = new views.SectionControllerView({
           model: model
         });
@@ -247,10 +236,9 @@
                 $t.trigger("click");
                 toSection = $(".control-section").eq(currIndex).find(".generate-section");
                 if (!toSection.hasClass("viewing-layout")) {
-                  toSection.trigger("click");
+                  return toSection.trigger("click");
                 }
               }
-              return console.log(currIndex);
             };
             return window.setTimeout(checkHover, 500);
           },
@@ -382,7 +370,6 @@
         $el = $(this.el);
         $el.prepend(_.template(this.template, this.model.toJSON()));
         props = this.model.get("properties");
-        console.log(this.model);
         for (i = _i = 0, _len = props.length; _i < _len; i = ++_i) {
           prop = props[i];
           newProperty = new models.Property(prop);
@@ -439,7 +426,6 @@
       render: function() {
         var $el, self;
         $el = this.$el;
-        $el.empty();
         self = this;
         return _.each(this.collection.models, function(prop) {
           return self.append(prop);
@@ -477,6 +463,7 @@
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
         this.$el.append(_.template(this.template, item));
+        this.$el.trigger("click");
         return this;
       },
       events: {
@@ -488,7 +475,6 @@
           currentSection = allSections.at(this.options.index).get("currentSection");
           this.model.selected = selected ? false : true;
           if (this.model.selected === true) {
-            console.log(allSections.at(this.options.index));
             allSections.at(this.options.index).get("properties").add(this.model);
             model = this.model.toJSON();
             model.title = model.className + "." + model.name;

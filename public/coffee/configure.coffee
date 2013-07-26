@@ -60,10 +60,6 @@ $(document).ready ->
             @$el.addClass("control-section").attr("id","section-" + i).html _.template @template, @model.toJSON()
             @$el.droppable
                 accept: '.builder-element'
-                over: (e,ui) ->
-                    console.log ui
-                out: (e, ui) ->
-                    console.log ui
                 drop: (e, ui) ->
                     models = window.currentDraggingModel
                     if $.isArray(models) is true
@@ -122,11 +118,10 @@ $(document).ready ->
                 failure: ->
                     alert("could not get data from URL " + that.url)    
             })
-            @genericCollection = new collections.GenericElements()
-            @genericCollection.fetch {
-                success: (coll) ->
-                    that.genericList = new views.GenericList {collection: coll, controller: that.model}
-            }
+
+            @genericList = new views.GenericList {controller: @model}
+
+            @layouts = new views.LayoutList({ controller: @model })
             @model.set({
                 builder: @builder
                 organizer: @organizer
@@ -157,7 +152,6 @@ $(document).ready ->
                 section_title: title
                 properties: @model.get("properties")
             })
-            console.log copy.get("currentSection").models
             copy.save(null, {
                 success: ->
                     $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
@@ -183,7 +177,6 @@ $(document).ready ->
                 self.append(controller)
             this
         append: (model) ->
-            console.log("append tab")
             view = new views.SectionControllerView({model: model})
             @$el.append($(view.render(@collection.models.length - 1).el))
             view.setProps().renderComponents(["builder","organizer"])
@@ -213,7 +206,6 @@ $(document).ready ->
                         toSection = $(".control-section").eq(currIndex).find(".generate-section")
                         if !toSection.hasClass("viewing-layout")
                             toSection.trigger("click")
-                    console.log(currIndex)
                 window.setTimeout(checkHover,500)
               out: (e)->
                 $(e.target).removeClass("over")
@@ -315,7 +307,6 @@ $(document).ready ->
             $el = $(@el)
             $el.prepend _.template @template, @model.toJSON()
             props = @model.get "properties"
-            console.log @model
             # Loop through all properties returned by the datatype, and create a model for each.
             for prop, i in props
                 newProperty = new models.Property(prop)
@@ -353,7 +344,6 @@ $(document).ready ->
             @render()
         render: ->
             $el = @$el
-            $el.empty()
             self = @
             _.each  @collection.models, (prop) ->
                 self.append(prop)
@@ -385,7 +375,7 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append _.template @template,item
-            # @$el.trigger "click"
+            @$el.trigger "click"
             this
         events:
             "click": (e) -> 
@@ -395,7 +385,6 @@ $(document).ready ->
                 currentSection = allSections.at(@options.index).get("currentSection")
                 @model.selected = if selected then false else true
                 if @model.selected is true
-                    console.log   allSections.at(@options.index)
                     allSections.at(@options.index).get("properties").add @model
                     model = @model.toJSON()
                     model.title = model.className + "." + model.name

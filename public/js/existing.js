@@ -12,7 +12,6 @@
         var $el;
         $el = this.$el;
         return _.each(this.collection.models, function(section) {
-          console.log(section);
           section.set("inFlow", false);
           return $el.append(new views.SingleSectionWireFrame({
             model: section
@@ -102,7 +101,6 @@
     return sectionCollection.fetch({
       success: function(coll) {
         var existingSectionsList;
-        console.log(coll.models[0]);
         return existingSectionsList = new views.ExistingSectionsList({
           collection: sectionCollection
         });

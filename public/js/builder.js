@@ -9,7 +9,7 @@
         global namespace and still have access to other scripts
     */
 
-    var _ref, _ref1;
+    var _ref, _ref1, _ref2;
     window.globals = {
       setPlaceholders: function(draggable, collection) {
         return draggable.before(new window.views.droppablePlaceholder({
@@ -19,8 +19,19 @@
         }).render());
       }
     };
-    window.models.Element = Backbone.Model.extend({
-      defaults: function() {
+    window.models.Element = (function(_super) {
+      __extends(Element, _super);
+
+      function Element() {
+        _ref = Element.__super__.constructor.apply(this, arguments);
+        return _ref;
+      }
+
+      Element.prototype.initialize = function() {
+        return console.log("making element");
+      };
+
+      Element.prototype.defaults = function() {
         var child_els;
         child_els = new collections.Elements();
         child_els.model = this;
@@ -28,14 +39,16 @@
           "child_els": child_els,
           "inFlow": true
         };
-      },
-      url: function() {
+      };
+
+      Element.prototype.url = function() {
         var url;
         url = "/section/";
         url += this.id != null ? this.id : "";
         return url;
-      },
-      modelify: function() {
+      };
+
+      Element.prototype.modelify = function() {
         var self, temp;
         self = this;
         temp = new collections.Elements();
@@ -45,12 +58,14 @@
           return tempModel.set("child_els", self.modelify());
         });
         return temp;
-      },
-      parse: function(response) {
+      };
+
+      Element.prototype.parse = function(response) {
         response.child_els = this.modelify(response.child_els);
         return response;
-      },
-      blend: function(putIn, at) {
+      };
+
+      Element.prototype.blend = function(putIn, at) {
         var children;
         if ($.isArray(putIn) === true && putIn.length > 1) {
           if (putIn.indexOf(this) !== -1) {
@@ -70,8 +85,9 @@
         });
         this.set("child_els", children);
         return true;
-      },
-      updateListItems: function(text, index) {
+      };
+
+      Element.prototype.updateListItems = function(text, index) {
         var listItems;
         if (this.get("type") === "Numbered List" || this.get("type") === "Bulleted List") {
           listItems = this.get("listItems");
@@ -85,8 +101,11 @@
           }
           return this.set("listItems", listItems);
         }
-      }
-    });
+      };
+
+      return Element;
+
+    })(Backbone.Model);
     window.collections.Elements = Backbone.Collection.extend({
       model: models.Element,
       url: '/section/',
@@ -141,8 +160,8 @@
       __extends(droppablePlaceholder, _super);
 
       function droppablePlaceholder() {
-        _ref = droppablePlaceholder.__super__.constructor.apply(this, arguments);
-        return _ref;
+        _ref1 = droppablePlaceholder.__super__.constructor.apply(this, arguments);
+        return _ref1;
       }
 
       droppablePlaceholder.prototype.events = {
@@ -156,7 +175,7 @@
         self = this;
         ghostFragment = $("<div/>").addClass("droppable-placeholder").text("");
         return ghostFragment.droppable({
-          accept: ".builder-element, .generic-elements li",
+          accept: ".builder-element, .outside-draggables li",
           greedy: true,
           tolerance: 'pointer',
           over: function(e, ui) {
@@ -174,9 +193,7 @@
             } else {
               insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev());
             }
-            if (ui.draggable.index() > dropZone.index() || ui.draggable.hasClass("generic-item")) {
-              insertAt += 1;
-            }
+            insertAt += 1;
             curr = window.currentDraggingModel;
             parent = self.collection.model;
             if (typeof parent === "function" || (parent == null)) {
@@ -202,8 +219,8 @@
       __extends(draggableElement, _super);
 
       function draggableElement() {
-        _ref1 = draggableElement.__super__.constructor.apply(this, arguments);
-        return _ref1;
+        _ref2 = draggableElement.__super__.constructor.apply(this, arguments);
+        return _ref2;
       }
 
       draggableElement.prototype.template = $("#draggable-element").html();
@@ -216,7 +233,6 @@
         var self;
         self = this;
         this.index = this.options.index;
-        console.log("initing the parent class with index ref", this.index);
         _.bindAll(this, "render", "bindDrop", "bindDrag", "setStyles", "appendChild");
         this.listenTo(this.model.get("child_els"), 'add', function(m, c, o) {
           return self.appendChild(m, o);
@@ -244,8 +260,7 @@
           }
         });
         this.bindDrop();
-        this.bindDrag();
-        return console.log(this.events);
+        return this.bindDrag();
       };
 
       draggableElement.prototype.render = function() {
@@ -362,7 +377,7 @@
         return this.$el.droppable({
           greedy: true,
           tolerance: 'pointer',
-          accept: '.builder-element, .generic-elements li',
+          accept: '.builder-element, .outside-draggables li',
           over: function(e) {
             return $(e.target).addClass("over");
           },
@@ -371,20 +386,25 @@
           },
           drop: function(e, ui) {
             var builder, draggingModel, model, sect_interface, section;
+            draggingModel = window.currentDraggingModel;
+            if (typeof draggingModel === "undefined" || (draggingModel == null)) {
+              return;
+            }
             sect_interface = allSections.at(that.index || currIndex);
             section = sect_interface.get("currentSection");
             builder = sect_interface.get("builder");
             $(e.target).removeClass("over");
             model = that.model;
-            draggingModel = window.currentDraggingModel;
             if (draggingModel.collection !== model.get("child_els")) {
               if (model.blend(draggingModel) === true) {
                 $(ui.helper).remove();
                 ui.draggable.data('dropped', true);
                 delete window.currentDraggingModel;
-                return window.currentDraggingModel = null;
+                window.currentDraggingModel = null;
               }
             }
+            e.stopPropagation();
+            return e.stopImmediatePropagation();
           }
         });
       };
@@ -402,10 +422,6 @@
         } else {
           return destroy();
         }
-      };
-
-      draggableElement.prototype.test = function() {
-        return console.log("test");
       };
 
       draggableElement.prototype.events = {
@@ -481,9 +497,7 @@
           }
         });
         $el.droppable({
-          accept: '.builder-element, .generic-elements li',
-          hoverClass: "dragging",
-          activeClass: "dragging",
+          accept: '.builder-element, .outside-draggables li',
           greedy: true,
           helper: 'clone',
           revert: 'invalid',
