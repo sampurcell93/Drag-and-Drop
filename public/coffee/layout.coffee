@@ -48,6 +48,10 @@ $(document).ready ->
             this
     }        
 
+    ### Inherited view events are triggered first - so if an indentical event binder is
+        applied to a descendant, we can use event.stopPropagation() in order to stop the 
+        higher level event from firing. ###
+
     class window.views["dynamicLayout"] extends window.views["genericElement"]
         template: $("#dynamic-layout").html()
         initialize: ->
@@ -76,14 +80,20 @@ $(document).ready ->
 
     class window.views["tabs"] extends window.views["genericElement"]
         template: $("#tab-layout").html()
+        settingsTemplate: $("#tab-layout-settings").html()
         initialize: ->
             _.bindAll @, "afterRender"
             super
+        events: 
+            "click .config-panel": (e) ->
+                console.log "yolo"
+                modal = window.launchModal(_.template(@settingsTemplate, @model.toJSON()))
+                e.stopPropagation()
         afterRender: ->
 
     class window.views["Freeform"] extends window.views["genericElement"]
         template: $("#freeform-layout").html()
-        configTemplate: $("#freeform-config").html()
+        configTemplate: $("#freeform-layout-settings").html()
         initialize: ->
             _.bindAll @, "afterRender", "beforeRender"
             super
@@ -103,3 +113,9 @@ $(document).ready ->
                 self.model.set("rows", rows, {silent: true})
                 self.model.set("columns", cols, {silent: true})
                 self.model.trigger("renderBase")
+    class window.views['layoutWrapper'] extends window.views["genericElement"]
+        initialize: ->
+            _.bindAll @, "afterRender"
+            super
+        afterRender: ->
+            @$el.addClass("layout-wrapper")

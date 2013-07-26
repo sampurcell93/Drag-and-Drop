@@ -169,20 +169,20 @@ $(document).ready ->
         initialize: (options) ->
             super 
     class window.views['Radio'] extends window.views.genericElement
-        template: $("#custom-text").html()
+        template: $("#generic-radio").html()
         initialize: (options) ->
             super 
     class window.views['Link'] extends window.views.genericElement
-        template: $("#custom-text").html()
+        template: $("#custom-link").html()
         initialize: (options) ->
             super 
 
     class window.views['DateTime'] extends window.views.genericElement
-        template: $("#custom-text").html()
+        template: $("#date-time").html()
         initialize: (options) ->
             super 
 
     class window.views['Dropdown'] extends window.views.genericElement
-        template: $("#custom-text").html()
+        template: $("#dropdown").html()
         initialize: (options) ->
             super 

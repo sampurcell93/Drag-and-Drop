@@ -237,7 +237,7 @@
         return _ref5;
       }
 
-      _Class.prototype.template = $("#custom-text").html();
+      _Class.prototype.template = $("#generic-radio").html();
 
       _Class.prototype.initialize = function(options) {
         return _Class.__super__.initialize.apply(this, arguments);
@@ -254,7 +254,7 @@
         return _ref6;
       }
 
-      _Class.prototype.template = $("#custom-text").html();
+      _Class.prototype.template = $("#custom-link").html();
 
       _Class.prototype.initialize = function(options) {
         return _Class.__super__.initialize.apply(this, arguments);
@@ -271,7 +271,7 @@
         return _ref7;
       }
 
-      _Class.prototype.template = $("#custom-text").html();
+      _Class.prototype.template = $("#date-time").html();
 
       _Class.prototype.initialize = function(options) {
         return _Class.__super__.initialize.apply(this, arguments);
@@ -288,7 +288,7 @@
         return _ref8;
       }
 
-      _Class.prototype.template = $("#custom-text").html();
+      _Class.prototype.template = $("#dropdown").html();
 
       _Class.prototype.initialize = function(options) {
         return _Class.__super__.initialize.apply(this, arguments);

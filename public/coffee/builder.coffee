@@ -171,8 +171,6 @@ $(document).ready ->
                 "end-sorting": ->
                     if (self.$el.hasClass("ui-selected") is false)
                         self.$el.removeClass("selected-element")
-                "change": ->
-                    @render(false)
                 "renderBase": ->
                     @render(false)
             }
@@ -311,6 +309,7 @@ $(document).ready ->
             "click .set-options": (e) ->
                 $t = $(e.currentTarget)
                 dropdown = $t.children(".dropdown")
+                $(".dropdown").not(dropdown).hide()
                 dropdown.fadeToggle(100);
                 e.stopPropagation()
             "click .set-options li": (e) ->
@@ -377,6 +376,15 @@ $(document).ready ->
                 filter: '.builder-element'
                 cancel: ".builder-element"
                 tolerance: 'touch'
+                stop: (e,ui) ->
+                    if e.shiftKey is false then return
+                    selected = that.collection.gather()
+                    if selected.length is 0 or selected.length is 1 then return
+                    layoutIndex = that.collection.indexOf(selected[0])
+                    that.collection.add(layout = new models.Element({view: 'layoutWrapper', type: 'Blank Layout'}), {at: layoutIndex})
+                    _.each selected , (model) ->
+                        model.collection.remove model
+                        layout.get("child_els").add model
                 selecting: (e,ui) ->
                     $(ui.selecting). trigger "select"
                 unselecting: (e,ui) ->

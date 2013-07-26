@@ -258,9 +258,6 @@
               return self.$el.removeClass("selected-element");
             }
           },
-          "change": function() {
-            return this.render(false);
-          },
           "renderBase": function() {
             return this.render(false);
           }
@@ -451,6 +448,7 @@
           var $t, dropdown;
           $t = $(e.currentTarget);
           dropdown = $t.children(".dropdown");
+          $(".dropdown").not(dropdown).hide();
           dropdown.fadeToggle(100);
           return e.stopPropagation();
         },
@@ -532,6 +530,27 @@
           filter: '.builder-element',
           cancel: ".builder-element",
           tolerance: 'touch',
+          stop: function(e, ui) {
+            var layout, layoutIndex, selected;
+            if (e.shiftKey === false) {
+              return;
+            }
+            selected = that.collection.gather();
+            if (selected.length === 0 || selected.length === 1) {
+              return;
+            }
+            layoutIndex = that.collection.indexOf(selected[0]);
+            that.collection.add(layout = new models.Element({
+              view: 'layoutWrapper',
+              type: 'Blank Layout'
+            }), {
+              at: layoutIndex
+            });
+            return _.each(selected, function(model) {
+              model.collection.remove(model);
+              return layout.get("child_els").add(model);
+            });
+          },
           selecting: function(e, ui) {
             return $(ui.selecting).trigger("select");
           },

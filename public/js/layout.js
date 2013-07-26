@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     allLayouts = [
       {
         type: 'Dynamic Layout',
@@ -61,6 +61,11 @@
         return this;
       }
     });
+    /* Inherited view events are triggered first - so if an indentical event binder is
+        applied to a descendant, we can use event.stopPropagation() in order to stop the 
+        higher level event from firing.
+    */
+
     window.views["dynamicLayout"] = (function(_super) {
       __extends(_Class, _super);
 
@@ -138,9 +143,20 @@
 
       _Class.prototype.template = $("#tab-layout").html();
 
+      _Class.prototype.settingsTemplate = $("#tab-layout-settings").html();
+
       _Class.prototype.initialize = function() {
         _.bindAll(this, "afterRender");
         return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      _Class.prototype.events = {
+        "click .config-panel": function(e) {
+          var modal;
+          console.log("yolo");
+          modal = window.launchModal(_.template(this.settingsTemplate, this.model.toJSON()));
+          return e.stopPropagation();
+        }
       };
 
       _Class.prototype.afterRender = function() {};
@@ -148,7 +164,7 @@
       return _Class;
 
     })(window.views["genericElement"]);
-    return window.views["Freeform"] = (function(_super) {
+    window.views["Freeform"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -158,7 +174,7 @@
 
       _Class.prototype.template = $("#freeform-layout").html();
 
-      _Class.prototype.configTemplate = $("#freeform-config").html();
+      _Class.prototype.configTemplate = $("#freeform-layout-settings").html();
 
       _Class.prototype.initialize = function() {
         _.bindAll(this, "afterRender", "beforeRender");
@@ -193,6 +209,26 @@
           });
           return self.model.trigger("renderBase");
         });
+      };
+
+      return _Class;
+
+    })(window.views["genericElement"]);
+    return window.views['layoutWrapper'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
+      }
+
+      _Class.prototype.initialize = function() {
+        _.bindAll(this, "afterRender");
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      _Class.prototype.afterRender = function() {
+        return this.$el.addClass("layout-wrapper");
       };
 
       return _Class;
