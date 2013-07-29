@@ -127,7 +127,6 @@ select {
       .row .row.collapse:after {
         clear: both; }
 
-.column,
 .columns {
   position: relative;
   padding-left: 0.9375em;
