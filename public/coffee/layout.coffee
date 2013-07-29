@@ -48,18 +48,41 @@ $(document).ready ->
             this
     }        
 
+    class window.views.layout extends window.views.draggableElement
+        columnTemplate: $("#column-picker").html()
+        # Calls the parent initialize function - mimicry of classical inheritance.
+        initialize: -> 
+            super
+            _.bindAll @, "afterRender"
+        afterRender: ->
+            @$el.addClass("layout-wrapper")
+        events:
+            "click .config-panel": (e) ->
+                self = @
+                modal = window.launchModal(_.template(@columnTemplate, {}))
+                modal.delegate "[data-columns]", "click", ->
+                    $t = $ this
+                    cols = $t.data("columns")
+                    console.log cols
+                    self.model.set({
+                        "classes": cols
+                        "columns": cols
+                    })
+                    self.$el.addClass(cols)
+                e.stopPropagation()
+
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
         higher level event from firing. ###
 
-    class window.views["dynamicLayout"] extends window.views["genericElement"]
+    class window.views["dynamicLayout"] extends window.views["layout"]
         template: $("#dynamic-layout").html()
         initialize: ->
             _.bindAll @, "afterRender"
             super
         afterRender: ->
 
-    class window.views["dynamicContainer"] extends window.views["genericElement"]
+    class window.views["dynamicContainer"] extends window.views["layout"]
         template: $("#dynamic-container").html()
         initialize: ->
             _.bindAll @, "afterRender"
@@ -67,7 +90,7 @@ $(document).ready ->
         afterRender: ->
 
 
-    class window.views["accordion"] extends window.views["genericElement"]
+    class window.views["accordion"] extends window.views["layout"]
         template: $("#accordion-layout").html()
         initialize: ->
             _.bindAll @, "afterRender"
@@ -78,7 +101,7 @@ $(document).ready ->
             if (@model.get("child_els").length)
                 @$el.children(".placeholder").remove()
 
-    class window.views["tabs"] extends window.views["genericElement"]
+    class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
         settingsTemplate: $("#tab-layout-settings").html()
         initialize: ->
@@ -91,7 +114,7 @@ $(document).ready ->
                 e.stopPropagation()
         afterRender: ->
 
-    class window.views["Freeform"] extends window.views["genericElement"]
+    class window.views["Freeform"] extends window.views["layout"]
         template: $("#freeform-layout").html()
         configTemplate: $("#freeform-layout-settings").html()
         initialize: ->
@@ -113,9 +136,10 @@ $(document).ready ->
                 self.model.set("rows", rows, {silent: true})
                 self.model.set("columns", cols, {silent: true})
                 self.model.trigger("renderBase")
-    class window.views['layoutWrapper'] extends window.views["genericElement"]
+    class window.views['BlankLayout'] extends window.views["layout"]
+        template: $("#blank-layout").html()
         initialize: ->
             _.bindAll @, "afterRender"
             super
         afterRender: ->
-            @$el.addClass("layout-wrapper")
+            @$el.addClass("blank-layout")

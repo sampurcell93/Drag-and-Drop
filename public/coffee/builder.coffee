@@ -187,7 +187,8 @@ $(document).ready ->
             $el =  @$el
             # Get model layout properties and set applicable as classes
             @setStyles()
-            $el.html(_.template @template, model.toJSON()).append(_.template @controls, {})
+            $el.html(_.template @template, model.toJSON())
+            if @controls? then $el.append(_.template @controls, {})
             if children? and do_children is true
                 _.each children.models , (el) ->
                     that.appendChild el, {}
@@ -336,90 +337,33 @@ $(document).ready ->
             "end-sorting": ->
                 @$el.removeClass("active-sorting")
 
+    # The builder is less of a listview and more of a simple controller whose render only appends a single droppable wrapper
+    # whose model is not included in the collection. This reduces redundancy.
     window.views.SectionBuilder = Backbone.View.extend {
+        rendered: false
         initialize: ->
             @controller = @options.controller
             @wrapper = $(".control-section").eq(@controller.index)
             @$el = @wrapper.find("section")
             @collection = @options.collection
-            that = @
-            $el = @$el
-            @listenTo @collection, {
-                "add": (m , c, opts) ->
-                    that.append(m, opts)
-            }
-            $el.droppable {
-                accept: '.builder-element, .outside-draggables li'
-                greedy: true
-                helper: 'clone'
-                revert: 'invalid'
-                tolerance: 'pointer'
-                over: ->
-                    # Here we have a blank function to overwrite the wrapper's over function. 
-                    # Greedy precludes by order of DOM tree
-                drop: ( event, ui ) -> 
-                    curr = window.currentDraggingModel
-                    c = curr.collection
-                    # If the model is in a collection, and it's not the same one as the builder,
-                    # IE not top level
-                    if c? and c != that.collection
-                        c.remove curr
-                        curr.set "inFlow", true
-                        that.collection.add curr 
-                        delete window.currentDraggingModel
-                        window.currentDraggingModel = null
-                        ui.helper.fadeOut(350)
-                    else 
-                        that.collection.add curr
-            }
-            $el.selectable {
-                filter: '.builder-element'
-                cancel: ".builder-element"
-                tolerance: 'touch'
-                stop: (e,ui) ->
-                    if e.shiftKey is false then return
-                    selected = that.collection.gather()
-                    if selected.length is 0 or selected.length is 1 then return
-                    layoutIndex = that.collection.indexOf(selected[0])
-                    that.collection.add(layout = new models.Element({view: 'layoutWrapper', type: 'Blank Layout'}), {at: layoutIndex})
-                    _.each selected , (model) ->
-                        model.collection.remove model
-                        layout.get("child_els").add model
-                selecting: (e,ui) ->
-                    $(ui.selecting). trigger "select"
-                unselecting: (e,ui) ->
-                    if (e.shiftKey is true) then return 
-                    $item = $(ui.unselecting)
-                    $item.trigger "deselect"
-                    that.wrapper.find(".selected-element").trigger("deselect")
-            }
+            @render()
         render: ->
-            $el = @$el
-            that = this
-            $el.empty()
-            _.each @collection.models, (element) ->
-                that.append(element, {})
-
+            unless @rendered is true
+                @rendered = true
+                $el = @$el
+                that = this
+                @append new models.Element({view: "BuilderWrapper"})
         append: (element, opts) ->
-            view = element.get("view") || "draggableElement"
-            #If the element has been taken out of the flow, don't render it.
-            draggable = new views[view]({model: element, index: @controller.index}).render().el
-            if opts? && !opts.at?
-                @$el.append draggable
-            else 
-                if @$el.children(".builder-element").eq(opts.at).length 
-                    @$el.children(".builder-element").eq(opts.at).before(draggable)
-                else @$el.children(".builder-element").eq(opts.at - 1).after(draggable)
-            globals.setPlaceholders($(draggable), @controller.get("currentSection"))
-            if element.get("inFlow") is false
-                $(draggable).hide()
+            view = element.get("view")
+            element.set("child_els", @collection)
+            @$el.append draggable = $(new views[view]({model: element}).render().el)
             @removeExtraPlaceholders()
         removeExtraPlaceholders: ->
             @$el.find(".droppable-placeholder").each ->
                 $t = $(this)
-                if $t.next().hasClass("droppable-placeholder") or $t.next().length == 0
+                if $t.next().hasClass("droppable-placeholder") or $t.next().length is 0
                     $t.next().remove()  
-                if $t.prev().hasClass("droppable-placeholder") or $t.prev().length == 0
+                if $t.prev().hasClass("droppable-placeholder") or $t.prev().length is 0
                     $t.prev().remove()
 
     }

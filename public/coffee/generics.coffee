@@ -186,3 +186,37 @@ $(document).ready ->
         template: $("#dropdown").html()
         initialize: (options) ->
             super 
+    class window.views['BuilderWrapper'] extends window.views.genericElement
+        controls: null
+        initialize: ->
+            super
+            _.bindAll(@, "afterRender")
+        template: $("#builder-wrap").html()
+        bindDrag: ->
+            null
+        afterRender: ->
+            that = @
+            @$el.selectable {
+                filter: '.builder-element'
+                tolerance: 'touch'
+                cancel: ".config-menu-wrap, input, .title-setter, textarea"
+                stop: (e,ui) ->
+                    if e.shiftKey is false then return
+                    collection = that.model.get("child_els")
+                    selected = collection.gather()
+                    if selected.length is 0 or selected.length is 1 then return
+                    layoutIndex = collection.indexOf(selected[0])
+                    collection.add(layout = new models.Element({view: 'BlankLayout', type: 'Blank Layout'}), {at: layoutIndex})
+                    _.each selected , (model) ->
+                        if model.collection?
+                            model.collection.remove model
+                        layout.get("child_els").add model
+                selecting: (e,ui) ->
+                    $(ui.selecting). trigger "select"
+                unselecting: (e,ui) ->
+                    if (e.shiftKey is true) then return 
+                    $item = $(ui.unselecting)
+                    $item.trigger "deselect"
+                    that.$el.find(".selected-element").trigger("deselect")
+            }
+            @$el.addClass("builder-scaffold")

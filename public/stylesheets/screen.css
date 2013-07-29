@@ -1107,7 +1107,7 @@ ul.outside-draggables li ul li:hover {
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
-  border: 1px dotted #2092cc !important;
+  outline: 1px dotted #2092cc !important;
   background: #dee9f2 !important;
 }
 
@@ -1285,7 +1285,7 @@ section.builder-container {
   float: right;
   position: relative;
   margin: 0px 10px 10px;
-  padding: 15px;
+  padding: 0;
   -webkit-border-radius: 0 0 3px 3px;
   -moz-border-radius: 0 0 3px 3px;
   -ms-border-radius: 0 0 3px 3px;
@@ -1326,6 +1326,7 @@ section.builder-container.no-grid .droppable-placeholder {
 .builder-element {
   position: relative;
   padding: 2px 3px;
+  margin: 5px;
   -webkit-transition: width 0.2s ease-in-out;
   -moz-transition: width 0.2s ease-in-out;
   -o-transition: width 0.2s ease-in-out;
@@ -1335,65 +1336,71 @@ section.builder-container.no-grid .droppable-placeholder {
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
-  border: 1px solid #82b7e0;
+  outline: 1px dashed #82b7e0;
   background: #fff;
   vertical-align: top;
   *zoom: 1;
   cursor: move;
 }
-/* line 745, ../sass/screen.scss */
+/* line 746, ../sass/screen.scss */
 .builder-element ul, .builder-element ol, .builder-element dl {
   list-style-position: inside !important;
 }
-/* line 748, ../sass/screen.scss */
+/* line 749, ../sass/screen.scss */
 .builder-element ul li, .builder-element ol li, .builder-element dl li {
   list-style-position: inside !important;
 }
-/* line 753, ../sass/screen.scss */
+/* line 754, ../sass/screen.scss */
+.builder-element.builder-scaffold {
+  outline: none;
+  margin: 0;
+  cursor: auto;
+}
+/* line 760, ../sass/screen.scss */
 .builder-element:hover {
-  border: 1px dotted #2092cc;
+  outline-color: #2092cc;
   -webkit-box-shadow: 0px 0px 4px #82b7e0;
   -moz-box-shadow: 0px 0px 4px #82b7e0;
   box-shadow: 0px 0px 4px #82b7e0;
 }
-/* line 757, ../sass/screen.scss */
+/* line 764, ../sass/screen.scss */
 .builder-element:hover > .config-menu-wrap {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
-/* line 762, ../sass/screen.scss */
+/* line 769, ../sass/screen.scss */
 .builder-element.child {
-  border: 1px dashed #82b7e0 !important;
+  outline: 1px dashed #82b7e0 !important;
 }
-/* line 766, ../sass/screen.scss */
+/* line 773, ../sass/screen.scss */
 .builder-element input {
   margin: 10px 0;
   width: 65%;
 }
-/* line 771, ../sass/screen.scss */
+/* line 778, ../sass/screen.scss */
 .builder-element.selected-element {
-  border: 1px dashed #FF6100 !important;
+  outline: 1px dashed #FF6100 !important;
   -webkit-box-shadow: 0px 0px 16px #cccccc;
   -moz-box-shadow: 0px 0px 16px #cccccc;
   box-shadow: 0px 0px 16px #cccccc;
 }
-/* line 778, ../sass/screen.scss */
+/* line 785, ../sass/screen.scss */
 .builder-element:before, .builder-element:after {
   content: " ";
   /* 1 */
   display: table;
   /* 2 */
 }
-/* line 782, ../sass/screen.scss */
+/* line 789, ../sass/screen.scss */
 .builder-element:after {
   clear: both;
 }
-/* line 786, ../sass/screen.scss */
+/* line 793, ../sass/screen.scss */
 .builder-element textarea {
   margin-left: 30px;
 }
 
-/* line 791, ../sass/screen.scss */
+/* line 798, ../sass/screen.scss */
 .droppable-placeholder {
   width: 100;
   position: relative;
@@ -1409,7 +1416,7 @@ section.builder-container.no-grid .droppable-placeholder {
   border: 2px dashed orange;
 }
 
-/* line 820, ../sass/screen.scss */
+/* line 827, ../sass/screen.scss */
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
@@ -1417,7 +1424,7 @@ section.builder-container.no-grid .droppable-placeholder {
   background: rgba(125, 185, 232, 0.4);
 }
 
-/* line 827, ../sass/screen.scss */
+/* line 834, ../sass/screen.scss */
 .config-menu-wrap {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1426,7 +1433,7 @@ section.builder-container.no-grid .droppable-placeholder {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   opacity: 0;
   position: absolute;
-  top: 0px;
+  top: -4px;
   right: 0px;
   display: block;
   cursor: pointer;
@@ -1434,13 +1441,14 @@ section.builder-container.no-grid .droppable-placeholder {
   width: 65px;
   height: 100%;
   max-height: 38px;
+  z-index: 12;
   -webkit-border-radius: 0 2px 0 2px;
   -moz-border-radius: 0 2px 0 2px;
   -ms-border-radius: 0 2px 0 2px;
   -o-border-radius: 0 2px 0 2px;
   border-radius: 0 2px 0 2px;
 }
-/* line 841, ../sass/screen.scss */
+/* line 849, ../sass/screen.scss */
 .config-menu-wrap li {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1454,16 +1462,16 @@ section.builder-container.no-grid .droppable-placeholder {
   color: #2092cc;
   position: relative;
 }
-/* line 851, ../sass/screen.scss */
+/* line 859, ../sass/screen.scss */
 .config-menu-wrap li li {
   color: #333;
 }
-/* line 853, ../sass/screen.scss */
+/* line 861, ../sass/screen.scss */
 .config-menu-wrap:hover {
   opacity: 1 !important;
 }
 
-/* line 861, ../sass/screen.scss */
+/* line 869, ../sass/screen.scss */
 .set-options .dropdown {
   position: absolute;
   top: 100%;
@@ -1483,7 +1491,7 @@ section.builder-container.no-grid .droppable-placeholder {
   z-index: 111;
   background: #fff;
 }
-/* line 875, ../sass/screen.scss */
+/* line 883, ../sass/screen.scss */
 .set-options .dropdown li {
   display: block;
   height: 33px;
@@ -1493,14 +1501,14 @@ section.builder-container.no-grid .droppable-placeholder {
   width: 100%;
   line-height: 33px;
 }
-/* line 884, ../sass/screen.scss */
+/* line 892, ../sass/screen.scss */
 .set-options .dropdown li:hover {
   background: #2092cc;
   color: #fff;
   text-shadow: none;
 }
 
-/* line 892, ../sass/screen.scss */
+/* line 900, ../sass/screen.scss */
 button {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1509,44 +1517,44 @@ button {
   border-radius: 2px;
 }
 
-/* line 896, ../sass/screen.scss */
+/* line 904, ../sass/screen.scss */
 .view-section {
   cursor: pointer;
 }
 
-/* line 900, ../sass/screen.scss */
+/* line 908, ../sass/screen.scss */
 .generic-list {
   width: 80%;
 }
-/* line 902, ../sass/screen.scss */
+/* line 910, ../sass/screen.scss */
 .generic-list li {
   border: 1px dotted #2092cc;
   padding: 6px 4px;
   border-bottom-color: transparent;
 }
-/* line 907, ../sass/screen.scss */
+/* line 915, ../sass/screen.scss */
 .generic-list li:last-of-type {
   border-bottom-color: #2092cc;
 }
 
-/* line 913, ../sass/screen.scss */
+/* line 921, ../sass/screen.scss */
 ul.generic-list {
   list-style: circle;
 }
 
-/* line 916, ../sass/screen.scss */
+/* line 924, ../sass/screen.scss */
 ol.generic-list {
   list-style: decimal;
 }
 
-/* line 920, ../sass/screen.scss */
+/* line 928, ../sass/screen.scss */
 .add-list-item {
   display: block;
   padding: 6px;
   cursor: pointer;
 }
 
-/* line 926, ../sass/screen.scss */
+/* line 934, ../sass/screen.scss */
 .property-link {
   outline: 1px solid #ccc;
   -webkit-border-radius: 3px;
@@ -1561,19 +1569,47 @@ ol.generic-list {
   margin: 0px 6px;
 }
 
-/* line 936, ../sass/screen.scss */
-.layout-wrapper {
-  border: 1px solid #82b7e0;
-  padding: 20px;
+/* line 944, ../sass/screen.scss */
+.blank-layout {
+  outline: 1px solid #7BF5F5;
+  margin: 2px;
+  padding: 10px 0 0;
 }
-/* line 940, ../sass/screen.scss */
-.layout-wrapper:hover {
+/* line 949, ../sass/screen.scss */
+.blank-layout:hover {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
+}
+/* line 954, ../sass/screen.scss */
+.blank-layout.six-column > .builder-element {
+  width: 16.47%;
+  display: inline-block !important;
+}
+/* line 955, ../sass/screen.scss */
+.blank-layout.six-column > .droppable-placeholder {
+  width: 5px;
+  height: 100px;
+  display: inline-block !important;
 }
 
 @media all and (min-width: 1000px) {
   width: 27.5%;
   margin-left: -5%;
+}
+/* line 965, ../sass/screen.scss */
+.choose-columns {
+  border-top: 1px solid #ccc;
+  padding-top: 30px;
+}
+/* line 970, ../sass/screen.scss */
+.choose-columns li {
+  width: 16%;
+  text-shadow: none;
+  display: inline-block;
+  height: 80px;
+  line-height: 80px;
+  text-align: center;
+  color: #f9f9f9;
+  background: #2092cc;
 }

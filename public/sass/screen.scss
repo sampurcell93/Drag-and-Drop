@@ -557,7 +557,7 @@ ul.outside-draggables {
 .over {
 	// @include transform(scale(.98));
 	@include border-radius(3px);
-	border: 1px dotted $strongblue !important;
+	outline: 1px dotted $strongblue !important;
 	background: $fadedblue !important;
 }
 
@@ -697,7 +697,7 @@ section.builder-container {
 	float: right;
 	position: relative;
 	margin: 0px 10px 10px;
-	padding: 15px;
+	padding: 0;
 	@include border-radius(0 0 3px 3px);
 	@include box-shadow(0px 2px 4px #ccc);
 	border: 1px solid #ccc;
@@ -734,9 +734,10 @@ section.builder-container {
 .builder-element {
 	position: relative;
 	padding: 2px 3px;
+	margin: 5px;
 	@include transition(width .2s ease-in-out);
 	@include border-radius(3px);
-	border: 1px solid $medblue;
+	outline: 1px dashed $medblue;
 	background: #fff;
 	vertical-align: top;
  	*zoom: 1;
@@ -750,8 +751,14 @@ section.builder-container {
  		}
  	}
 
+	&.builder-scaffold {
+		outline: none;
+		margin: 0;
+		cursor: auto;
+	}
+
  	&:hover { 
-		border: 1px dotted $strongblue;
+		outline-color: $strongblue;
 		@include box-shadow(0px 0px 4px $medblue);
 		
 		> .config-menu-wrap  {
@@ -760,7 +767,7 @@ section.builder-container {
  	}
 
 	&.child { 
-		border: 1px dashed $medblue !important;
+		outline: 1px dashed $medblue !important;
 	}
 
 	input { 
@@ -769,7 +776,7 @@ section.builder-container {
 	}
 
 	&.selected-element {
-		border: 1px dashed #FF6100 !important;
+		outline: 1px dashed #FF6100 !important;
 		@include box-shadow(0px 0px 16px #ccc);
 		// background: #FFCA8E;
 	}
@@ -828,7 +835,7 @@ section.builder-container {
 	@include transition(all .1s ease-in-out);
 	@include opacity(0);
 	position: absolute;
-	top: 0px;
+	top: -4px;
 	right: 0px;
 	display: block;
 	cursor: pointer;
@@ -836,6 +843,7 @@ section.builder-container {
 	width: 65px;
 	height: 100%;
 	max-height: 38px;
+	z-index: 12;
 	@include border-radius(0 2px 0 2px);
 
 	li {
@@ -933,12 +941,18 @@ ol.generic-list {
 	margin: 0px 6px;
 }
 
-.layout-wrapper {
-	border: 1px solid $medblue;
-	padding: 20px;
-	
+.blank-layout {
+	outline: 1px solid #7BF5F5;
+	margin: 2px;
+	padding: 10px 0 0;
+
 	&:hover {
 		@include box-shadow(none);
+	}
+
+	&.six-column {
+		> .builder-element { width: 16.47%; display: inline-block !important; }
+		> .droppable-placeholder { width: 5px; height: 100px; display: inline-block !important; }
 	}
 
 }
@@ -946,4 +960,22 @@ ol.generic-list {
 @media all and (min-width: 1000px) {
 	width: 27.5%;
 	margin-left: -5%;
+}
+
+.choose-columns {
+
+	border-top: 1px solid #ccc;
+	padding-top: 30px;
+
+	li{
+		width: 16%;
+		text-shadow: none;
+		display: inline-block;
+		height: 80px;
+		line-height: 80px;
+		text-align: center;
+		color: #f9f9f9;
+		background: $strongblue;
+
+	}
 }

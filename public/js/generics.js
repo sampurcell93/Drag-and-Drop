@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var generics, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+    var generics, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     generics = [
       {
         "type": "Button",
@@ -280,7 +280,7 @@
       return _Class;
 
     })(window.views.genericElement);
-    return window.views['Dropdown'] = (function(_super) {
+    window.views['Dropdown'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -292,6 +292,77 @@
 
       _Class.prototype.initialize = function(options) {
         return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      return _Class;
+
+    })(window.views.genericElement);
+    return window.views['BuilderWrapper'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref9 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref9;
+      }
+
+      _Class.prototype.controls = null;
+
+      _Class.prototype.initialize = function() {
+        _Class.__super__.initialize.apply(this, arguments);
+        return _.bindAll(this, "afterRender");
+      };
+
+      _Class.prototype.template = $("#builder-wrap").html();
+
+      _Class.prototype.bindDrag = function() {
+        return null;
+      };
+
+      _Class.prototype.afterRender = function() {
+        var that;
+        that = this;
+        this.$el.selectable({
+          filter: '.builder-element',
+          tolerance: 'touch',
+          cancel: ".config-menu-wrap, input, .title-setter, textarea",
+          stop: function(e, ui) {
+            var collection, layout, layoutIndex, selected;
+            if (e.shiftKey === false) {
+              return;
+            }
+            collection = that.model.get("child_els");
+            selected = collection.gather();
+            if (selected.length === 0 || selected.length === 1) {
+              return;
+            }
+            layoutIndex = collection.indexOf(selected[0]);
+            collection.add(layout = new models.Element({
+              view: 'BlankLayout',
+              type: 'Blank Layout'
+            }), {
+              at: layoutIndex
+            });
+            return _.each(selected, function(model) {
+              if (model.collection != null) {
+                model.collection.remove(model);
+              }
+              return layout.get("child_els").add(model);
+            });
+          },
+          selecting: function(e, ui) {
+            return $(ui.selecting).trigger("select");
+          },
+          unselecting: function(e, ui) {
+            var $item;
+            if (e.shiftKey === true) {
+              return;
+            }
+            $item = $(ui.unselecting);
+            $item.trigger("deselect");
+            return that.$el.find(".selected-element").trigger("deselect");
+          }
+        });
+        return this.$el.addClass("builder-scaffold");
       };
 
       return _Class;

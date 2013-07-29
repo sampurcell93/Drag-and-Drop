@@ -279,7 +279,10 @@
         children = model.get("child_els");
         $el = this.$el;
         this.setStyles();
-        $el.html(_.template(this.template, model.toJSON())).append(_.template(this.controls, {}));
+        $el.html(_.template(this.template, model.toJSON()));
+        if (this.controls != null) {
+          $el.append(_.template(this.controls, {}));
+        }
         if ((children != null) && do_children === true) {
           _.each(children.models, function(el) {
             return that.appendChild(el, {});
@@ -490,110 +493,32 @@
 
     })(Backbone.View);
     return window.views.SectionBuilder = Backbone.View.extend({
+      rendered: false,
       initialize: function() {
-        var $el, that;
         this.controller = this.options.controller;
         this.wrapper = $(".control-section").eq(this.controller.index);
         this.$el = this.wrapper.find("section");
         this.collection = this.options.collection;
-        that = this;
-        $el = this.$el;
-        this.listenTo(this.collection, {
-          "add": function(m, c, opts) {
-            return that.append(m, opts);
-          }
-        });
-        $el.droppable({
-          accept: '.builder-element, .outside-draggables li',
-          greedy: true,
-          helper: 'clone',
-          revert: 'invalid',
-          tolerance: 'pointer',
-          over: function() {},
-          drop: function(event, ui) {
-            var c, curr;
-            curr = window.currentDraggingModel;
-            c = curr.collection;
-            if ((c != null) && c !== that.collection) {
-              c.remove(curr);
-              curr.set("inFlow", true);
-              that.collection.add(curr);
-              delete window.currentDraggingModel;
-              window.currentDraggingModel = null;
-              return ui.helper.fadeOut(350);
-            } else {
-              return that.collection.add(curr);
-            }
-          }
-        });
-        return $el.selectable({
-          filter: '.builder-element',
-          cancel: ".builder-element",
-          tolerance: 'touch',
-          stop: function(e, ui) {
-            var layout, layoutIndex, selected;
-            if (e.shiftKey === false) {
-              return;
-            }
-            selected = that.collection.gather();
-            if (selected.length === 0 || selected.length === 1) {
-              return;
-            }
-            layoutIndex = that.collection.indexOf(selected[0]);
-            that.collection.add(layout = new models.Element({
-              view: 'layoutWrapper',
-              type: 'Blank Layout'
-            }), {
-              at: layoutIndex
-            });
-            return _.each(selected, function(model) {
-              model.collection.remove(model);
-              return layout.get("child_els").add(model);
-            });
-          },
-          selecting: function(e, ui) {
-            return $(ui.selecting).trigger("select");
-          },
-          unselecting: function(e, ui) {
-            var $item;
-            if (e.shiftKey === true) {
-              return;
-            }
-            $item = $(ui.unselecting);
-            $item.trigger("deselect");
-            return that.wrapper.find(".selected-element").trigger("deselect");
-          }
-        });
+        return this.render();
       },
       render: function() {
         var $el, that;
-        $el = this.$el;
-        that = this;
-        $el.empty();
-        return _.each(this.collection.models, function(element) {
-          return that.append(element, {});
-        });
+        if (this.rendered !== true) {
+          this.rendered = true;
+          $el = this.$el;
+          that = this;
+          return this.append(new models.Element({
+            view: "BuilderWrapper"
+          }));
+        }
       },
       append: function(element, opts) {
         var draggable, view;
-        view = element.get("view") || "draggableElement";
-        draggable = new views[view]({
-          model: element,
-          index: this.controller.index
-        }).render().el;
-        if ((opts != null) && (opts.at == null)) {
-          this.$el.append(draggable);
-        } else {
-          if (this.$el.children(".builder-element").eq(opts.at).length) {
-            this.$el.children(".builder-element").eq(opts.at).before(draggable);
-          } else {
-            this.$el.children(".builder-element").eq(opts.at - 1).after(draggable);
-          }
-        }
-        globals.setPlaceholders($(draggable), this.controller.get("currentSection"));
-        if (element.get("inFlow") === false) {
-          $(draggable).hide();
-        }
+        view = element.get("view");
+        element.set("child_els", this.collection);
+        this.$el.append(draggable = $(new views[view]({
+          model: element
+        }).render().el));
         return this.removeExtraPlaceholders();
       },
       removeExtraPlaceholders: function() {

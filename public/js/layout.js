@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     allLayouts = [
       {
         type: 'Dynamic Layout',
@@ -61,6 +61,48 @@
         return this;
       }
     });
+    window.views.layout = (function(_super) {
+      __extends(layout, _super);
+
+      function layout() {
+        _ref1 = layout.__super__.constructor.apply(this, arguments);
+        return _ref1;
+      }
+
+      layout.prototype.columnTemplate = $("#column-picker").html();
+
+      layout.prototype.initialize = function() {
+        layout.__super__.initialize.apply(this, arguments);
+        return _.bindAll(this, "afterRender");
+      };
+
+      layout.prototype.afterRender = function() {
+        return this.$el.addClass("layout-wrapper");
+      };
+
+      layout.prototype.events = {
+        "click .config-panel": function(e) {
+          var modal, self;
+          self = this;
+          modal = window.launchModal(_.template(this.columnTemplate, {}));
+          modal.delegate("[data-columns]", "click", function() {
+            var $t, cols;
+            $t = $(this);
+            cols = $t.data("columns");
+            console.log(cols);
+            self.model.set({
+              "classes": cols,
+              "columns": cols
+            });
+            return self.$el.addClass(cols);
+          });
+          return e.stopPropagation();
+        }
+      };
+
+      return layout;
+
+    })(window.views.draggableElement);
     /* Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
         higher level event from firing.
@@ -70,8 +112,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref1 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref1;
+        _ref2 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref2;
       }
 
       _Class.prototype.template = $("#dynamic-layout").html();
@@ -85,13 +127,13 @@
 
       return _Class;
 
-    })(window.views["genericElement"]);
+    })(window.views["layout"]);
     window.views["dynamicContainer"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
-        _ref2 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref2;
+        _ref3 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref3;
       }
 
       _Class.prototype.template = $("#dynamic-container").html();
@@ -105,13 +147,13 @@
 
       return _Class;
 
-    })(window.views["genericElement"]);
+    })(window.views["layout"]);
     window.views["accordion"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
-        _ref3 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref3;
+        _ref4 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref4;
       }
 
       _Class.prototype.template = $("#accordion-layout").html();
@@ -132,13 +174,13 @@
 
       return _Class;
 
-    })(window.views["genericElement"]);
+    })(window.views["layout"]);
     window.views["tabs"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
-        _ref4 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref4;
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
       }
 
       _Class.prototype.template = $("#tab-layout").html();
@@ -163,13 +205,13 @@
 
       return _Class;
 
-    })(window.views["genericElement"]);
+    })(window.views["layout"]);
     window.views["Freeform"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
-        _ref5 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref5;
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
       }
 
       _Class.prototype.template = $("#freeform-layout").html();
@@ -213,14 +255,16 @@
 
       return _Class;
 
-    })(window.views["genericElement"]);
-    return window.views['layoutWrapper'] = (function(_super) {
+    })(window.views["layout"]);
+    return window.views['BlankLayout'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
-        _ref6 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref6;
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
       }
+
+      _Class.prototype.template = $("#blank-layout").html();
 
       _Class.prototype.initialize = function() {
         _.bindAll(this, "afterRender");
@@ -228,12 +272,12 @@
       };
 
       _Class.prototype.afterRender = function() {
-        return this.$el.addClass("layout-wrapper");
+        return this.$el.addClass("blank-layout");
       };
 
       return _Class;
 
-    })(window.views["genericElement"]);
+    })(window.views["layout"]);
   });
 
 }).call(this);
