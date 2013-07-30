@@ -273,7 +273,6 @@
         model = this.model;
         children = model.get("child_els");
         $el = this.$el;
-        this.setStyles();
         $el.html(_.template(this.template, model.toJSON()));
         if (this.controls != null) {
           $el.append(_.template(this.controls, {}));
@@ -290,7 +289,8 @@
       };
 
       draggableElement.prototype.appendChild = function(child, opts) {
-        var builderChildren, draggable, i, view;
+        var builderChildren, draggable, i, j, linked_items, view;
+        console.log(this.$el.find(this.linked_items), this.linked_items, this.$el);
         view = child.get("view") || "draggableElement";
         if (child.get("inFlow") === true) {
           i = this.index || currIndex;
@@ -301,11 +301,21 @@
           if ((opts != null) && (opts.at == null)) {
             this.$el.append(draggable);
           } else {
-            builderChildren = this.$el.children(".builder-element");
-            if (builderChildren.eq(opts.at).length) {
-              builderChildren.eq(opts.at).before(draggable);
-            } else {
-              this.$el.append(draggable);
+            linked_items = [".builder-element"];
+            linked_items.concat(this.linked_items);
+            console.log(linked_items);
+            j = 0;
+            while (j < linked_items.length) {
+              if (linked_items[i] == null) {
+                break;
+              }
+              builderChildren = this.$el.children(linked_items[i]);
+              if (builderChildren.eq(opts.at).length) {
+                builderChildren.eq(opts.at).before(draggable);
+              } else {
+                this.$el.append(draggable);
+              }
+              j++;
             }
           }
           globals.setPlaceholders($(draggable), this.model.get("child_els"));
@@ -434,7 +444,6 @@
       draggableElement.prototype.events = {
         "click": function(e) {
           var layout;
-          console.log(this.$el.index() + 1);
           if (e.shiftKey === true) {
             layout = this.model["layout-item"];
             if (layout === false || typeof layout === "undefined") {
@@ -442,9 +451,9 @@
             } else {
               this.$el.trigger("deselect");
             }
+            e.stopPropagation();
+            return e.stopImmediatePropagation();
           }
-          e.stopPropagation();
-          return e.stopImmediatePropagation();
         },
         "click .set-options": function(e) {
           var $t, dropdown;

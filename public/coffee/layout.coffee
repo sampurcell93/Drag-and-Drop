@@ -54,9 +54,14 @@ $(document).ready ->
         # Calls the parent initialize function - mimicry of classical inheritance.
         initialize: -> 
             super
-            _.bindAll @, "afterRender"
-        afterRender: ->
+            self = @
             @$el.addClass("layout-wrapper")
+            @listenTo @model.get("child_els"), "add", (m,c,o)->
+                if c? and c.length
+                    self.$el.children(".placeholder").hide()
+                else 
+                    self.$el.children(".placeholder").show()
+
         events:
             "click .config-panel": (e) ->
                 column_types = ["one", "two", "three", "four", "five", "six"]
@@ -105,9 +110,30 @@ $(document).ready ->
             if (@model.get("child_els").length)
                 @$el.children(".placeholder").remove()
 
+    class window.views["tabItem"] extends views["draggableElement"]
+        # template: $("#tab-list-item").html()
+        # tagName: 'li class="no-drag" contentEditable="true"'
+        controls: null 
+        events: 
+            "keyup": (e) ->    
+                $t = $(e.currentTarget)
+                @model.set "tab_title", $t.html()
+            "click": (e) ->
+                console.log "clickme"
+                @$el.addClass("active-tab").siblings().removeClass("active-tab")
+        initialize: ->
+            _.bindAll @, "afterRender"
+            super
+        afterRender: ->
+            $("<h3/>").addClass("no-drag").text(@model.get("title") || "Default title").prependTo(@$el)
+            @$el.children("h3").first().attr("contentEditable", true)
+            @$el.addClass("active-tab").siblings().removeClass("active-tab")
+            # index = @model.collection.indexOf(@model)
+            # @$el.children("a").attr("href", "#tab-" + index)
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
         settingsTemplate: $("#tab-layout-settings").html()
+        linked_items: ['.tab-list li']
         initialize: ->
             _.bindAll @, "afterRender"
             self = @
@@ -118,41 +144,30 @@ $(document).ready ->
                         self.$el.children(".placeholder-text").show()
             }
             super
-            # We must extend events, because they would otherwise overwrite higher level ones.
-            $.extend @events, {
-                "click .add-tab": ->
-                    tabs = @model.get "tabs"
-                    tabs.push @defaultContent
-                    @model.set tabs
-                    @model.trigger("renderBase")
-                    console.log @model.get("tabs")
-                "keyup .tab-list li": (e) ->    
-                    $t = $(e.currentTarget)
-                    tabIndex = $t.index()
-                    tabs = @model.get "tabs"
-                    tabs[tabIndex].name = $t.html()
-                    @model.set tabs
-            }
-
-        defaultContent: {
-                name: "New Tab", 
-                content: "default"
-            }
         afterRender: ->
-            tabs = @model.get "tabs"
+            @$el.addClass("tab-layout column six").children(".tab-list").tabs({ active: @options.activeTab || 1 })
+            tabs = @model.get "child_els"
             self = @
             _.each tabs, (tab) ->
-                model = tab.content.model 
-                if tab.content == "default"
-                    if tab.content.model instanceof models.Element is true
-                        self.$el.children(".tab-content-list").append(new views[model.get("view")])
+                self.formatNewModel tab
         formatNewModel: (model, collection, options) ->
-            @$el.children(".placeholder-text").hide()
             model.set("view", "tabItem")
-
-    class window.views["tabItem"] extends views["tabs"]
-        template: $("#tab-layout-item").html()
-
+            $el = @$el
+            $el.children(".placeholder-text").hide()
+            # console.log options
+            # len = @model.get("child_els").length
+            # $el = @$el
+            # type  = model.get("type")
+            # title = model.get("title") || "Default Title"
+            # item = $("<li/>").addClass("no-drag").text(title).attr({
+            #     "contentEditable":true
+            #     "href": "#tab-" + len
+            # }).appendTo($el.children(".tab-list"))
+            # kids = $el.children(".builder-child").hide()
+            # kids.each (i) ->
+            #     $t = $(this).attr("id", "tab-" + i)
+            #     $t.next(".droppable-placeholder").hide()
+            #     $t.prev(".droppable-placeholder").hide()
 
 
     class window.views["Freeform"] extends window.views["layout"]

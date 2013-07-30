@@ -74,12 +74,17 @@
       layout.prototype.skinTemplate = $("#skins").html();
 
       layout.prototype.initialize = function() {
+        var self;
         layout.__super__.initialize.apply(this, arguments);
-        return _.bindAll(this, "afterRender");
-      };
-
-      layout.prototype.afterRender = function() {
-        return this.$el.addClass("layout-wrapper");
+        self = this;
+        this.$el.addClass("layout-wrapper");
+        return this.listenTo(this.model.get("child_els"), "add", function(m, c, o) {
+          if ((c != null) && c.length) {
+            return self.$el.children(".placeholder").hide();
+          } else {
+            return self.$el.children(".placeholder").show();
+          }
+        });
       };
 
       layout.prototype.events = {
@@ -181,7 +186,7 @@
       return _Class;
 
     })(window.views["layout"]);
-    window.views["tabs"] = (function(_super) {
+    window.views["tabItem"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -189,9 +194,47 @@
         return _ref5;
       }
 
+      _Class.prototype.controls = null;
+
+      _Class.prototype.events = {
+        "keyup": function(e) {
+          var $t;
+          $t = $(e.currentTarget);
+          return this.model.set("tab_title", $t.html());
+        },
+        "click": function(e) {
+          console.log("clickme");
+          return this.$el.addClass("active-tab").siblings().removeClass("active-tab");
+        }
+      };
+
+      _Class.prototype.initialize = function() {
+        _.bindAll(this, "afterRender");
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      _Class.prototype.afterRender = function() {
+        $("<h3/>").addClass("no-drag").text(this.model.get("title") || "Default title").prependTo(this.$el);
+        this.$el.children("h3").first().attr("contentEditable", true);
+        return this.$el.addClass("active-tab").siblings().removeClass("active-tab");
+      };
+
+      return _Class;
+
+    })(views["draggableElement"]);
+    window.views["tabs"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
+      }
+
       _Class.prototype.template = $("#tab-layout").html();
 
       _Class.prototype.settingsTemplate = $("#tab-layout-settings").html();
+
+      _Class.prototype.linked_items = ['.tab-list li'];
 
       _Class.prototype.initialize = function() {
         var self;
@@ -205,68 +248,31 @@
             }
           }
         });
-        _Class.__super__.initialize.apply(this, arguments);
-        return $.extend(this.events, {
-          "click .add-tab": function() {
-            var tabs;
-            tabs = this.model.get("tabs");
-            tabs.push(this.defaultContent);
-            this.model.set(tabs);
-            this.model.trigger("renderBase");
-            return console.log(this.model.get("tabs"));
-          },
-          "keyup .tab-list li": function(e) {
-            var $t, tabIndex, tabs;
-            $t = $(e.currentTarget);
-            tabIndex = $t.index();
-            tabs = this.model.get("tabs");
-            tabs[tabIndex].name = $t.html();
-            return this.model.set(tabs);
-          }
-        });
-      };
-
-      _Class.prototype.defaultContent = {
-        name: "New Tab",
-        content: "default"
+        return _Class.__super__.initialize.apply(this, arguments);
       };
 
       _Class.prototype.afterRender = function() {
         var self, tabs;
-        tabs = this.model.get("tabs");
+        this.$el.addClass("tab-layout column six").children(".tab-list").tabs({
+          active: this.options.activeTab || 1
+        });
+        tabs = this.model.get("child_els");
         self = this;
         return _.each(tabs, function(tab) {
-          var model;
-          model = tab.content.model;
-          if (tab.content === "default") {
-            if (tab.content.model instanceof models.Element === true) {
-              return self.$el.children(".tab-content-list").append(new views[model.get("view")]);
-            }
-          }
+          return self.formatNewModel(tab);
         });
       };
 
       _Class.prototype.formatNewModel = function(model, collection, options) {
-        this.$el.children(".placeholder-text").hide();
-        return model.set("view", "tabItem");
+        var $el;
+        model.set("view", "tabItem");
+        $el = this.$el;
+        return $el.children(".placeholder-text").hide();
       };
 
       return _Class;
 
     })(window.views["layout"]);
-    window.views["tabItem"] = (function(_super) {
-      __extends(_Class, _super);
-
-      function _Class() {
-        _ref6 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref6;
-      }
-
-      _Class.prototype.template = $("#tab-layout-item").html();
-
-      return _Class;
-
-    })(views["tabs"]);
     window.views["Freeform"] = (function(_super) {
       __extends(_Class, _super);
 

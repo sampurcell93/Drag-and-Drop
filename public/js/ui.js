@@ -14,9 +14,12 @@
     window.validNumber = function(num) {
       return !isNaN(parseInt(num));
     };
-    return $(this).delegate(".close-modal", "click", function() {
+    $(this).delegate(".close-modal", "click", function() {
       $(this).closest(".modal").remove();
       return $("body").removeClass("active-modal");
+    });
+    return $(".builder-element").delegate(".tab-list", "click", function() {
+      return console.log("clinking");
     });
   });
 

@@ -183,8 +183,6 @@ $(document).ready ->
             model = @model
             children = model.get "child_els" 
             $el =  @$el
-            # Get model layout properties and set applicable as classes
-            @setStyles()
             $el.html(_.template @template, model.toJSON())
             if @controls? then $el.append(_.template @controls, {})
             if children? and do_children is true
@@ -195,6 +193,7 @@ $(document).ready ->
             )()
             @
         appendChild: ( child , opts ) ->
+            console.log(this.$el.find(this.linked_items), this.linked_items, this.$el);
             # We choose a view to render based on the model's specification, 
             # or default to a standard draggable.
             view = child.get("view") || "draggableElement"
@@ -204,10 +203,17 @@ $(document).ready ->
                 if (opts? and !opts.at?)
                     @$el.append(draggable)
                 else 
-                    builderChildren = @$el.children(".builder-element")
-                    if builderChildren.eq(opts.at).length 
-                        builderChildren.eq(opts.at).before(draggable)
-                    else @$el.append(draggable)
+                    linked_items = [".builder-element"]
+                    linked_items.concat @linked_items
+                    console.log linked_items
+                    j = 0
+                    while (j < linked_items.length)
+                        if !linked_items[i]? then break
+                        builderChildren = @$el.children(linked_items[i])
+                        if builderChildren.eq(opts.at).length 
+                            builderChildren.eq(opts.at).before(draggable)
+                        else @$el.append(draggable)
+                        j++
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
                 allSections.at(@index || currIndex).get("builder").removeExtraPlaceholders()
         setStyles: ->
@@ -303,15 +309,14 @@ $(document).ready ->
         # Default events for any draggable - basically configuration settings.
         events: 
             "click": (e) ->
-                console.log @$el.index() + 1
                 if e.shiftKey is true
                     layout = @model["layout-item"]
                     if (layout is false or typeof layout is "undefined")
                         @$el.trigger("select")
                     else 
                         @$el.trigger("deselect")
-                e.stopPropagation()
-                e.stopImmediatePropagation()
+                    e.stopPropagation()
+                    e.stopImmediatePropagation()
             "click .set-options": (e) ->
                 $t = $(e.currentTarget)
                 dropdown = $t.children(".dropdown")

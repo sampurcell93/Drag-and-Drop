@@ -11,8 +11,8 @@ script#dynamic-container(type='text/template')
     p.p10.center.placeholder Dynamic Container here
 script#tab-layout(type='text/template')
     p.center.p10.center.placeholder-text Drag in properties or elements. The layout will format them into tabs appropriately.
-script#tab-layout-item(type='text/template')
-    | <%= type %>
+script#tab-list-item(type='text/template')
+    <%= typeof tab_title !== "undefined" ? tab_title : "Default Title" %>
 script#accordion-layout(type='text/template')
     p.p10.center.placeholder Accordion here!
 script#freeform-layout(type='text/template')
