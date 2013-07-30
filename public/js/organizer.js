@@ -27,16 +27,11 @@
           items: '> li',
           cancel: ".out-of-flow",
           start: function(e, ui) {
-            that.oldIndex = ui.placeholder.index() - 1;
+            that.oldIndex = ui.item.index();
             return that.collection.at(that.oldIndex).trigger("sorting");
           },
-          change: function(e, ui) {
-            var incrementer;
-            incrementer = 1;
-            that.collection.reorder(that.oldIndex + incrementer, that.oldIndex);
-            return that.oldIndex + incrementer;
-          },
           stop: function(e, ui) {
+            that.collection.reorder($(ui.item).index(), that.oldIndex);
             return ui.item.removeClass("moving-sort");
           }
         });
@@ -116,15 +111,18 @@
         });
       },
       render: function() {
-        var $el, childList, that;
-        console.log("rendering item in organizer");
+        var $el, childList, self, that;
+        self = this;
         $el = this.$el;
         $el.html(_.template(this.template, this.model.toJSON()));
         $el.draggable({
           zIndex: 11111,
           cancel: '.sort-element, .activate-element, .destroy-element',
           revert: 'invalid',
-          helper: 'clone'
+          helper: 'clone',
+          start: function(e, ui) {
+            return window.currentDraggingModel = self.model;
+          }
         });
         that = this;
         if (this.model.get("inFlow") === false) {
@@ -134,7 +132,6 @@
         } else {
           $el.removeClass("out-of-flow");
         }
-        this.outOfFlow = [];
         _.each(this.model.get("child_els").models, function(el) {
           return that.append(el);
         });
@@ -209,13 +206,15 @@
         "click .destroy-element": function() {
           return this.model.destroy();
         },
-        "mouseover": function() {
-          return this.model.trigger("sorting");
+        "mouseover": function(e) {
+          this.model.trigger("sorting");
+          return e.stopPropagation();
         },
-        "mouseout": function() {
+        "mouseout": function(e) {
           if (!this.$el.hasClass("moving-sort")) {
-            return this.model.trigger("end-sorting");
+            this.model.trigger("end-sorting");
           }
+          return e.stopPropagation();
         }
       }
     });

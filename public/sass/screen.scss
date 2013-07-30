@@ -631,6 +631,7 @@ ul.outside-draggables {
 		cursor: move;
 		width: 100%;
 		overflow: hidden;
+		white-space: nowrap;
 		text-overflow: ellipsis !important;
 
 		&:first-child {
@@ -715,9 +716,14 @@ section.builder-container {
 			margin-left: 0;
 			margin-right: 0;
 
-			textarea, .big-input, .generic-list li {
+			textarea, .title-setter{
 				border: none;
 				resize: none;
+			}
+
+			textarea {
+				background: #e3e3e3;
+				padding: 10px;
 			}
 
 			.add-list-item { display: none; }
@@ -794,10 +800,8 @@ section.builder-container {
 	&:after {
     	clear: both;
 	}
-	
-	textarea { 
-		margin-left: 30px;
-	}
+
+	textarea { color: #363636; }
 }
 
 .droppable-placeholder {
@@ -1061,3 +1065,4 @@ ol.generic-list {
 }
 
 .no-drag { cursor: auto; }
+

@@ -1,9 +1,13 @@
 $(document).ready ->
 
+
+    # Store the display type of the element, and a string reference to its view type
+    # This view type also refers to the editor template, stored in editors.coffee within the
+    # window.views.editors object.
     generics = [
         {
             "type" : "Button",
-            "view" : "Button"
+            "view" : "Button",
         },
         {
             "type" : "Custom Text",
@@ -16,12 +20,14 @@ $(document).ready ->
         {
             "tagName" : "ol",
             "type" : "Numbered List",
-            "view" : "listElement"
+            "view" : "listElement",
+            listItems: [1,2,3]
         },
         {
             "tagName" : "ul",
             "type" : "Bulleted List",
-            "view" : "listElement"
+            "view" : "listElement",
+            listItems: [1,2,3]
         },
         {
             type: 'Date/Time'
@@ -41,10 +47,7 @@ $(document).ready ->
         },
     ]
 
-    window.models.GenericElement = Backbone.Model.extend {
-        defaults: ->
-            listItems: [1,2,3]
-    }
+    window.models.GenericElement = Backbone.Model.extend {}
 
     window.collections.GenericElements = Backbone.Collection.extend {
         model: models.GenericElement
@@ -53,24 +56,25 @@ $(document).ready ->
     }
 
     window.views.GenericList = Backbone.View.extend {
+        el: ".generic-elements ul"
         initialize: ->
             @controller = @options.controller
             @collection = new collections.GenericElements(generics)
             @wrapper = $(".control-section").eq(@controller.index)
-            @$el = @wrapper.find(".generic-elements ul")
+            @$el = @wrapper.find(@el)
             @el = @$el.get()
             do @render
         render: ->
             $el = @$el
             _.each @collection.models, (el) ->
-                $el.append new views.GenericListItem({model: el}).render().el
+                $el.append new views.OutsideDraggableItem({model: el}).render().el
             this
     }
 
-    window.views.GenericListItem = Backbone.View.extend {
+    window.views.OutsideDraggableItem = Backbone.View.extend {
         initialize: ->
             # need to preserve default state of genericity
-            @baseModel = @model.toJSON()
+            baseModel = @model.toJSON()
             self = @
             @$el.draggable {
                 # When the drop is bad, do nothing
@@ -82,11 +86,12 @@ $(document).ready ->
                 start: (e, ui) ->
                     $(ui.helper).addClass("dragging")
                     child_els = new collections.Elements()
-                    toAdd = new models.Element(self.baseModel)
+                    toAdd = new models.Element(baseModel)
                     child_els.model = toAdd
                     toAdd.set("child_els", child_els)
                     # Give the builder an acceptable element.
                     window.currentDraggingModel = toAdd
+                    console.log toAdd is self.model
                 stop: (e, ui) ->
                     $(ui.item).removeClass("dragging").remove()
                     # If the drop was a success, remove the original and preserve the clone
@@ -144,11 +149,20 @@ $(document).ready ->
                     index = target.index()
                     if target.index() is 0
                         @model.set("title", target.text())
-                    @model.updateListItems(target.html(), index)
+                    @updateListItems(target.html(), index)
                 "click .remove-property-link": (e) ->
                     $(e.currentTarget).closest(".property-link").slideUp "fast", ->
                         $(@).remove()
             })
+        updateListItems: (text, index) ->
+             if (@model.get("type") == "Numbered List" || @model.get("type") == "Bulleted List")
+                listItems = @model.get("listItems")
+                if listItems?
+                    listItems[index] = {}
+                    listItems[index].text = text
+                else listItems.splice(index,0, {text: text})
+                @model.set("listItems", listItems)
+
 
     class window.views['Button'] extends window.views.genericElement
         template: $("#button-template").html()
@@ -180,12 +194,17 @@ $(document).ready ->
     class window.views['DateTime'] extends window.views.genericElement
         template: $("#date-time").html()
         initialize: (options) ->
+            _.bindAll(@, "afterRender")
             super 
+        afterRender: ->
+            @$el.find(".date-picker").datepicker()
 
     class window.views['Dropdown'] extends window.views.genericElement
         template: $("#dropdown").html()
         initialize: (options) ->
             super 
+
+
     class window.views['BuilderWrapper'] extends window.views.genericElement
         controls: null
         initialize: ->
@@ -197,9 +216,9 @@ $(document).ready ->
         afterRender: ->
             that = @
             @$el.selectable {
-                filter: '.builder-element'
+                filter: '.builder-element:not(.builder-scaffold)'
                 tolerance: 'touch'
-                cancel: ".config-menu-wrap, input, .title-setter, textarea"
+                cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag"
                 stop: (e,ui) ->
                     if e.shiftKey is false then return
                     collection = that.model.get("child_els")

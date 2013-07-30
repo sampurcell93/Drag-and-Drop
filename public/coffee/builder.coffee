@@ -7,8 +7,8 @@ $(document).ready ->
     window.globals =
          setPlaceholders: (draggable, collection) ->
             draggable
-            .before(new window.views.droppablePlaceholder({collection: collection}).render())
-            .after(new window.views.droppablePlaceholder({collection: collection}).render())
+            .before(new views.droppablePlaceholder({collection: collection}).render())
+            .after(new views.droppablePlaceholder({collection: collection}).render())
             # extra = new window.views.droppablePlaceholder({collection: collection}).render()
             # if (draggable.index() is 0 and !draggable.hasClass("builder-child"))
             #     draggable.before(extra)
@@ -61,26 +61,19 @@ $(document).ready ->
             children.add(putIn, {at: at})
             @set "child_els", children
             true
-        updateListItems: (text, index) ->
-             if (@get("type") == "Numbered List" || @get("type") == "Bulleted List")
-                listItems = @get("listItems")
-                if listItems?
-                    listItems[index] = {}
-                    listItems[index].text = text
-                else listItems.splice(index,0, {text: text})
-                @set("listItems", listItems)
-
 
     window.collections.Elements = Backbone.Collection.extend {
         model: models.Element
         url: '/section/'
         blend: (putIn, at) ->
+            if !putIn? then return false
             if $.isArray(putIn) is true and putIn.length > 1
                  _.each putIn, (model) ->
                     model.collection.remove model
             else if putIn.collection?
                 putIn.collection.remove putIn
             @add putIn, {at: at}
+            true
          # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
         reorder: (newIndex, originalIndex, collection, options) ->
@@ -110,11 +103,13 @@ $(document).ready ->
         events:
             "remove": ->
                 do @remove
+        initialize: ->
+            @index = @options.index
         render: ->
             self = @
             ghostFragment = $("<div/>").addClass("droppable-placeholder").text("")
             ghostFragment.droppable
-                accept: ".builder-element, .outside-draggables li"
+                accept: ".builder-element, .outside-draggables li, .property"
                 greedy: true
                 tolerance: 'pointer' 
                 over: (e, ui) ->
@@ -154,6 +149,7 @@ $(document).ready ->
                 self.appendChild(m,o)
             @listenTo @model, { 
                 "change:styles": @setStyles
+                "change:view": @render
                 "change:inFlow": ( model ) ->
                     if model.get("inFlow") is true
                          self.$el.slideDown("fast").
@@ -164,8 +160,9 @@ $(document).ready ->
                         next(".droppable-placeholder").slideUp("fast").
                         prev(".droppable-placeholder").slideUp("fast")
                 "remove": ->
+                    console.log "remove"
                     self.$el.next(".droppable-placeholder").remove()
-                    do self.remove
+                    self.remove()
                 "sorting": ->
                     self.$el.addClass("selected-element")
                 "end-sorting": ->
@@ -177,6 +174,7 @@ $(document).ready ->
             do @bindDrop
             do @bindDrag
         render: (do_children) ->
+            console.log "rendering parent draggable"
             if typeof do_children is "undefined" then do_children = true
             # For inherited views that don't want to overwrite render entirely, we have 
             # custom methods to accompany it.
@@ -192,8 +190,9 @@ $(document).ready ->
             if children? and do_children is true
                 _.each children.models , (el) ->
                     that.appendChild el, {}
-            $el.hide().fadeIn(325)
-            (@afterRender || -> {})()
+            (@afterRender || -> 
+                $el.hide().fadeIn(325)
+            )()
             @
         appendChild: ( child , opts ) ->
             # We choose a view to render based on the model's specification, 
@@ -220,10 +219,9 @@ $(document).ready ->
                 @$el.css styles
         bindDrag: ->
             that = this
-            cancel = ".config-menu-wrap, input, textarea, [contentEditable], [contenteditable], .add-list-item, .generic-list li, .no-drag"            
             # Set the element to be draggable.
             @$el.draggable
-                cancel: cancel
+                cancel: ".no-drag"
                 revert: true
                 scrollSensitivity: 100
                 helper: ->
@@ -231,13 +229,15 @@ $(document).ready ->
                     selected = that.$el.closest("section").find(".ui-selected, .selected-element")
                     self = $(this)
                     if !self.hasClass("selected-element") then return self
+                    console.log "helper"
                     # Make a wrapper for all elements
                     wrap = $("<div />").html(self.clone()).css("width", "100%")
                     # Append each selected item to the wrapper so the user can see what they drag
                     selected.each -> 
+                        console.log "eachin"
                         # Do not reappend the direct dragged item - it need not be selected, per se
                         # but may still be the subject of a drag. Do not reappend children.
-                        unless self.is(this) or $(this).hasClass("builder-child")
+                        unless self.is(this)
                             if $(this).index() > self.index()
                                 wrap.append $(this).clone()
                             else wrap.prepend $(this).clone()
@@ -263,18 +263,19 @@ $(document).ready ->
             @$el.droppable {
               greedy:true                                          # intercepts events from parent
               tolerance: 'pointer'                                 # only the location of the mouse determines drop zone.
-              accept: '.builder-element, .outside-draggables li'
+              accept: '.builder-element, .outside-draggables li, .property'
               over: (e) ->
                 $(e.target).addClass("over")
               out: (e)->
-                $(e.target).removeClass("over")
+                $(e.target).removeClass("over").parent().removeClass("over")
               drop: (e,ui) ->
+                $(e.target).removeClass("over").parent().removeClass("over")
                 draggingModel = window.currentDraggingModel
-                if typeof draggingModel is "undefined" or !draggingModel? then return
+                if typeof draggingModel is "undefined" or !draggingModel? then return false
+                else if draggingModel is that.model then return false
                 sect_interface = allSections.at(that.index || currIndex)
                 section = sect_interface.get("currentSection")
                 builder = sect_interface.get("builder")
-                $(e.target).removeClass("over")
                 model = that.model
                 # if the dragged element is a direct child of its new parent, do nothing
                 unless draggingModel.collection is model.get("child_els")
@@ -286,27 +287,31 @@ $(document).ready ->
                     window.currentDraggingModel = null
                 e.stopPropagation()
                 e.stopImmediatePropagation()
+                true
             }
         removeFromFlow: (e) ->        #  When they click the "X" in the config - remove the el from the builder
             that = @
             destroy = ->
                 that.model.set("inFlow", false)
-                e.stopPropagation()
-                e.stopImmediatePropagation()  
             if e.type == "flowRemoveViaDrag"
                 @$el.toggle("clip",  300, destroy)
             else do destroy
+
+            e.stopPropagation()
+            e.stopImmediatePropagation()  
+
         # Default events for any draggable - basically configuration settings.
         events: 
             "click": (e) ->
-                layout = @model["layout-item"]
+                console.log @$el.index() + 1
                 if e.shiftKey is true
+                    layout = @model["layout-item"]
                     if (layout is false or typeof layout is "undefined")
                         @$el.trigger("select")
                     else 
                         @$el.trigger("deselect")
-                    e.stopPropagation()
-                    e.stopImmediatePropagation()
+                e.stopPropagation()
+                e.stopImmediatePropagation()
             "click .set-options": (e) ->
                 $t = $(e.currentTarget)
                 dropdown = $t.children(".dropdown")
@@ -316,10 +321,15 @@ $(document).ready ->
             "click .set-options li": (e) ->
                 e.preventDefault()
                 e.stopPropagation()                  # So as to stop the parent list from closing
-            "click .remove-from-flow": "removeFromFlow"
+            "click .remove-from-flow": (e) ->
+                e.stopPropagation()
+                e.stopImmediatePropagation()
+                @removeFromFlow(e)
             "flowRemoveViaDrag": "removeFromFlow"      # Stop the click event from bubbling up to the parent model, if there is one.:
             "click .config-panel": (e) ->            #  On click of the panel in the top right
-                editor = new views.ElementEditor({model: @model, view: @}).render()
+                editor = @model.get("view") || "DefaultEditor"
+                console.log editor, views.editors[editor]
+                new views.editors[editor]().render()
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
                 @model["layout-item"] = true
@@ -361,9 +371,14 @@ $(document).ready ->
         removeExtraPlaceholders: ->
             @$el.find(".droppable-placeholder").each ->
                 $t = $(this)
-                if $t.next().hasClass("droppable-placeholder") or $t.next().length is 0
+                flag = 0
+                if $t.next().hasClass("droppable-placeholder")
                     $t.next().remove()  
-                if $t.prev().hasClass("droppable-placeholder") or $t.prev().length is 0
+                if $t.prev().hasClass("droppable-placeholder")
                     $t.prev().remove()
-
+                if !$t.next().hasClass("builder-element")
+                    flag += 1
+                if !$t.prev().hasClass("builder-element")
+                    flag += 1
+                if flag is 2 then $t.remove()
     }

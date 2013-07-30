@@ -22,16 +22,14 @@ $(document).ready ->
                 items: '> li'
                 cancel: ".out-of-flow"
                 start: (e,ui)->
-                    that.oldIndex = ui.placeholder.index() - 1
+                    that.oldIndex = ui.item.index()
                     that.collection.at(that.oldIndex).trigger("sorting")
-                change: (e, ui) ->
-                    incrementer = 1
-                    # that.collection.at(that.origIndex)
-                    that.collection.reorder that.oldIndex+incrementer, that.oldIndex
-                    # ui.item.removeClass("moving-sort")
-                    that.oldIndex+incrementer
                 stop: (e, ui) ->
+                    # that.collection.at(that.origIndex)
+                    that.collection.reorder $(ui.item).index(), that.oldIndex
+                    # ui.item.removeClass("moving-sort")
                     ui.item.removeClass("moving-sort")
+                # stop: (e, ui) ->
             }
             this
         render: (e) ->
@@ -95,7 +93,7 @@ $(document).ready ->
                         that.append(model, opts)
             }
         render: ->
-            console.log "rendering item in organizer"
+            self = @
             $el = @$el
             $el.html _.template @template, @model.toJSON()
             $el.draggable
@@ -103,15 +101,16 @@ $(document).ready ->
                 cancel: '.sort-element, .activate-element, .destroy-element'
                 revert: 'invalid'
                 helper: 'clone'
-            that = this
-            # Same recursion as draggable element.
+                start: (e,ui) ->
+                    window.currentDraggingModel = self.model
+            that = @
+            # If the model is not in the page, set it aside
             if @model.get("inFlow") is false
                 $el.addClass("out-of-flow")
                 $("<div />").addClass("activate-element").text("m").prependTo($el)
                 $("<div />").addClass("destroy-element").text("g").prependTo($el)
             else 
                 $el.removeClass("out-of-flow") 
-            @outOfFlow = []
             _.each @model.get("child_els").models, (el) ->
                 that.append el
             childList = $el.children(".child-list")
@@ -165,9 +164,11 @@ $(document).ready ->
                 @model.set "inFlow", true, {e: e}
             "click .destroy-element": ->
                 @model.destroy()
-            "mouseover": ->
+            "mouseover": (e) ->
                 @model.trigger("sorting")
-            "mouseout": ->
+                e.stopPropagation()
+            "mouseout": (e) ->
                 if !@$el.hasClass("moving-sort")
                    @model.trigger("end-sorting")
+                e.stopPropagation()
     }

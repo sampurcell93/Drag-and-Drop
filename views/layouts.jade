@@ -10,9 +10,9 @@ script#dynamic-layout(type='text/template')
 script#dynamic-container(type='text/template')
     p.p10.center.placeholder Dynamic Container here
 script#tab-layout(type='text/template')
-    p.p10.center.placeholder Tabs here    
-script#tab-layout-settings(type='text/template')
-    | TAB SETTINGS
+    p.center.p10.center.placeholder-text Drag in properties or elements. The layout will format them into tabs appropriately.
+script#tab-layout-item(type='text/template')
+    | <%= type %>
 script#accordion-layout(type='text/template')
     p.p10.center.placeholder Accordion here!
 script#freeform-layout(type='text/template')
@@ -33,10 +33,13 @@ script#freeform-layout-settings(type='text/template')
 script#column-picker(type='text/template')
     h2 Choose a column layout
     ul.choose-columns
-        li(data-columns='one-column') One Column
-        li(data-columns='two-column') Two Columns
-        li(data-columns='three-column') Three Columns
-        li(data-columns='four-column') Four Columns
-        li(data-columns='five-column') Five Columns
-        li(data-columns='six-column') Six Columns
+        li(data-columns='one') One Column
+        li(data-columns='two') Two Columns
+        li(data-columns='three') Three Columns
+        li(data-columns='four') Four Columns
+        li(data-columns='five') Five Columns
+        li(data-columns='six') Six Columns
 script#blank-layout(type='text/template')
+
+script#skins(type='text/template')
+    | PRO

@@ -18,11 +18,13 @@
       }, {
         "tagName": "ol",
         "type": "Numbered List",
-        "view": "listElement"
+        "view": "listElement",
+        listItems: [1, 2, 3]
       }, {
         "tagName": "ul",
         "type": "Bulleted List",
-        "view": "listElement"
+        "view": "listElement",
+        listItems: [1, 2, 3]
       }, {
         type: 'Date/Time',
         view: 'DateTime'
@@ -37,23 +39,18 @@
         view: 'Dropdown'
       }
     ];
-    window.models.GenericElement = Backbone.Model.extend({
-      defaults: function() {
-        return {
-          listItems: [1, 2, 3]
-        };
-      }
-    });
+    window.models.GenericElement = Backbone.Model.extend({});
     window.collections.GenericElements = Backbone.Collection.extend({
       model: models.GenericElement,
       url: '/generic'
     });
     window.views.GenericList = Backbone.View.extend({
+      el: ".generic-elements ul",
       initialize: function() {
         this.controller = this.options.controller;
         this.collection = new collections.GenericElements(generics);
         this.wrapper = $(".control-section").eq(this.controller.index);
-        this.$el = this.wrapper.find(".generic-elements ul");
+        this.$el = this.wrapper.find(this.el);
         this.el = this.$el.get();
         return this.render();
       },
@@ -61,17 +58,17 @@
         var $el;
         $el = this.$el;
         _.each(this.collection.models, function(el) {
-          return $el.append(new views.GenericListItem({
+          return $el.append(new views.OutsideDraggableItem({
             model: el
           }).render().el);
         });
         return this;
       }
     });
-    window.views.GenericListItem = Backbone.View.extend({
+    window.views.OutsideDraggableItem = Backbone.View.extend({
       initialize: function() {
-        var self;
-        this.baseModel = this.model.toJSON();
+        var baseModel, self;
+        baseModel = this.model.toJSON();
         self = this;
         return this.$el.draggable({
           revert: true,
@@ -81,10 +78,11 @@
             var child_els, toAdd;
             $(ui.helper).addClass("dragging");
             child_els = new collections.Elements();
-            toAdd = new models.Element(self.baseModel);
+            toAdd = new models.Element(baseModel);
             child_els.model = toAdd;
             toAdd.set("child_els", child_els);
-            return window.currentDraggingModel = toAdd;
+            window.currentDraggingModel = toAdd;
+            return console.log(toAdd === self.model);
           },
           stop: function(e, ui) {
             $(ui.item).removeClass("dragging").remove();
@@ -160,7 +158,7 @@
             if (target.index() === 0) {
               this.model.set("title", target.text());
             }
-            return this.model.updateListItems(target.html(), index);
+            return this.updateListItems(target.html(), index);
           },
           "click .remove-property-link": function(e) {
             return $(e.currentTarget).closest(".property-link").slideUp("fast", function() {
@@ -168,6 +166,22 @@
             });
           }
         });
+      };
+
+      _Class.prototype.updateListItems = function(text, index) {
+        var listItems;
+        if (this.model.get("type") === "Numbered List" || this.model.get("type") === "Bulleted List") {
+          listItems = this.model.get("listItems");
+          if (listItems != null) {
+            listItems[index] = {};
+            listItems[index].text = text;
+          } else {
+            listItems.splice(index, 0, {
+              text: text
+            });
+          }
+          return this.model.set("listItems", listItems);
+        }
       };
 
       return _Class;
@@ -274,7 +288,12 @@
       _Class.prototype.template = $("#date-time").html();
 
       _Class.prototype.initialize = function(options) {
+        _.bindAll(this, "afterRender");
         return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      _Class.prototype.afterRender = function() {
+        return this.$el.find(".date-picker").datepicker();
       };
 
       return _Class;
@@ -322,9 +341,9 @@
         var that;
         that = this;
         this.$el.selectable({
-          filter: '.builder-element',
+          filter: '.builder-element:not(.builder-scaffold)',
           tolerance: 'touch',
-          cancel: ".config-menu-wrap, input, .title-setter, textarea",
+          cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag",
           stop: function(e, ui) {
             var collection, layout, layoutIndex, selected;
             if (e.shiftKey === false) {

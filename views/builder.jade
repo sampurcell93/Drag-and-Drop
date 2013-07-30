@@ -5,14 +5,15 @@ script(type='text/template')#element-sortable-item
     div.destroy-element g
     <span class='element-title'>
     <%= (typeof title !== "undefined" && title !== "") ?  title.clean(true) : "Default Title" %>
-    <%= (typeof type !== "undefined" && type !== "") ?  " - " + type : "" %>
     </span>
+    <%= (typeof type !== "undefined" && type !== "") ?  " - " + type : "" %>
     ul.child-list
 script(type='text/template')#draggable-element
     h3 <%= typeof title !== "undefined" ? title.clean() : type.clean() %>
     <% if (typeof property !== "undefined") { %> <input placeholder='<%= className + "." + property.name.clean() %>' /> <%}%>
+    ul.child-list
 script(type='text/template')#drag-controls
-    ul.config-menu-wrap
+    ul.config-menu-wrap.no-drag 
         li.icon.set-options e
             ul.dropdown
                 li.config-panel Properties

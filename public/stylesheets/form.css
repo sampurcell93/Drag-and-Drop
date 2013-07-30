@@ -400,25 +400,27 @@ textarea {
   width: 75%;
   max-width: 85%;
   margin: 5px 0;
+  resize: vertical;
+  overflow: visible;
 }
-/* line 20, ../sass/form.scss */
+/* line 22, ../sass/form.scss */
 textarea.generic-text {
   display: block;
   width: 100% !important;
   height: 100% !important;
 }
 
-/* line 27, ../sass/form.scss */
+/* line 29, ../sass/form.scss */
 .add-section-title {
   margin: 10px 0 0px 20px;
 }
 
-/* line 31, ../sass/form.scss */
+/* line 33, ../sass/form.scss */
 button {
   position: relative;
   background: #2092cc;
 }
-/* line 35, ../sass/form.scss */
+/* line 37, ../sass/form.scss */
 button[data-icon]::after {
   content: attr(data-icon);
   left: 10px;
@@ -426,11 +428,11 @@ button[data-icon]::after {
   color: #f9f9f9;
   position: absolute;
 }
-/* line 42, ../sass/form.scss */
+/* line 44, ../sass/form.scss */
 button[data-icon] {
   padding-left: 40px;
 }
-/* line 45, ../sass/form.scss */
+/* line 47, ../sass/form.scss */
 button.orange {
   background-color: #f9aa48;
   *zoom: 1;
@@ -443,12 +445,12 @@ button.orange {
   border: none;
   padding-bottom: 12px;
 }
-/* line 54, ../sass/form.scss */
+/* line 56, ../sass/form.scss */
 button.orange:hover {
   background: #EF8707;
 }
 
-/* line 60, ../sass/form.scss */
+/* line 62, ../sass/form.scss */
 label {
   font-weight: bold;
 }

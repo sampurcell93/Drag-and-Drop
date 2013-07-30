@@ -12,9 +12,9 @@
     var _ref, _ref1, _ref2;
     window.globals = {
       setPlaceholders: function(draggable, collection) {
-        return draggable.before(new window.views.droppablePlaceholder({
+        return draggable.before(new views.droppablePlaceholder({
           collection: collection
-        }).render()).after(new window.views.droppablePlaceholder({
+        }).render()).after(new views.droppablePlaceholder({
           collection: collection
         }).render());
       }
@@ -87,22 +87,6 @@
         return true;
       };
 
-      Element.prototype.updateListItems = function(text, index) {
-        var listItems;
-        if (this.get("type") === "Numbered List" || this.get("type") === "Bulleted List") {
-          listItems = this.get("listItems");
-          if (listItems != null) {
-            listItems[index] = {};
-            listItems[index].text = text;
-          } else {
-            listItems.splice(index, 0, {
-              text: text
-            });
-          }
-          return this.set("listItems", listItems);
-        }
-      };
-
       return Element;
 
     })(Backbone.Model);
@@ -110,6 +94,9 @@
       model: models.Element,
       url: '/section/',
       blend: function(putIn, at) {
+        if (putIn == null) {
+          return false;
+        }
         if ($.isArray(putIn) === true && putIn.length > 1) {
           _.each(putIn, function(model) {
             return model.collection.remove(model);
@@ -117,9 +104,10 @@
         } else if (putIn.collection != null) {
           putIn.collection.remove(putIn);
         }
-        return this.add(putIn, {
+        this.add(putIn, {
           at: at
         });
+        return true;
       },
       reorder: function(newIndex, originalIndex, collection, options) {
         var temp;
@@ -170,12 +158,16 @@
         }
       };
 
+      droppablePlaceholder.prototype.initialize = function() {
+        return this.index = this.options.index;
+      };
+
       droppablePlaceholder.prototype.render = function() {
         var ghostFragment, self;
         self = this;
         ghostFragment = $("<div/>").addClass("droppable-placeholder").text("");
         return ghostFragment.droppable({
-          accept: ".builder-element, .outside-draggables li",
+          accept: ".builder-element, .outside-draggables li, .property",
           greedy: true,
           tolerance: 'pointer',
           over: function(e, ui) {
@@ -239,6 +231,7 @@
         });
         this.listenTo(this.model, {
           "change:styles": this.setStyles,
+          "change:view": this.render,
           "change:inFlow": function(model) {
             if (model.get("inFlow") === true) {
               return self.$el.slideDown("fast").next(".droppable-placeholder").slideDown("fast").prev(".droppable-placeholder").slideDown("fast");
@@ -247,6 +240,7 @@
             }
           },
           "remove": function() {
+            console.log("remove");
             self.$el.next(".droppable-placeholder").remove();
             return self.remove();
           },
@@ -268,6 +262,7 @@
 
       draggableElement.prototype.render = function(do_children) {
         var $el, children, model, that;
+        console.log("rendering parent draggable");
         if (typeof do_children === "undefined") {
           do_children = true;
         }
@@ -288,9 +283,8 @@
             return that.appendChild(el, {});
           });
         }
-        $el.hide().fadeIn(325);
         (this.afterRender || function() {
-          return {};
+          return $el.hide().fadeIn(325);
         })();
         return this;
       };
@@ -328,11 +322,10 @@
       };
 
       draggableElement.prototype.bindDrag = function() {
-        var cancel, that;
+        var that;
         that = this;
-        cancel = ".config-menu-wrap, input, textarea, [contentEditable], [contenteditable], .add-list-item, .generic-list li, .no-drag";
         return this.$el.draggable({
-          cancel: cancel,
+          cancel: ".no-drag",
           revert: true,
           scrollSensitivity: 100,
           helper: function() {
@@ -342,9 +335,11 @@
             if (!self.hasClass("selected-element")) {
               return self;
             }
+            console.log("helper");
             wrap = $("<div />").html(self.clone()).css("width", "100%");
             selected.each(function() {
-              if (!(self.is(this) || $(this).hasClass("builder-child"))) {
+              console.log("eachin");
+              if (!self.is(this)) {
                 if ($(this).index() > self.index()) {
                   return wrap.append($(this).clone());
                 } else {
@@ -386,23 +381,25 @@
         return this.$el.droppable({
           greedy: true,
           tolerance: 'pointer',
-          accept: '.builder-element, .outside-draggables li',
+          accept: '.builder-element, .outside-draggables li, .property',
           over: function(e) {
             return $(e.target).addClass("over");
           },
           out: function(e) {
-            return $(e.target).removeClass("over");
+            return $(e.target).removeClass("over").parent().removeClass("over");
           },
           drop: function(e, ui) {
             var builder, draggingModel, model, sect_interface, section;
+            $(e.target).removeClass("over").parent().removeClass("over");
             draggingModel = window.currentDraggingModel;
             if (typeof draggingModel === "undefined" || (draggingModel == null)) {
-              return;
+              return false;
+            } else if (draggingModel === that.model) {
+              return false;
             }
             sect_interface = allSections.at(that.index || currIndex);
             section = sect_interface.get("currentSection");
             builder = sect_interface.get("builder");
-            $(e.target).removeClass("over");
             model = that.model;
             if (draggingModel.collection !== model.get("child_els")) {
               if (model.blend(draggingModel) === true) {
@@ -413,7 +410,8 @@
               }
             }
             e.stopPropagation();
-            return e.stopImmediatePropagation();
+            e.stopImmediatePropagation();
+            return true;
           }
         });
       };
@@ -422,30 +420,31 @@
         var destroy, that;
         that = this;
         destroy = function() {
-          that.model.set("inFlow", false);
-          e.stopPropagation();
-          return e.stopImmediatePropagation();
+          return that.model.set("inFlow", false);
         };
         if (e.type === "flowRemoveViaDrag") {
-          return this.$el.toggle("clip", 300, destroy);
+          this.$el.toggle("clip", 300, destroy);
         } else {
-          return destroy();
+          destroy();
         }
+        e.stopPropagation();
+        return e.stopImmediatePropagation();
       };
 
       draggableElement.prototype.events = {
         "click": function(e) {
           var layout;
-          layout = this.model["layout-item"];
+          console.log(this.$el.index() + 1);
           if (e.shiftKey === true) {
+            layout = this.model["layout-item"];
             if (layout === false || typeof layout === "undefined") {
               this.$el.trigger("select");
             } else {
               this.$el.trigger("deselect");
             }
-            e.stopPropagation();
-            return e.stopImmediatePropagation();
           }
+          e.stopPropagation();
+          return e.stopImmediatePropagation();
         },
         "click .set-options": function(e) {
           var $t, dropdown;
@@ -459,14 +458,17 @@
           e.preventDefault();
           return e.stopPropagation();
         },
-        "click .remove-from-flow": "removeFromFlow",
+        "click .remove-from-flow": function(e) {
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return this.removeFromFlow(e);
+        },
         "flowRemoveViaDrag": "removeFromFlow",
         "click .config-panel": function(e) {
           var editor;
-          return editor = new views.ElementEditor({
-            model: this.model,
-            view: this
-          }).render();
+          editor = this.model.get("view") || "DefaultEditor";
+          console.log(editor, views.editors[editor]);
+          return new views.editors[editor]().render();
         },
         "select": function(e) {
           this.model["layout-item"] = true;
@@ -523,13 +525,23 @@
       },
       removeExtraPlaceholders: function() {
         return this.$el.find(".droppable-placeholder").each(function() {
-          var $t;
+          var $t, flag;
           $t = $(this);
-          if ($t.next().hasClass("droppable-placeholder") || $t.next().length === 0) {
+          flag = 0;
+          if ($t.next().hasClass("droppable-placeholder")) {
             $t.next().remove();
           }
-          if ($t.prev().hasClass("droppable-placeholder") || $t.prev().length === 0) {
-            return $t.prev().remove();
+          if ($t.prev().hasClass("droppable-placeholder")) {
+            $t.prev().remove();
+          }
+          if (!$t.next().hasClass("builder-element")) {
+            flag += 1;
+          }
+          if (!$t.prev().hasClass("builder-element")) {
+            flag += 1;
+          }
+          if (flag === 2) {
+            return $t.remove();
           }
         });
       }

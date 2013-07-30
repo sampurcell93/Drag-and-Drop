@@ -16,6 +16,8 @@ textarea {
 	width: 75%;
 	max-width: 85%;
 	margin:5px 0;
+	resize: vertical;
+	overflow: visible;
 
 	&.generic-text {
 		display: block;
@@ -44,9 +46,9 @@ button {
 	}
 	&.orange {
 		// needs latest Compass, add '@import "compass"' to your scss
-background-color: #f9aa48; // Old browsers
-@include filter-gradient(#f9aa48, #ff920a, vertical); // IE6-9
-@include background-image(linear-gradient(top,  #f9aa48 0%,#ff920a 100%));
+		background-color: #f9aa48; // Old browsers
+		@include filter-gradient(#f9aa48, #ff920a, vertical); // IE6-9
+		@include background-image(linear-gradient(top,  #f9aa48 0%,#ff920a 100%));
 
 		border: none;
 		padding-bottom: 12px;

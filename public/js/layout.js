@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
     allLayouts = [
       {
         type: 'Dynamic Layout',
@@ -13,13 +13,13 @@
         type: 'Dynamic Container',
         view: 'dynamicContainer'
       }, {
-        type: 'Tabs',
+        type: 'Tabbed Layout',
         view: 'tabs'
       }, {
-        type: 'Accordion',
+        type: 'Accordion Layout',
         view: 'accordion'
       }, {
-        type: 'Free Form',
+        type: 'Free Form Layout',
         view: 'Freeform',
         columns: '2',
         rows: '2'
@@ -54,7 +54,7 @@
         var $el;
         $el = this.$el;
         _.each(this.collection.models, function(layout) {
-          return $el.append(new views.GenericListItem({
+          return $el.append(new views.OutsideDraggableItem({
             model: layout
           }).render().el);
         });
@@ -71,6 +71,8 @@
 
       layout.prototype.columnTemplate = $("#column-picker").html();
 
+      layout.prototype.skinTemplate = $("#skins").html();
+
       layout.prototype.initialize = function() {
         layout.__super__.initialize.apply(this, arguments);
         return _.bindAll(this, "afterRender");
@@ -82,20 +84,24 @@
 
       layout.prototype.events = {
         "click .config-panel": function(e) {
-          var modal, self;
+          var column_types, modal, self;
+          column_types = ["one", "two", "three", "four", "five", "six"];
           self = this;
-          modal = window.launchModal(_.template(this.columnTemplate, {}));
+          modal = window.launchModal(_.template(this.skinTemplate, {}) + _.template(this.columnTemplate, {}));
           modal.delegate("[data-columns]", "click", function() {
             var $t, cols;
             $t = $(this);
             cols = $t.data("columns");
-            console.log(cols);
             self.model.set({
               "classes": cols,
               "columns": cols
             });
-            return self.$el.addClass(cols);
+            _.each(column_types, function(type) {
+              return self.$el.removeClass("column " + type);
+            });
+            return self.$el.addClass("column " + cols);
           });
+          console.log("launch from layouts");
           return e.stopPropagation();
         }
       };
@@ -188,30 +194,86 @@
       _Class.prototype.settingsTemplate = $("#tab-layout-settings").html();
 
       _Class.prototype.initialize = function() {
+        var self;
         _.bindAll(this, "afterRender");
+        self = this;
+        this.listenTo(this.model.get("child_els"), {
+          "add": this.formatNewModel,
+          "remove": function(m, c, o) {
+            if (c.length === 0) {
+              return self.$el.children(".placeholder-text").show();
+            }
+          }
+        });
         return _Class.__super__.initialize.apply(this, arguments);
       };
 
+      _Class.prototype.defaultContent = {
+        name: "New Tab",
+        content: "default"
+      };
+
       _Class.prototype.events = {
-        "click .config-panel": function(e) {
-          var modal;
-          console.log("yolo");
-          modal = window.launchModal(_.template(this.settingsTemplate, this.model.toJSON()));
-          return e.stopPropagation();
+        "click .add-tab": function() {
+          var tabs;
+          tabs = this.model.get("tabs");
+          tabs.push(this.defaultContent);
+          this.model.set(tabs);
+          this.model.trigger("renderBase");
+          return console.log(this.model.get("tabs"));
+        },
+        "keyup .tab-list li": function(e) {
+          var $t, tabIndex, tabs;
+          $t = $(e.currentTarget);
+          tabIndex = $t.index();
+          tabs = this.model.get("tabs");
+          tabs[tabIndex].name = $t.html();
+          return this.model.set(tabs);
         }
       };
 
-      _Class.prototype.afterRender = function() {};
+      _Class.prototype.afterRender = function() {
+        var self, tabs;
+        tabs = this.model.get("tabs");
+        self = this;
+        return _.each(tabs, function(tab) {
+          var model;
+          model = tab.content.model;
+          if (tab.content === "default") {
+            if (tab.content.model instanceof models.Element === true) {
+              return self.$el.children(".tab-content-list").append(new views[model.get("view")]);
+            }
+          }
+        });
+      };
+
+      _Class.prototype.formatNewModel = function(model, collection, options) {
+        this.$el.children(".placeholder-text").hide();
+        return model.set("view", "tabItem");
+      };
 
       return _Class;
 
     })(window.views["layout"]);
-    window.views["Freeform"] = (function(_super) {
+    window.views["tabItem"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
         _ref6 = _Class.__super__.constructor.apply(this, arguments);
         return _ref6;
+      }
+
+      _Class.prototype.template = $("#tab-layout-item").html();
+
+      return _Class;
+
+    })(views["tabs"]);
+    window.views["Freeform"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
       }
 
       _Class.prototype.template = $("#freeform-layout").html();
@@ -260,8 +322,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref7 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref7;
+        _ref8 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref8;
       }
 
       _Class.prototype.template = $("#blank-layout").html();
