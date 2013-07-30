@@ -49,8 +49,7 @@ $(document).ready ->
     }        
 
     class window.views.layout extends window.views.draggableElement
-        columnTemplate: $("#column-picker").html()
-        skinTemplate: $("#skins").html()
+      
         # Calls the parent initialize function - mimicry of classical inheritance.
         initialize: -> 
             super
@@ -61,25 +60,6 @@ $(document).ready ->
                     self.$el.children(".placeholder").hide()
                 else 
                     self.$el.children(".placeholder").show()
-
-        events:
-            "click .config-panel": (e) ->
-                column_types = ["one", "two", "three", "four", "five", "six"]
-                self = @
-                modal = window.launchModal(_.template(@skinTemplate, {}) + _.template(@columnTemplate, {}))
-                modal.delegate "[data-columns]", "click", ->
-                    $t = $ this
-                    cols = $t.data("columns")
-                    self.model.set({
-                        "classes": cols
-                        "columns": cols
-                    })
-                    _.each column_types, (type) ->
-                        self.$el.removeClass("column " + type)
-                    self.$el.addClass("column " + cols)
-                console.log "launch from layouts"
-                e.stopPropagation()
-
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
         higher level event from firing. ###
@@ -103,33 +83,49 @@ $(document).ready ->
         template: $("#accordion-layout").html()
         initialize: ->
             _.bindAll @, "afterRender"
-            @listenTo @model.get("child_els"), 'add', (m,c,o) ->
-                console.log "added, overwrite"
             super
+        linkElements: (model) ->
+            console.log "linking elements"
+            self = @
+            model.set("type", "Accordion Header")
+            _.each model.get("child_els").models, (child) ->
+                child.set("accordion_parent", model)
+                if (child.get("child_els").length)
+                    self.linkElements(child)
+        appendChild: (model) ->
+            super
+            console.log model
+            @linkElements(model)
         afterRender: ->
             if (@model.get("child_els").length)
                 @$el.children(".placeholder").remove()
 
     class window.views["tabItem"] extends views["draggableElement"]
-        # template: $("#tab-list-item").html()
-        # tagName: 'li class="no-drag" contentEditable="true"'
         controls: null 
         events: 
             "keyup": (e) ->    
                 $t = $(e.currentTarget)
-                @model.set "tab_title", $t.html()
-            "click": (e) ->
-                console.log "clickme"
-                @$el.addClass("active-tab").siblings().removeClass("active-tab")
+                @model.set "title", $t.text()
+            "click": "showTabContent"                
         initialize: ->
-            _.bindAll @, "afterRender"
             super
+            _.bindAll @, "afterRender"
+        appendChild: ->
+            super
+            console.log "calling layout append"
+            @showTabContent()
         afterRender: ->
-            $("<h3/>").addClass("no-drag").text(@model.get("title") || "Default title").prependTo(@$el)
-            @$el.children("h3").first().attr("contentEditable", true)
-            @$el.addClass("active-tab").siblings().removeClass("active-tab")
-            # index = @model.collection.indexOf(@model)
-            # @$el.children("a").attr("href", "#tab-" + index)
+            @showTabContent()
+            @$el.trigger("click").children("h3").first().attr("contentEditable", true).addClass("no-drag")
+        showTabContent: ->
+            $el = @$el
+            siblings = $el.siblings(".builder-element").length + 1
+            offset = Math.floor(siblings/7)
+            offset = 30 + 50*offset
+            $el.addClass("active-tab").children(".children").css("top", 20 + offset + "px")
+            wrap_height = $el.height() + $el.children(".children").height()
+            $el.closest(".tab-layout").css("height", wrap_height + offset + 30 + "px")
+            $el.addClass("active-tab").siblings().removeClass("active-tab")
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
         settingsTemplate: $("#tab-layout-settings").html()
@@ -148,7 +144,7 @@ $(document).ready ->
             @$el.addClass("tab-layout column six").children(".tab-list").tabs({ active: @options.activeTab || 1 })
             tabs = @model.get "child_els"
             self = @
-            _.each tabs, (tab) ->
+            _.each tabs.models, (tab) ->
                 self.formatNewModel tab
         formatNewModel: (model, collection, options) ->
             model.set("view", "tabItem")

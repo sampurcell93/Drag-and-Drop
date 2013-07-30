@@ -10,7 +10,9 @@ script(type='text/template')#element-sortable-item
     ul.child-list
 script(type='text/template')#draggable-element
     h3 <%= typeof title !== "undefined" ? title.clean() : type.clean() %>
+    <ul class='children'>
     <% if (typeof property !== "undefined") { %> <input placeholder='<%= className + "." + property.name.clean() %>' /> <%}%>
+    </ul>
 script(type='text/template')#drag-controls
     ul.config-menu-wrap.no-drag 
         li.icon.set-options e

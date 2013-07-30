@@ -120,9 +120,9 @@ $(document).ready ->
                     $(".over").removeClass("over")
                     dropZone = $(e.target)
                     if (dropZone.closest(".builder-element").length)
-                        insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev())
+                        insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev())
                     else 
-                        insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev())
+                        insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev())
                     # if (ui.draggable.index() > dropZone.index() or ui.draggable.hasClass("generic-item"))
                     insertAt += 1
                     curr = window.currentDraggingModel
@@ -185,6 +185,8 @@ $(document).ready ->
             $el =  @$el
             $el.html(_.template @template, model.toJSON())
             if @controls? then $el.append(_.template @controls, {})
+            if $el.children(".children").length is 0
+                    $el.append("<ul class='children'></ul>")
             if children? and do_children is true
                 _.each children.models , (el) ->
                     that.appendChild el, {}
@@ -193,27 +195,21 @@ $(document).ready ->
             )()
             @
         appendChild: ( child , opts ) ->
-            console.log(this.$el.find(this.linked_items), this.linked_items, this.$el);
             # We choose a view to render based on the model's specification, 
             # or default to a standard draggable.
+            $el = @$el.children(".children")
             view = child.get("view") || "draggableElement"
             if child.get("inFlow") is true
                 i = @index || currIndex
                 draggable = $(new views[view]({model: child, index: i}).render().el).addClass("builder-child")
                 if (opts? and !opts.at?)
-                    @$el.append(draggable)
+                    $el.append(draggable)
                 else 
-                    linked_items = [".builder-element"]
-                    linked_items.concat @linked_items
-                    console.log linked_items
-                    j = 0
-                    while (j < linked_items.length)
-                        if !linked_items[i]? then break
-                        builderChildren = @$el.children(linked_items[i])
-                        if builderChildren.eq(opts.at).length 
-                            builderChildren.eq(opts.at).before(draggable)
-                        else @$el.append(draggable)
-                        j++
+                    console.log opts.at
+                    builderChildren = $el.children(".builder-element")
+                    if builderChildren.eq(opts.at).length 
+                        builderChildren.eq(opts.at).before(draggable)
+                    else $el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
                 allSections.at(@index || currIndex).get("builder").removeExtraPlaceholders()
         setStyles: ->
@@ -308,6 +304,9 @@ $(document).ready ->
 
         # Default events for any draggable - basically configuration settings.
         events: 
+            "dblclick": (e) ->
+                console.log @model, @$el.index()
+                e.stopPropagation()
             "click": (e) ->
                 if e.shiftKey is true
                     layout = @model["layout-item"]
@@ -332,9 +331,9 @@ $(document).ready ->
                 @removeFromFlow(e)
             "flowRemoveViaDrag": "removeFromFlow"      # Stop the click event from bubbling up to the parent model, if there is one.:
             "click .config-panel": (e) ->            #  On click of the panel in the top right
-                editor = @model.get("view") || "DefaultEditor"
-                console.log editor, views.editors[editor]
-                new views.editors[editor]().render()
+                editor = views.editors[@model.get("view") || "DefaultEditor"]
+                if editor? then new editor({model: @model}).render()
+                else new views.editors["DefaultEditor"]({model: @model}).render()
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
                 @model["layout-item"] = true

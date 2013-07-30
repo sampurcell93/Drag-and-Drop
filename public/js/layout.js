@@ -69,10 +69,6 @@
         return _ref1;
       }
 
-      layout.prototype.columnTemplate = $("#column-picker").html();
-
-      layout.prototype.skinTemplate = $("#skins").html();
-
       layout.prototype.initialize = function() {
         var self;
         layout.__super__.initialize.apply(this, arguments);
@@ -85,30 +81,6 @@
             return self.$el.children(".placeholder").show();
           }
         });
-      };
-
-      layout.prototype.events = {
-        "click .config-panel": function(e) {
-          var column_types, modal, self;
-          column_types = ["one", "two", "three", "four", "five", "six"];
-          self = this;
-          modal = window.launchModal(_.template(this.skinTemplate, {}) + _.template(this.columnTemplate, {}));
-          modal.delegate("[data-columns]", "click", function() {
-            var $t, cols;
-            $t = $(this);
-            cols = $t.data("columns");
-            self.model.set({
-              "classes": cols,
-              "columns": cols
-            });
-            _.each(column_types, function(type) {
-              return self.$el.removeClass("column " + type);
-            });
-            return self.$el.addClass("column " + cols);
-          });
-          console.log("launch from layouts");
-          return e.stopPropagation();
-        }
       };
 
       return layout;
@@ -171,10 +143,26 @@
 
       _Class.prototype.initialize = function() {
         _.bindAll(this, "afterRender");
-        this.listenTo(this.model.get("child_els"), 'add', function(m, c, o) {
-          return console.log("added, overwrite");
-        });
         return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      _Class.prototype.linkElements = function(model) {
+        var self;
+        console.log("linking elements");
+        self = this;
+        model.set("type", "Accordion Header");
+        return _.each(model.get("child_els").models, function(child) {
+          child.set("accordion_parent", model);
+          if ((child.get("child_els").length)) {
+            return self.linkElements(child);
+          }
+        });
+      };
+
+      _Class.prototype.appendChild = function(model) {
+        _Class.__super__.appendChild.apply(this, arguments);
+        console.log(model);
+        return this.linkElements(model);
       };
 
       _Class.prototype.afterRender = function() {
@@ -200,23 +188,37 @@
         "keyup": function(e) {
           var $t;
           $t = $(e.currentTarget);
-          return this.model.set("tab_title", $t.html());
+          return this.model.set("title", $t.text());
         },
-        "click": function(e) {
-          console.log("clickme");
-          return this.$el.addClass("active-tab").siblings().removeClass("active-tab");
-        }
+        "click": "showTabContent"
       };
 
       _Class.prototype.initialize = function() {
-        _.bindAll(this, "afterRender");
-        return _Class.__super__.initialize.apply(this, arguments);
+        _Class.__super__.initialize.apply(this, arguments);
+        return _.bindAll(this, "afterRender");
+      };
+
+      _Class.prototype.appendChild = function() {
+        _Class.__super__.appendChild.apply(this, arguments);
+        console.log("calling layout append");
+        return this.showTabContent();
       };
 
       _Class.prototype.afterRender = function() {
-        $("<h3/>").addClass("no-drag").text(this.model.get("title") || "Default title").prependTo(this.$el);
-        this.$el.children("h3").first().attr("contentEditable", true);
-        return this.$el.addClass("active-tab").siblings().removeClass("active-tab");
+        this.showTabContent();
+        return this.$el.trigger("click").children("h3").first().attr("contentEditable", true).addClass("no-drag");
+      };
+
+      _Class.prototype.showTabContent = function() {
+        var $el, offset, siblings, wrap_height;
+        $el = this.$el;
+        siblings = $el.siblings(".builder-element").length + 1;
+        offset = Math.floor(siblings / 7);
+        offset = 30 + 50 * offset;
+        $el.addClass("active-tab").children(".children").css("top", 20 + offset + "px");
+        wrap_height = $el.height() + $el.children(".children").height();
+        $el.closest(".tab-layout").css("height", wrap_height + offset + 30 + "px");
+        return $el.addClass("active-tab").siblings().removeClass("active-tab");
       };
 
       return _Class;
@@ -258,7 +260,7 @@
         });
         tabs = this.model.get("child_els");
         self = this;
-        return _.each(tabs, function(tab) {
+        return _.each(tabs.models, function(tab) {
           return self.formatNewModel(tab);
         });
       };

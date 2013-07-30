@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(function() {
-    var editors, _ref, _ref1;
+    var editors, _ref, _ref1, _ref2;
     editors = window.views.editors = {};
     editors["DefaultEditor"] = (function(_super) {
       __extends(_Class, _super);
@@ -14,12 +14,31 @@
         return _ref;
       }
 
+      _Class.prototype.columnTemplate = $("#column-picker").html();
+
+      _Class.prototype.skinTemplate = $("#skins").html();
+
       _Class.prototype.initialize = function() {};
 
       _Class.prototype.render = function() {
-        var modal;
-        console.log("default rendwer");
-        modal = window.launchModal("yolo");
+        var column_types, modal, self;
+        column_types = ["one", "two", "three", "four", "five", "six"];
+        self = this;
+        modal = window.launchModal(_.template(this.skinTemplate, {}) + _.template(this.columnTemplate, {}));
+        modal.delegate("[data-columns]", "click", function() {
+          var $t, cols;
+          $t = $(this);
+          cols = $t.data("columns");
+          self.model.set({
+            "classes": cols,
+            "columns": cols
+          });
+          _.each(column_types, function(type) {
+            return self.$el.removeClass("column " + type);
+          });
+          return self.$el.addClass("column " + cols);
+        });
+        console.log("launch from layouts");
         return (this.afterRender || function() {
           return {};
         })();
@@ -28,7 +47,7 @@
       return _Class;
 
     })(Backbone.View);
-    return editors["Button"] = (function(_super) {
+    editors["Button"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -44,6 +63,17 @@
         _Class.__super__.render.apply(this, arguments);
         return console.log("button render");
       };
+
+      return _Class;
+
+    })(editors["DefaultEditor"]);
+    return editors["accordion"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref2 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref2;
+      }
 
       return _Class;
 

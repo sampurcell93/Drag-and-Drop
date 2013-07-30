@@ -181,9 +181,9 @@
             $(".over").removeClass("over");
             dropZone = $(e.target);
             if ((dropZone.closest(".builder-element").length)) {
-              insertAt = dropZone.closest(".builder-element").children(".builder-element").index(dropZone.prev());
+              insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev());
             } else {
-              insertAt = dropZone.closest("section").children(".builder-element").index(dropZone.prev());
+              insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev());
             }
             insertAt += 1;
             curr = window.currentDraggingModel;
@@ -277,6 +277,9 @@
         if (this.controls != null) {
           $el.append(_.template(this.controls, {}));
         }
+        if ($el.children(".children").length === 0) {
+          $el.append("<ul class='children'></ul>");
+        }
         if ((children != null) && do_children === true) {
           _.each(children.models, function(el) {
             return that.appendChild(el, {});
@@ -289,8 +292,8 @@
       };
 
       draggableElement.prototype.appendChild = function(child, opts) {
-        var builderChildren, draggable, i, j, linked_items, view;
-        console.log(this.$el.find(this.linked_items), this.linked_items, this.$el);
+        var $el, builderChildren, draggable, i, view;
+        $el = this.$el.children(".children");
         view = child.get("view") || "draggableElement";
         if (child.get("inFlow") === true) {
           i = this.index || currIndex;
@@ -299,23 +302,14 @@
             index: i
           }).render().el).addClass("builder-child");
           if ((opts != null) && (opts.at == null)) {
-            this.$el.append(draggable);
+            $el.append(draggable);
           } else {
-            linked_items = [".builder-element"];
-            linked_items.concat(this.linked_items);
-            console.log(linked_items);
-            j = 0;
-            while (j < linked_items.length) {
-              if (linked_items[i] == null) {
-                break;
-              }
-              builderChildren = this.$el.children(linked_items[i]);
-              if (builderChildren.eq(opts.at).length) {
-                builderChildren.eq(opts.at).before(draggable);
-              } else {
-                this.$el.append(draggable);
-              }
-              j++;
+            console.log(opts.at);
+            builderChildren = $el.children(".builder-element");
+            if (builderChildren.eq(opts.at).length) {
+              builderChildren.eq(opts.at).before(draggable);
+            } else {
+              $el.append(draggable);
             }
           }
           globals.setPlaceholders($(draggable), this.model.get("child_els"));
@@ -442,6 +436,10 @@
       };
 
       draggableElement.prototype.events = {
+        "dblclick": function(e) {
+          console.log(this.model, this.$el.index());
+          return e.stopPropagation();
+        },
         "click": function(e) {
           var layout;
           if (e.shiftKey === true) {
@@ -475,9 +473,16 @@
         "flowRemoveViaDrag": "removeFromFlow",
         "click .config-panel": function(e) {
           var editor;
-          editor = this.model.get("view") || "DefaultEditor";
-          console.log(editor, views.editors[editor]);
-          return new views.editors[editor]().render();
+          editor = views.editors[this.model.get("view") || "DefaultEditor"];
+          if (editor != null) {
+            return new editor({
+              model: this.model
+            }).render();
+          } else {
+            return new views.editors["DefaultEditor"]({
+              model: this.model
+            }).render();
+          }
         },
         "select": function(e) {
           this.model["layout-item"] = true;

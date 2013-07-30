@@ -966,44 +966,45 @@ ol.generic-list {
 
 	&.column {
 		
-		> .builder-element { 
-			display: inline-block !important; 
-			margin: 2px 0 1px 0 !important;
+		> ul.children > .builder-element { 
+			display: inline-block; 
+			margin: 2px 0 1px 0;
 		}
-		> .droppable-placeholder { 
+		> ul.children > .droppable-placeholder { 
 			width: 1% !important; 
 			background: orange;
 			display: inline-block !important; 
 			margin: 0;
-			min-height: 70px;
+			min-height: 41px;
 		}
 	
 		// Necessary to compensate for unbalanced placeholders which skew the page view.
-		&.two > .builder-element:nth-child(4n+7) ,
-		&.three > .builder-element:nth-child(6n+9),
-		&.four > .builder-element:nth-child(8n+11),
-		&.five > .builder-element:nth-child(10n+13),
-		&.six > .builder-element:nth-child(12n+15),
+		&.two ul.children .builder-element:nth-of-type(4n+5) , &.two  ul.children  .builder-element:nth-child(4n+5) ,
+		&.three ul.children .builder-element:nth-of-type(6n+7), &.three  ul.children  .builder-element:nth-child(6n+7),
+		&.four ul.children .builder-element:nth-of-type(8n+9), &.four  ul.children  .builder-element:nth-child(8n+9),
+		&.five ul.children .builder-element:nth-of-type(10n+11), &.five  ul.children  .builder-element:nth-child(10n+11),
+		&.six ul.children .builder-element:nth-of-type(12n+13), &.six  ul.children  .builder-element:nth-child(12n+13)
 		{
+			border: 1px solid red !important;
 			margin-left: 1% !important;
 		}
-		&.two > .builder-element { 
+		&.two > ul.children > .builder-element { 
 			width: 48.5%; 
 		}
 
-		&.three > .builder-element { 
+		&.three > ul.children > .builder-element { 
 			width: 32%; 
 		}
 	
-		&.four > .builder-element { 
+		&.four > ul.children > .builder-element { 
 			width: 23.75%; 
 		}
 
-		&.five > .builder-element { 
+		&.five > ul.children > .builder-element { 
 			width: 18.8%; 
 		}
 
-		&.six > .builder-element { 
+		&.six > ul.children > .builder-element { 
 			width: 15.5%; 
 		}
 	}
@@ -1039,79 +1040,77 @@ ol.generic-list {
 	}
 }
 
-.tab-list {
-	width: 95%;
-	margin-left: 10px;
-
-	li {
-		@include border-radius(3px 3px 0 0);
-		border: 1px solid #ccc;
-		border-bottom: none;
-		cursor: pointer;
-		display: inline-block;
-		height: 30px;
-		line-height: 30px;
-		margin-top: 3px;
-		max-width: 170px;
-		overflow: hidden;
-		padding: 0 10px;
-		text-align: center;
-		white-space: nowrap;
-
-		&:hover {
-			background: #ddd;
-		}
-	}	
-}
-
 .no-drag { cursor: auto; }
 
 .tab-layout {
-	 > .builder-element {
-		position: relative;
-		@include border-radius(3px 3px 0 0);
-		border: 1px solid #ccc;
-		border-bottom: none;
-		cursor: pointer;
-		display: inline-block;
-		height: 30px;
-		line-height: 30px;
-		margin-top: 3px;
-		max-width: 170px;
-		overflow: hidden;
-		outline: none;
-		padding: 0 10px;
-		text-align: center;
-		white-space: nowrap;
-		margin: 0 -1px 0 -1px;
+	position: relative;
 
-		&:hover {
-			background: #eee;
+	> ul.children {
+	 	> .droppable-placeholder {
+			display: inline-block;
+			width: 1%;
+			margin: 0;
 		}
 
-		h3:first-of-type {
-			position: relative;
-			top: -1px;
+		> .droppable-placeholder {
+			height: 41px !important;
+			min-height: none !important;
+		}
+	
+	 	> .builder-element {
+			position: static;
+			@include border-radius(3px 3px 0 0);
+			cursor: pointer;
+			display: inline-block;
+			line-height: 30px;
+			outline: none;
 			text-align: center;
-			width: 100%;
-			padding: 0;
-			font-size: 1em;
+			white-space: nowrap;
+			margin: 0 -4px 0 -4px !important;
 
-			&:focus {
-				outline: none;
-				background: #ddd;
+			&:hover {
+				@include box-shadow(none);
+			}
+
+			> h3:first-of-type {
+				cursor: pointer;
+				position: relative;
+				top: -1px;
+				border: 1px solid #ccc;
+				@include border-radius(3px 3px 0 0);
+				text-align: center;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				width: 100%;
+				padding: 0;
+				font-size: 1em;
+
+				&:hover { background: #eee; }
+
+				&:focus {
+					outline: none;
+					background: #ddd;
+				}
+			}
+			&.active-tab > ul.children {
+				display: block; 
+				z-index: 11;
+				background: #fff;
+				outline: 1px dotted $strongblue;
+				padding: 3px 7px;
+			}
+
+			> ul.children {
+				min-height: 200px;
+				z-index: -11;
+				display: none;
+				position: absolute;
+				top: 50px;
+				left: 10px;
+				width: 96%;
+				border: 100%;
 			}
 		}
-
-		&.active-tab {
-
-			height: auto !important;
-		}
-	}	
-	> .droppable-placeholder {
-		display: inline-block;
-		width: 1%;
-		margin: 0;
-
-	}
+	}		
 }

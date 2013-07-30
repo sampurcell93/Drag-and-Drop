@@ -14,7 +14,8 @@ script#tab-layout(type='text/template')
 script#tab-list-item(type='text/template')
     <%= typeof tab_title !== "undefined" ? tab_title : "Default Title" %>
 script#accordion-layout(type='text/template')
-    p.p10.center.placeholder Accordion here!
+    p.p10.center.placeholder  Drop a property, section, UI element, or another dynamic layout here. Nested elements will be the hideable section of the
+        | accordion, while their parent will control their visibility.
 script#freeform-layout(type='text/template')
     p.p10.center.placeholder Free form layout here!
     <% for (var j = 0; j < rows; j++) { %>
@@ -40,6 +41,6 @@ script#column-picker(type='text/template')
         li(data-columns='five') Five Columns
         li(data-columns='six') Six Columns
 script#blank-layout(type='text/template')
-
+    ul.children
 script#skins(type='text/template')
     | PRO
