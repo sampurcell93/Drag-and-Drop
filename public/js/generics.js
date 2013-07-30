@@ -146,7 +146,7 @@
             index = genericList.children().length;
             innerText = "Item " + (index + 1);
             $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList);
-            this.model.updateListItems(innerText, index);
+            this.updateListItems(innerText, index);
             e.stopPropagation();
             return console.log(this.events);
           },

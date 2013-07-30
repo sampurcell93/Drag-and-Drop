@@ -205,31 +205,30 @@
             }
           }
         });
-        return _Class.__super__.initialize.apply(this, arguments);
+        _Class.__super__.initialize.apply(this, arguments);
+        return $.extend(this.events, {
+          "click .add-tab": function() {
+            var tabs;
+            tabs = this.model.get("tabs");
+            tabs.push(this.defaultContent);
+            this.model.set(tabs);
+            this.model.trigger("renderBase");
+            return console.log(this.model.get("tabs"));
+          },
+          "keyup .tab-list li": function(e) {
+            var $t, tabIndex, tabs;
+            $t = $(e.currentTarget);
+            tabIndex = $t.index();
+            tabs = this.model.get("tabs");
+            tabs[tabIndex].name = $t.html();
+            return this.model.set(tabs);
+          }
+        });
       };
 
       _Class.prototype.defaultContent = {
         name: "New Tab",
         content: "default"
-      };
-
-      _Class.prototype.events = {
-        "click .add-tab": function() {
-          var tabs;
-          tabs = this.model.get("tabs");
-          tabs.push(this.defaultContent);
-          this.model.set(tabs);
-          this.model.trigger("renderBase");
-          return console.log(this.model.get("tabs"));
-        },
-        "keyup .tab-list li": function(e) {
-          var $t, tabIndex, tabs;
-          $t = $(e.currentTarget);
-          tabIndex = $t.index();
-          tabs = this.model.get("tabs");
-          tabs[tabIndex].name = $t.html();
-          return this.model.set(tabs);
-        }
       };
 
       _Class.prototype.afterRender = function() {

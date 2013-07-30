@@ -118,23 +118,26 @@ $(document).ready ->
                         self.$el.children(".placeholder-text").show()
             }
             super
+            # We must extend events, because they would otherwise overwrite higher level ones.
+            $.extend @events, {
+                "click .add-tab": ->
+                    tabs = @model.get "tabs"
+                    tabs.push @defaultContent
+                    @model.set tabs
+                    @model.trigger("renderBase")
+                    console.log @model.get("tabs")
+                "keyup .tab-list li": (e) ->    
+                    $t = $(e.currentTarget)
+                    tabIndex = $t.index()
+                    tabs = @model.get "tabs"
+                    tabs[tabIndex].name = $t.html()
+                    @model.set tabs
+            }
+
         defaultContent: {
                 name: "New Tab", 
                 content: "default"
             }
-        events: 
-            "click .add-tab": ->
-                tabs = @model.get "tabs"
-                tabs.push @defaultContent
-                @model.set tabs
-                @model.trigger("renderBase")
-                console.log @model.get("tabs")
-            "keyup .tab-list li": (e) ->    
-                $t = $(e.currentTarget)
-                tabIndex = $t.index()
-                tabs = @model.get "tabs"
-                tabs[tabIndex].name = $t.html()
-                @model.set tabs
         afterRender: ->
             tabs = @model.get "tabs"
             self = @

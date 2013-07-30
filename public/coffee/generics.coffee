@@ -140,7 +140,7 @@ $(document).ready ->
                     index = genericList.children().length
                     innerText = "Item " + (index + 1)
                     $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList)
-                    @model.updateListItems(innerText, index)
+                    @updateListItems(innerText, index)
                     e.stopPropagation()
                     console.log @events
                 "keyup .generic-list li": (e) ->
