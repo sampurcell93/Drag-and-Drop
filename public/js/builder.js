@@ -224,6 +224,8 @@
 
       draggableElement.prototype.tagName = 'div class="builder-element"';
 
+      draggableElement.prototype.modelListeners = {};
+
       draggableElement.prototype.initialize = function() {
         var self;
         self = this;
@@ -232,7 +234,8 @@
         this.listenTo(this.model.get("child_els"), 'add', function(m, c, o) {
           return self.appendChild(m, o);
         });
-        this.listenTo(this.model, {
+        console.log(this.modelListeners);
+        this.modelListeners = _.extend({}, this.modelListeners, {
           "change:styles": this.setStyles,
           "change:view": this.render,
           "change:inFlow": function(model) {
@@ -243,7 +246,6 @@
             }
           },
           "remove": function() {
-            console.log("remove");
             self.$el.next(".droppable-placeholder").remove();
             return self.remove();
           },
@@ -260,6 +262,7 @@
           },
           "render": this.render
         });
+        this.listenTo(this.model, this.modelListeners);
         this.bindDrop();
         return this.bindDrag();
       };

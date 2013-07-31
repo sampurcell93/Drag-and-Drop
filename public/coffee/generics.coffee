@@ -168,6 +168,12 @@ $(document).ready ->
         template: $("#button-template").html()
         initialize: (options) ->
             super
+            self = @
+            # Using .on() is bad because in certain cases, listeners are not unbound.
+            # .listenTo() not working for now
+            @model.on "change:title", (model) ->
+                self.$el.children(".title-setter").text(model.get("title"))
+
 
     class window.views['CustomHeader'] extends window.views.genericElement
         template: $("#custom-header").html()

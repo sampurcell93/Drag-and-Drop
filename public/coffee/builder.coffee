@@ -142,13 +142,15 @@ $(document).ready ->
         template: $("#draggable-element").html()
         controls: $("#drag-controls").html()
         tagName: 'div class="builder-element"'
+        modelListeners: {}
         initialize: ->
             self = @
             @index = @options.index
             _.bindAll(this, "render", "bindDrop", "bindDrag","setStyles","appendChild")
             @listenTo @model.get("child_els"), 'add', (m,c,o) ->
                 self.appendChild(m,o)
-            @listenTo @model, { 
+            console.log @modelListeners
+            @modelListeners = _.extend({}, @modelListeners, { 
                 "change:styles": @setStyles
                 "change:view": @render
                 "change:inFlow": ( model ) ->
@@ -161,7 +163,6 @@ $(document).ready ->
                         next(".droppable-placeholder").slideUp("fast").
                         prev(".droppable-placeholder").slideUp("fast")
                 "remove": ->
-                    console.log "remove"
                     self.$el.next(".droppable-placeholder").remove()
                     self.remove()
                 "sorting": ->
@@ -172,8 +173,12 @@ $(document).ready ->
                 "renderBase": ->
                     @render(false)
                 "render": @render
-            }
+            })
+            # Allow class descendants to bind listeners
+            @listenTo @model, @modelListeners
+            # Bind the drag event to the el
             do @bindDrop
+            # Bind the drop event to the el
             do @bindDrag
         render: (do_children) ->
             console.log "rendering parent draggable"

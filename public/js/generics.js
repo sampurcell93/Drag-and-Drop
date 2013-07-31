@@ -198,7 +198,12 @@
       _Class.prototype.template = $("#button-template").html();
 
       _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
+        var self;
+        _Class.__super__.initialize.apply(this, arguments);
+        self = this;
+        return this.model.on("change:title", function(model) {
+          return self.$el.children(".title-setter").text(model.get("title"));
+        });
       };
 
       return _Class;

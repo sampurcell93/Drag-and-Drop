@@ -41,6 +41,10 @@
         return this.$el.appendTo(document.body).html(editor_content);
       };
 
+      _Class.prototype.enqueue = function(name, func) {
+        return this.change_queue[name] = func;
+      };
+
       _Class.prototype.events = {
         "click [data-columns]": function(e) {
           var $t, cols, coltypes, self;
@@ -49,9 +53,9 @@
           cols = $t.data("columns");
           self = this;
           if (this.model != null) {
-            this.change_queue["classes-columns"] = function() {
+            this.enqueue("classes-columns", function() {
               return self.model.set("columns", cols);
-            };
+            });
           }
           _.each(coltypes, function(type) {
             return $(self.link_el).removeClass("column " + type);
@@ -61,12 +65,13 @@
           }
         },
         "click .confirm": function() {
-          var cq, process;
+          var cq, process, _results;
           cq = this.change_queue;
+          _results = [];
           for (process in cq) {
-            cq[process]();
+            _results.push(cq[process]());
           }
-          return this.model.trigger("render");
+          return _results;
         },
         "click .reject, .confirm": function() {
           $(document.body).removeClass("active-modal");
@@ -92,9 +97,9 @@
         self = this;
         return $.extend(this.events, {
           "keyup .title-setter": function() {
-            return self.cq["title"] = function() {
+            return self.enqueue("title", function() {
               return self.model.set("title", self.$el.find(".title-setter").val());
-            };
+            });
           }
         });
       };

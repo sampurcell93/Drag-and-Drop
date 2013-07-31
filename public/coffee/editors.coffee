@@ -26,7 +26,9 @@ $ ->
                 editor_content += _.template template, self.model.toJSON()
             # Append editor to body - making it a true modal is not within the purvue of this class
             @$el.appendTo(document.body).html(editor_content)
-
+        # Put a new event into the queue, executed only if the user clicks .confirm
+        enqueue: (name, func) ->
+             @change_queue[name] = func
         events:
             "click [data-columns]": (e) ->
                 coltypes = ["two", "three", "four", "five", "six"]
@@ -35,8 +37,8 @@ $ ->
                 self     = @
 
                 if @model?
-                    @change_queue["classes-columns"] = ->
-                        self.model.set "columns", cols
+                    @enqueue("classes-columns", ->
+                        self.model.set "columns", cols)
                 _.each coltypes, (type) ->
                     $(self.link_el).removeClass("column " + type)
                 unless cols == ""
@@ -50,7 +52,6 @@ $ ->
                 # Fuck yeah, closures.
                 for process of cq
                     do cq[process]
-                @model.trigger("render")
             # On confirm or reject, close the modal.
             "click .reject, .confirm": ->
                 $(document.body).removeClass("active-modal")
@@ -63,8 +64,9 @@ $ ->
             self = @
             $.extend @events, {
                 "keyup .title-setter": ->
-                    self.cq["title"] = ->
+                    self.enqueue("title", ->
                         self.model.set("title", self.$el.find(".title-setter").val())
+                    )
             }
         render: ->
             super
