@@ -307,6 +307,16 @@ ul.select-properties {
 		margin: 0 !important;
 	}
 
+	label {
+		cursor: pointer;
+		padding: 4px 15px;
+		position: absolute;
+		right: 3px;
+		top: 0px;
+		z-index: 11;	
+	}
+
+
 	li li, .property {
 
 		@include box-shadow(none);
@@ -315,6 +325,7 @@ ul.select-properties {
 		background: #fff; 
 		margin: 1px 3px 1px 35px;
 		cursor: pointer;
+		position: relative;
 		min-height: 25px;
 		line-height: 25px;
 		font-size: 1em;
@@ -352,7 +363,7 @@ ul.select-properties {
 		}
 	}
 
-	div[contentEditable] {
+	div {
 		padding-left: 60px;
 		&:focus {
 			outline: 1px solid #fff;
@@ -741,7 +752,7 @@ section.builder-container {
 	position: relative;
 	padding: 2px 3px;
 	margin: 0px 1%;
-	@include transition(width .2s ease-in-out);
+	@include transition(width .2s ease-in-out, height .2s ease-in-out);
 	@include border-radius(3px);
 	// @include clearfix();
 	outline: 1px dashed $medblue;

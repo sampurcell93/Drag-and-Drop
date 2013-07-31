@@ -205,7 +205,6 @@
       };
 
       _Class.prototype.afterRender = function() {
-        this.showTabContent();
         return this.$el.trigger("click").children("h3").first().attr("contentEditable", true).addClass("no-drag");
       };
 
@@ -215,10 +214,12 @@
         siblings = $el.siblings(".builder-element").length + 1;
         offset = Math.floor(siblings / 7);
         offset = 30 + 50 * offset;
-        $el.addClass("active-tab").children(".children").css("top", 20 + offset + "px");
+        console.log($el.children(".children"));
+        $el.children(".children").css("top", 20 + offset + "px");
+        $el.addClass("active-tab").siblings().removeClass("active-tab");
         wrap_height = $el.height() + $el.children(".children").height();
         $el.closest(".tab-layout").css("height", wrap_height + offset + 30 + "px");
-        return $el.addClass("active-tab").siblings().removeClass("active-tab");
+        return console.log("done");
       };
 
       return _Class;

@@ -377,7 +377,7 @@
           $el.append(new views.PropertyItem({
             model: newProperty,
             index: this.options.index,
-            editable: true
+            editable: false
           }).render().el);
         }
         return this;
@@ -389,11 +389,12 @@
             name: 'Change Me',
             className: this.model.get("name")
           });
-          $(this.el).append(new views.PropertyItem({
+          this.$el.append(new views.PropertyItem({
             model: newProp,
-            index: this.options.index
+            index: this.options.index,
+            editable: true
           }).render().el);
-          return allSections.at(this.options.index).get("properties").add(newProp);
+          return this.$el.children(".property").last().trigger("click");
         },
         "click .close": function(e) {
           var that;
@@ -448,11 +449,12 @@
             return self.$el.fadeOut("fast", function() {
               return self.remove();
             });
-          }
+          },
+          "change:name": this.render
         });
       },
       render: function() {
-        $(this.el).append(_.template(this.template, this.model.toJSON()));
+        this.$el.html(_.template(this.template, this.model.toJSON()));
         return this;
       }
     });
@@ -463,11 +465,10 @@
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
         this.$el.append(_.template(this.template, item));
-        this.$el.trigger("click");
         return this;
       },
       events: {
-        "click": function(e) {
+        "click .choose-prop": function(e) {
           var $t, currentSection, model, selected;
           $t = $(e.currentTarget);
           $t.toggleClass("selected");
@@ -493,7 +494,7 @@
         "keyup": function(e) {
           var $t, val;
           $t = $(e.currentTarget);
-          val = $t.find("div").text();
+          val = $t.text();
           return this.model.set("name", val);
         }
       }

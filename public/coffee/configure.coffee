@@ -312,13 +312,14 @@ $(document).ready ->
                 newProperty = new models.Property(prop)
                 newProperty.set("className", @model.get("name"))
                 # Then append a new view for that model
-                $el.append new views.PropertyItem({model: newProperty, index:@options.index, editable: true}).render().el
+                $el.append new views.PropertyItem({model: newProperty, index:@options.index, editable: false}).render().el
             this
         events:
             "click .add-property": (e) ->
                 newProp = new models.Property({name: 'Change Me', className: @model.get("name")})
-                $(@el).append new views.PropertyItem({model: newProp, index: @options.index}).render().el
-                allSections.at(@options.index).get("properties").add newProp
+                @$el.append new views.PropertyItem({model: newProp, index: @options.index, editable: true}).render().el
+                @$el.children(".property").last().trigger("click")
+                # allSections.at(@options.index).get("properties").add newProp
             "click .close": (e) ->
                 that = @
                 $(e.currentTarget).closest("li").fadeOut "fast", ->
@@ -361,9 +362,10 @@ $(document).ready ->
                 "remove": ->
                     self.$el.fadeOut "fast", ->
                         do self.remove
+                "change:name": @render
             }
         render: ->
-            $(@el).append _.template @template, @model.toJSON()
+            @$el.html _.template @template, @model.toJSON()
             this
     })
 
@@ -375,10 +377,9 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append _.template @template,item
-            @$el.trigger "click"
             this
         events:
-            "click": (e) -> 
+            "click .choose-prop": (e) ->
                 $t = $(e.currentTarget)
                 $t.toggleClass "selected"
                 selected = @model.selected
@@ -401,7 +402,7 @@ $(document).ready ->
             "keyup": (e) ->
                 $t =  $(e.currentTarget)
                 # Get the new name of the property
-                val = $t.find("div").text()
+                val = $t.text()
                 # Set the model name
                 @model.set("name", val)
     })

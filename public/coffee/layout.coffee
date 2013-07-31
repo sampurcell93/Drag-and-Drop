@@ -115,17 +115,19 @@ $(document).ready ->
             console.log "calling layout append"
             @showTabContent()
         afterRender: ->
-            @showTabContent()
             @$el.trigger("click").children("h3").first().attr("contentEditable", true).addClass("no-drag")
         showTabContent: ->
             $el = @$el
             siblings = $el.siblings(".builder-element").length + 1
             offset = Math.floor(siblings/7)
             offset = 30 + 50*offset
-            $el.addClass("active-tab").children(".children").css("top", 20 + offset + "px")
+            console.log $el.children(".children")
+            $el.children(".children").css("top", 20 + offset + "px")
+            $el.addClass("active-tab").siblings().removeClass("active-tab")
             wrap_height = $el.height() + $el.children(".children").height()
             $el.closest(".tab-layout").css("height", wrap_height + offset + 30 + "px")
-            $el.addClass("active-tab").siblings().removeClass("active-tab")
+            console.log("done")
+
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
         settingsTemplate: $("#tab-layout-settings").html()
@@ -150,20 +152,7 @@ $(document).ready ->
             model.set("view", "tabItem")
             $el = @$el
             $el.children(".placeholder-text").hide()
-            # console.log options
-            # len = @model.get("child_els").length
-            # $el = @$el
-            # type  = model.get("type")
-            # title = model.get("title") || "Default Title"
-            # item = $("<li/>").addClass("no-drag").text(title).attr({
-            #     "contentEditable":true
-            #     "href": "#tab-" + len
-            # }).appendTo($el.children(".tab-list"))
-            # kids = $el.children(".builder-child").hide()
-            # kids.each (i) ->
-            #     $t = $(this).attr("id", "tab-" + i)
-            #     $t.next(".droppable-placeholder").hide()
-            #     $t.prev(".droppable-placeholder").hide()
+
 
 
     class window.views["Freeform"] extends window.views["layout"]

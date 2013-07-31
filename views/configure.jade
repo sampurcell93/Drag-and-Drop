@@ -7,11 +7,15 @@ script(type='text/template')#data-type
 script(type='text/template')#property-item
     <% if (typeof editable !== "undefined" && editable == true) { %>
     <div contentEditable>
+    <% } else {%>
+    <div>
     <% } %>
     //- Sorry for the shitty formatting - jade is bad at indents.
     <% String.prototype.clean = function(trim) { var cutoff = 10000000; var appendMe = ""; if (typeof trim !== "undefined" && trim == true) { if (this.length > 27){ appendMe = "...."; cutoff = 27} }return this.charAt(0).toUpperCase() + this.slice(1).replace("_"," ")} %>
     | <%= name.clean() %>
     </div>
+    label
+        input.fr.choose-prop(type='checkbox')
 //- Template to edit properties
 script(type='text/template')#property-item-editor
     <%= className + "." + name.clean() %>
