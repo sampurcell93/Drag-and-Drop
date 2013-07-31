@@ -82,7 +82,7 @@
           var $t;
           $t = $(e.currentTarget);
           if ($t.val() === "") {
-            return $t.val($t.data("previous-val") || "New Section");
+            return $t.val($t.data("previous-val") || "");
           }
         }
       },
@@ -156,7 +156,7 @@
       saveSection: function() {
         var copy, title;
         title = this.$el.find(".section-title").val();
-        if (title === "" || typeof title === "undefined" || title === "New Section") {
+        if (title === "" || typeof title === "undefined" || title === "Default Section") {
           alert("You need to enter a title");
           return;
         }

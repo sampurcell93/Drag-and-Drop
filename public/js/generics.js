@@ -198,12 +198,7 @@
       _Class.prototype.template = $("#button-template").html();
 
       _Class.prototype.initialize = function(options) {
-        _Class.__super__.initialize.apply(this, arguments);
-        return _.bindAll(this, "beforeRender");
-      };
-
-      _Class.prototype.beforeRender = function() {
-        return this.$el.addClass("max-w3");
+        return _Class.__super__.initialize.apply(this, arguments);
       };
 
       return _Class;
@@ -328,10 +323,22 @@
 
       _Class.prototype.initialize = function() {
         _Class.__super__.initialize.apply(this, arguments);
-        return _.bindAll(this, "afterRender");
+        _.bindAll(this, "afterRender");
+        if (this.model.get("child_els").length === 0) {
+          return $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(this.$el);
+        }
       };
 
       _Class.prototype.template = $("#builder-wrap").html();
+
+      _Class.prototype.appendChild = function() {
+        _Class.__super__.appendChild.apply(this, arguments);
+        if (this.model.get("child_els").length === 0) {
+          return $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(this.$el);
+        } else {
+          return this.$el.children(".placeholder").remove();
+        }
+      };
 
       _Class.prototype.bindDrag = function() {
         return null;

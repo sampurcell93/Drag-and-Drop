@@ -168,10 +168,6 @@ $(document).ready ->
         template: $("#button-template").html()
         initialize: (options) ->
             super
-            # Key line which binds all parent views to this, the descendant!
-            _.bindAll(@, "beforeRender")
-        beforeRender: () ->
-            @$el.addClass("max-w3")
 
     class window.views['CustomHeader'] extends window.views.genericElement
         template: $("#custom-header").html()
@@ -210,7 +206,14 @@ $(document).ready ->
         initialize: ->
             super
             _.bindAll(@, "afterRender")
+            if (@model.get("child_els").length is 0)
+                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el) 
         template: $("#builder-wrap").html()
+        appendChild: ->
+            super
+            if (@model.get("child_els").length is 0)
+                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el)     
+            else @$el.children(".placeholder").remove()
         bindDrag: ->
             null
         afterRender: ->

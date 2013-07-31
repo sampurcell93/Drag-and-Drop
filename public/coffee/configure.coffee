@@ -90,7 +90,7 @@ $(document).ready ->
             'blur .section-title': (e) ->
                 $t = $(e.currentTarget)
                 if ($t.val() == "")
-                    $t.val($t.data("previous-val") || "New Section")
+                    $t.val($t.data("previous-val") || "")
         setProps: ->
             that = this
             if !opts? 
@@ -140,7 +140,7 @@ $(document).ready ->
             @$el.find(@wrap).slideToggle('fast')
         saveSection: ->
             title = @$el.find(".section-title").val()
-            if title == "" or typeof title is "undefined" or title == "New Section"
+            if title == "" or typeof title is "undefined" or title == "Default Section"
                 alert "You need to enter a title"
                 return
             console.log(title)

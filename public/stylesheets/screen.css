@@ -1375,52 +1375,53 @@ section.builder-container.no-grid .droppable-placeholder {
   outline: none;
   margin: 0;
   cursor: auto;
+  min-height: 100px;
 }
-/* line 782, ../sass/screen.scss */
+/* line 783, ../sass/screen.scss */
 .builder-element:hover {
   outline-color: #2092cc;
   -webkit-box-shadow: 0px 0px 4px #82b7e0;
   -moz-box-shadow: 0px 0px 4px #82b7e0;
   box-shadow: 0px 0px 4px #82b7e0;
 }
-/* line 786, ../sass/screen.scss */
+/* line 787, ../sass/screen.scss */
 .builder-element:hover > .config-menu-wrap {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
-/* line 791, ../sass/screen.scss */
+/* line 792, ../sass/screen.scss */
 .builder-element.child {
   outline: 1px dashed #82b7e0 !important;
 }
-/* line 795, ../sass/screen.scss */
+/* line 796, ../sass/screen.scss */
 .builder-element input {
   margin: 10px 0;
   width: 65%;
 }
-/* line 800, ../sass/screen.scss */
+/* line 801, ../sass/screen.scss */
 .builder-element.selected-element {
   outline: 1px dashed #FF6100 !important;
   -webkit-box-shadow: 0px 0px 16px #cccccc;
   -moz-box-shadow: 0px 0px 16px #cccccc;
   box-shadow: 0px 0px 16px #cccccc;
 }
-/* line 807, ../sass/screen.scss */
+/* line 808, ../sass/screen.scss */
 .builder-element:before, .builder-element:after {
   content: " ";
   /* 1 */
   display: table;
   /* 2 */
 }
-/* line 811, ../sass/screen.scss */
+/* line 812, ../sass/screen.scss */
 .builder-element:after {
   clear: both;
 }
-/* line 815, ../sass/screen.scss */
+/* line 816, ../sass/screen.scss */
 .builder-element textarea {
   color: #363636;
 }
 
-/* line 818, ../sass/screen.scss */
+/* line 819, ../sass/screen.scss */
 .droppable-placeholder {
   width: 100%;
   position: relative;
@@ -1436,7 +1437,7 @@ section.builder-container.no-grid .droppable-placeholder {
   border: 2px dashed orange;
 }
 
-/* line 847, ../sass/screen.scss */
+/* line 848, ../sass/screen.scss */
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
@@ -1444,7 +1445,7 @@ section.builder-container.no-grid .droppable-placeholder {
   background: rgba(125, 185, 232, 0.4);
 }
 
-/* line 854, ../sass/screen.scss */
+/* line 855, ../sass/screen.scss */
 .config-menu-wrap {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1453,12 +1454,13 @@ section.builder-container.no-grid .droppable-placeholder {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   opacity: 0;
   position: absolute;
-  top: -4px;
+  top: 0px;
   right: 0px;
   display: block;
   cursor: pointer;
   text-align: center;
-  width: 65px;
+  background: #f9f9f9;
+  width: 51px;
   height: 100%;
   max-height: 38px;
   z-index: 12;
@@ -1468,8 +1470,9 @@ section.builder-container.no-grid .droppable-placeholder {
   -o-border-radius: 0 2px 0 2px;
   border-radius: 0 2px 0 2px;
 }
-/* line 869, ../sass/screen.scss */
+/* line 872, ../sass/screen.scss */
 .config-menu-wrap li {
+  cursor: pointer;
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
   -o-transition: all 0.1s ease-in-out;
@@ -1482,13 +1485,9 @@ section.builder-container.no-grid .droppable-placeholder {
   color: #2092cc;
   position: relative;
 }
-/* line 879, ../sass/screen.scss */
+/* line 883, ../sass/screen.scss */
 .config-menu-wrap li li {
   color: #333;
-}
-/* line 881, ../sass/screen.scss */
-.config-menu-wrap:hover {
-  opacity: 1 !important;
 }
 
 /* line 889, ../sass/screen.scss */
@@ -1769,7 +1768,6 @@ ol.generic-list {
 }
 /* line 1114, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element > ul.children {
-  min-height: 200px;
   z-index: -11;
   display: none;
   position: absolute;

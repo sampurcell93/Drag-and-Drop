@@ -125,10 +125,15 @@ $(document).ready ->
         afterRender: ->
             @$el.children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click")
         showTabContent: ->
+            column_types = ["two", "three", "four", "five", "six"]
             # Settign height of parent container and showing the tab content
             $el = @$el
             siblings = $el.siblings(".builder-element").length + 1
-            offset = Math.floor(siblings/7)
+            num_per_row = null
+            _.each column_types, (num,i) ->
+                if $el.closest(".tab-layout").hasClass("column " + num)
+                    num_per_row = i + 3
+            offset = Math.floor(siblings/num_per_row)
             offset = 30 + 50*offset
             console.log $el.children(".children")
             $el.children(".children").css({"top": 20 + offset + "px"})
@@ -141,7 +146,6 @@ $(document).ready ->
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
         settingsTemplate: $("#tab-layout-settings").html()
-        linked_items: ['.tab-list li']
         initialize: ->
             _.bindAll @, "afterRender"
             self = @

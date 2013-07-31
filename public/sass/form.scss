@@ -220,7 +220,7 @@ button {
 		@include filter-gradient(#f9aa48, #ff920a, vertical); // IE6-9
 		@include background-image(linear-gradient(top,  #f9aa48 0%,#ff920a 100%));
 
-		border: none;
+		border-color: #777;
 		padding-bottom: 12px;
 
 		&:hover {

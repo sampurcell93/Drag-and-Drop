@@ -42,6 +42,7 @@ $(document).ready ->
             response.child_els = @modelify(response.child_els)
             response
         blend: (putIn, at) ->
+            if !putIn? then return false
             # If put in is a collection
             if $.isArray(putIn) is true and putIn.length > 1
                 if putIn.indexOf(@) != -1
@@ -170,6 +171,7 @@ $(document).ready ->
                         self.$el.removeClass("selected-element")
                 "renderBase": ->
                     @render(false)
+                "render": @render
             }
             do @bindDrop
             do @bindDrag
@@ -269,9 +271,9 @@ $(document).ready ->
               over: (e) ->
                 $(e.target).addClass("over")
               out: (e)->
-                $(e.target).removeClass("over").parent().removeClass("over")
+                $(e.target).removeClass("over").parents().removeClass("over")
               drop: (e,ui) ->
-                $(e.target).removeClass("over").parent().removeClass("over")
+                $(e.target).removeClass("over").parents().removeClass("over")
                 draggingModel = window.currentDraggingModel
                 if typeof draggingModel is "undefined" or !draggingModel? then return false
                 else if draggingModel is that.model then return false
@@ -331,9 +333,10 @@ $(document).ready ->
                 @removeFromFlow(e)
             "flowRemoveViaDrag": "removeFromFlow"      # Stop the click event from bubbling up to the parent model, if there is one.:
             "click .config-panel": (e) ->            #  On click of the panel in the top right
-                editor = views.editors[@model.get("view") || "DefaultEditor"]
-                if editor? then new editor({model: @model, el: @el}).render()
-                else new views.editors["DefaultEditor"]({model: @model, el: @el}).render()
+                editor = views.editors[@model.get("view") || "BaseEditor"]
+                if editor? then editor = new editor({model: @model, link_el: @el}).render()
+                else editor = new views.editors["BaseEditor"]({model: @model, link_el: @el}).render()
+                $(editor.el).launchModal()
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
                 @model["layout-item"] = true
@@ -367,6 +370,7 @@ $(document).ready ->
                 $el = @$el
                 that = this
                 @append new models.Element({view: "BuilderWrapper"})
+
         append: (element, opts) ->
             view = element.get("view")
             element.set("child_els", @collection)

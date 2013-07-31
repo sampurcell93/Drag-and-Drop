@@ -738,7 +738,7 @@ button.orange {
   background-image: -moz-linear-gradient(top, #f9aa48 0%, #ff920a 100%);
   background-image: -o-linear-gradient(top, #f9aa48 0%, #ff920a 100%);
   background-image: linear-gradient(top, #f9aa48 0%, #ff920a 100%);
-  border: none;
+  border-color: #777;
   padding-bottom: 12px;
 }
 /* line 226, ../sass/form.scss */

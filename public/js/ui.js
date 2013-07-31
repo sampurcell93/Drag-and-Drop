@@ -7,9 +7,21 @@
     window.propertyLink = $("#property-link").html();
     window.launchModal = function(content) {
       var modal;
-      modal = $("<div />").addClass("modal").html(content).prepend("<div class='close-modal icon'>g</div>");
+      modal = $("<div />").addClass("modal");
+      if ($.isArray(content)) {
+        _.each(content, function(item) {
+          return modal.append(item);
+        });
+      } else {
+        modal.html(content);
+      }
+      modal.prepend("<div class='close-modal icon'>g</div>");
       $(document.body).addClass("active-modal").append(modal);
       return modal;
+    };
+    $.fn.launchModal = function(content) {
+      console.log($(this), "launching jquery modal");
+      return this.addClass("modal").appendTo($("body").addClass("active-modal"));
     };
     window.validNumber = function(num) {
       return !isNaN(parseInt(num));

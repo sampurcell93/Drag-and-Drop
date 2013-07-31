@@ -1,23 +1,22 @@
-script(type='text/template')#layout-item
-    <%= name %>
-    .close-modal.icon g
-script(type="text/template")#picker-interface
-    button.try-layout Try Layout On Selected
-    ul.layout-list
-    div.close-modal.icon g
+
+//-  DYNAMIC LAYOUT TEMPLATE
 script#dynamic-layout(type='text/template')
     p.p10.center.placeholder Drop a property, section, UI element, or another dynamic layout here.
-script#dynamic-layout-setup(type='text/template')
-    h2 Choose a Preset Layout
+
+//- DYNAMIC CONTAINER TEMPLATE
 script#dynamic-container(type='text/template')
     p.p10.center.placeholder Dynamic Container here
+
+//- PLACEHOLDER FOR TAB LAYOUT - BEHAVIOR DEFINED IN CSS
 script#tab-layout(type='text/template')
     p.center.p10.center.placeholder-text Drag in properties or elements. The layout will format them into tabs appropriately.
-script#tab-list-item(type='text/template')
-    <%= typeof tab_title !== "undefined" ? tab_title : "Default Title" %>
+
+//- PLACEHOLDER FOR ACCORDION LAYOUT
 script#accordion-layout(type='text/template')
     p.p10.center.placeholder  Drop a property, section, UI element, or another dynamic layout here. Nested elements will be the hideable section of the
         | accordion, while their parent will control their visibility.
+
+//- TEMPLATE FOR n-wide n-high FREEFORM GRID
 script#freeform-layout(type='text/template')
     p.p10.center.placeholder Free form layout here!
     <% for (var j = 0; j < rows; j++) { %>
@@ -28,21 +27,7 @@ script#freeform-layout(type='text/template')
             | COL
     <% } %>
     <% } %>
-    
-script#freeform-layout-settings(type='text/template')
-    input(data-property='columns', type='text', placeholder='Number of columns', value='2').set-columns
-    input(data-property='rows', type='text', placeholder='Number of rows', value='2').set-rows
-    button.submit.fr Ok
-script#column-picker(type='text/template')
-    h2 Choose a column layout
-    ul.choose-columns
-        li(data-columns='') One Column
-        li(data-columns='two') Two Columns
-        li(data-columns='three') Three Columns
-        li(data-columns='four') Four Columns
-        li(data-columns='five') Five Columns
-        li(data-columns='six') Six Columns
+
+//-  TEMPLATE FOR A BLANK LAYOUT YET TO BE CONFIGURED
 script#blank-layout(type='text/template')
     ul.children
-script#skins(type='text/template')
-    | PRO

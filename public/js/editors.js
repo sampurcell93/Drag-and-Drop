@@ -6,7 +6,7 @@
   $(function() {
     var editors, _ref, _ref1, _ref2;
     editors = window.views.editors = {};
-    editors["DefaultEditor"] = (function(_super) {
+    editors["BaseEditor"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -14,33 +14,64 @@
         return _ref;
       }
 
-      _Class.prototype.columnTemplate = $("#column-picker").html();
+      _Class.prototype.change_queue = [];
 
-      _Class.prototype.skinTemplate = $("#skins").html();
+      _Class.prototype.tagName = "div class='modal'";
+
+      _Class.prototype.initialize = function() {
+        if (this.templates != null) {
+          return this.templates = this.templates.concat([$("#skins").html(), $("#column-picker").html()]);
+        } else {
+          return this.templates = [$("#skins").html(), $("#column-picker").html()];
+        }
+      };
 
       _Class.prototype.render = function() {
-        var column_types, modal, self;
-        column_types = ["two", "three", "four", "five", "six"];
+        var cq, editor_content, self;
         self = this;
-        modal = window.launchModal(_.template(this.skinTemplate, {}) + _.template(this.columnTemplate, {}));
-        modal.delegate("[data-columns]", "click", function() {
-          var $t, cols;
-          $t = $(this);
+        this.link_el = this.options.link_el;
+        cq = this.change_queue;
+        editor_content = "";
+        if (this.templates != null) {
+          this.templates = this.templates.concat([$("#finalize-editing").html()]);
+        }
+        _.each(this.templates, function(template) {
+          return editor_content += _.template(template, self.model.toJSON());
+        });
+        return this.$el.appendTo(document.body).html(editor_content);
+      };
+
+      _Class.prototype.events = {
+        "click [data-columns]": function(e) {
+          var $t, cols, coltypes, self;
+          coltypes = ["two", "three", "four", "five", "six"];
+          $t = $(e.currentTarget);
           cols = $t.data("columns");
-          if (self.model != null) {
-            self.model.set({
-              "classes": cols,
-              "columns": cols
-            });
+          self = this;
+          if (this.model != null) {
+            this.change_queue["classes-columns"] = function() {
+              return self.model.set("columns", cols);
+            };
           }
-          _.each(column_types, function(type) {
-            return self.$el.removeClass("column " + type);
+          _.each(coltypes, function(type) {
+            return $(self.link_el).removeClass("column " + type);
           });
           if (cols !== "") {
-            return self.$el.addClass("column " + cols);
+            return $(self.link_el).addClass("column " + cols);
           }
-        });
-        return console.log("launch from default editor");
+        },
+        "click .confirm": function() {
+          var cq, process;
+          cq = this.change_queue;
+          for (process in cq) {
+            cq[process]();
+          }
+          return this.model.trigger("render");
+        },
+        "click .reject, .confirm": function() {
+          $(document.body).removeClass("active-modal");
+          return this.remove();
+        }
       };
 
       return _Class;
@@ -54,18 +85,31 @@
         return _ref1;
       }
 
+      _Class.prototype.templates = [$("#button-editor").html()];
+
       _Class.prototype.initialize = function() {
-        return _Class.__super__.initialize.apply(this, arguments);
+        var self;
+        self = this;
+        return $.extend(this.events, {
+          "keyup .title-setter": function() {
+            return self.cq["title"] = function() {
+              return self.model.set("title", self.$el.find(".title-setter").val());
+            };
+          }
+        });
       };
 
       _Class.prototype.render = function() {
+        var modal;
         _Class.__super__.render.apply(this, arguments);
-        return console.log("button render");
+        this.cq = this.change_queue;
+        modal = this.el || $(".modal").first();
+        return this.$el = $(this.el);
       };
 
       return _Class;
 
-    })(editors["DefaultEditor"]);
+    })(editors["BaseEditor"]);
     return editors["accordion"] = (function(_super) {
       __extends(_Class, _super);
 
@@ -74,9 +118,11 @@
         return _ref2;
       }
 
+      _Class.prototype.templates = [$("#accordion-layout").html()];
+
       return _Class;
 
-    })(editors["DefaultEditor"]);
+    })(editors["BaseEditor"]);
   });
 
 }).call(this);

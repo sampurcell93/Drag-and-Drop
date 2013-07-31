@@ -777,6 +777,7 @@ section.builder-container {
 		outline: none;
 		margin: 0;
 		cursor: auto;
+		min-height: 100px;
 	}
 
  	&:hover { 
@@ -855,18 +856,21 @@ section.builder-container {
 	@include transition(all .1s ease-in-out);
 	@include opacity(0);
 	position: absolute;
-	top: -4px;
+	top: 0px;
 	right: 0px;
 	display: block;
 	cursor: pointer;
 	text-align: center;
-	width: 65px;
+	background: #f9f9f9;
+	width: 51px;
 	height: 100%;
+	// border: 1px solid red;
 	max-height: 38px;
 	z-index: 12;
 	@include border-radius(0 2px 0 2px);
 
 	li {
+		cursor: pointer;
 		@include transition(all .1s ease-in-out);
 		float: left;
 		text-shadow: none;
@@ -877,10 +881,6 @@ section.builder-container {
 		position: relative;
 
 		li { color: #333; }
-	}
-	&:hover {
-		opacity: 1 !important;
-
 	}
 }
 
@@ -1112,7 +1112,6 @@ ol.generic-list {
 			}
 
 			> ul.children {
-				min-height: 200px;
 				z-index: -11;
 				display: none;
 				position: absolute;

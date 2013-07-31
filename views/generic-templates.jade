@@ -1,5 +1,5 @@
 script(type='text/template')#button-template
-    <button class='no-drag title-setter'>  Button Text (edit me!)</button>
+    <button class='no-drag title-setter'><%= typeof title !== "undefined" ? title: "Default Text"%></button>
 script(type='text/template')#generic-list
     <% if (typeof tagName === "undefined") tagName = "ul"; console.log(listItems) %>
     <<%= tagName %> class='no-drag generic-list'>

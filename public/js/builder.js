@@ -67,6 +67,9 @@
 
       Element.prototype.blend = function(putIn, at) {
         var children;
+        if (putIn == null) {
+          return false;
+        }
         if ($.isArray(putIn) === true && putIn.length > 1) {
           if (putIn.indexOf(this) !== -1) {
             alert("you may not drag shit into itself. DIVIDE BY ZERO");
@@ -254,7 +257,8 @@
           },
           "renderBase": function() {
             return this.render(false);
-          }
+          },
+          "render": this.render
         });
         this.bindDrop();
         return this.bindDrag();
@@ -390,11 +394,11 @@
             return $(e.target).addClass("over");
           },
           out: function(e) {
-            return $(e.target).removeClass("over").parent().removeClass("over");
+            return $(e.target).removeClass("over").parents().removeClass("over");
           },
           drop: function(e, ui) {
             var builder, draggingModel, model, sect_interface, section;
-            $(e.target).removeClass("over").parent().removeClass("over");
+            $(e.target).removeClass("over").parents().removeClass("over");
             draggingModel = window.currentDraggingModel;
             if (typeof draggingModel === "undefined" || (draggingModel == null)) {
               return false;
@@ -473,18 +477,19 @@
         "flowRemoveViaDrag": "removeFromFlow",
         "click .config-panel": function(e) {
           var editor;
-          editor = views.editors[this.model.get("view") || "DefaultEditor"];
+          editor = views.editors[this.model.get("view") || "BaseEditor"];
           if (editor != null) {
-            return new editor({
+            editor = new editor({
               model: this.model,
-              el: this.el
+              link_el: this.el
             }).render();
           } else {
-            return new views.editors["DefaultEditor"]({
+            editor = new views.editors["BaseEditor"]({
               model: this.model,
-              el: this.el
+              link_el: this.el
             }).render();
           }
+          return $(editor.el).launchModal();
         },
         "select": function(e) {
           this.model["layout-item"] = true;

@@ -216,10 +216,17 @@
       };
 
       _Class.prototype.showTabContent = function() {
-        var $el, offset, siblings, wrap_height;
+        var $el, column_types, num_per_row, offset, siblings, wrap_height;
+        column_types = ["two", "three", "four", "five", "six"];
         $el = this.$el;
         siblings = $el.siblings(".builder-element").length + 1;
-        offset = Math.floor(siblings / 7);
+        num_per_row = null;
+        _.each(column_types, function(num, i) {
+          if ($el.closest(".tab-layout").hasClass("column " + num)) {
+            return num_per_row = i + 3;
+          }
+        });
+        offset = Math.floor(siblings / num_per_row);
         offset = 30 + 50 * offset;
         console.log($el.children(".children"));
         $el.children(".children").css({
@@ -246,8 +253,6 @@
       _Class.prototype.template = $("#tab-layout").html();
 
       _Class.prototype.settingsTemplate = $("#tab-layout-settings").html();
-
-      _Class.prototype.linked_items = ['.tab-list li'];
 
       _Class.prototype.initialize = function() {
         var self;
