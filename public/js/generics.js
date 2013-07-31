@@ -113,7 +113,6 @@
         genericElement.__super__.initialize.apply(this, arguments);
         return $.extend(this.events, {
           "keyup .title-setter": function(e) {
-            console.log("title");
             this.model.set({
               'customHeader': $(e.currentTarget).val(),
               'title': $(e.currentTarget).val()
@@ -254,7 +253,22 @@
       _Class.prototype.template = $("#generic-radio").html();
 
       _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
+        _Class.__super__.initialize.apply(this, arguments);
+        _.bindAll(this, "afterRender");
+        return this.model.on("change:label_position", this.render);
+      };
+
+      _Class.prototype.afterRender = function() {
+        var clone, label, position;
+        label = this.$el.children(".main-label");
+        clone = label.clone();
+        position = this.model.get("label_position");
+        console.log(position);
+        if (position === "right") {
+          console.log("heyooo", clone);
+          label.next().after(clone);
+        }
+        return label.remove();
       };
 
       return _Class;

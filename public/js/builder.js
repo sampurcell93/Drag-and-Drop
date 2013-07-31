@@ -281,6 +281,9 @@
         children = model.get("child_els");
         $el = this.$el;
         $el.html(_.template(this.template, model.toJSON()));
+        if (this.model['layout-element'] === true) {
+          $el.addClass("selected-element");
+        }
         if (this.controls != null) {
           $el.append(_.template(this.controls, {}));
         }
@@ -301,6 +304,9 @@
       draggableElement.prototype.appendChild = function(child, opts) {
         var $el, builderChildren, draggable, i, view;
         $el = this.$el.children(".children");
+        if (child['layout-element'] === true) {
+          $el.addClass("selected-element");
+        }
         view = child.get("view") || "draggableElement";
         if (child.get("inFlow") === true) {
           i = this.index || currIndex;
@@ -480,7 +486,7 @@
         "flowRemoveViaDrag": "removeFromFlow",
         "click .config-panel": function(e) {
           var editor;
-          editor = views.editors[this.model.get("view") || "BaseEditor"];
+          editor = views.editors[this.model.get("edit_view") || this.model.get("view") || "BaseEditor"];
           if (editor != null) {
             editor = new editor({
               model: this.model,

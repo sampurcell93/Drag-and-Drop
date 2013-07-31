@@ -16,7 +16,6 @@ $ ->
             # A pointer to the linked element in the builder.
             self     = @
             @link_el = @options.link_el 
-            cq       = @change_queue
             editor_content  = ""
             # This is not optional, the controls must be there
             if @templates? 
@@ -30,6 +29,11 @@ $ ->
         enqueue: (name, func) ->
              @change_queue[name] = func
         events:
+            "keyup .title-setter": ->
+                self = @
+                @enqueue("title", ->
+                    self.model.set("title", self.$el.find(".title-setter").val())
+                )
             "click [data-columns]": (e) ->
                 coltypes = ["two", "three", "four", "five", "six"]
                 $t       = $ e.currentTarget
@@ -37,12 +41,16 @@ $ ->
                 self     = @
 
                 if @model?
-                    @enqueue("classes-columns", ->
+                    @enqueue("columns", ->
                         self.model.set "columns", cols)
                 _.each coltypes, (type) ->
-                    $(self.link_el).removeClass("column " + type)
+                    self.enqueue("remove_col_classes-" + type, ->
+                        $(self.link_el).removeClass("column " + type)
+                    )
                 unless cols == ""
-                    $(self.link_el).addClass("column " + cols)
+                    @enqueue("add_col_classes", ->
+                        $(self.link_el).addClass("column " + cols)
+                    )
 
             # On confirm, execute every item in the queue, then render the view again
             # Perhaps queue is misleading.... try hashtable. Repetitive events do not need to
@@ -61,18 +69,28 @@ $ ->
     class editors["Button"] extends editors["BaseEditor"]
         templates: [$("#button-editor").html()]
         initialize: ->
-            self = @
-            $.extend @events, {
-                "keyup .title-setter": ->
-                    self.enqueue("title", ->
-                        self.model.set("title", self.$el.find(".title-setter").val())
-                    )
-            }
+            # Blank init prevents default behavior
         render: ->
             super
             @cq = @change_queue
             modal = @el || $(".modal").first()
             @$el = $(@el)
+    class editors['Link'] extends editors["BaseEditor"]
+        templates: [$("#link-editor").html()]
+        initialize: ->
+
+    class editors['Radio'] extends editors["BaseEditor"]
+        templates: [$("#radio-editor").html()]
+        initialize: ->
+            self = @
+            _.extend @events, {
+                "change .label-position": (e) ->
+                    position = $(e.currentTarget).val()
+                    self.enqueue("label_position", ->
+                        self.model.set("label_position", position)
+                    )
+            }
+
     class editors["accordion"] extends editors["BaseEditor"]
         templates: [$("#accordion-layout").html()]
     # new editors["Button"]().render()

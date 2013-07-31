@@ -191,6 +191,7 @@ $(document).ready ->
             children = model.get "child_els" 
             $el =  @$el
             $el.html(_.template @template, model.toJSON())
+            if @model['layout-element'] is true then $el.addClass("selected-element")
             if @controls? then $el.append(_.template @controls, {})
             if $el.children(".children").length is 0
                     $el.append("<ul class='children'></ul>")
@@ -205,6 +206,7 @@ $(document).ready ->
             # We choose a view to render based on the model's specification, 
             # or default to a standard draggable.
             $el = @$el.children(".children")
+            if child['layout-element'] is true then $el.addClass("selected-element")
             view = child.get("view") || "draggableElement"
             if child.get("inFlow") is true
                 i = @index || currIndex
@@ -338,7 +340,7 @@ $(document).ready ->
                 @removeFromFlow(e)
             "flowRemoveViaDrag": "removeFromFlow"      # Stop the click event from bubbling up to the parent model, if there is one.:
             "click .config-panel": (e) ->            #  On click of the panel in the top right
-                editor = views.editors[@model.get("view") || "BaseEditor"]
+                editor = views.editors[@model.get("edit_view") || @model.get("view") || "BaseEditor"]
                 if editor? then editor = new editor({model: @model, link_el: @el}).render()
                 else editor = new views.editors["BaseEditor"]({model: @model, link_el: @el}).render()
                 $(editor.el).launchModal()

@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(function() {
-    var editors, _ref, _ref1, _ref2;
+    var editors, _ref, _ref1, _ref2, _ref3, _ref4;
     editors = window.views.editors = {};
     editors["BaseEditor"] = (function(_super) {
       __extends(_Class, _super);
@@ -27,10 +27,9 @@
       };
 
       _Class.prototype.render = function() {
-        var cq, editor_content, self;
+        var editor_content, self;
         self = this;
         this.link_el = this.options.link_el;
-        cq = this.change_queue;
         editor_content = "";
         if (this.templates != null) {
           this.templates = this.templates.concat([$("#finalize-editing").html()]);
@@ -46,6 +45,13 @@
       };
 
       _Class.prototype.events = {
+        "keyup .title-setter": function() {
+          var self;
+          self = this;
+          return this.enqueue("title", function() {
+            return self.model.set("title", self.$el.find(".title-setter").val());
+          });
+        },
         "click [data-columns]": function(e) {
           var $t, cols, coltypes, self;
           coltypes = ["two", "three", "four", "five", "six"];
@@ -53,15 +59,19 @@
           cols = $t.data("columns");
           self = this;
           if (this.model != null) {
-            this.enqueue("classes-columns", function() {
+            this.enqueue("columns", function() {
               return self.model.set("columns", cols);
             });
           }
           _.each(coltypes, function(type) {
-            return $(self.link_el).removeClass("column " + type);
+            return self.enqueue("remove_col_classes-" + type, function() {
+              return $(self.link_el).removeClass("column " + type);
+            });
           });
           if (cols !== "") {
-            return $(self.link_el).addClass("column " + cols);
+            return this.enqueue("add_col_classes", function() {
+              return $(self.link_el).addClass("column " + cols);
+            });
           }
         },
         "click .confirm": function() {
@@ -92,17 +102,7 @@
 
       _Class.prototype.templates = [$("#button-editor").html()];
 
-      _Class.prototype.initialize = function() {
-        var self;
-        self = this;
-        return $.extend(this.events, {
-          "keyup .title-setter": function() {
-            return self.enqueue("title", function() {
-              return self.model.set("title", self.$el.find(".title-setter").val());
-            });
-          }
-        });
-      };
+      _Class.prototype.initialize = function() {};
 
       _Class.prototype.render = function() {
         var modal;
@@ -115,12 +115,54 @@
       return _Class;
 
     })(editors["BaseEditor"]);
-    return editors["accordion"] = (function(_super) {
+    editors['Link'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
         _ref2 = _Class.__super__.constructor.apply(this, arguments);
         return _ref2;
+      }
+
+      _Class.prototype.templates = [$("#link-editor").html()];
+
+      _Class.prototype.initialize = function() {};
+
+      return _Class;
+
+    })(editors["BaseEditor"]);
+    editors['Radio'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref3 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref3;
+      }
+
+      _Class.prototype.templates = [$("#radio-editor").html()];
+
+      _Class.prototype.initialize = function() {
+        var self;
+        self = this;
+        return _.extend(this.events, {
+          "change .label-position": function(e) {
+            var position;
+            position = $(e.currentTarget).val();
+            return self.enqueue("label_position", function() {
+              return self.model.set("label_position", position);
+            });
+          }
+        });
+      };
+
+      return _Class;
+
+    })(editors["BaseEditor"]);
+    return editors["accordion"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref4 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref4;
       }
 
       _Class.prototype.templates = [$("#accordion-layout").html()];

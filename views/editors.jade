@@ -9,6 +9,22 @@ script(type='text/template')#button-editor
         | Set button title:
         <input type='text' class='title-setter w7' value='<%= typeof title !== "undefined" ? title: "Default Text"%>' />
 
+script(type='text/template')#link-editor
+    label
+        | Set link title:
+        <input type='text' class='title-setter w7' value='<%= typeof title !== "undefined" ? title: "Default Text"%>' />    
+    label
+        | Set link destination:
+        <input type='text' class='title-setter w7' placeholder="e.g. http://pega.com" value='<%= typeof link_href !== "undefined" ? title: ""%>' />    
+
+script(type='text/template')#radio-editor
+    label
+        Label Position:
+        select.label-position
+            option(value="left") Left
+            option(value="right") Right
+            option(value="top") Top
+
 
 script#freeform-layout-settings(type='text/template')
     input(data-property='columns', type='text', placeholder='Number of columns', value='2').set-columns

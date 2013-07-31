@@ -87,30 +87,39 @@ $(document).ready ->
             super
         afterRender: ->
 
+    # Layout for accordion and all child items
+    class views["accordionItem"] extends views["draggableElement"]
+
 
     class window.views["accordion"] extends window.views["layout"]
-        template: $("#accordion-layout").html()
+        template: $("#tab-layout").html()
+        settingsTemplate: $("#tab-layout-settings").html()
         initialize: ->
             _.bindAll @, "afterRender"
-            super
-        linkElements: (model) ->
-            console.log "linking elements"
             self = @
-            model.set("type", "Accordion Header")
-            _.each model.get("child_els").models, (child) ->
-                child.set("accordion_parent", model)
-                if (child.get("child_els").length)
-                    self.linkElements(child)
-        appendChild: (model) ->
+            @listenTo @model.get("child_els"), {
+                "add": @formatNewModel
+                "remove": (m,c,o) ->
+                    if c.length is 0
+                        self.$el.children(".placeholder-text").show()
+            }
             super
-            console.log model
-            @linkElements(model)
         afterRender: ->
-            if (@model.get("child_els").length)
-                @$el.children(".placeholder").remove()
+            @$el.addClass("accordion-layout")
+            accordions = @model.get "child_els"
+            self = @
+            _.each accordions.models, (item) ->
+                self.formatNewModel item
+        appendChild: (model)->
+            super
+        formatNewModel: (model) ->
+            model.set("view", "accordionItem")
+            $el = @$el
+            $el.children(".placeholder-text").hide()
 
-    class window.views["tabItem"] extends views["draggableElement"]
-        controls: null 
+
+    #  Layout for tab structure and all child items
+    class window.views["tabItem"] extends views["draggableElement"] 
         events: 
             "keyup": (e) ->    
                 $t = $(e.currentTarget)
@@ -142,6 +151,7 @@ $(document).ready ->
             console.log wrap_height
             $el.closest(".tab-layout").css("height", wrap_height + offset + 12 + "px")
             console.log("done", $el.height() + $el.children(".children").height())
+            @$el.children(".config-menu-wrap").css({"top": offset + 22 + "px", "right": "26px"})
 
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
@@ -162,9 +172,6 @@ $(document).ready ->
             self = @
             _.each tabs.models, (tab) ->
                 self.formatNewModel tab
-        appendChild: ( model)->
-            super
-            console.log "appending new chid"
         formatNewModel: (model, collection, options) ->
             model.set("view", "tabItem")
             $el = @$el

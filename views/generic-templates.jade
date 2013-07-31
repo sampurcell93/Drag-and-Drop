@@ -18,8 +18,9 @@ script(type='text/template')#custom-header
     <% var value = typeof customHeader !== "undefined" ? customHeader : ""  %>
     <input placeholder="Enter your header here" value ="<%= value %>" class='no-drag title-setter big-input generic-header' />
 script(type='text/template')#custom-link
+    <a href="<%= typeof link_href !== 'undefined' ? link_href : '#' %>" title="<%= typeof title !== 'undefined' ? title : 'Link' %>"><%= typeof title !== "undefined" ? title : 'Link' %></a>
 script(type='text/template')#generic-radio
-    label.no-drag 
+    label.no-drag.main-label
         span.label-text Radio Button
         input(type='radio')
 script(type='text/template')#date-time

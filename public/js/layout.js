@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     allLayouts = [
       {
         type: 'Dynamic Layout',
@@ -139,7 +139,7 @@
       return _Class;
 
     })(window.views["layout"]);
-    window.views["accordion"] = (function(_super) {
+    views["accordionItem"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -147,36 +147,55 @@
         return _ref4;
       }
 
-      _Class.prototype.template = $("#accordion-layout").html();
+      return _Class;
+
+    })(views["draggableElement"]);
+    window.views["accordion"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
+      }
+
+      _Class.prototype.template = $("#tab-layout").html();
+
+      _Class.prototype.settingsTemplate = $("#tab-layout-settings").html();
 
       _Class.prototype.initialize = function() {
+        var self;
         _.bindAll(this, "afterRender");
+        self = this;
+        this.listenTo(this.model.get("child_els"), {
+          "add": this.formatNewModel,
+          "remove": function(m, c, o) {
+            if (c.length === 0) {
+              return self.$el.children(".placeholder-text").show();
+            }
+          }
+        });
         return _Class.__super__.initialize.apply(this, arguments);
       };
 
-      _Class.prototype.linkElements = function(model) {
-        var self;
-        console.log("linking elements");
+      _Class.prototype.afterRender = function() {
+        var accordions, self;
+        this.$el.addClass("accordion-layout");
+        accordions = this.model.get("child_els");
         self = this;
-        model.set("type", "Accordion Header");
-        return _.each(model.get("child_els").models, function(child) {
-          child.set("accordion_parent", model);
-          if ((child.get("child_els").length)) {
-            return self.linkElements(child);
-          }
+        return _.each(accordions.models, function(item) {
+          return self.formatNewModel(item);
         });
       };
 
       _Class.prototype.appendChild = function(model) {
-        _Class.__super__.appendChild.apply(this, arguments);
-        console.log(model);
-        return this.linkElements(model);
+        return _Class.__super__.appendChild.apply(this, arguments);
       };
 
-      _Class.prototype.afterRender = function() {
-        if ((this.model.get("child_els").length)) {
-          return this.$el.children(".placeholder").remove();
-        }
+      _Class.prototype.formatNewModel = function(model) {
+        var $el;
+        model.set("view", "accordionItem");
+        $el = this.$el;
+        return $el.children(".placeholder-text").hide();
       };
 
       return _Class;
@@ -186,11 +205,9 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref5 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref5;
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
       }
-
-      _Class.prototype.controls = null;
 
       _Class.prototype.events = {
         "keyup": function(e) {
@@ -236,7 +253,11 @@
         wrap_height = $el.height() + $el.children(".children").height();
         console.log(wrap_height);
         $el.closest(".tab-layout").css("height", wrap_height + offset + 12 + "px");
-        return console.log("done", $el.height() + $el.children(".children").height());
+        console.log("done", $el.height() + $el.children(".children").height());
+        return this.$el.children(".config-menu-wrap").css({
+          "top": offset + 22 + "px",
+          "right": "26px"
+        });
       };
 
       return _Class;
@@ -246,8 +267,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref6 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref6;
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
       }
 
       _Class.prototype.template = $("#tab-layout").html();
@@ -281,11 +302,6 @@
         });
       };
 
-      _Class.prototype.appendChild = function(model) {
-        _Class.__super__.appendChild.apply(this, arguments);
-        return console.log("appending new chid");
-      };
-
       _Class.prototype.formatNewModel = function(model, collection, options) {
         var $el;
         model.set("view", "tabItem");
@@ -300,8 +316,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref7 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref7;
+        _ref8 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref8;
       }
 
       _Class.prototype.template = $("#freeform-layout").html();
@@ -350,8 +366,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref8 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref8;
+        _ref9 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref9;
       }
 
       _Class.prototype.template = $("#blank-layout").html();

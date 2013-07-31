@@ -113,7 +113,6 @@ $(document).ready ->
             $.extend(@events, {
                 # When they edit an input, update the model's display title.
                 "keyup .title-setter": (e) ->
-                    console.log "title"
                     @model.set {
                         # Modularize this ; todo
                         'customHeader': $(e.currentTarget).val()
@@ -188,6 +187,18 @@ $(document).ready ->
         template: $("#generic-radio").html()
         initialize: (options) ->
             super 
+            _.bindAll(@, "afterRender")
+            @model.on "change:label_position", @render
+        afterRender: ->
+            label = @$el.children(".main-label")
+            clone = label.clone()
+            position = @model.get("label_position")
+            console.log position
+            if position == "right"
+                console.log "heyooo", clone
+                label.next().after(clone)
+            label.remove()
+
     class window.views['Link'] extends window.views.genericElement
         template: $("#custom-link").html()
         initialize: (options) ->
