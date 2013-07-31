@@ -17,7 +17,7 @@ $(document).ready ->
 
     # A single property - pulled from the db with only a name, but returned to a new section
     # with many more options configured.
-    window.models.Property = Backbone.Model.extend()
+    window.models.Property = Backbone.Model.extend {}
 
     ###################
     ### COLLECTIONS ###
@@ -284,7 +284,7 @@ $(document).ready ->
         render: ->
             that = @
             @$el.empty()
-            _.each(this.collection.models, (prop) ->
+            _.each(this.collection.models, (prop, i) ->               
                 unless prop.rendered
                     prop.rendered = true;
                     that.$el.append new views.DataSingle({model: prop, index: that.controller.index}).render().el
@@ -317,8 +317,8 @@ $(document).ready ->
         events:
             "click .add-property": (e) ->
                 newProp = new models.Property({name: 'Change Me', className: @model.get("name")})
-                @$el.append new views.PropertyItem({model: newProp, index: @options.index, editable: true}).render().el
-                @$el.children(".property").last().trigger("click")
+                @$el.append prop = new views.PropertyItem({model: newProp, index: @options.index, editable: true}).render().el
+                $(prop).find("input").trigger("click")
                 # allSections.at(@options.index).get("properties").add newProp
             "click .close": (e) ->
                 that = @
@@ -376,29 +376,33 @@ $(document).ready ->
         tagName: 'li class="property" '
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
-            @$el.append _.template @template,item
+            @$el.append(_.template @template,item).toggleClass("selected").find("input").trigger "click"
+            @chooseProp()
             this
-        events:
-            "click .choose-prop": (e) ->
+        chooseProp: (e) ->
+            console.log "TesT"
+            if e?
                 $t = $(e.currentTarget)
-                $t.toggleClass "selected"
-                selected = @model.selected
-                currentSection = allSections.at(@options.index).get("currentSection")
-                @model.selected = if selected then false else true
-                if @model.selected is true
-                    allSections.at(@options.index).get("properties").add @model
-                    model = @model.toJSON()
-                    model.title = model.className + "." + model.name
-                    # model.property = {}
-                    model.property = @model
-                    model.property.name = model.name
-                    model.type = "Property"
-                    if !@elementModel?
-                        @elementModel = new models.Element(model)
-                    currentSection.add @elementModel
-                else 
-                    allSections.at(@options.index || currIndex).get("properties").remove @model
-                    currentSection.remove @elementModel
+                $t.closest(".property").toggleClass "selected"
+            selected = @model.selected
+            currentSection = allSections.at(@options.index).get("currentSection")
+            @model.selected = if selected then false else true
+            if @model.selected is true
+                allSections.at(@options.index).get("properties").add @model
+                model = @model.toJSON()
+                model.title = model.className + "." + model.name
+                # model.property = {}
+                model.property = @model
+                model.property.name = model.name
+                model.type = "Property"
+                if !@elementModel?
+                    @elementModel = new models.Element(model)
+                currentSection.add @elementModel
+            else 
+                allSections.at(@options.index || currIndex).get("properties").remove @model
+                currentSection.remove @elementModel
+        events:
+            "click .choose-prop": "chooseProp"
             "keyup": (e) ->
                 $t =  $(e.currentTarget)
                 # Get the new name of the property

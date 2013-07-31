@@ -7,7 +7,7 @@
         return "/class/";
       }
     });
-    window.models.Property = Backbone.Model.extend();
+    window.models.Property = Backbone.Model.extend({});
     /* COLLECTIONS*/
 
     window.collections.AllSections = Backbone.Collection.extend({
@@ -336,7 +336,7 @@
         var that;
         that = this;
         this.$el.empty();
-        return _.each(this.collection.models, function(prop) {
+        return _.each(this.collection.models, function(prop, i) {
           if (!prop.rendered) {
             prop.rendered = true;
             return that.$el.append(new views.DataSingle({
@@ -384,17 +384,17 @@
       },
       events: {
         "click .add-property": function(e) {
-          var newProp;
+          var newProp, prop;
           newProp = new models.Property({
             name: 'Change Me',
             className: this.model.get("name")
           });
-          this.$el.append(new views.PropertyItem({
+          this.$el.append(prop = new views.PropertyItem({
             model: newProp,
             index: this.options.index,
             editable: true
           }).render().el);
-          return this.$el.children(".property").last().trigger("click");
+          return $(prop).find("input").trigger("click");
         },
         "click .close": function(e) {
           var that;
@@ -464,33 +464,38 @@
       render: function() {
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
-        this.$el.append(_.template(this.template, item));
+        this.$el.append(_.template(this.template, item)).toggleClass("selected").find("input").trigger("click");
+        this.chooseProp();
         return this;
       },
-      events: {
-        "click .choose-prop": function(e) {
-          var $t, currentSection, model, selected;
+      chooseProp: function(e) {
+        var $t, currentSection, model, selected;
+        console.log("TesT");
+        if (e != null) {
           $t = $(e.currentTarget);
-          $t.toggleClass("selected");
-          selected = this.model.selected;
-          currentSection = allSections.at(this.options.index).get("currentSection");
-          this.model.selected = selected ? false : true;
-          if (this.model.selected === true) {
-            allSections.at(this.options.index).get("properties").add(this.model);
-            model = this.model.toJSON();
-            model.title = model.className + "." + model.name;
-            model.property = this.model;
-            model.property.name = model.name;
-            model.type = "Property";
-            if (this.elementModel == null) {
-              this.elementModel = new models.Element(model);
-            }
-            return currentSection.add(this.elementModel);
-          } else {
-            allSections.at(this.options.index || currIndex).get("properties").remove(this.model);
-            return currentSection.remove(this.elementModel);
+          $t.closest(".property").toggleClass("selected");
+        }
+        selected = this.model.selected;
+        currentSection = allSections.at(this.options.index).get("currentSection");
+        this.model.selected = selected ? false : true;
+        if (this.model.selected === true) {
+          allSections.at(this.options.index).get("properties").add(this.model);
+          model = this.model.toJSON();
+          model.title = model.className + "." + model.name;
+          model.property = this.model;
+          model.property.name = model.name;
+          model.type = "Property";
+          if (this.elementModel == null) {
+            this.elementModel = new models.Element(model);
           }
-        },
+          return currentSection.add(this.elementModel);
+        } else {
+          allSections.at(this.options.index || currIndex).get("properties").remove(this.model);
+          return currentSection.remove(this.elementModel);
+        }
+      },
+      events: {
+        "click .choose-prop": "chooseProp",
         "keyup": function(e) {
           var $t, val;
           $t = $(e.currentTarget);

@@ -18,30 +18,29 @@
 
       _Class.prototype.skinTemplate = $("#skins").html();
 
-      _Class.prototype.initialize = function() {};
-
       _Class.prototype.render = function() {
         var column_types, modal, self;
-        column_types = ["one", "two", "three", "four", "five", "six"];
+        column_types = ["two", "three", "four", "five", "six"];
         self = this;
         modal = window.launchModal(_.template(this.skinTemplate, {}) + _.template(this.columnTemplate, {}));
         modal.delegate("[data-columns]", "click", function() {
           var $t, cols;
           $t = $(this);
           cols = $t.data("columns");
-          self.model.set({
-            "classes": cols,
-            "columns": cols
-          });
+          if (self.model != null) {
+            self.model.set({
+              "classes": cols,
+              "columns": cols
+            });
+          }
           _.each(column_types, function(type) {
             return self.$el.removeClass("column " + type);
           });
-          return self.$el.addClass("column " + cols);
+          if (cols !== "") {
+            return self.$el.addClass("column " + cols);
+          }
         });
-        console.log("launch from layouts");
-        return (this.afterRender || function() {
-          return {};
-        })();
+        return console.log("launch from default editor");
       };
 
       return _Class;

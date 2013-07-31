@@ -476,11 +476,13 @@
           editor = views.editors[this.model.get("view") || "DefaultEditor"];
           if (editor != null) {
             return new editor({
-              model: this.model
+              model: this.model,
+              el: this.el
             }).render();
           } else {
             return new views.editors["DefaultEditor"]({
-              model: this.model
+              model: this.model,
+              el: this.el
             }).render();
           }
         },

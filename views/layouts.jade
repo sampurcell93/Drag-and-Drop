@@ -7,6 +7,8 @@ script(type="text/template")#picker-interface
     div.close-modal.icon g
 script#dynamic-layout(type='text/template')
     p.p10.center.placeholder Drop a property, section, UI element, or another dynamic layout here.
+script#dynamic-layout-setup(type='text/template')
+    h2 Choose a Preset Layout
 script#dynamic-container(type='text/template')
     p.p10.center.placeholder Dynamic Container here
 script#tab-layout(type='text/template')
@@ -34,7 +36,7 @@ script#freeform-layout-settings(type='text/template')
 script#column-picker(type='text/template')
     h2 Choose a column layout
     ul.choose-columns
-        li(data-columns='one') One Column
+        li(data-columns='') One Column
         li(data-columns='two') Two Columns
         li(data-columns='three') Three Columns
         li(data-columns='four') Four Columns

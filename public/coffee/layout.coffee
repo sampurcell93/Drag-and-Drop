@@ -17,12 +17,12 @@ $(document).ready ->
             type: 'Accordion Layout'
             view: 'accordion'
         }
-        {
-            type: 'Free Form Layout'
-            view: 'Freeform'
-            columns: '2'
-            rows: '2'
-        }
+        # {
+        #     type: 'Free Form Layout'
+        #     view: 'Freeform'
+        #     columns: '2'
+        #     rows: '2'
+        # }
     ]
     class window.models.Layout extends window.models.Element
 
@@ -65,11 +65,20 @@ $(document).ready ->
         higher level event from firing. ###
 
     class window.views["dynamicLayout"] extends window.views["layout"]
+        configTemplate: $("#dynamic-layout-setup").html()
         template: $("#dynamic-layout").html()
         initialize: ->
-            _.bindAll @, "afterRender"
+            _.bindAll @, "afterRender", "beforeRender"
             super
         afterRender: ->
+        beforeRender: ->
+            self = @
+            if $(".modal").length is 0
+                modal = window.launchModal(_.template(@configTemplate, @model.toJSON()))
+            else 
+                modal = $(".modal").first()
+            modal.delegate ".submit", "click", ->
+
 
     class window.views["dynamicContainer"] extends window.views["layout"]
         template: $("#dynamic-container").html()
@@ -110,23 +119,24 @@ $(document).ready ->
         initialize: ->
             super
             _.bindAll @, "afterRender"
-        appendChild: ->
+        appendChild: (model) ->
             super
-            console.log "calling layout append"
             @showTabContent()
         afterRender: ->
-            @$el.trigger("click").children("h3").first().attr("contentEditable", true).addClass("no-drag")
+            @$el.children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click")
         showTabContent: ->
+            # Settign height of parent container and showing the tab content
             $el = @$el
             siblings = $el.siblings(".builder-element").length + 1
             offset = Math.floor(siblings/7)
             offset = 30 + 50*offset
             console.log $el.children(".children")
-            $el.children(".children").css("top", 20 + offset + "px")
+            $el.children(".children").css({"top": 20 + offset + "px"})
             $el.addClass("active-tab").siblings().removeClass("active-tab")
             wrap_height = $el.height() + $el.children(".children").height()
-            $el.closest(".tab-layout").css("height", wrap_height + offset + 30 + "px")
-            console.log("done")
+            console.log wrap_height
+            $el.closest(".tab-layout").css("height", wrap_height + offset + 12 + "px")
+            console.log("done", $el.height() + $el.children(".children").height())
 
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
@@ -148,6 +158,9 @@ $(document).ready ->
             self = @
             _.each tabs.models, (tab) ->
                 self.formatNewModel tab
+        appendChild: ( model)->
+            super
+            console.log "appending new chid"
         formatNewModel: (model, collection, options) ->
             model.set("view", "tabItem")
             $el = @$el

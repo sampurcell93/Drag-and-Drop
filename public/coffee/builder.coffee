@@ -332,8 +332,8 @@ $(document).ready ->
             "flowRemoveViaDrag": "removeFromFlow"      # Stop the click event from bubbling up to the parent model, if there is one.:
             "click .config-panel": (e) ->            #  On click of the panel in the top right
                 editor = views.editors[@model.get("view") || "DefaultEditor"]
-                if editor? then new editor({model: @model}).render()
-                else new views.editors["DefaultEditor"]({model: @model}).render()
+                if editor? then new editor({model: @model, el: @el}).render()
+                else new views.editors["DefaultEditor"]({model: @model, el: @el}).render()
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
                 @model["layout-item"] = true

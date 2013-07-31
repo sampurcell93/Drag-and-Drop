@@ -1,7 +1,8 @@
 var express = require('express');
 var mongo = require('mongodb');
 var app = express();
-var db = require("mongojs").connect("builder",['classes', 'sections', 'layouts', 'generics']);
+var MONGO_URI = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || "builder"
+var db = require("mongojs").connect(MONGO_URI,['classes', 'sections', 'layouts', 'generics']);
 
 app.configure(function (){
   app.use(express.logger('dev'));
@@ -59,4 +60,4 @@ app.get("/class", function(req,res) {
 	});
 })
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);

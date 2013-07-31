@@ -978,7 +978,7 @@ ol.generic-list {
 	&.column {
 		
 		> ul.children > .builder-element { 
-			display: inline-block; 
+			display: inline-block !important; 
 			margin: 2px 0 1px 0;
 		}
 		> ul.children > .droppable-placeholder { 
@@ -990,13 +990,12 @@ ol.generic-list {
 		}
 	
 		// Necessary to compensate for unbalanced placeholders which skew the page view.
-		&.two ul.children .builder-element:nth-of-type(4n+5) , &.two  ul.children  .builder-element:nth-child(4n+5) ,
-		&.three ul.children .builder-element:nth-of-type(6n+7), &.three  ul.children  .builder-element:nth-child(6n+7),
-		&.four ul.children .builder-element:nth-of-type(8n+9), &.four  ul.children  .builder-element:nth-child(8n+9),
-		&.five ul.children .builder-element:nth-of-type(10n+11), &.five  ul.children  .builder-element:nth-child(10n+11),
-		&.six ul.children .builder-element:nth-of-type(12n+13), &.six  ul.children  .builder-element:nth-child(12n+13)
+		&.two > ul.children > .builder-element:nth-of-type(4n+6) ,
+		&.three > ul.children > .builder-element:nth-of-type(6n+8), 
+		&.four > ul.children > .builder-element:nth-of-type(8n+10),
+		&.five > ul.children > .builder-element:nth-of-type(10n+12),
+		&.six > ul.children > .builder-element:nth-of-type(12n+14)
 		{
-			border: 1px solid red !important;
 			margin-left: 1% !important;
 		}
 		&.two > ul.children > .builder-element { 

@@ -370,6 +370,15 @@
           },
           selecting: function(e, ui) {
             return $(ui.selecting).trigger("select");
+          },
+          unselecting: function(e, ui) {
+            var $item;
+            if (e.shiftKey === true) {
+              return;
+            }
+            $item = $(ui.unselecting);
+            $item.trigger("deselect");
+            return that.$el.find(".selected-element").trigger("deselect");
           }
         });
         return this.$el.addClass("builder-scaffold");

@@ -232,5 +232,10 @@ $(document).ready ->
                         layout.get("child_els").add model
                 selecting: (e,ui) ->
                     $(ui.selecting). trigger "select"
+                unselecting: (e,ui) ->
+                    if (e.shiftKey is true) then return 
+                    $item = $(ui.unselecting)
+                    $item.trigger "deselect"
+                    that.$el.find(".selected-element").trigger("deselect")
             }
             @$el.addClass("builder-scaffold")
