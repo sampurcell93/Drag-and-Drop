@@ -159,6 +159,17 @@ header, footer {
 		}
 	}
 	
+	h1 {
+		cursor: pointer;
+		color: #ccc;
+		padding-top: 4px;
+
+		&:hover {
+			text-decoration: underline;
+			color: #eee;
+		}
+	}
+
 	button { 
 		font-size: .9em;
 		margin: 0 0 0 8px;
@@ -789,8 +800,9 @@ section.builder-container {
 		}
  	}
 
-	&.child { 
-		outline: 1px dashed $medblue !important;
+	&.builder-child { 
+		outline: 1px dashed $medblue;
+		// width: auto;
 	}
 
 	input { 
@@ -893,9 +905,9 @@ section.builder-container {
 		display: none;
 		font-family: $opensans;
 		width: 170px;			
-		border: 1px solid #bbb;
+		border: 1px solid #ddd;
 		@include border-radius(3px);
-		@include box-shadow(0px 1px 3px #999);
+		@include box-shadow(0px 2px 3px #ccc);
 		z-index: 111;
 		background: #fff;
 	}
@@ -962,7 +974,7 @@ ol.generic-list {
 }
 
 .layout-wrapper {
-	outline: 1px solid #7BF5F5;
+	outline: 1px solid #7BF5F5 !important;
 	padding: 10px 0 0;
 
 	&:hover {
@@ -1039,7 +1051,13 @@ ol.generic-list {
 		line-height: 80px;
 		text-align: center;
 		color: #313131;
-		background:  url("../images/columnsprite.jpg") no-repeat center;
+		background:  url("../images/columnsprite.png") no-repeat center;
+		cursor: pointer;
+
+		&.selected-column {
+			outline: 2px solid $strongblue;
+		}
+
 
 		&:nth-child(1) { background: #c5d4e8; }
 		&:nth-child(2) { background-position: 0 0px; }
@@ -1122,4 +1140,41 @@ ol.generic-list {
 			}
 		}
 	}		
+}
+
+
+.context-menu {
+	position: absolute;
+	background: #f9f9f9;
+	@include opacity(1);
+	@include border-radius(3px);
+	@include box-shadow(0px 2px 3px #ccc);
+	border: 1px solid #ddd;
+	top: auto;
+	left: auto;
+	width: 150px;
+	height: auto !important;
+	max-height: none;
+	@include transition(all .1s ease-in-out);
+	z-index: 9999;
+	display: block;
+	cursor: pointer;
+
+	li {
+		text-align: center;
+		padding: 10px;
+		
+		&:first-of-type {
+			@include border-radius(3px 3px 0 0);
+		}
+		&:last-of-type {
+			@include border-radius(0 0 3px 3px);
+		}
+	
+		&:hover {
+			background: $strongblue;
+			color: #f9f9f9;
+			text-shadow: none;
+		}
+	}
 }

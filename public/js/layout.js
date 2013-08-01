@@ -89,6 +89,7 @@
             for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
               child = _ref2[i];
               child['layout-item'] = false;
+              child.collection = null;
               parent.add(child, {
                 at: position + i
               });
@@ -179,9 +180,7 @@
         return _ref5;
       }
 
-      _Class.prototype.template = $("#tab-layout").html();
-
-      _Class.prototype.settingsTemplate = $("#tab-layout-settings").html();
+      _Class.prototype.template = $("#accordion-layout").html();
 
       _Class.prototype.initialize = function() {
         var self;
@@ -246,7 +245,7 @@
 
       _Class.prototype.appendChild = function(model) {
         _Class.__super__.appendChild.apply(this, arguments);
-        return this.showTabContent();
+        return this.$el.children("h3").first().trigger("click");
       };
 
       _Class.prototype.afterRender = function() {
@@ -293,8 +292,6 @@
       }
 
       _Class.prototype.template = $("#tab-layout").html();
-
-      _Class.prototype.settingsTemplate = $("#tab-layout-settings").html();
 
       _Class.prototype.initialize = function() {
         var self;

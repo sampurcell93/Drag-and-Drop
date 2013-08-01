@@ -25,11 +25,6 @@ script(type='text/template')#radio-editor
             option(value="right") Right
             option(value="top") Top
 
-
-script#freeform-layout-settings(type='text/template')
-    input(data-property='columns', type='text', placeholder='Number of columns', value='2').set-columns
-    input(data-property='rows', type='text', placeholder='Number of rows', value='2').set-rows
-    button.submit.fr Ok
 script#column-picker(type='text/template')
     h2 Choose a column layout
     ul.choose-columns
@@ -44,3 +39,6 @@ script#skins(type='text/template')
 
 script#dynamic-layout-setup(type='text/template')
     h2 Choose a Preset Layout
+
+script#section-change(type='text/template')
+    <input type='text' class='change-section-title w7 m10' value="<%= typeof title !== 'undefined' ? title : '' %>" placeholder='Enter a section title' />

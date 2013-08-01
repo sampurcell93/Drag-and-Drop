@@ -7,19 +7,15 @@ $ ->
     class editors["BaseEditor"] extends Backbone.View
         change_queue: []
         tagName: "div class='modal'"
-        initialize: ->
-            # To avoid concatenation of extra templates onto child class,
-            # don't call "super", and overwrite the function
-            if @templates? then @templates = @templates.concat [$("#skins").html(), $("#column-picker").html()]
-            else @templates = [$("#skins").html(), $("#column-picker").html()]
         render: ->
+            if !@templates?
+                @templates = []
             # A pointer to the linked element in the builder.
             self     = @
             @link_el = @options.link_el 
             editor_content  = ""
-            # This is not optional, the controls must be there
-            if @templates? 
-                @templates = @templates.concat [$("#finalize-editing").html()]
+            # This is not optional, the controls must be there 
+            @templates = @templates.concat [$("#finalize-editing").html()]
             # template data, and append results to the element.
             _.each @templates, (template) ->
                 editor_content += _.template template, self.model.toJSON()
@@ -39,7 +35,7 @@ $ ->
                 $t       = $ e.currentTarget
                 cols     = $t.data("columns")
                 self     = @
-
+                $t.addClass("selected-column").siblings().removeClass("selected-column")
                 if @model?
                     @enqueue("columns", ->
                         self.model.set "columns", cols)
@@ -65,11 +61,13 @@ $ ->
                 $(document.body).removeClass("active-modal")
                 do @remove
 
+    class editors["BaseLayoutEditor"] extends editors["BaseEditor"]
+        initialize: ->
+            if !@templates? then @templates = []
+            @templates = @templates.concat [$("#skins").html(), $("#column-picker").html()]
 
     class editors["Button"] extends editors["BaseEditor"]
         templates: [$("#button-editor").html()]
-        initialize: ->
-            # Blank init prevents default behavior
         render: ->
             super
             @cq = @change_queue
@@ -91,6 +89,6 @@ $ ->
                     )
             }
 
-    class editors["accordion"] extends editors["BaseEditor"]
+    class editors["accordion"] extends editors["BaseLayoutEditor"]
         templates: [$("#accordion-layout").html()]
     # new editors["Button"]().render()

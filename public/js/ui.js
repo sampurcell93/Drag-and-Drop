@@ -30,8 +30,9 @@
       $(this).closest(".modal").remove();
       return $("body").removeClass("active-modal");
     });
-    return $(".builder-element").delegate(".tab-list", "click", function() {
-      return console.log("clinking");
+    return $(this).delegate(".modal .confirm", "click", function() {
+      $(document.body).removeClass("active-modal");
+      return $(this).closest(".modal").remove();
     });
   });
 

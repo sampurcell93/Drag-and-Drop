@@ -8,7 +8,7 @@ include builder.jade
     //- The template for rendering a single instance of the builder - allows multiple builder tabs to be open at once.
     script(type='text/template')#controller-wrap
            header
-                <h2 class='section-title w4 inline'><%= typeof title !== "undefined" ? title : "Default Section Title"%></h2>
+                <h1 class='section-title w4 inline'><%= typeof title !== "undefined" ? title : "Default Section Title"%></h1>
                 button.fr.view-sections(data-icon='i') View Sections
                 button.fr.generate-section(data-icon='h') View Section Builder
                 button.fr.configure-interface.icon e

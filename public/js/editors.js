@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(function() {
-    var editors, _ref, _ref1, _ref2, _ref3, _ref4;
+    var editors, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     editors = window.views.editors = {};
     editors["BaseEditor"] = (function(_super) {
       __extends(_Class, _super);
@@ -18,22 +18,15 @@
 
       _Class.prototype.tagName = "div class='modal'";
 
-      _Class.prototype.initialize = function() {
-        if (this.templates != null) {
-          return this.templates = this.templates.concat([$("#skins").html(), $("#column-picker").html()]);
-        } else {
-          return this.templates = [$("#skins").html(), $("#column-picker").html()];
-        }
-      };
-
       _Class.prototype.render = function() {
         var editor_content, self;
+        if (this.templates == null) {
+          this.templates = [];
+        }
         self = this;
         this.link_el = this.options.link_el;
         editor_content = "";
-        if (this.templates != null) {
-          this.templates = this.templates.concat([$("#finalize-editing").html()]);
-        }
+        this.templates = this.templates.concat([$("#finalize-editing").html()]);
         _.each(this.templates, function(template) {
           return editor_content += _.template(template, self.model.toJSON());
         });
@@ -58,6 +51,7 @@
           $t = $(e.currentTarget);
           cols = $t.data("columns");
           self = this;
+          $t.addClass("selected-column").siblings().removeClass("selected-column");
           if (this.model != null) {
             this.enqueue("columns", function() {
               return self.model.set("columns", cols);
@@ -92,7 +86,7 @@
       return _Class;
 
     })(Backbone.View);
-    editors["Button"] = (function(_super) {
+    editors["BaseLayoutEditor"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -100,9 +94,25 @@
         return _ref1;
       }
 
-      _Class.prototype.templates = [$("#button-editor").html()];
+      _Class.prototype.initialize = function() {
+        if (this.templates == null) {
+          this.templates = [];
+        }
+        return this.templates = this.templates.concat([$("#skins").html(), $("#column-picker").html()]);
+      };
 
-      _Class.prototype.initialize = function() {};
+      return _Class;
+
+    })(editors["BaseEditor"]);
+    editors["Button"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref2 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref2;
+      }
+
+      _Class.prototype.templates = [$("#button-editor").html()];
 
       _Class.prototype.render = function() {
         var modal;
@@ -119,8 +129,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref2 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref2;
+        _ref3 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref3;
       }
 
       _Class.prototype.templates = [$("#link-editor").html()];
@@ -134,8 +144,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref3 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref3;
+        _ref4 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref4;
       }
 
       _Class.prototype.templates = [$("#radio-editor").html()];
@@ -161,15 +171,15 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref4 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref4;
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
       }
 
       _Class.prototype.templates = [$("#accordion-layout").html()];
 
       return _Class;
 
-    })(editors["BaseEditor"]);
+    })(editors["BaseLayoutEditor"]);
   });
 
 }).call(this);

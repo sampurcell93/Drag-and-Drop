@@ -222,6 +222,8 @@
 
       draggableElement.prototype.controls = $("#drag-controls").html();
 
+      draggableElement.prototype.contextMenu = $("#context-menu-default").html();
+
       draggableElement.prototype.tagName = 'div class="builder-element"';
 
       draggableElement.prototype.modelListeners = {};
@@ -278,6 +280,7 @@
         })();
         that = this;
         model = this.model;
+        model["layout-item"] = false;
         children = model.get("child_els");
         $el = this.$el;
         $el.html(_.template(this.template, model.toJSON()));
@@ -448,19 +451,80 @@
         return e.stopImmediatePropagation();
       };
 
+      draggableElement.prototype.blankLayout = function() {
+        var collection, layout, layoutIndex, selected;
+        collection = allSections.at(this.index || currIndex).get("currentSection");
+        selected = collection.gather();
+        if (selected.length === 0 || selected.length === 1) {
+          return;
+        }
+        layoutIndex = collection.indexOf(selected[0]);
+        collection.add(layout = new models.Element({
+          view: 'BlankLayout',
+          type: 'Blank Layout'
+        }), {
+          at: layoutIndex
+        });
+        return _.each(selected, function(model) {
+          if (model.collection != null) {
+            model.collection.remove(model);
+          }
+          return layout.get("child_els").add(model);
+        });
+      };
+
+      draggableElement.prototype.bindContextMenu = function(e) {
+        var $el, pageX, pageY;
+        if (this.contextMenu == null) {
+          return true;
+        } else if (e.shiftKey === true) {
+          return true;
+        }
+        this.unbindContextMenu(e);
+        e.preventDefault();
+        $el = this.$el;
+        pageX = e.pageX - $el.offset().left;
+        pageY = e.pageY - $el.offset().top;
+        $("<ul />").html(_.template(this.contextMenu, {})).addClass("context-menu").css({
+          "top": pageY + "px",
+          "left": pageX + "px"
+        }).appendTo(this.$el);
+        e.stopPropagation();
+        return false;
+      };
+
+      draggableElement.prototype.unbindContextMenu = function(e) {
+        var menu;
+        menu = $(".context-menu");
+        if ((e != null) && $(e.currentTarget).hasClass("context-menu")) {
+          return false;
+        } else if (!menu.length) {
+          return false;
+        }
+        return menu.remove();
+      };
+
       draggableElement.prototype.events = {
         "dblclick": function(e) {
           console.log(this.model, this.$el.index());
           return e.stopPropagation();
         },
+        "contextmenu": "bindContextMenu",
+        "click .context-menu": function(e) {
+          return e.stopPropagation();
+        },
+        "click .group-elements": "blankLayout",
         "click": function(e) {
           var layout;
+          this.unbindContextMenu(e);
           if (e.shiftKey === true) {
             layout = this.model["layout-item"];
             if (layout === false || typeof layout === "undefined") {
               this.$el.trigger("select");
+              this.model["layout-item"] = true;
             } else {
               this.$el.trigger("deselect");
+              this.model["layout-item"] = false;
             }
             e.stopPropagation();
             return e.stopImmediatePropagation();
@@ -485,8 +549,9 @@
         },
         "flowRemoveViaDrag": "removeFromFlow",
         "click .config-panel": function(e) {
-          var editor;
-          editor = views.editors[this.model.get("edit_view") || this.model.get("view") || "BaseEditor"];
+          var defaultEditor, editor;
+          defaultEditor = this.model.get("layout") === true ? "BaseLayoutEditor" : "BaseEditor";
+          editor = views.editors[this.edit_view || defaultEditor];
           if (editor != null) {
             editor = new editor({
               model: this.model,

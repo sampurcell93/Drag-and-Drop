@@ -31,6 +31,13 @@
       tagName: 'div',
       wrap: '.section-builder-wrap',
       template: $("#controller-wrap").html(),
+      initialize: function() {
+        var self;
+        self = this;
+        return this.listenTo(this.model, "change:title", function(model) {
+          return self.$el.find(".section-title").text(model.get("title"));
+        });
+      },
       render: function(i) {
         this.$el.addClass("control-section").attr("id", "section-" + i).html(_.template(this.template, this.model.toJSON()));
         this.$el.droppable({
@@ -64,14 +71,21 @@
         'click .configure-interface': function() {
           return this.model.get("builder").$el.toggleClass("no-grid");
         },
-        'keyup .section-title': function(e) {
-          var $t, title;
-          $t = $(e.currentTarget);
-          title = $t.val();
-          if (title === "") {
-            title = $t.data("previous-val") || "New Section";
-          }
-          this.model.set("title", title);
+        'click .section-title': function(e) {
+          var modal, self;
+          self = this;
+          modal = window.launchModal(_.template($("#section-change").html(), {
+            title: this.model.get("title")
+          }) + "<button class='confirm m10'>Ok</button>");
+          modal.delegate(".change-section-title", "keyup", function() {
+            var $t, title;
+            $t = $(this);
+            title = $t.val();
+            if (title === "") {
+              title = $t.data("previous-val") || "Default Title";
+            }
+            return self.model.set("title", title);
+          });
           e.stopPropagation();
           return e.stopImmediatePropagation();
         },
@@ -155,12 +169,11 @@
       },
       saveSection: function() {
         var copy, title;
-        title = this.$el.find(".section-title").val();
-        if (title === "" || typeof title === "undefined" || title === "Default Section") {
+        title = this.$el.find(".section-title").text();
+        if (title === "" || typeof title === "undefined" || title === "Default Section Title") {
           alert("You need to enter a title");
           return;
         }
-        console.log(title);
         copy = new models.SectionController();
         copy.set({
           currentSection: this.model.get("currentSection"),
@@ -482,6 +495,7 @@
           allSections.at(this.options.index).get("properties").add(this.model);
           model = this.model.toJSON();
           model.title = model.className + "." + model.name;
+          model.view = "Property";
           model.property = this.model;
           model.property.name = model.name;
           model.type = "Property";

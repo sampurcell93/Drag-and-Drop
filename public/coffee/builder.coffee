@@ -141,6 +141,7 @@ $(document).ready ->
     class window.views.draggableElement extends Backbone.View
         template: $("#draggable-element").html()
         controls: $("#drag-controls").html()
+        contextMenu: $("#context-menu-default").html()
         tagName: 'div class="builder-element"'
         modelListeners: {}
         initialize: ->
@@ -188,6 +189,7 @@ $(document).ready ->
             (@beforeRender || -> {})()
             that = @
             model = @model
+            model["layout-item"] = false
             children = model.get "child_els" 
             $el =  @$el
             $el.html(_.template @template, model.toJSON())
@@ -255,8 +257,7 @@ $(document).ready ->
                     wrap.addClass("selected-element")
                 cursor: "move"
                 start: (e, ui) ->
-                    if e.shiftKey is true
-                        return false
+                    if e.shiftKey is true then return false
                     sect_interface = allSections.at(that.index)
                     section = sect_interface.get("currentSection")
                     ui.helper.addClass("dragging")
@@ -310,19 +311,59 @@ $(document).ready ->
 
             e.stopPropagation()
             e.stopImmediatePropagation()  
+        # Grabs all 
+        blankLayout: ->
+            collection = allSections.at(@index || currIndex).get("currentSection")
+            selected = collection.gather()
+            if selected.length is 0 or selected.length is 1 then return
+            layoutIndex = collection.indexOf(selected[0])
+            collection.add(layout = new models.Element({view: 'BlankLayout', type: 'Blank Layout'}), {at: layoutIndex})
+            _.each selected , (model) ->
+                if model.collection?
+                    model.collection.remove model
+                layout.get("child_els").add model
+        bindContextMenu:  (e) ->
+            if !@contextMenu? then return true
+            else if e.shiftKey is true then return true
+            @unbindContextMenu(e)
+            e.preventDefault()
+            $el = @$el
+            pageX = e.pageX - $el.offset().left
+            pageY = e.pageY - $el.offset().top
+            # Remove all other right click menus
+            $("<ul />").html(_.template(@contextMenu, {})).
+            addClass("context-menu").
+            css({"top":pageY + "px", "left": pageX + "px"}).
+            appendTo(@$el)
+            e.stopPropagation()
+            false
+        unbindContextMenu: (e) ->
+            menu = $(".context-menu") 
+            if e? and $(e.currentTarget).hasClass("context-menu") then return false
+            else if !menu.length then return false
+            menu.remove()
 
         # Default events for any draggable - basically configuration settings.
         events: 
             "dblclick": (e) ->
                 console.log @model, @$el.index()
                 e.stopPropagation()
+            # for right click functionality users expect
+            "contextmenu": "bindContextMenu"
+            "click .context-menu": (e) ->
+                # Stop the context menu from closing
+                e.stopPropagation()
+            "click .group-elements": "blankLayout"
             "click": (e) ->
+                @unbindContextMenu(e)
                 if e.shiftKey is true
                     layout = @model["layout-item"]
                     if (layout is false or typeof layout is "undefined")
                         @$el.trigger("select")
+                        @model["layout-item"] = true
                     else 
                         @$el.trigger("deselect")
+                        @model["layout-item"] = false
                     e.stopPropagation()
                     e.stopImmediatePropagation()
             "click .set-options": (e) ->
@@ -332,15 +373,17 @@ $(document).ready ->
                 dropdown.fadeToggle(100);
                 e.stopPropagation()
             "click .set-options li": (e) ->
+                # So as to stop the parent list from closing
                 e.preventDefault()
-                e.stopPropagation()                  # So as to stop the parent list from closing
+                e.stopPropagation()               
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 e.stopImmediatePropagation()
                 @removeFromFlow(e)
-            "flowRemoveViaDrag": "removeFromFlow"      # Stop the click event from bubbling up to the parent model, if there is one.:
-            "click .config-panel": (e) ->            #  On click of the panel in the top right
-                editor = views.editors[@model.get("edit_view") || @model.get("view") || "BaseEditor"]
+            "flowRemoveViaDrag": "removeFromFlow" 
+            "click .config-panel": (e) ->            
+                defaultEditor = if @model.get("layout") == true then "BaseLayoutEditor" else "BaseEditor"
+                editor = views.editors[@edit_view || defaultEditor]
                 if editor? then editor = new editor({model: @model, link_el: @el}).render()
                 else editor = new views.editors["BaseEditor"]({model: @model, link_el: @el}).render()
                 $(editor.el).launchModal()

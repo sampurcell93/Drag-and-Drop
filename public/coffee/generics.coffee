@@ -163,6 +163,9 @@ $(document).ready ->
                 @model.set("listItems", listItems)
 
 
+    class views["Property"] extends views.genericElement
+        template: $("#property-template").html()
+
     class window.views['Button'] extends window.views.genericElement
         template: $("#button-template").html()
         initialize: (options) ->
@@ -220,6 +223,7 @@ $(document).ready ->
 
     class window.views['BuilderWrapper'] extends window.views.genericElement
         controls: null
+        contextMenu: null
         initialize: ->
             super
             _.bindAll(@, "afterRender")
@@ -232,24 +236,15 @@ $(document).ready ->
                 $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el)     
             else @$el.children(".placeholder").remove()
         bindDrag: ->
-            null
         afterRender: ->
             that = @
             @$el.selectable {
                 filter: '.builder-element:not(.builder-scaffold)'
                 tolerance: 'touch'
                 cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag"
-                stop: (e,ui) ->
-                    if e.shiftKey is false then return
-                    collection = that.model.get("child_els")
-                    selected = collection.gather()
-                    if selected.length is 0 or selected.length is 1 then return
-                    layoutIndex = collection.indexOf(selected[0])
-                    collection.add(layout = new models.Element({view: 'BlankLayout', type: 'Blank Layout'}), {at: layoutIndex})
-                    _.each selected , (model) ->
-                        if model.collection?
-                            model.collection.remove model
-                        layout.get("child_els").add model
+                stop: (e)->
+                    if (e.shiftKey is true)
+                        that.blankLayout()
                 selecting: (e,ui) ->
                     $(ui.selecting). trigger "select"
                 unselecting: (e,ui) ->

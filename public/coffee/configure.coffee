@@ -56,6 +56,10 @@ $(document).ready ->
         tagName: 'div'
         wrap: '.section-builder-wrap'
         template: $("#controller-wrap").html()
+        initialize:->
+            self = @
+            @listenTo @model, "change:title", (model)->
+                self.$el.find(".section-title").text(model.get("title"))
         render: (i) ->
             @$el.addClass("control-section").attr("id","section-" + i).html _.template @template, @model.toJSON()
             @$el.droppable
@@ -78,11 +82,15 @@ $(document).ready ->
                 $("#existing-sections").animate({height: 'toggle'}, 200)
             'click .configure-interface': ->
                 @model.get("builder").$el.toggleClass("no-grid")
-            'keyup .section-title': (e) ->
-                $t = $(e.currentTarget)
-                title =  $t.val()
-                if title == "" then title = $t.data("previous-val") || "New Section"
-                @model.set "title", title
+            'click .section-title': (e) ->
+                self = @
+                modal = window.launchModal(_.template($("#section-change").html(), {title: @model.get("title")}) + "<button class='confirm m10'>Ok</button>")
+                modal.delegate(".change-section-title", "keyup", ->
+                    $t = $ this
+                    title =  $t.val()
+                    if title == "" then title = $t.data("previous-val") || "Default Title"
+                    self.model.set "title", title
+                )
                 e.stopPropagation()
                 e.stopImmediatePropagation()
             'focus .section-title': (e) ->
@@ -139,11 +147,10 @@ $(document).ready ->
                 else $t.text "View Section Builder"
             @$el.find(@wrap).slideToggle('fast')
         saveSection: ->
-            title = @$el.find(".section-title").val()
-            if title == "" or typeof title is "undefined" or title == "Default Section"
+            title = @$el.find(".section-title").text()
+            if title == "" or typeof title is "undefined" or title == "Default Section Title"
                 alert "You need to enter a title"
                 return
-            console.log(title)
             # _.each @model.get("currentSection").models, (model) ->
             #     model.unset "inFlow", {silent: true}
             copy = new models.SectionController()
@@ -392,6 +399,7 @@ $(document).ready ->
                 model = @model.toJSON()
                 model.title = model.className + "." + model.name
                 # model.property = {}
+                model.view = "Property"
                 model.property = @model
                 model.property.name = model.name
                 model.type = "Property"

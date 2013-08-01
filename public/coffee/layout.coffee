@@ -70,9 +70,12 @@ $(document).ready ->
                     parent   = model.collection
                     to_remove= [] 
                     for child, i in children.models
-                        # Simply adding at position would insert elements in reverse order
                         child['layout-item']= false
+                        # Unlink each model from the collection
+                        child.collection = null
+                        # Simply adding at position would insert elements in reverse order
                         parent.add child, {at: position + i }
+                    # Remove each model from group collection
                     children.reset()
                     # Destroy the layout/group
                     model.destroy()
@@ -109,8 +112,7 @@ $(document).ready ->
 
 
     class window.views["accordion"] extends window.views["layout"]
-        template: $("#tab-layout").html()
-        settingsTemplate: $("#tab-layout-settings").html()
+        template: $("#accordion-layout").html()
         initialize: ->
             _.bindAll @, "afterRender"
             self = @
@@ -147,7 +149,7 @@ $(document).ready ->
             _.bindAll @, "afterRender"
         appendChild: (model) ->
             super
-            @showTabContent()
+            @$el.children("h3").first().trigger("click")
         afterRender: ->
             @$el.children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click")
         showTabContent: ->
@@ -172,7 +174,6 @@ $(document).ready ->
 
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
-        settingsTemplate: $("#tab-layout-settings").html()
         initialize: ->
             _.bindAll @, "afterRender"
             self = @

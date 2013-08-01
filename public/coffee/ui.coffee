@@ -26,6 +26,8 @@ $(document).ready ->
     $(@).delegate ".close-modal", "click", ->
         $(@).closest(".modal").remove()
         $("body").removeClass("active-modal")
-    $(".builder-element").delegate ".tab-list", "click", ->
-        console.log "clinking"
 
+    $(@).delegate(".modal .confirm", "click", ->
+        $(document.body).removeClass("active-modal")
+        $(@).closest(".modal").remove()
+    )

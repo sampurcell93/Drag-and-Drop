@@ -3,6 +3,6 @@ body
     ul.tabs.mauto
         li.add-section +
     script(type='text/template')#tab-item
-        <%= typeof title !== "undefined" ? title : "New Section" %>
+        <%= typeof title !== "undefined" ? title : "Default Title" %>
         div.remove.hidden x
 include builder-instance.jade
