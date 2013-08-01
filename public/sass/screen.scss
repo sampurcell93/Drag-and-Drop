@@ -382,20 +382,6 @@ ul.select-properties {
 	}
 }
 
-.layout-list {
-	li {
-		display: inline-block;
-		width: 30%;
-		padding: 10px;
-		margin: 10px 1.5%;
-		text-align: center;
-		&.selected-layout {
-			background: $strongblue;
-			color: #fff;
-			text-shadow: none;
-		}
-	}
-}
 
 .selected-properties-title {
 	position: relative;
@@ -734,7 +720,7 @@ section.builder-container {
 	&.no-grid {
 
 		 .builder-element {
-			outline-color: transparent;
+			outline-color: transparent !important;
 			margin-left: 0;
 			margin-right: 0;
 
@@ -781,6 +767,10 @@ section.builder-container {
  		li {
  			list-style-position: inside !important;
  		}
+ 	}
+
+ 	&.width-5 {
+ 		width: 500px !important;
  	}
 
 	&.builder-scaffold {
@@ -975,9 +965,10 @@ ol.generic-list {
 
 .layout-wrapper {
 	outline: 1px solid #7BF5F5 !important;
-	padding: 10px 0 0;
+	padding: 10px 0 10px;
 
 	&:hover {
+		background: #FBF9DE;
 		@include box-shadow(none);
 	}
 

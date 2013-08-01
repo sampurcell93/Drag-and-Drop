@@ -28,7 +28,8 @@
       }
 
       Element.prototype.initialize = function() {
-        return console.log("making element");
+        var self;
+        return self = this;
       };
 
       Element.prototype.defaults = function() {
@@ -37,7 +38,8 @@
         child_els.model = this;
         return {
           "child_els": child_els,
-          "inFlow": true
+          "inFlow": true,
+          classes: []
         };
       };
 
@@ -232,14 +234,13 @@
         var self;
         self = this;
         this.index = this.options.index;
-        _.bindAll(this, "render", "bindDrop", "bindDrag", "setStyles", "appendChild");
+        _.bindAll(this, "render", "bindDrop", "bindDrag", "appendChild");
         this.listenTo(this.model.get("child_els"), 'add', function(m, c, o) {
           return self.appendChild(m, o);
         });
         console.log(this.modelListeners);
         this.modelListeners = _.extend({}, this.modelListeners, {
           "change:styles": this.setStyles,
-          "change:view": this.render,
           "change:inFlow": function(model) {
             if (model.get("inFlow") === true) {
               return self.$el.slideDown("fast").next(".droppable-placeholder").slideDown("fast").prev(".droppable-placeholder").slideDown("fast");
@@ -271,10 +272,10 @@
 
       draggableElement.prototype.render = function(do_children) {
         var $el, children, model, that;
-        console.log("rendering parent draggable");
         if (typeof do_children === "undefined") {
           do_children = true;
         }
+        console.log("rendering parent draggable with classes", this.model.get("classes"));
         (this.beforeRender || function() {
           return {};
         })();
@@ -284,9 +285,6 @@
         children = model.get("child_els");
         $el = this.$el;
         $el.html(_.template(this.template, model.toJSON()));
-        if (this.model['layout-element'] === true) {
-          $el.addClass("selected-element");
-        }
         if (this.controls != null) {
           $el.append(_.template(this.controls, model.toJSON()));
         }
@@ -295,9 +293,12 @@
         }
         if ((children != null) && do_children === true) {
           _.each(children.models, function(el) {
+            console.log(el);
             return that.appendChild(el, {});
           });
         }
+        this.applyClasses();
+        this.checkPlaceholder();
         (this.afterRender || function() {
           return $el.hide().fadeIn(325);
         })();
@@ -306,6 +307,7 @@
 
       draggableElement.prototype.appendChild = function(child, opts) {
         var $el, builderChildren, draggable, i, view;
+        console.log("appending child!");
         $el = this.$el.children(".children");
         if (child['layout-element'] === true) {
           $el.addClass("selected-element");
@@ -330,14 +332,6 @@
           }
           globals.setPlaceholders($(draggable), this.model.get("child_els"));
           return allSections.at(this.index || currIndex).get("builder").removeExtraPlaceholders();
-        }
-      };
-
-      draggableElement.prototype.setStyles = function() {
-        var styles;
-        styles = this.model.get("styles");
-        if (styles != null) {
-          return this.$el.css(styles);
         }
       };
 
@@ -451,6 +445,16 @@
         return e.stopImmediatePropagation();
       };
 
+      draggableElement.prototype.checkPlaceholder = function() {};
+
+      draggableElement.prototype.applyClasses = function() {
+        var $el;
+        $el = this.$el;
+        return _.each(this.model.get("classes"), function(style) {
+          return $el.addClass(style);
+        });
+      };
+
       draggableElement.prototype.blankLayout = function() {
         var collection, layout, layoutIndex, selected;
         collection = allSections.at(this.index || currIndex).get("currentSection");
@@ -478,6 +482,7 @@
         if (this.contextMenu == null) {
           return true;
         } else if (e.shiftKey === true) {
+          this.unbindContextMenu(e);
           return true;
         }
         this.unbindContextMenu(e);
@@ -496,6 +501,7 @@
       draggableElement.prototype.unbindContextMenu = function(e) {
         var menu;
         menu = $(".context-menu");
+        console.log(menu.length, $(e.currentTarget).hasClass("context-menu"));
         if ((e != null) && $(e.currentTarget).hasClass("context-menu")) {
           return false;
         } else if (!menu.length) {
@@ -532,6 +538,7 @@
         },
         "click .set-options": function(e) {
           var $t, dropdown;
+          this.unbindContextMenu(e);
           $t = $(e.currentTarget);
           dropdown = $t.children(".dropdown");
           $(".dropdown").not(dropdown).hide();
@@ -539,6 +546,7 @@
           return e.stopPropagation();
         },
         "click .set-options li": function(e) {
+          this.unbindContextMenu(e);
           e.preventDefault();
           return e.stopPropagation();
         },

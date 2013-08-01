@@ -35,10 +35,27 @@ script#column-picker(type='text/template')
         li(data-columns='five') Five Columns
         li(data-columns='six') Six Columns
 script#skins(type='text/template')
-    | PRO
+
+script#layout-changer(type="text/template")
+    h2 Change the layout type
+    ul.choose-layout
+        li(data-layout='tabs', data-view-item='tabItem') Tabbed
+        li(data-layout='BlankLayout') Blank
 
 script#dynamic-layout-setup(type='text/template')
     h2 Choose a Preset Layout
 
 script#section-change(type='text/template')
     <input type='text' class='change-section-title w7 m10' value="<%= typeof title !== 'undefined' ? title : '' %>" placeholder='Enter a section title' />
+
+script#change-styles(type='text/template')
+    select.set-width
+        option(value="") None Specified
+        option(value='w1-6') One Sixth
+        option(value='w25') One Fourth
+        option(value="w1-3") One Third
+        option(value="w5") One Half
+        option(value="w2-3") Two Thirds
+        option(value="w75") Three Fourths
+        option(value="w5-6") Five Sixths
+        option(value="w10") Full Size

@@ -18,12 +18,23 @@ $(document).ready ->
 
     class window.models.Element extends Backbone.Model
         initialize: ->
-            console.log "making element"
+            self = @
+            # @listenTo @, {
+            #     "change:view": (model,view,opts) ->
+            #         console.log model.toJSON(), view
+            #         collection = self.collection
+            #         if collection?
+            #             collection.remove self
+            #             collection.add self
+            # }
         defaults: ->
             child_els = new collections.Elements()
             child_els.model = @
-            {"child_els": child_els
-            "inFlow": true}
+            {
+                "child_els": child_els
+                "inFlow": true
+                classes: []
+            }
         url: ->
             url = "/section/"
             url += if @id? then @id else ""
@@ -62,6 +73,7 @@ $(document).ready ->
             children.add(putIn, {at: at})
             @set "child_els", children
             true
+
 
     window.collections.Elements = Backbone.Collection.extend {
         model: models.Element
@@ -147,13 +159,12 @@ $(document).ready ->
         initialize: ->
             self = @
             @index = @options.index
-            _.bindAll(this, "render", "bindDrop", "bindDrag","setStyles","appendChild")
+            _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild")
             @listenTo @model.get("child_els"), 'add', (m,c,o) ->
                 self.appendChild(m,o)
             console.log @modelListeners
             @modelListeners = _.extend({}, @modelListeners, { 
                 "change:styles": @setStyles
-                "change:view": @render
                 "change:inFlow": ( model ) ->
                     if model.get("inFlow") is true
                          self.$el.slideDown("fast").
@@ -182,8 +193,8 @@ $(document).ready ->
             # Bind the drop event to the el
             do @bindDrag
         render: (do_children) ->
-            console.log "rendering parent draggable"
             if typeof do_children is "undefined" then do_children = true
+            console.log "rendering parent draggable with classes", @model.get("classes")
             # For inherited views that don't want to overwrite render entirely, we have 
             # custom methods to accompany it.
             (@beforeRender || -> {})()
@@ -193,18 +204,21 @@ $(document).ready ->
             children = model.get "child_els" 
             $el =  @$el
             $el.html(_.template @template, model.toJSON())
-            if @model['layout-element'] is true then $el.addClass("selected-element")
             if @controls? then $el.append(_.template @controls, model.toJSON())
             if $el.children(".children").length is 0
                     $el.append("<ul class='children'></ul>")
             if children? and do_children is true
                 _.each children.models , (el) ->
+                    console.log el
                     that.appendChild el, {}
+            @applyClasses()
+            @checkPlaceholder()
             (@afterRender || -> 
                 $el.hide().fadeIn(325)
             )()
             @
         appendChild: ( child , opts ) ->
+            console.log "appending child!"
             # We choose a view to render based on the model's specification, 
             # or default to a standard draggable.
             $el = @$el.children(".children")
@@ -223,13 +237,6 @@ $(document).ready ->
                     else $el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
                 allSections.at(@index || currIndex).get("builder").removeExtraPlaceholders()
-        setStyles: ->
-            # Get all styling information associated with model
-            styles = @model.get "styles"
-            # Apply styling inline - ideal solution seems to be a combination 
-            # of a class suite and inline styles for uncommon patterns
-            if styles?
-                @$el.css styles
         bindDrag: ->
             that = this
             # Set the element to be draggable.
@@ -311,7 +318,17 @@ $(document).ready ->
 
             e.stopPropagation()
             e.stopImmediatePropagation()  
-        # Grabs all 
+        checkPlaceholder: ->
+            # parent = @$el.prev()
+            # console.log @$el, parent, parent.hasClass("layout-wrapper")
+
+        applyClasses: ->
+            $el = @$el
+            # "class" is a reserved keyword. style instead
+            _.each @model.get("classes"), (style) ->
+                $el.addClass(style)
+
+        # Grabs all selected elements and groupes them into a barebones layout
         blankLayout: ->
             collection = allSections.at(@index || currIndex).get("currentSection")
             selected = collection.gather()
@@ -324,7 +341,9 @@ $(document).ready ->
                 layout.get("child_els").add model
         bindContextMenu:  (e) ->
             if !@contextMenu? then return true
-            else if e.shiftKey is true then return true
+            else if e.shiftKey is true
+                @unbindContextMenu(e)
+                return true
             @unbindContextMenu(e)
             e.preventDefault()
             $el = @$el
@@ -339,12 +358,14 @@ $(document).ready ->
             false
         unbindContextMenu: (e) ->
             menu = $(".context-menu") 
+            console.log menu.length, $(e.currentTarget).hasClass("context-menu")
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
             else if !menu.length then return false
             menu.remove()
 
         # Default events for any draggable - basically configuration settings.
         events: 
+            # for debugging
             "dblclick": (e) ->
                 console.log @model, @$el.index()
                 e.stopPropagation()
@@ -367,12 +388,14 @@ $(document).ready ->
                     e.stopPropagation()
                     e.stopImmediatePropagation()
             "click .set-options": (e) ->
+                @unbindContextMenu(e)
                 $t = $(e.currentTarget)
                 dropdown = $t.children(".dropdown")
                 $(".dropdown").not(dropdown).hide()
                 dropdown.fadeToggle(100);
                 e.stopPropagation()
             "click .set-options li": (e) ->
+                @unbindContextMenu(e)
                 # So as to stop the parent list from closing
                 e.preventDefault()
                 e.stopPropagation()               

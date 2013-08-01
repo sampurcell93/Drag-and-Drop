@@ -30,7 +30,8 @@ script(type='text/template')#dropdown
 script(type='text/template')#builder-wrap
     ul.children
 script(type='text/template')#property-template
-    label
         h3 <% if (typeof property !== "undefined") { print(property.name.clean()) }%>
+        label
+            | This is a label test
         <% if (typeof property !== "undefined") { %> <input placeholder='<%= className + "." + property.name.clean() %>' /> <%}%>
 

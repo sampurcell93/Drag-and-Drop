@@ -219,7 +219,7 @@
 
 /* line 53, ../sass/build.scss */
 .w25 {
-  width: 25%;
+  width: 25% !important;
 }
 
 /* line 54, ../sass/build.scss */
@@ -380,4 +380,24 @@
 /* line 85, ../sass/build.scss */
 .white {
   color: #fff;
+}
+
+/* line 87, ../sass/build.scss */
+.w1-6 {
+  width: 15.5% !important;
+}
+
+/* line 88, ../sass/build.scss */
+.w5-6 {
+  width: 82% !important;
+}
+
+/* line 89, ../sass/build.scss */
+.w1-3 {
+  width: 32% !important;
+}
+
+/* line 90, ../sass/build.scss */
+.w2-3 {
+  width: 64% !important;
 }

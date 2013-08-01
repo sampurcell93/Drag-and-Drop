@@ -26,6 +26,9 @@
     window.validNumber = function(num) {
       return !isNaN(parseInt(num));
     };
+    window.cc = function(msg, color) {
+      return console.log("%c" + msg, "color:" + color + ";font-weight:bold;");
+    };
     $(this).delegate(".close-modal", "click", function() {
       $(this).closest(".modal").remove();
       return $("body").removeClass("active-modal");

@@ -50,7 +50,7 @@ $strongblue : #2092CC;
 .max-w2 { width: 20%; }
 .w2 { width: 20%; }
 .max-w25 { max-width: 25%; }
-.w25 { width: 25%; }
+.w25 { width: 25% !important; }
 .w3 { width: 30%; }
 .max-w3 { max-width: 30%; }
 .w35 { width: 35%; }
@@ -83,3 +83,8 @@ $strongblue : #2092CC;
 .w10 { width: 100%; }
 .icon { font-family: 'icons'; }
 .white { color: #fff; }
+
+.w1-6 { width: 15.5% !important; }
+.w5-6 { width: 82% !important; }
+.w1-3 { width: 32% !important; }
+.w2-3 { width: 64% !important; }

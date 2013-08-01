@@ -23,6 +23,10 @@ $(document).ready ->
     window.validNumber = (num) ->
         !isNaN(parseInt(num))
 
+    window.cc = (msg, color) ->
+        console.log "%c" + msg, "color:" + color + ";font-weight:bold;"
+
+
     $(@).delegate ".close-modal", "click", ->
         $(@).closest(".modal").remove()
         $("body").removeClass("active-modal")

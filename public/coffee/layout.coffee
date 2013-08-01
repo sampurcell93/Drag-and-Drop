@@ -12,10 +12,6 @@ $(document).ready ->
         {
             type: 'Tabbed Layout'
             view: 'tabs'
-        },
-        {
-            type: 'Accordion Layout'
-            view: 'accordion'
         }
         # {
         #     type: 'Free Form Layout'
@@ -107,52 +103,27 @@ $(document).ready ->
             super
         afterRender: ->
 
-    # Layout for accordion and all child items
-    class views["accordionItem"] extends views["draggableElement"]
-
-
-    class window.views["accordion"] extends window.views["layout"]
-        template: $("#accordion-layout").html()
-        initialize: ->
-            _.bindAll @, "afterRender"
-            self = @
-            @listenTo @model.get("child_els"), {
-                "add": @formatNewModel
-                "remove": (m,c,o) ->
-                    if c.length is 0
-                        self.$el.children(".placeholder-text").show()
-            }
-            super
-        afterRender: ->
-            @$el.addClass("accordion-layout")
-            accordions = @model.get "child_els"
-            self = @
-            _.each accordions.models, (item) ->
-                self.formatNewModel item
-        appendChild: (model)->
-            super
-        formatNewModel: (model) ->
-            model.set("view", "accordionItem")
-            $el = @$el
-            $el.children(".placeholder-text").hide()
-
-
     #  Layout for tab structure and all child items
     class window.views["tabItem"] extends views["draggableElement"] 
         events: 
-            "keyup": (e) ->    
+            "keyup h3:first-child": (e) ->    
                 $t = $(e.currentTarget)
+                console.log $t
                 @model.set "title", $t.text()
             "click": "showTabContent"                
         initialize: ->
             super
-            _.bindAll @, "afterRender"
+            console.log "making new tab item"
+            _.bindAll @, "afterRender", "showTabContent"
+            @model.get("child_els").on("remove", @showTabContent)
         appendChild: (model) ->
             super
             @$el.children("h3").first().trigger("click")
         afterRender: ->
-            @$el.children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click")
+            @$el.css("display","inline-block !important")
+            .children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click")
         showTabContent: ->
+            console.log "showTabContent"
             column_types = ["two", "three", "four", "five", "six"]
             # Settign height of parent container and showing the tab content
             $el = @$el
@@ -185,9 +156,11 @@ $(document).ready ->
             }
             super
         afterRender: ->
-            @$el.addClass("tab-layout column six").children(".tab-list").tabs({ active: @options.activeTab || 1 })
+            cc "tabs after rendering"
+            @$el.addClass("tab-layout column six")
             tabs = @model.get "child_els"
             self = @
+            console.log tabs.models
             _.each tabs.models, (tab) ->
                 self.formatNewModel tab
         formatNewModel: (model, collection, options) ->

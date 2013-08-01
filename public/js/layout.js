@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     allLayouts = [
       {
         type: 'Dynamic Layout',
@@ -15,9 +15,6 @@
       }, {
         type: 'Tabbed Layout',
         view: 'tabs'
-      }, {
-        type: 'Accordion Layout',
-        view: 'accordion'
       }
     ];
     window.models.Layout = (function(_super) {
@@ -161,7 +158,7 @@
       return _Class;
 
     })(window.views["layout"]);
-    views["accordionItem"] = (function(_super) {
+    window.views["tabItem"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -169,70 +166,11 @@
         return _ref4;
       }
 
-      return _Class;
-
-    })(views["draggableElement"]);
-    window.views["accordion"] = (function(_super) {
-      __extends(_Class, _super);
-
-      function _Class() {
-        _ref5 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref5;
-      }
-
-      _Class.prototype.template = $("#accordion-layout").html();
-
-      _Class.prototype.initialize = function() {
-        var self;
-        _.bindAll(this, "afterRender");
-        self = this;
-        this.listenTo(this.model.get("child_els"), {
-          "add": this.formatNewModel,
-          "remove": function(m, c, o) {
-            if (c.length === 0) {
-              return self.$el.children(".placeholder-text").show();
-            }
-          }
-        });
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
-
-      _Class.prototype.afterRender = function() {
-        var accordions, self;
-        this.$el.addClass("accordion-layout");
-        accordions = this.model.get("child_els");
-        self = this;
-        return _.each(accordions.models, function(item) {
-          return self.formatNewModel(item);
-        });
-      };
-
-      _Class.prototype.appendChild = function(model) {
-        return _Class.__super__.appendChild.apply(this, arguments);
-      };
-
-      _Class.prototype.formatNewModel = function(model) {
-        var $el;
-        model.set("view", "accordionItem");
-        $el = this.$el;
-        return $el.children(".placeholder-text").hide();
-      };
-
-      return _Class;
-
-    })(window.views["layout"]);
-    window.views["tabItem"] = (function(_super) {
-      __extends(_Class, _super);
-
-      function _Class() {
-        _ref6 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref6;
-      }
-
       _Class.prototype.events = {
-        "keyup": function(e) {
+        "keyup h3:first-child": function(e) {
           var $t;
           $t = $(e.currentTarget);
+          console.log($t);
           return this.model.set("title", $t.text());
         },
         "click": "showTabContent"
@@ -240,7 +178,9 @@
 
       _Class.prototype.initialize = function() {
         _Class.__super__.initialize.apply(this, arguments);
-        return _.bindAll(this, "afterRender");
+        console.log("making new tab item");
+        _.bindAll(this, "afterRender", "showTabContent");
+        return this.model.get("child_els").on("remove", this.showTabContent);
       };
 
       _Class.prototype.appendChild = function(model) {
@@ -249,11 +189,12 @@
       };
 
       _Class.prototype.afterRender = function() {
-        return this.$el.children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click");
+        return this.$el.css("display", "inline-block !important").children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click");
       };
 
       _Class.prototype.showTabContent = function() {
         var $el, column_types, num_per_row, offset, siblings, wrap_height;
+        console.log("showTabContent");
         column_types = ["two", "three", "four", "five", "six"];
         $el = this.$el;
         siblings = $el.siblings(".builder-element").length + 1;
@@ -287,8 +228,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref7 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref7;
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
       }
 
       _Class.prototype.template = $("#tab-layout").html();
@@ -310,11 +251,11 @@
 
       _Class.prototype.afterRender = function() {
         var self, tabs;
-        this.$el.addClass("tab-layout column six").children(".tab-list").tabs({
-          active: this.options.activeTab || 1
-        });
+        cc("tabs after rendering");
+        this.$el.addClass("tab-layout column six");
         tabs = this.model.get("child_els");
         self = this;
+        console.log(tabs.models);
         return _.each(tabs.models, function(tab) {
           return self.formatNewModel(tab);
         });
@@ -334,8 +275,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref8 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref8;
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
       }
 
       _Class.prototype.template = $("#freeform-layout").html();
@@ -384,8 +325,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref9 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref9;
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
       }
 
       _Class.prototype.template = $("#blank-layout").html();

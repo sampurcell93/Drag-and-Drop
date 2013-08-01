@@ -18,6 +18,15 @@
 
       _Class.prototype.tagName = "div class='modal'";
 
+      _Class.prototype.standards = [$("#change-styles").html()];
+
+      _Class.prototype.initialize = function() {
+        if (this.templates == null) {
+          this.templates = [];
+        }
+        return this.templates = this.templates.concat(this.standards);
+      };
+
       _Class.prototype.render = function() {
         var editor_content, self;
         if (this.templates == null) {
@@ -38,6 +47,19 @@
       };
 
       _Class.prototype.events = {
+        "change .set-width": function(e) {
+          var self, width;
+          width = $(e.currentTarget).val();
+          self = this;
+          console.log;
+          return this.enqueue("width-change", function() {
+            var classes;
+            $(self.link_el).addClass(width);
+            classes = self.model.get("classes");
+            classes.push(width);
+            return self.model.set("classes", classes);
+          });
+        },
         "keyup .title-setter": function() {
           var self;
           self = this;
@@ -45,35 +67,12 @@
             return self.model.set("title", self.$el.find(".title-setter").val());
           });
         },
-        "click [data-columns]": function(e) {
-          var $t, cols, coltypes, self;
-          coltypes = ["two", "three", "four", "five", "six"];
-          $t = $(e.currentTarget);
-          cols = $t.data("columns");
-          self = this;
-          $t.addClass("selected-column").siblings().removeClass("selected-column");
-          if (this.model != null) {
-            this.enqueue("columns", function() {
-              return self.model.set("columns", cols);
-            });
-          }
-          _.each(coltypes, function(type) {
-            return self.enqueue("remove_col_classes-" + type, function() {
-              return $(self.link_el).removeClass("column " + type);
-            });
-          });
-          if (cols !== "") {
-            return this.enqueue("add_col_classes", function() {
-              return $(self.link_el).addClass("column " + cols);
-            });
-          }
-        },
         "click .confirm": function() {
           var cq, process, _results;
           cq = this.change_queue;
           _results = [];
           for (process in cq) {
-            _results.push(cq[process]());
+            _results.push(process = cq[process]());
           }
           return _results;
         },
@@ -94,11 +93,52 @@
         return _ref1;
       }
 
+      _Class.prototype.standards = [$("#layout-changer").html(), $("#skins").html(), $("#column-picker").html()];
+
       _Class.prototype.initialize = function() {
         if (this.templates == null) {
           this.templates = [];
         }
-        return this.templates = this.templates.concat([$("#skins").html(), $("#column-picker").html()]);
+        this.templates = this.templates.concat(this.standards);
+        return _.extend(this.events, {
+          "click [data-columns]": function(e) {
+            var $t, cols, coltypes, self;
+            coltypes = ["two", "three", "four", "five", "six"];
+            $t = $(e.currentTarget);
+            cols = $t.data("columns");
+            self = this;
+            $t.addClass("selected-column").siblings().removeClass("selected-column");
+            if (this.model != null) {
+              this.enqueue("columns", function() {
+                return self.model.set("columns", cols);
+              });
+            }
+            _.each(coltypes, function(type) {
+              return self.enqueue("remove_col_classes-" + type, function() {
+                return $(self.link_el).removeClass("column " + type);
+              });
+            });
+            if (cols !== "") {
+              return this.enqueue("add_col_classes", function() {
+                return $(self.link_el).addClass("column " + cols);
+              });
+            }
+          },
+          "click [data-layout]": function(e) {
+            var $t, layout, self;
+            $t = $(e.currentTarget);
+            layout = $t.data("layout");
+            self = this;
+            return this.enqueue("view", function() {
+              self.model.set({
+                "layout": true,
+                "view": layout,
+                type: "Tab Layout"
+              });
+              return $(self.link_el).addClass("tab-layout");
+            });
+          }
+        });
       };
 
       return _Class;

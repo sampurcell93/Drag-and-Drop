@@ -7,6 +7,12 @@ $ ->
     class editors["BaseEditor"] extends Backbone.View
         change_queue: []
         tagName: "div class='modal'"
+        standards: [
+            $("#change-styles").html()
+        ]
+        initialize: ->
+            if !@templates? then @templates = []
+            @templates = @templates.concat @standards
         render: ->
             if !@templates?
                 @templates = []
@@ -25,46 +31,77 @@ $ ->
         enqueue: (name, func) ->
              @change_queue[name] = func
         events:
+            "change .set-width": (e) ->
+                width = $(e.currentTarget).val()
+                self = @
+                console.log 
+                @enqueue("width-change", ->
+                    $(self.link_el).addClass(width)
+                    classes = self.model.get "classes"
+                    classes.push width
+                    self.model.set("classes", classes)
+                )
             "keyup .title-setter": ->
                 self = @
                 @enqueue("title", ->
                     self.model.set("title", self.$el.find(".title-setter").val())
                 )
-            "click [data-columns]": (e) ->
-                coltypes = ["two", "three", "four", "five", "six"]
-                $t       = $ e.currentTarget
-                cols     = $t.data("columns")
-                self     = @
-                $t.addClass("selected-column").siblings().removeClass("selected-column")
-                if @model?
-                    @enqueue("columns", ->
-                        self.model.set "columns", cols)
-                _.each coltypes, (type) ->
-                    self.enqueue("remove_col_classes-" + type, ->
-                        $(self.link_el).removeClass("column " + type)
-                    )
-                unless cols == ""
-                    @enqueue("add_col_classes", ->
-                        $(self.link_el).addClass("column " + cols)
-                    )
-
-            # On confirm, execute every item in the queue, then render the view again
-            # Perhaps queue is misleading.... try hashtable. Repetitive events do not need to
-            # bu pushed over and over.... just assign them a unique title.
             "click .confirm": ->
                 cq = @change_queue
                 # Fuck yeah, closures.
                 for process of cq
-                    do cq[process]
+                    process = do cq[process]
             # On confirm or reject, close the modal.
             "click .reject, .confirm": ->
                 $(document.body).removeClass("active-modal")
                 do @remove
 
     class editors["BaseLayoutEditor"] extends editors["BaseEditor"]
+        # Put in order to reflect the order they are appended in. Tab functionality... later.
+        standards: [
+            $("#layout-changer").html()
+            $("#skins").html(),
+            $("#column-picker").html()
+        ]
         initialize: ->
             if !@templates? then @templates = []
-            @templates = @templates.concat [$("#skins").html(), $("#column-picker").html()]
+            @templates = @templates.concat @standards
+            _.extend @events, {
+                "click [data-columns]": (e) ->
+                    coltypes = ["two", "three", "four", "five", "six"]
+                    $t       = $ e.currentTarget
+                    cols     = $t.data("columns")
+                    self     = @
+                    $t.addClass("selected-column").siblings().removeClass("selected-column")
+                    if @model?
+                        @enqueue("columns", ->
+                            self.model.set "columns", cols)
+                    _.each coltypes, (type) ->
+                        self.enqueue("remove_col_classes-" + type, ->
+                            $(self.link_el).removeClass("column " + type)
+                        )
+                    unless cols == ""
+                        @enqueue("add_col_classes", ->
+                            $(self.link_el).addClass("column " + cols)
+                        )
+                "click [data-layout]": (e) ->
+                    $t      = $ e.currentTarget
+                    layout  = $t.data("layout")
+                    self    = @
+                    @enqueue("view", ->
+                        self.model.set({
+                            "layout": true
+                            "view": layout
+                            type: "Tab Layout"
+                        })
+                        $(self.link_el).addClass("tab-layout")
+                    )
+
+            # On confirm, execute every item in the queue, then render the view again
+            # Perhaps queue is misleading.... try hashtable. Repetitive events do not need to
+            # bu pushed over and over.... just assign them a unique title. Potential problems:
+            # need order of ops. Solution: use a conditional upsert. TODO
+            }
 
     class editors["Button"] extends editors["BaseEditor"]
         templates: [$("#button-editor").html()]
