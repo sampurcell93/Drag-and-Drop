@@ -14,11 +14,13 @@ script(type='text/template')#draggable-element
     <% if (typeof property !== "undefined") { %> <input placeholder='<%= className + "." + property.name.clean() %>' /> <%}%>
     </ul>
 script(type='text/template')#drag-controls
+    <% var layout = typeof layout !== "undefined" && layout == true ? true : false %>
     ul.config-menu-wrap.no-drag 
         li.icon.set-options e
             ul.dropdown
-                li.config-panel Properties
-                li.export Export
+                li.config-panel Configure <%= layout == true ? "Group" : "Element" %>
+                li.export Export As Section
+                <%= layout == true ? "<li class='ungroup-fields'>Ungroup fields</li>" : "" %>
         li.icon.remove-from-flow g
 script(type='text/template')#property-link
     span(contentEditable='false').property-link <%= property_name  %> 

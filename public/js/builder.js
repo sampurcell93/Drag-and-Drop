@@ -285,7 +285,7 @@
           $el.addClass("selected-element");
         }
         if (this.controls != null) {
-          $el.append(_.template(this.controls, {}));
+          $el.append(_.template(this.controls, model.toJSON()));
         }
         if ($el.children(".children").length === 0) {
           $el.append("<ul class='children'></ul>");

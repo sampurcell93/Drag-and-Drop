@@ -52,6 +52,7 @@ $(document).ready ->
       
         # Calls the parent initialize function - mimicry of classical inheritance.
         initialize: -> 
+            @model.set("layout", true)
             super
             self = @
             @$el.addClass("layout-wrapper")
@@ -60,6 +61,22 @@ $(document).ready ->
                     self.$el.children(".placeholder").hide()
                 else 
                     self.$el.children(".placeholder").show()
+            _.extend @events, {
+                "click .ungroup-fields": ->
+                    model    = @model
+                    # Get position of layout
+                    position = model.collection.indexOf(model)
+                    children = model.get("child_els")
+                    parent   = model.collection
+                    to_remove= [] 
+                    for child, i in children.models
+                        # Simply adding at position would insert elements in reverse order
+                        child['layout-item']= false
+                        parent.add child, {at: position + i }
+                    children.reset()
+                    # Destroy the layout/group
+                    model.destroy()
+                }
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
         higher level event from firing. ###

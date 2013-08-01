@@ -192,7 +192,7 @@ $(document).ready ->
             $el =  @$el
             $el.html(_.template @template, model.toJSON())
             if @model['layout-element'] is true then $el.addClass("selected-element")
-            if @controls? then $el.append(_.template @controls, {})
+            if @controls? then $el.append(_.template @controls, model.toJSON())
             if $el.children(".children").length is 0
                     $el.append("<ul class='children'></ul>")
             if children? and do_children is true

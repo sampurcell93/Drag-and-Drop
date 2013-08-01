@@ -66,14 +66,35 @@
 
       layout.prototype.initialize = function() {
         var self;
+        this.model.set("layout", true);
         layout.__super__.initialize.apply(this, arguments);
         self = this;
         this.$el.addClass("layout-wrapper");
-        return this.listenTo(this.model.get("child_els"), "add", function(m, c, o) {
+        this.listenTo(this.model.get("child_els"), "add", function(m, c, o) {
           if ((c != null) && c.length) {
             return self.$el.children(".placeholder").hide();
           } else {
             return self.$el.children(".placeholder").show();
+          }
+        });
+        return _.extend(this.events, {
+          "click .ungroup-fields": function() {
+            var child, children, i, model, parent, position, to_remove, _i, _len, _ref2;
+            model = this.model;
+            position = model.collection.indexOf(model);
+            children = model.get("child_els");
+            parent = model.collection;
+            to_remove = [];
+            _ref2 = children.models;
+            for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
+              child = _ref2[i];
+              child['layout-item'] = false;
+              parent.add(child, {
+                at: position + i
+              });
+            }
+            children.reset();
+            return model.destroy();
           }
         });
       };
