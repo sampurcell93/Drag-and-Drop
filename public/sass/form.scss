@@ -10,15 +10,23 @@ input, textarea {
 	&.big-input {
 		font-size: 1.3em;
 	}
+
+  &[type="radio"] {
+    display: inline-block;
+    width: 25px;
+  }
+
 }
 
 textarea {
 	width: 75%;
 	max-width: 85%;
 	margin:5px 0;
-	resize: vertical;
-	overflow: visible;
-
+	overflow: auto;
+  max-height: 500px;
+  min-height: 100px;
+  display: block;
+  
 	&.generic-text {
 		display: block;
 		width: 100% !important;

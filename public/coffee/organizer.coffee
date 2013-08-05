@@ -102,7 +102,14 @@ $(document).ready ->
                 revert: 'invalid'
                 helper: 'clone'
                 start: (e,ui) ->
-                    window.currentDraggingModel = self.model
+                    if (self.model.get("type") == "Property")
+                        clone = self.model.clone()
+                        clone.collection = null;
+                        children = clone.get("child_els")
+                        children.reset()
+                        clone.set("child_els", children)
+                        window.currentDraggingModel = clone
+                    else window.currentDraggingModel = self.model
             that = @
             # If the model is not in the page, set it aside
             if @model.get("inFlow") is false

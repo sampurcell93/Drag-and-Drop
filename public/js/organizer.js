@@ -121,7 +121,17 @@
           revert: 'invalid',
           helper: 'clone',
           start: function(e, ui) {
-            return window.currentDraggingModel = self.model;
+            var children, clone;
+            if (self.model.get("type") === "Property") {
+              clone = self.model.clone();
+              clone.collection = null;
+              children = clone.get("child_els");
+              children.reset();
+              clone.set("child_els", children);
+              return window.currentDraggingModel = clone;
+            } else {
+              return window.currentDraggingModel = self.model;
+            }
           }
         });
         that = this;

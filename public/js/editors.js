@@ -21,6 +21,7 @@
       _Class.prototype.standards = [$("#change-styles").html()];
 
       _Class.prototype.initialize = function() {
+        this.change_queue = [];
         if (this.templates == null) {
           this.templates = [];
         }
@@ -29,21 +30,39 @@
 
       _Class.prototype.render = function() {
         var editor_content, self;
-        if (this.templates == null) {
-          this.templates = [];
-        }
         self = this;
         this.link_el = this.options.link_el;
         editor_content = "";
         this.templates = this.templates.concat([$("#finalize-editing").html()]);
         _.each(this.templates, function(template) {
+          console.log(self.model.toJSON());
           return editor_content += _.template(template, self.model.toJSON());
         });
         return this.$el.appendTo(document.body).html(editor_content);
       };
 
-      _Class.prototype.enqueue = function(name, func) {
-        return this.change_queue[name] = func;
+      _Class.prototype.enqueue = function(name, func, opts) {
+        var index, prevDeclaration, queue;
+        queue = this.change_queue;
+        prevDeclaration = _.findWhere(queue, {
+          name: name
+        });
+        if (prevDeclaration != null) {
+          index = queue.indexOf(prevDeclaration);
+          queue[index] = prevDeclaration;
+          return;
+        }
+        if ((opts != null) && opts.pushBack === true) {
+          return queue.pushBack({
+            name: name,
+            func: func
+          });
+        } else {
+          return queue.push({
+            name: name,
+            func: func
+          });
+        }
       };
 
       _Class.prototype.events = {
@@ -72,7 +91,7 @@
           cq = this.change_queue;
           _results = [];
           for (process in cq) {
-            _results.push(process = cq[process]());
+            _results.push(process = cq[process].func());
           }
           return _results;
         },
@@ -107,7 +126,7 @@
             $t = $(e.currentTarget);
             cols = $t.data("columns");
             self = this;
-            $t.addClass("selected-column").siblings().removeClass("selected-column");
+            $t.addClass("selected-choice").siblings().removeClass("selected-choice");
             if (this.model != null) {
               this.enqueue("columns", function() {
                 return self.model.set("columns", cols);
@@ -129,11 +148,11 @@
             $t = $(e.currentTarget);
             layout = $t.data("layout");
             self = this;
+            $t.addClass("selected-choice").siblings().removeClass("selected-choice");
             return this.enqueue("view", function() {
               self.model.set({
                 "layout": true,
-                "view": layout,
-                type: "Tab Layout"
+                "view": layout
               });
               return $(self.link_el).addClass("tab-layout");
             });
@@ -153,14 +172,6 @@
       }
 
       _Class.prototype.templates = [$("#button-editor").html()];
-
-      _Class.prototype.render = function() {
-        var modal;
-        _Class.__super__.render.apply(this, arguments);
-        this.cq = this.change_queue;
-        modal = this.el || $(".modal").first();
-        return this.$el = $(this.el);
-      };
 
       return _Class;
 
@@ -192,6 +203,7 @@
 
       _Class.prototype.initialize = function() {
         var self;
+        _Class.__super__.initialize.apply(this, arguments);
         self = this;
         return _.extend(this.events, {
           "change .label-position": function(e) {

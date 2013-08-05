@@ -7,8 +7,10 @@ $(document).ready ->
     window.globals =
          setPlaceholders: (draggable, collection) ->
             draggable
-            .before(new views.droppablePlaceholder({collection: collection}).render())
-            .after(new views.droppablePlaceholder({collection: collection}).render())
+            .before(before = new views.droppablePlaceholder({collection: collection}).render())
+            .after(after = new views.droppablePlaceholder({collection: collection}).render())
+            if before.prev().css("display") == "inline-block"
+                before.css("height", before.prev().height() + "px")
             # extra = new window.views.droppablePlaceholder({collection: collection}).render()
             # if (draggable.index() is 0 and !draggable.hasClass("builder-child"))
             #     draggable.before(extra)
@@ -19,14 +21,16 @@ $(document).ready ->
     class window.models.Element extends Backbone.Model
         initialize: ->
             self = @
-            # @listenTo @, {
-            #     "change:view": (model,view,opts) ->
-            #         console.log model.toJSON(), view
-            #         collection = self.collection
-            #         if collection?
-            #             collection.remove self
-            #             collection.add self
-            # }
+            @on {
+                "change:view": (model,view,opts) ->
+                    console.log "changing view"
+                    index = model.collection.indexOf(model)
+                    collection = self.collection
+                    if collection?
+                        cc "COLLECTION"
+                        collection.remove self
+                        collection.add self, {at: index}
+            }
         defaults: ->
             child_els = new collections.Elements()
             child_els.model = @
@@ -44,7 +48,7 @@ $(document).ready ->
             self = @
             temp = new collections.Elements()
             _.each @get("child_els"), (model) ->
-                temp.add tempModel = new models.Element(model)
+                temp.add tempModel = new models.Element(model.toJSON())
                 tempModel.set "child_els", self.modelify()
             temp
         # JSON returns as a single model whose submodels are standard json objects, not backbone models.
@@ -161,6 +165,9 @@ $(document).ready ->
             @index = @options.index
             _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild")
             @listenTo @model.get("child_els"), 'add', (m,c,o) ->
+                unless (typeof self.itemName == "undefined")
+                    console.log self.itemName
+                    m.set("view", self.itemName)
                 self.appendChild(m,o)
             console.log @modelListeners
             @modelListeners = _.extend({}, @modelListeners, { 
@@ -377,6 +384,7 @@ $(document).ready ->
             "click .group-elements": "blankLayout"
             "click": (e) ->
                 @unbindContextMenu(e)
+                @$el.find(".dropdown").hide()
                 if e.shiftKey is true
                     layout = @model["layout-item"]
                     if (layout is false or typeof layout is "undefined")
@@ -406,7 +414,7 @@ $(document).ready ->
             "flowRemoveViaDrag": "removeFromFlow" 
             "click .config-panel": (e) ->            
                 defaultEditor = if @model.get("layout") == true then "BaseLayoutEditor" else "BaseEditor"
-                editor = views.editors[@edit_view || defaultEditor]
+                editor = views.editors[@edit_view || @model.get("view") || defaultEditor]
                 if editor? then editor = new editor({model: @model, link_el: @el}).render()
                 else editor = new views.editors["BaseEditor"]({model: @model, link_el: @el}).render()
                 $(editor.el).launchModal()

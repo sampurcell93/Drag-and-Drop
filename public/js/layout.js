@@ -15,6 +15,9 @@
       }, {
         type: 'Tabbed Layout',
         view: 'tabs'
+      }, {
+        type: 'List Layout',
+        view: 'ListLayout'
       }
     ];
     window.models.Layout = (function(_super) {
@@ -176,11 +179,29 @@
         "click": "showTabContent"
       };
 
+      _Class.prototype.tabOffset = function() {
+        var $el, column_types, len, num_per_row;
+        len = this.model.collection.length;
+        $el = this.$el;
+        num_per_row = 0;
+        column_types = ["two", "three", "four", "five", "six"];
+        _.each(column_types, function(num, i) {
+          if ($el.closest(".tab-layout").hasClass("column " + num)) {
+            return num_per_row = i + 2;
+          }
+        });
+        return 10 + 50 * (len / num_per_row);
+      };
+
       _Class.prototype.initialize = function() {
+        var self;
         _Class.__super__.initialize.apply(this, arguments);
+        self = this;
         console.log("making new tab item");
         _.bindAll(this, "afterRender", "showTabContent");
-        return this.model.get("child_els").on("remove", this.showTabContent);
+        return this.model.get("child_els").on({
+          "remove": this.showTabContent
+        });
       };
 
       _Class.prototype.appendChild = function(model) {
@@ -193,20 +214,11 @@
       };
 
       _Class.prototype.showTabContent = function() {
-        var $el, column_types, num_per_row, offset, siblings, wrap_height;
+        var $el, offset, wrap_height;
         console.log("showTabContent");
-        column_types = ["two", "three", "four", "five", "six"];
         $el = this.$el;
-        siblings = $el.siblings(".builder-element").length + 1;
-        num_per_row = null;
-        _.each(column_types, function(num, i) {
-          if ($el.closest(".tab-layout").hasClass("column " + num)) {
-            return num_per_row = i + 3;
-          }
-        });
-        offset = Math.floor(siblings / num_per_row);
-        offset = 30 + 50 * offset;
-        console.log($el.children(".children"));
+        offset = this.tabOffset();
+        console.log(offset);
         $el.children(".children").css({
           "top": 20 + offset + "px"
         });
@@ -216,7 +228,7 @@
         $el.closest(".tab-layout").css("height", wrap_height + offset + 12 + "px");
         console.log("done", $el.height() + $el.children(".children").height());
         return this.$el.children(".config-menu-wrap").css({
-          "top": offset + 22 + "px",
+          "top": (offset - 10) + "px",
           "right": "26px"
         });
       };
@@ -234,17 +246,25 @@
 
       _Class.prototype.template = $("#tab-layout").html();
 
+      _Class.prototype.itemName = 'tabItem';
+
+      _Class.prototype.tagName = 'div class="builder-element tab-layout column six"';
+
       _Class.prototype.initialize = function() {
         var self;
+        this.model.set("type", "Tab Layout");
         _.bindAll(this, "afterRender");
         self = this;
         this.listenTo(this.model.get("child_els"), {
-          "add": this.formatNewModel,
           "remove": function(m, c, o) {
             if (c.length === 0) {
               return self.$el.children(".placeholder-text").show();
             }
           }
+        });
+        this.model.get("child_els").on("add", function() {
+          cc("addd ON");
+          return self.$el.children(".placeholder-text").hide();
         });
         return _Class.__super__.initialize.apply(this, arguments);
       };
@@ -252,7 +272,6 @@
       _Class.prototype.afterRender = function() {
         var self, tabs;
         cc("tabs after rendering");
-        this.$el.addClass("tab-layout column six");
         tabs = this.model.get("child_els");
         self = this;
         console.log(tabs.models);
@@ -262,16 +281,14 @@
       };
 
       _Class.prototype.formatNewModel = function(model, collection, options) {
-        var $el;
         model.set("view", "tabItem");
-        $el = this.$el;
-        return $el.children(".placeholder-text").hide();
+        return this.$el.children(".placeholder-text").hide();
       };
 
       return _Class;
 
     })(window.views["layout"]);
-    window.views["Freeform"] = (function(_super) {
+    views["ListLayout"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -279,48 +296,19 @@
         return _ref6;
       }
 
-      _Class.prototype.template = $("#freeform-layout").html();
-
-      _Class.prototype.configTemplate = $("#freeform-layout-settings").html();
-
       _Class.prototype.initialize = function() {
-        _.bindAll(this, "afterRender", "beforeRender");
-        return _Class.__super__.initialize.apply(this, arguments);
+        _Class.__super__.initialize.apply(this, arguments);
+        this.model.set("type", "List Layout");
+        return _.bindAll(this, "afterRender");
       };
 
-      _Class.prototype.afterRender = function() {};
-
-      _Class.prototype.beforeRender = function() {
-        var modal, self;
-        self = this;
-        if ($(".modal").length === 0) {
-          modal = window.launchModal(_.template(this.configTemplate, this.model.toJSON()));
-        } else {
-          modal = $(".modal").first();
-        }
-        return modal.delegate(".submit", "click", function() {
-          var cols, rows;
-          cols = parseInt($(".set-columns").val());
-          rows = parseInt($(".set-rows").val());
-          if (!validNumber(cols)) {
-            cols = 2;
-          }
-          if (!validNumber(rows)) {
-            rows = 2;
-          }
-          self.model.set("rows", rows, {
-            silent: true
-          });
-          self.model.set("columns", cols, {
-            silent: true
-          });
-          return self.model.trigger("renderBase");
-        });
+      _Class.prototype.afterRender = function() {
+        return this.$el.addClass("list-layout");
       };
 
       return _Class;
 
-    })(window.views["layout"]);
+    })(views['layout']);
     return window.views['BlankLayout'] = (function(_super) {
       __extends(_Class, _super);
 

@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var generics, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var generics, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     generics = [
       {
         "type": "Button",
@@ -15,16 +15,6 @@
       }, {
         "type": "Custom Header",
         "view": "CustomHeader"
-      }, {
-        "tagName": "ol",
-        "type": "Numbered List",
-        "view": "listElement",
-        listItems: [1, 2, 3]
-      }, {
-        "tagName": "ul",
-        "type": "Bulleted List",
-        "view": "listElement",
-        listItems: [1, 2, 3]
       }, {
         type: 'Date/Time',
         view: 'DateTime'
@@ -125,73 +115,12 @@
       return genericElement;
 
     })(window.views.draggableElement);
-    window.views['listElement'] = (function(_super) {
+    views["Property"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
         _ref1 = _Class.__super__.constructor.apply(this, arguments);
         return _ref1;
-      }
-
-      _Class.prototype.template = $("#generic-list").html();
-
-      _Class.prototype.initialize = function(options) {
-        _Class.__super__.initialize.apply(this, arguments);
-        console.log(this.events);
-        return $.extend(this.events, {
-          "click .add-list-item": function(e) {
-            var genericList, index, innerText;
-            genericList = this.$el.find(".generic-list");
-            index = genericList.children().length;
-            innerText = "Item " + (index + 1);
-            $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList);
-            this.updateListItems(innerText, index);
-            e.stopPropagation();
-            return console.log(this.events);
-          },
-          "keyup .generic-list li": function(e) {
-            var index, keyCode, target;
-            keyCode = e.keyCode || e.which;
-            target = $(e.currentTarget);
-            index = target.index();
-            if (target.index() === 0) {
-              this.model.set("title", target.text());
-            }
-            return this.updateListItems(target.html(), index);
-          },
-          "click .remove-property-link": function(e) {
-            return $(e.currentTarget).closest(".property-link").slideUp("fast", function() {
-              return $(this).remove();
-            });
-          }
-        });
-      };
-
-      _Class.prototype.updateListItems = function(text, index) {
-        var listItems;
-        if (this.model.get("type") === "Numbered List" || this.model.get("type") === "Bulleted List") {
-          listItems = this.model.get("listItems");
-          if (listItems != null) {
-            listItems[index] = {};
-            listItems[index].text = text;
-          } else {
-            listItems.splice(index, 0, {
-              text: text
-            });
-          }
-          return this.model.set("listItems", listItems);
-        }
-      };
-
-      return _Class;
-
-    })(window.views.genericElement);
-    views["Property"] = (function(_super) {
-      __extends(_Class, _super);
-
-      function _Class() {
-        _ref2 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref2;
       }
 
       _Class.prototype.template = $("#property-template").html();
@@ -203,8 +132,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref3 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref3;
+        _ref2 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref2;
       }
 
       _Class.prototype.template = $("#button-template").html();
@@ -225,8 +154,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref4 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref4;
+        _ref3 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref3;
       }
 
       _Class.prototype.template = $("#custom-header").html();
@@ -242,8 +171,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref5 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref5;
+        _ref4 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref4;
       }
 
       _Class.prototype.template = $("#custom-text").html();
@@ -259,29 +188,29 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref6 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref6;
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
       }
 
       _Class.prototype.template = $("#generic-radio").html();
 
       _Class.prototype.initialize = function(options) {
+        var self;
         _Class.__super__.initialize.apply(this, arguments);
+        self = this;
         _.bindAll(this, "afterRender");
-        return this.model.on("change:label_position", this.render);
+        return this.model.on("change:label_position", function() {
+          console.log("changed label pos");
+          return self.render();
+        });
       };
 
       _Class.prototype.afterRender = function() {
-        var clone, label, position;
-        label = this.$el.children(".main-label");
-        clone = label.clone();
-        position = this.model.get("label_position");
-        console.log(position);
-        if (position === "right") {
-          console.log("heyooo", clone);
-          label.next().after(clone);
+        var label_position;
+        label_position = this.model.get("label_position");
+        if (label_position === "top" || label_position === "bottom") {
+          return console.log(this.$el.find("span.label-text").css("display", "block"));
         }
-        return label.remove();
       };
 
       return _Class;
@@ -291,8 +220,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref7 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref7;
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
       }
 
       _Class.prototype.template = $("#custom-link").html();
@@ -308,8 +237,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref8 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref8;
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
       }
 
       _Class.prototype.template = $("#date-time").html();
@@ -330,8 +259,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref9 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref9;
+        _ref8 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref8;
       }
 
       _Class.prototype.template = $("#dropdown").html();
@@ -347,8 +276,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref10 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref10;
+        _ref9 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref9;
       }
 
       _Class.prototype.controls = null;

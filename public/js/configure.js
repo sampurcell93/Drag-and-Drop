@@ -402,12 +402,11 @@
             name: 'Change Me',
             className: this.model.get("name")
           });
-          this.$el.append(prop = new views.PropertyItem({
+          return this.$el.append(prop = new views.PropertyItem({
             model: newProp,
             index: this.options.index,
             editable: true
           }).render().el);
-          return $(prop).find("input").trigger("click");
         },
         "click .close": function(e) {
           var that;

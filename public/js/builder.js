@@ -12,11 +12,15 @@
     var _ref, _ref1, _ref2;
     window.globals = {
       setPlaceholders: function(draggable, collection) {
-        return draggable.before(new views.droppablePlaceholder({
+        var after, before;
+        draggable.before(before = new views.droppablePlaceholder({
           collection: collection
-        }).render()).after(new views.droppablePlaceholder({
+        }).render()).after(after = new views.droppablePlaceholder({
           collection: collection
         }).render());
+        if (before.prev().css("display") === "inline-block") {
+          return before.css("height", before.prev().height() + "px");
+        }
       }
     };
     window.models.Element = (function(_super) {
@@ -29,7 +33,22 @@
 
       Element.prototype.initialize = function() {
         var self;
-        return self = this;
+        self = this;
+        return this.on({
+          "change:view": function(model, view, opts) {
+            var collection, index;
+            console.log("changing view");
+            index = model.collection.indexOf(model);
+            collection = self.collection;
+            if (collection != null) {
+              cc("COLLECTION");
+              collection.remove(self);
+              return collection.add(self, {
+                at: index
+              });
+            }
+          }
+        });
       };
 
       Element.prototype.defaults = function() {
@@ -56,7 +75,7 @@
         temp = new collections.Elements();
         _.each(this.get("child_els"), function(model) {
           var tempModel;
-          temp.add(tempModel = new models.Element(model));
+          temp.add(tempModel = new models.Element(model.toJSON()));
           return tempModel.set("child_els", self.modelify());
         });
         return temp;
@@ -236,6 +255,10 @@
         this.index = this.options.index;
         _.bindAll(this, "render", "bindDrop", "bindDrag", "appendChild");
         this.listenTo(this.model.get("child_els"), 'add', function(m, c, o) {
+          if (!(typeof self.itemName === "undefined")) {
+            console.log(self.itemName);
+            m.set("view", self.itemName);
+          }
           return self.appendChild(m, o);
         });
         console.log(this.modelListeners);
@@ -523,6 +546,7 @@
         "click": function(e) {
           var layout;
           this.unbindContextMenu(e);
+          this.$el.find(".dropdown").hide();
           if (e.shiftKey === true) {
             layout = this.model["layout-item"];
             if (layout === false || typeof layout === "undefined") {
@@ -559,7 +583,7 @@
         "click .config-panel": function(e) {
           var defaultEditor, editor;
           defaultEditor = this.model.get("layout") === true ? "BaseLayoutEditor" : "BaseEditor";
-          editor = views.editors[this.edit_view || defaultEditor];
+          editor = views.editors[this.edit_view || this.model.get("view") || defaultEditor];
           if (editor != null) {
             editor = new editor({
               model: this.model,

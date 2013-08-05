@@ -325,7 +325,6 @@ $(document).ready ->
             "click .add-property": (e) ->
                 newProp = new models.Property({name: 'Change Me', className: @model.get("name")})
                 @$el.append prop = new views.PropertyItem({model: newProp, index: @options.index, editable: true}).render().el
-                $(prop).find("input").trigger("click")
                 # allSections.at(@options.index).get("properties").add newProp
             "click .close": (e) ->
                 that = @

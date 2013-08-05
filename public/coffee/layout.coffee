@@ -12,13 +12,11 @@ $(document).ready ->
         {
             type: 'Tabbed Layout'
             view: 'tabs'
+        },
+        {
+            type: 'List Layout'
+            view: 'ListLayout'
         }
-        # {
-        #     type: 'Free Form Layout'
-        #     view: 'Freeform'
-        #     columns: '2'
-        #     rows: '2'
-        # }
     ]
     class window.models.Layout extends window.models.Element
 
@@ -111,11 +109,23 @@ $(document).ready ->
                 console.log $t
                 @model.set "title", $t.text()
             "click": "showTabContent"                
+        tabOffset: ->
+            len = @model.collection.length
+            $el = @$el
+            num_per_row = 0
+            column_types = ["two", "three", "four", "five", "six"]
+            _.each column_types, (num,i) ->
+                if $el.closest(".tab-layout").hasClass("column " + num)
+                    num_per_row = i + 2
+            10 + 50*(len/num_per_row)
         initialize: ->
             super
+            self = @
             console.log "making new tab item"
             _.bindAll @, "afterRender", "showTabContent"
-            @model.get("child_els").on("remove", @showTabContent)
+            @model.get("child_els").on({
+                "remove": @showTabContent
+            })
         appendChild: (model) ->
             super
             @$el.children("h3").first().trigger("click")
@@ -124,40 +134,37 @@ $(document).ready ->
             .children("h3").first().attr("contentEditable", true).addClass("no-drag").trigger("click")
         showTabContent: ->
             console.log "showTabContent"
-            column_types = ["two", "three", "four", "five", "six"]
             # Settign height of parent container and showing the tab content
             $el = @$el
-            siblings = $el.siblings(".builder-element").length + 1
-            num_per_row = null
-            _.each column_types, (num,i) ->
-                if $el.closest(".tab-layout").hasClass("column " + num)
-                    num_per_row = i + 3
-            offset = Math.floor(siblings/num_per_row)
-            offset = 30 + 50*offset
-            console.log $el.children(".children")
+            offset = @tabOffset()
+            console.log offset
             $el.children(".children").css({"top": 20 + offset + "px"})
             $el.addClass("active-tab").siblings().removeClass("active-tab")
             wrap_height = $el.height() + $el.children(".children").height()
             console.log wrap_height
             $el.closest(".tab-layout").css("height", wrap_height + offset + 12 + "px")
             console.log("done", $el.height() + $el.children(".children").height())
-            @$el.children(".config-menu-wrap").css({"top": offset + 22 + "px", "right": "26px"})
+            @$el.children(".config-menu-wrap").css({"top": (offset - 10) + "px", "right": "26px"})
 
     class window.views["tabs"] extends window.views["layout"]
         template: $("#tab-layout").html()
+        itemName: 'tabItem'
+        tagName: 'div class="builder-element tab-layout column six"'
         initialize: ->
+            @model.set("type", "Tab Layout")
             _.bindAll @, "afterRender"
             self = @
             @listenTo @model.get("child_els"), {
-                "add": @formatNewModel
                 "remove": (m,c,o) ->
                     if c.length is 0
                         self.$el.children(".placeholder-text").show()
             }
+            @model.get("child_els").on "add", ->
+                cc "addd ON"
+                self.$el.children(".placeholder-text").hide()
             super
         afterRender: ->
             cc "tabs after rendering"
-            @$el.addClass("tab-layout column six")
             tabs = @model.get "child_els"
             self = @
             console.log tabs.models
@@ -165,33 +172,16 @@ $(document).ready ->
                 self.formatNewModel tab
         formatNewModel: (model, collection, options) ->
             model.set("view", "tabItem")
-            $el = @$el
-            $el.children(".placeholder-text").hide()
+            @$el.children(".placeholder-text").hide()
 
-
-
-    class window.views["Freeform"] extends window.views["layout"]
-        template: $("#freeform-layout").html()
-        configTemplate: $("#freeform-layout-settings").html()
+    class views["ListLayout"] extends views['layout']
         initialize: ->
-            _.bindAll @, "afterRender", "beforeRender"
             super
+            @model.set("type", "List Layout")
+            _.bindAll(@, "afterRender")
         afterRender: ->
-        beforeRender: ->
-            self = @
-            if $(".modal").length is 0
-                modal = window.launchModal(_.template(@configTemplate, @model.toJSON()))
-            else 
-                modal = $(".modal").first()
-            modal.delegate ".submit", "click", ->
-                cols = parseInt($(".set-columns").val())
-                rows = parseInt($(".set-rows").val())
-                # Default to 2x2
-                if !validNumber(cols) then cols = 2
-                if !validNumber(rows) then rows = 2
-                self.model.set("rows", rows, {silent: true})
-                self.model.set("columns", cols, {silent: true})
-                self.model.trigger("renderBase")
+            @$el.addClass("list-layout")
+
     class window.views['BlankLayout'] extends window.views["layout"]
         template: $("#blank-layout").html()
         initialize: ->

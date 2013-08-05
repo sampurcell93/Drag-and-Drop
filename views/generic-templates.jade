@@ -20,11 +20,18 @@ script(type='text/template')#custom-header
 script(type='text/template')#custom-link
     <a href="<%= typeof link_href !== 'undefined' ? link_href : '#' %>" title="<%= typeof title !== 'undefined' ? title : 'Link' %>"><%= typeof title !== "undefined" ? title : 'Link' %></a>
 script(type='text/template')#generic-radio
-    label.no-drag.main-label
-        span.label-text Radio Button
-        input(type='radio')
+    <% var label = "<label class='no-drag main-label'><span class='label-text'>Radio Button</span>" %>
+    <% var labelpos = typeof label_position !== "undefined" ? label_position : false %>
+    <% if (labelpos == "left" || labelpos == "top" || labelpos == false) { %>
+    <%= label %>
+    <% } %>
+    input(type='radio')
+    <% if (labelpos == "bottom" || labelpos == "right") { %>
+    <%= label %>
+    <% } %>
+    </label>
 script(type='text/template')#date-time
-    label.no-drag 
+    label.no-drag   
         span.label-text.date-picker Pick a Date/Time
 script(type='text/template')#dropdown
 script(type='text/template')#builder-wrap

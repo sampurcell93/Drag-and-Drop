@@ -17,18 +17,18 @@ $(document).ready ->
             "type" : "Custom Header",
             "view" : "CustomHeader"
         },
-        {
-            "tagName" : "ol",
-            "type" : "Numbered List",
-            "view" : "listElement",
-            listItems: [1,2,3]
-        },
-        {
-            "tagName" : "ul",
-            "type" : "Bulleted List",
-            "view" : "listElement",
-            listItems: [1,2,3]
-        },
+        # {
+        #     "tagName" : "ol",
+        #     "type" : "Numbered List",
+        #     "view" : "listElement",
+        #     listItems: [1,2,3]
+        # },
+        # {
+        #     "tagName" : "ul",
+        #     "type" : "Bulleted List",
+        #     "view" : "listElement",
+        #     listItems: [1,2,3]
+        # },
         {
             type: 'Date/Time'
             view: 'DateTime'
@@ -127,41 +127,6 @@ $(document).ready ->
     # which is draggable (see builder.js/coffee) There are too many events and cases to 
     # store in a single class,so we'll split it up here using inheritance.
     # HANG ON - javascript does INHERITANCE????????!
-    class window.views['listElement'] extends window.views.genericElement
-        template: $("#generic-list").html()
-        initialize: (options) ->
-            super
-            console.log @events
-            $.extend(@events, {
-                # Append a new dummy list item to the scaffold
-                "click .add-list-item":  (e) ->
-                    genericList = @$el.find(".generic-list")
-                    index = genericList.children().length
-                    innerText = "Item " + (index + 1)
-                    $("<li/>").text(innerText).attr("contenteditable", true).appendTo(genericList)
-                    @updateListItems(innerText, index)
-                    e.stopPropagation()
-                    console.log @events
-                "keyup .generic-list li": (e) ->
-                    keyCode = e.keyCode || e.which
-                    target = $(e.currentTarget)
-                    index = target.index()
-                    if target.index() is 0
-                        @model.set("title", target.text())
-                    @updateListItems(target.html(), index)
-                "click .remove-property-link": (e) ->
-                    $(e.currentTarget).closest(".property-link").slideUp "fast", ->
-                        $(@).remove()
-            })
-        updateListItems: (text, index) ->
-             if (@model.get("type") == "Numbered List" || @model.get("type") == "Bulleted List")
-                listItems = @model.get("listItems")
-                if listItems?
-                    listItems[index] = {}
-                    listItems[index].text = text
-                else listItems.splice(index,0, {text: text})
-                @model.set("listItems", listItems)
-
 
     class views["Property"] extends views.genericElement
         template: $("#property-template").html()
@@ -190,17 +155,16 @@ $(document).ready ->
         template: $("#generic-radio").html()
         initialize: (options) ->
             super 
+            self = @
             _.bindAll(@, "afterRender")
-            @model.on "change:label_position", @render
+            @model.on "change:label_position", ->
+                console.log "changed label pos"
+                self.render()
         afterRender: ->
-            label = @$el.children(".main-label")
-            clone = label.clone()
-            position = @model.get("label_position")
-            console.log position
-            if position == "right"
-                console.log "heyooo", clone
-                label.next().after(clone)
-            label.remove()
+            label_position = @model.get("label_position")
+            if  label_position == "top" || label_position == "bottom"
+                console.log @$el.find("span.label-text").css("display", "block")
+
 
     class window.views['Link'] extends window.views.genericElement
         template: $("#custom-link").html()

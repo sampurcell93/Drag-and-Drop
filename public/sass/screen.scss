@@ -858,18 +858,18 @@ section.builder-container {
 	@include transition(all .1s ease-in-out);
 	@include opacity(0);
 	position: absolute;
-	top: 0px;
-	right: 0px;
+	top: -25px;
+	right: -1px;
 	display: block;
 	cursor: pointer;
 	text-align: center;
-	background: #f9f9f9;
-	width: 51px;
-	height: 100%;
-	// border: 1px solid red;
-	max-height: 38px;
+	background: $strongblue;
+	width: 55px;
+	border: 1px solid #f9f9f9;
+	border-bottom: none;
+	max-height: 25px;
 	z-index: 12;
-	@include border-radius(0 2px 0 2px);
+	@include border-radius(3px 3px 0 0);
 
 	li {
 		cursor: pointer;
@@ -878,8 +878,8 @@ section.builder-container {
 		text-shadow: none;
 		padding: 0 6px;
 		width: 50%;
-		line-height: 38px;
-		color: $strongblue;
+		line-height: 25px;
+		color: white;
 		position: relative;
 
 		li { color: #333; }
@@ -887,7 +887,6 @@ section.builder-container {
 }
 
 .set-options {
-
 	.dropdown {
 		position: absolute;
 		top: 100%;
@@ -1045,11 +1044,6 @@ ol.generic-list {
 		background:  url("../images/columnsprite.png") no-repeat center;
 		cursor: pointer;
 
-		&.selected-column {
-			outline: 2px solid $strongblue;
-		}
-
-
 		&:nth-child(1) { background: #c5d4e8; }
 		&:nth-child(2) { background-position: 0 0px; }
 		&:nth-child(3) { background-position: 0 -79px; }
@@ -1057,6 +1051,10 @@ ol.generic-list {
 		&:nth-child(5) { background-position: 0 -240px; }
 		&:nth-child(6) { background-position: 0 -320px; }
 	}
+}
+
+ul li.selected-choice {
+	outline: 2px solid $strongblue !important;
 }
 
 .no-drag { cursor: auto; }
@@ -1083,7 +1081,6 @@ ol.generic-list {
 			display: inline-block;
 			line-height: 30px;
 			outline: none;
-			text-align: center;
 			white-space: nowrap;
 			margin: 0 -4px 0 -4px !important;
 
@@ -1125,12 +1122,20 @@ ol.generic-list {
 				display: none;
 				position: absolute;
 				top: 50px;
-				left: 10px;
+				left: 9px;
 				width: 96%;
 				border: 100%;
 			}
 		}
 	}		
+}
+
+.list-layout {
+
+
+	> ul.children > .builder-element {
+		list-style: disc !important;
+	}
 }
 
 
@@ -1166,6 +1171,22 @@ ol.generic-list {
 			background: $strongblue;
 			color: #f9f9f9;
 			text-shadow: none;
+		}
+	}
+}
+
+.choose-layout {
+	width: 95%;
+	margin: 0 auto;
+
+	li {
+		display: inline-block;
+		height: 85px;
+		width: 85px;
+		text-align: center;
+
+		&[data-layout="tabs"] {
+			background: url("../images/tabicon.jpg") no-repeat center 15px;
 		}
 	}
 }

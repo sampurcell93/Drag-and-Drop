@@ -19,11 +19,14 @@ script(type='text/template')#link-editor
 
 script(type='text/template')#radio-editor
     label
-        Label Position:
-        select.label-position
-            option(value="left") Left
-            option(value="right") Right
-            option(value="top") Top
+        | Label Position:
+        <% var pos = typeof label_position !== 'undefined' ? label_position : '' %>
+        <select class='label-position'>
+        <option value="left" <% if (pos == "left") print("selected") %>> Left </option>
+        <option value="right" <% if (pos == "right") print("selected") %>> Right</option>
+        <option value="top" <% if (pos == "top") print("selected") %>> Top</option>
+        <option value="bottom" <% if (pos == "bottom") print("selected") %>> Bottom</option>
+        </select>
 
 script#column-picker(type='text/template')
     h2 Choose a column layout
@@ -41,6 +44,7 @@ script#layout-changer(type="text/template")
     ul.choose-layout
         li(data-layout='tabs', data-view-item='tabItem') Tabbed
         li(data-layout='BlankLayout') Blank
+        li(data-layout='ListLayout') List Layout
 
 script#dynamic-layout-setup(type='text/template')
     h2 Choose a Preset Layout
@@ -49,13 +53,15 @@ script#section-change(type='text/template')
     <input type='text' class='change-section-title w7 m10' value="<%= typeof title !== 'undefined' ? title : '' %>" placeholder='Enter a section title' />
 
 script#change-styles(type='text/template')
-    select.set-width
-        option(value="") None Specified
-        option(value='w1-6') One Sixth
-        option(value='w25') One Fourth
-        option(value="w1-3") One Third
-        option(value="w5") One Half
-        option(value="w2-3") Two Thirds
-        option(value="w75") Three Fourths
-        option(value="w5-6") Five Sixths
-        option(value="w10") Full Size
+    label
+        | Object Width: 
+        select.set-width
+            option(value="") None Specified
+            option(value='w1-6') One Sixth
+            option(value='w25') One Fourth
+            option(value="w1-3") One Third
+            option(value="w5") One Half
+            option(value="w2-3") Two Thirds
+            option(value="w75") Three Fourths
+            option(value="w5-6") Five Sixths
+            option(value="w10") Full Size
