@@ -39,6 +39,7 @@
       },
       render: function(e) {
         var $el, index, outOfFlow, that;
+        console.log("rendering this organizer", this.collection.models.length);
         $el = this.$el;
         $el.children().remove();
         that = this;

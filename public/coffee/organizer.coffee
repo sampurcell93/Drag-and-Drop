@@ -33,6 +33,7 @@ $(document).ready ->
             }
             this
         render: (e) ->
+            console.log "rendering this organizer", @collection.models.length
             $el = @$el
             $el.children().remove()
             that = this

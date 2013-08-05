@@ -254,16 +254,19 @@
         self = this;
         this.index = this.options.index;
         _.bindAll(this, "render", "bindDrop", "bindDrag", "appendChild");
-        this.listenTo(this.model.get("child_els"), 'add', function(m, c, o) {
-          if (!(typeof self.itemName === "undefined")) {
-            console.log(self.itemName);
-            m.set("view", self.itemName);
+        this.listenTo(this.model.get("child_els"), {
+          'add': function(m, c, o) {
+            if (!(typeof self.itemName === "undefined")) {
+              console.log(self.itemName);
+              m.set("view", self.itemName);
+            }
+            return self.appendChild(m, o);
+          },
+          "change": function() {
+            return cc("change");
           }
-          return self.appendChild(m, o);
         });
-        console.log(this.modelListeners);
         this.modelListeners = _.extend({}, this.modelListeners, {
-          "change:styles": this.setStyles,
           "change:inFlow": function(model) {
             if (model.get("inFlow") === true) {
               return self.$el.slideDown("fast").next(".droppable-placeholder").slideDown("fast").prev(".droppable-placeholder").slideDown("fast");
@@ -298,7 +301,6 @@
         if (typeof do_children === "undefined") {
           do_children = true;
         }
-        console.log("rendering parent draggable with classes", this.model.get("classes"));
         (this.beforeRender || function() {
           return {};
         })();
@@ -316,7 +318,6 @@
         }
         if ((children != null) && do_children === true) {
           _.each(children.models, function(el) {
-            console.log(el);
             return that.appendChild(el, {});
           });
         }
@@ -576,7 +577,6 @@
         },
         "click .remove-from-flow": function(e) {
           e.stopPropagation();
-          e.stopImmediatePropagation();
           return this.removeFromFlow(e);
         },
         "flowRemoveViaDrag": "removeFromFlow",
@@ -590,7 +590,7 @@
               link_el: this.el
             }).render();
           } else {
-            editor = new views.editors["BaseEditor"]({
+            editor = new views.editors[defaultEditor]({
               model: this.model,
               link_el: this.el
             }).render();
@@ -610,7 +610,6 @@
           return e.stopImmediatePropagation();
         },
         "sorting": function() {
-          console.log(this);
           return this.$el.addClass("active-sorting");
         },
         "end-sorting": function() {
@@ -630,13 +629,13 @@
         this.collection = this.options.collection;
         return this.render();
       },
-      render: function() {
+      render: function(children) {
         var $el, that;
         if (this.rendered !== true) {
           this.rendered = true;
           $el = this.$el;
           that = this;
-          return this.append(new models.Element({
+          return this.append(this.scaffold = new models.Element({
             view: "BuilderWrapper"
           }));
         }
@@ -648,7 +647,8 @@
         this.$el.append(draggable = $(new views[view]({
           model: element
         }).render().el));
-        return this.removeExtraPlaceholders();
+        this.removeExtraPlaceholders();
+        return draggable;
       },
       removeExtraPlaceholders: function() {
         return this.$el.find(".droppable-placeholder").each(function() {

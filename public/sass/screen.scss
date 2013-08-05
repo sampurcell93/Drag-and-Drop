@@ -503,6 +503,7 @@ ul.outside-draggables {
 	color: #fff;
 	
 	li {
+		cursor: pointer;
 		text-shadow: none;
 		display: inline-block;
 		line-height: 30px;
@@ -510,7 +511,6 @@ ul.outside-draggables {
 		height: 100%;
 		margin: 0 3px;
 		position: relative;
-		cursor: move;
 		min-width: 100px;
 		text-align: center;
 
@@ -539,6 +539,7 @@ ul.outside-draggables {
 			left: -3px;
 			z-index: 9999;
 			border: 1px solid #aaa;
+			cursor: move;
 			border-top: none;
 			display: none;
 

@@ -285,11 +285,18 @@
       _Class.prototype.contextMenu = null;
 
       _Class.prototype.initialize = function() {
+        var self;
         _Class.__super__.initialize.apply(this, arguments);
+        self = this;
         _.bindAll(this, "afterRender");
         if (this.model.get("child_els").length === 0) {
-          return $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(this.$el);
+          $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(this.$el);
         }
+        return this.model.on({
+          "render": function() {
+            return self.render(true);
+          }
+        });
       };
 
       _Class.prototype.template = $("#builder-wrap").html();

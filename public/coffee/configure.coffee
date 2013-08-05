@@ -105,6 +105,13 @@ $(document).ready ->
                 opts = {}
             @model.index = allSections.length - 1 
             # Render page scaffolding
+            @snaps = new collections.Snapshots()
+            @histList = new window.views.history.HistoryList({
+                controller: @
+                snapshots: @snaps
+                collection: @model.get("currentSection")
+            })
+
             # The controller now has a reference to the builder
             @builder = new views.SectionBuilder({
                 controller: @model
@@ -133,8 +140,10 @@ $(document).ready ->
             @model.set({
                 builder: @builder
                 organizer: @organizer
+                snaps: @snaps
             })
             this
+
         renderComponents: (components) ->
             for component in components
                 this[component].render()
@@ -320,6 +329,7 @@ $(document).ready ->
                 newProperty.set("className", @model.get("name"))
                 # Then append a new view for that model
                 $el.append new views.PropertyItem({model: newProperty, index:@options.index, editable: false}).render().el
+            # allSections.at(@options.index).get("snaps").reset()
             this
         events:
             "click .add-property": (e) ->
@@ -382,8 +392,9 @@ $(document).ready ->
         tagName: 'li class="property" '
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
-            @$el.append(_.template @template,item).toggleClass("selected").find("input").trigger "click"
-            @chooseProp()
+            @$el.append(_.template @template,item)
+            # .toggleClass("selected").find("input").trigger "click"
+            # @chooseProp()
             this
         chooseProp: (e) ->
             console.log "TesT"

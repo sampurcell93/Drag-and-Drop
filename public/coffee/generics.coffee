@@ -190,9 +190,12 @@ $(document).ready ->
         contextMenu: null
         initialize: ->
             super
+            self = @
             _.bindAll(@, "afterRender")
             if (@model.get("child_els").length is 0)
                 $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el) 
+            @model.on "render": ->
+                self.render(true)
         template: $("#builder-wrap").html()
         appendChild: ->
             super

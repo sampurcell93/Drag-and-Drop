@@ -164,14 +164,17 @@ $(document).ready ->
             self = @
             @index = @options.index
             _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild")
-            @listenTo @model.get("child_els"), 'add', (m,c,o) ->
-                unless (typeof self.itemName == "undefined")
-                    console.log self.itemName
-                    m.set("view", self.itemName)
-                self.appendChild(m,o)
-            console.log @modelListeners
+            @listenTo @model.get("child_els"),
+            {   'add': (m,c,o) ->
+                    unless (typeof self.itemName == "undefined")
+                        console.log self.itemName
+                        m.set("view", self.itemName)
+                    self.appendChild(m,o)
+                "change": ->
+                    cc "change"
+            }
+
             @modelListeners = _.extend({}, @modelListeners, { 
-                "change:styles": @setStyles
                 "change:inFlow": ( model ) ->
                     if model.get("inFlow") is true
                          self.$el.slideDown("fast").
@@ -201,7 +204,6 @@ $(document).ready ->
             do @bindDrag
         render: (do_children) ->
             if typeof do_children is "undefined" then do_children = true
-            console.log "rendering parent draggable with classes", @model.get("classes")
             # For inherited views that don't want to overwrite render entirely, we have 
             # custom methods to accompany it.
             (@beforeRender || -> {})()
@@ -216,7 +218,6 @@ $(document).ready ->
                     $el.append("<ul class='children'></ul>")
             if children? and do_children is true
                 _.each children.models , (el) ->
-                    console.log el
                     that.appendChild el, {}
             @applyClasses()
             @checkPlaceholder()
@@ -409,14 +410,14 @@ $(document).ready ->
                 e.stopPropagation()               
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
-                e.stopImmediatePropagation()
+                # e.stopImmediatePropagation()
                 @removeFromFlow(e)
             "flowRemoveViaDrag": "removeFromFlow" 
             "click .config-panel": (e) ->            
                 defaultEditor = if @model.get("layout") == true then "BaseLayoutEditor" else "BaseEditor"
                 editor = views.editors[@edit_view || @model.get("view") || defaultEditor]
                 if editor? then editor = new editor({model: @model, link_el: @el}).render()
-                else editor = new views.editors["BaseEditor"]({model: @model, link_el: @el}).render()
+                else editor = new views.editors[defaultEditor]({model: @model, link_el: @el}).render()
                 $(editor.el).launchModal()
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
@@ -430,7 +431,6 @@ $(document).ready ->
                 e.stopPropagation()
                 e.stopImmediatePropagation()
             "sorting": ->
-                console.log @
                 @$el.addClass("active-sorting")
             "end-sorting": ->
                 @$el.removeClass("active-sorting")
@@ -445,18 +445,18 @@ $(document).ready ->
             @$el = @wrapper.find("section")
             @collection = @options.collection
             @render()
-        render: ->
+        render: (children) ->
             unless @rendered is true
                 @rendered = true
                 $el = @$el
                 that = this
-                @append new models.Element({view: "BuilderWrapper"})
-
+                @append @scaffold = new models.Element({view: "BuilderWrapper"})
         append: (element, opts) ->
             view = element.get("view")
             element.set("child_els", @collection)
             @$el.append draggable = $(new views[view]({model: element}).render().el)
             @removeExtraPlaceholders()
+            draggable
         removeExtraPlaceholders: ->
             @$el.find(".droppable-placeholder").each ->
                 $t = $(this)

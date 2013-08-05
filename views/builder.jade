@@ -27,3 +27,5 @@ script(type='text/template')#property-link
 script(type='text/template')#context-menu-default
     li.group-elements Group selected
     li.copy-element Copy Element
+script(type='text/template')#snapshot
+    | <%= opname.clean() %>ed <%= typeof title !== "undefined" ? title : type %>

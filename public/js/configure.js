@@ -107,6 +107,12 @@
           opts = {};
         }
         this.model.index = allSections.length - 1;
+        this.snaps = new collections.Snapshots();
+        this.histList = new window.views.history.HistoryList({
+          controller: this,
+          snapshots: this.snaps,
+          collection: this.model.get("currentSection")
+        });
         this.builder = new views.SectionBuilder({
           controller: this.model,
           collection: this.model.get("currentSection")
@@ -141,7 +147,8 @@
         });
         this.model.set({
           builder: this.builder,
-          organizer: this.organizer
+          organizer: this.organizer,
+          snaps: this.snaps
         });
         return this;
       },
@@ -476,8 +483,7 @@
       render: function() {
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
-        this.$el.append(_.template(this.template, item)).toggleClass("selected").find("input").trigger("click");
-        this.chooseProp();
+        this.$el.append(_.template(this.template, item));
         return this;
       },
       chooseProp: function(e) {
