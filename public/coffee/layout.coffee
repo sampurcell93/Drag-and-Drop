@@ -1,5 +1,39 @@
 $(document).ready ->
 
+    adjs = [
+        "autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark",
+        "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter",
+        "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue",
+        "billowing", "broken", "cold", "damp", "falling", "frosty", "green",
+        "long", "late", "lingering", "bold", "little", "morning", "muddy", "old",
+        "red", "rough", "still", "small", "sparkling", "throbbing", "shy",
+        "wandering", "withered", "wild", "black", "young", "holy", "solitary",
+        "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine",
+        "polished", "ancient", "purple", "lively", "nameless", "protected", 
+        "fierce", "snowy", "floating", "serene", "placid", "afternoon", "calm", "cryptic",
+        "desolate", "falling", "glacial", "limitless", "murmuring", "pacific", "whispering"
+    ]
+
+    nouns = [
+        "waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning",
+        "snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter",
+        "forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook",
+        "butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly",
+        "feather", "grass", "haze", "mountain", "night", "pond", "darkness",
+        "snowflake", "silence", "sound", "sky", "shape", "surf", "thunder",
+        "violet", "water", "wildflower", "wave", "water", "resonance", "sun",
+        "wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper",
+        "frog", "smoke", "star", "savannah", "quarry", "mountainside", "riverbank",
+        "canopy", "tree", "monastery", "frost", "shelf", "badlands", "crags", "lowlands",
+        "badlands", "woodlands", "eyrie", "beach", "temple"
+    ]
+
+    String.prototype.firstUpperCase = ->
+        return this.charAt(0).toUpperCase() + this.slice(1)
+    randomDict = -> 
+        return (adjs[Math.floor(Math.random()*adjs.length)] + "-" + nouns[Math.floor(Math.random()*nouns.length)]).toLowerCase().firstUpperCase() + "-" + Math.floor(Math.random() *10000)
+
+
     allLayouts =[
         {
             type: 'Dynamic Layout'
@@ -16,6 +50,14 @@ $(document).ready ->
         {
             type: 'List Layout'
             view: 'ListLayout'
+        }
+        {
+            type: 'Dynamic Grid'
+            view: 'table'
+        }
+        {
+            type: 'Dynamic Repeating Layout'
+            view: 'RepeatingLayout'
         }
     ]
     class window.models.Layout extends window.models.Element
@@ -49,6 +91,7 @@ $(document).ready ->
             @model.set("layout", true)
             super
             self = @
+            _.bindAll @, "afterRender"
             @$el.addClass("layout-wrapper")
             @listenTo @model.get("child_els"), "add", (m,c,o)->
                 if c? and c.length
@@ -74,9 +117,44 @@ $(document).ready ->
                     # Destroy the layout/group
                     model.destroy()
                 }
+        afterRender: ->
+            if @model.get("child_els").length > 0
+                @$el.children(".placeholder").hide()
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
         higher level event from firing. ###
+
+    class views["table"] extends views["layout"]
+        tagName: 'table class="builder-element column six"'
+        template: $("#table-layout").html()
+        initialize: ->
+            super
+            self = @
+            @model.get("child_els").on "add", (model, collection, options) ->
+                # This only accepts properties for table structure
+                if model.get("type") != "Property"
+                    # Stop the element from being added
+                    collection.remove model
+                    # Then add it one level up.
+                    self.model.collection.add model
+                else
+                    model.set("view", "TableCell")
+                    console.log self.$el.find(".dummy")
+                    self.$el.find(".dummy").first().append(self.dummyData())
+        dummyData: ->
+            cols = @model.get("child_els").length
+            rows = 5
+            cell_template = "<td><%= word %></td>"
+            dummy = ""
+            for row in [0...rows]
+                if row > 0
+                    dummy += "<tr>"
+                for col in [0...cols]
+                    dummy += _.template cell_template, {word: randomDict()}
+                if row > 0
+                    dummy += "</tr>"
+            dummy
+
 
     class window.views["dynamicLayout"] extends window.views["layout"]
         configTemplate: $("#dynamic-layout-setup").html()

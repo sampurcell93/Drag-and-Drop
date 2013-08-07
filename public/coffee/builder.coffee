@@ -24,12 +24,13 @@ $(document).ready ->
             @on {
                 "change:view": (model,view,opts) ->
                     console.log "changing view"
-                    index = model.collection.indexOf(model)
-                    collection = self.collection
-                    if collection?
-                        cc "COLLECTION"
-                        collection.remove self
-                        collection.add self, {at: index}
+                    collection = model.collection
+                    index = collection.indexOf(model)
+                    console.log collection
+                    if collection? and typeof collection != "undefined"
+                        console.log "modelling shit"
+                        collection.remove model, {no_history: true}
+                        collection.add model, {at: index, no_history: true }
             }
         defaults: ->
             child_els = new collections.Elements()
@@ -65,10 +66,10 @@ $(document).ready ->
                     return false
                 # Remove each model from its collection so that events are triggered
                 _.each putIn, (model) ->
-                    model.collection.remove model
+                    model.collection.remove model, {no_history: true}
             # Remove the model from its current collection, if there is such.
             else if putIn.collection?
-                putIn.collection.remove putIn
+                putIn.collection.remove putIn, {no_history: true}
             # Get all current child elements, add the dropped element(s)
             # and put the collection back in
             children = @get "child_els"
@@ -124,17 +125,19 @@ $(document).ready ->
             @index = @options.index
         render: ->
             self = @
-            ghostFragment = $("<div/>").addClass("droppable-placeholder").text("")
+            ghostFragment = $("<div/>").addClass("droppable-placeholder").html("<div class='make-bigger'></div>")
             ghostFragment.droppable
                 accept: ".builder-element, .outside-draggables li, .property"
                 greedy: true
                 tolerance: 'pointer' 
                 over: (e, ui) ->
+                    if $(document.body).hasClass("active-modal") then return false
                     $(e.target).css("opacity", 1)
                 out: (e, ui) ->
                     $(e.target).css("opacity", 0)
                 drop: (e,ui) ->
                     $(".over").removeClass("over")
+                    if $(document.body).hasClass("active-modal") then return false
                     dropZone = $(e.target)
                     if (dropZone.closest(".builder-element").length)
                         insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev())
@@ -161,20 +164,34 @@ $(document).ready ->
         tagName: 'div class="builder-element"'
         modelListeners: {}
         initialize: ->
-            self = @
             @index = @options.index
-            _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild")
+            _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild","bindListeners")
+            @on "bindListeners", @bindListeners
+            # Bind the drag event to the el
+            do @bindDrop
+            # Bind the drop event to the el
+            do @bindDrag
+            # Bind all model listeners
+            do @bindListeners
+        bindListeners: ->
+            self = @
+            # Unbind previous listeners
+            @stopListening()
             @listenTo @model.get("child_els"),
             {   'add': (m,c,o) ->
                     unless (typeof self.itemName == "undefined")
                         console.log self.itemName
                         m.set("view", self.itemName)
                     self.appendChild(m,o)
-                "change": ->
-                    cc "change"
             }
 
             @modelListeners = _.extend({}, @modelListeners, { 
+                "change:classes": ->
+                    console.log "changed classes"
+                    @render(false)
+                "change:child_els": ->
+                    self.bindListeners()
+                    self.render()
                 "change:inFlow": ( model ) ->
                     if model.get("inFlow") is true
                          self.$el.slideDown("fast").
@@ -193,15 +210,12 @@ $(document).ready ->
                     if (self.$el.hasClass("ui-selected") is false)
                         self.$el.removeClass("selected-element")
                 "renderBase": ->
-                    @render(false)
-                "render": @render
+                    self.render(false)
+                "render": ->
+                    self.render(true)
             })
             # Allow class descendants to bind listeners
             @listenTo @model, @modelListeners
-            # Bind the drag event to the el
-            do @bindDrop
-            # Bind the drop event to the el
-            do @bindDrag
         render: (do_children) ->
             if typeof do_children is "undefined" then do_children = true
             # For inherited views that don't want to overwrite render entirely, we have 
@@ -230,6 +244,8 @@ $(document).ready ->
             # We choose a view to render based on the model's specification, 
             # or default to a standard draggable.
             $el = @$el.children(".children")
+            # For table layouts, sometimes things are wrapped in a tbody
+            if $el.length == 0 then $el = $el.find(".children").first()
             if child['layout-element'] is true then $el.addClass("selected-element")
             view = child.get("view") || "draggableElement"
             if child.get("inFlow") is true
@@ -292,11 +308,13 @@ $(document).ready ->
               tolerance: 'pointer'                                 # only the location of the mouse determines drop zone.
               accept: '.builder-element, .outside-draggables li, .property'
               over: (e) ->
+                if $(document.body).hasClass("active-modal") then return false
                 $(e.target).addClass("over")
               out: (e)->
                 $(e.target).removeClass("over").parents().removeClass("over")
               drop: (e,ui) ->
                 $(e.target).removeClass("over").parents().removeClass("over")
+                if $(document.body).hasClass("active-modal") then return false
                 draggingModel = window.currentDraggingModel
                 if typeof draggingModel is "undefined" or !draggingModel? then return false
                 else if draggingModel is that.model then return false
@@ -332,6 +350,7 @@ $(document).ready ->
 
         applyClasses: ->
             $el = @$el
+            console.log @model.get "classes"
             # "class" is a reserved keyword. style instead
             _.each @model.get("classes"), (style) ->
                 $el.addClass(style)
@@ -345,7 +364,7 @@ $(document).ready ->
             collection.add(layout = new models.Element({view: 'BlankLayout', type: 'Blank Layout'}), {at: layoutIndex})
             _.each selected , (model) ->
                 if model.collection?
-                    model.collection.remove model
+                    model.collection.remove model, {no_history: true}
                 layout.get("child_els").add model
         bindContextMenu:  (e) ->
             if !@contextMenu? then return true
@@ -407,7 +426,19 @@ $(document).ready ->
                 @unbindContextMenu(e)
                 # So as to stop the parent list from closing
                 e.preventDefault()
-                e.stopPropagation()               
+                e.stopPropagation()          
+            "click .quick-props": (e) ->
+                property_item = "<li><%=prop%> : <%= value %></li>";
+                properties = "<ul>"
+                attrs = @model.attributes
+                for prop of attrs
+                    properties +=  _.template property_item, {
+                        prop: prop
+                        value: attrs[prop]
+                    }
+                properties += "</ul>"   
+                window.launchModal(properties)
+                e.stopPropagation()
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 # e.stopImmediatePropagation()

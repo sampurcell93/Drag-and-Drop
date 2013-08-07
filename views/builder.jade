@@ -15,6 +15,7 @@ script(type='text/template')#draggable-element
 script(type='text/template')#drag-controls
     <% var layout = typeof layout !== "undefined" && layout == true ? true : false %>
     ul.config-menu-wrap.no-drag 
+        li.icon.quick-props b
         li.icon.set-options e
             ul.dropdown
                 li.config-panel Configure <%= layout == true ? "Group" : "Element" %>

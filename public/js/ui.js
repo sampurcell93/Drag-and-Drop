@@ -19,6 +19,7 @@
       $(document.body).addClass("active-modal").append(modal);
       return modal;
     };
+    window.launchDraggableModal = function(content) {};
     $.fn.launchModal = function(content) {
       console.log($(this), "launching jquery modal");
       return this.addClass("modal").appendTo($("body").addClass("active-modal"));

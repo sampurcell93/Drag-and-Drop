@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var generics, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var generics, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     generics = [
       {
         "type": "Button",
@@ -199,14 +199,15 @@
         _Class.__super__.initialize.apply(this, arguments);
         self = this;
         _.bindAll(this, "afterRender");
-        return this.model.on("change:label_position", function() {
-          console.log("changed label pos");
-          return self.render();
+        return this.model.on({
+          "change:label_position": this.render,
+          "change:label_text": this.render
         });
       };
 
       _Class.prototype.afterRender = function() {
         var label_position;
+        console.log("just rendered radio");
         label_position = this.model.get("label_position");
         if (label_position === "top" || label_position === "bottom") {
           return console.log(this.$el.find("span.label-text").css("display", "block"));
@@ -272,12 +273,29 @@
       return _Class;
 
     })(window.views.genericElement);
-    return window.views['BuilderWrapper'] = (function(_super) {
+    window.views['TableCell'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
         _ref9 = _Class.__super__.constructor.apply(this, arguments);
         return _ref9;
+      }
+
+      _Class.prototype.tagName = 'td class="builder-element"';
+
+      _Class.prototype.initialize = function(options) {
+        return _Class.__super__.initialize.apply(this, arguments);
+      };
+
+      return _Class;
+
+    })(window.views.genericElement);
+    return window.views['BuilderWrapper'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref10 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref10;
       }
 
       _Class.prototype.controls = null;

@@ -167,9 +167,9 @@
           $t = $(e.currentTarget);
           $t.toggleClass("viewing-layout");
           if ($t.hasClass("viewing-layout")) {
-            $t.text("View Configuration");
+            $t.text("Configuration");
           } else {
-            $t.text("View Section Builder");
+            $t.text("Builder");
           }
         }
         return this.$el.find(this.wrap).slideToggle('fast');
@@ -483,7 +483,8 @@
       render: function() {
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
-        this.$el.append(_.template(this.template, item));
+        this.$el.append(_.template(this.template, item)).toggleClass("selected").find("input").trigger("click");
+        this.chooseProp();
         return this;
       },
       chooseProp: function(e) {

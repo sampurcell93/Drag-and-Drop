@@ -9,7 +9,7 @@ script#dynamic-container(type='text/template')
 
 //- PLACEHOLDER FOR TAB LAYOUT - BEHAVIOR DEFINED IN CSS
 script#tab-layout(type='text/template')
-    p.center.p10.center.placeholder-text Drag in properties or elements. The layout will format them into tabs appropriately.
+    p.center.p10.center.placeholder Drag in properties or elements. The layout will format them into tabs appropriately.
 
 //- PLACEHOLDER FOR ACCORDION LAYOUT
 script#accordion-layout(type='text/template')
@@ -29,4 +29,7 @@ script#freeform-layout(type='text/template')
 
 //-  TEMPLATE FOR A BLANK LAYOUT YET TO BE CONFIGURED
 script#blank-layout(type='text/template')
-    ul.children
+script#table-layout(type='text/template')
+    p.placeholder.p10.center Drag properties into this layout to setup the table structure.
+    tr.children
+    tr.dummy

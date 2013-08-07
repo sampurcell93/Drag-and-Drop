@@ -11,10 +11,11 @@ $ ->
             $("#change-styles").html()
         ]
         initialize: ->
-            @change_queue = []
             if !@templates? then @templates = []
             @templates = @templates.concat @standards
         render: ->
+            if !@templates?
+                @templates = []
             # A pointer to the linked element in the builder.
             self     = @
             @link_el = @options.link_el 
@@ -23,28 +24,12 @@ $ ->
             @templates = @templates.concat [$("#finalize-editing").html()]
             # template data, and append results to the element.
             _.each @templates, (template) ->
-                console.log self.model.toJSON()
                 editor_content += _.template template, self.model.toJSON()
             # Append editor to body - making it a true modal is not within the purvue of this class
             @$el.appendTo(document.body).html(editor_content)
         # Put a new event into the queue, executed only if the user clicks .confirm
-        enqueue: (name, func, opts) ->
-            queue = @change_queue
-            # First, looks to see if this process is in the queue
-            prevDeclaration = _.findWhere queue, {
-                name: name
-            }
-            #  If it was, replace it with the new process by the same name
-            if prevDeclaration?
-                index = queue.indexOf(prevDeclaration)
-                queue[index] = prevDeclaration
-                return
-            # Otherwise, push/back the new process to the queue.
-            if opts? and opts.pushBack is true
-                queue.pushBack({name: name, func: func})
-            else
-                queue.push({name: name, func: func})
-
+        enqueue: (name, func) ->
+             @change_queue[name] = func
         events:
             "change .set-width": (e) ->
                 width = $(e.currentTarget).val()
@@ -65,7 +50,7 @@ $ ->
                 cq = @change_queue
                 # Fuck yeah, closures.
                 for process of cq
-                    process = do cq[process].func
+                    process = do cq[process]
             # On confirm or reject, close the modal.
             "click .reject, .confirm": ->
                 $(document.body).removeClass("active-modal")
@@ -90,7 +75,11 @@ $ ->
                     $t.addClass("selected-choice").siblings().removeClass("selected-choice")
                     if @model?
                         @enqueue("columns", ->
-                            self.model.set "columns", cols)
+                            self.model.set "columns", cols
+                            classes = self.model.get "classes"
+                            classes.push("column " + cols) 
+                            self.model.set "classes", classes
+                        )
                     _.each coltypes, (type) ->
                         self.enqueue("remove_col_classes-" + type, ->
                             $(self.link_el).removeClass("column " + type)
@@ -108,6 +97,7 @@ $ ->
                         self.model.set({
                             "layout": true
                             "view": layout
+                            type: "Tab Layout"
                         })
                         $(self.link_el).addClass("tab-layout")
                     )
@@ -120,7 +110,11 @@ $ ->
 
     class editors["Button"] extends editors["BaseEditor"]
         templates: [$("#button-editor").html()]
-
+        render: ->
+            super
+            @cq = @change_queue
+            modal = @el || $(".modal").first()
+            @$el = $(@el)
     class editors['Link'] extends editors["BaseEditor"]
         templates: [$("#link-editor").html()]
         initialize: ->
@@ -128,13 +122,17 @@ $ ->
     class editors['Radio'] extends editors["BaseEditor"]
         templates: [$("#radio-editor").html()]
         initialize: ->
-            super
             self = @
             _.extend @events, {
                 "change .label-position": (e) ->
                     position = $(e.currentTarget).val()
                     self.enqueue("label_position", ->
                         self.model.set("label_position", position)
+                    )
+                "keyup .label-text": (e) ->
+                    label = $(e.currentTarget).val()
+                    self.enqueue("label_text", ->
+                        self.model.set("label_text", label)
                     )
             }
 

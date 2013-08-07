@@ -7,31 +7,38 @@ include builder.jade
 .container
     //- The template for rendering a single instance of the builder - allows multiple builder tabs to be open at once.
     script(type='text/template')#controller-wrap
-           header
-                <h1 class='section-title w4 inline'><%= typeof title !== "undefined" ? title : "Default Section Title"%></h1>
-                button.fr.view-sections(data-icon='i') View Sections
-                button.fr.generate-section(data-icon='h') View Section Builder
-                button.fr.configure-interface.icon e
-                button.fr.orange.save-section(data-icon='m') Save Section
-                ul#existing-sections.hidden
+           
+            ul.sidebar-controls.main-controls
+                li(data-icon='k').generate-section Builder
+                li(data-icon='e').configure-interface No Grid
+                li(data-icon='m').save-section Save
+                li(data-icon='n').history History
+                    ul
+
             .section-builder-wrap
-                h2.w35.fl.m10.center Add Content to this Section
-                .clear
-                input.w35.fl.m10#search-data-types(placeholder='Search Data Types')
+                p.nice-dialog
+                    | Configure your data here. Start by choosing system properties to include in your section. They will be easily accessible while you build.
+
+                div.fl.w35.m10
+                    h2.m10.center Add Content to this Section
+                    input#search-data-types(placeholder='Search Data Types').w9.mauto
+                    ul.select-properties.class-list.m10
+                div.fl.w05.icon.center.right-arrow
+                    span s
+                div.fl.w3.m30
+                    ul.property-editor
+                ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr
                 .clear  
-                ul.select-properties.class-list.m10
                  //- Simple UI pointer to selected items.
-                div.fl.w15.icon.center.right-arrow
-                    span s
-                    span s
-                    span s
+                
                 //-  Part of the configuration panel, allows backend editing of properties.
-                ul.property-editor.fl.w45.m10
-                .clear
+                
 
             .section-builder-wrap.hidden
                 //-  Generic elements to drag into the builder
-                ul.fr.w75.outside-draggables
+                ul.organize-elements.dark-sidebar.sidebar-controls
+                    li.organizer-header Section Content
+                ul.outside-draggables
                     li.generic-elements
                         | Basic
                         ul
@@ -41,17 +48,19 @@ include builder.jade
                     li.advanced 
                         | Advanced
                         ul
-                    li.history
-                        | History
-                        ul
+                
 
-                //- The UI architecture panel, which shows the overall structure of the section.
-                ul.organize-elements
+                
                 //- The container for the builder itself.
-                section.w75.builder-container
-                //-  A template for each draggable element. Because rendering is recursive,
-                //-  more complex templates are unnecessary.
+                section.builder-container
+                //- The UI architecture panel, which shows the overall structure of the section.
                 .clear
-            footer
+
                 //- button.fr.view-layouts(data-icon='d') View Layouts
 
+//- header
+           //-      <h1 class='section-title w4 inline'><%= typeof title !== "undefined" ? title : "Default Section Title"%></h1>
+           //-      button.fr.view-sections(data-icon='i') View Sections
+           //-      button.fr.configure-interface.icon e
+           //-      button.fr.orange.save-section(data-icon='m') Save Section
+           //-      ul#existing-sections.hidden

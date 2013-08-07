@@ -152,8 +152,8 @@ $(document).ready ->
                 $t = $(e.currentTarget)
                 $t.toggleClass "viewing-layout"
                 if $t.hasClass "viewing-layout"
-                    $t.text "View Configuration" 
-                else $t.text "View Section Builder"
+                    $t.text "Configuration" 
+                else $t.text "Builder"
             @$el.find(@wrap).slideToggle('fast')
         saveSection: ->
             title = @$el.find(".section-title").text()
@@ -393,8 +393,8 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append(_.template @template,item)
-            # .toggleClass("selected").find("input").trigger "click"
-            # @chooseProp()
+            .toggleClass("selected").find("input").trigger "click"
+            @chooseProp()
             this
         chooseProp: (e) ->
             console.log "TesT"

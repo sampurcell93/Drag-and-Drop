@@ -4,7 +4,15 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var allLayouts, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var adjs, allLayouts, nouns, randomDict, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+    adjs = ["autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark", "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter", "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue", "billowing", "broken", "cold", "damp", "falling", "frosty", "green", "long", "late", "lingering", "bold", "little", "morning", "muddy", "old", "red", "rough", "still", "small", "sparkling", "throbbing", "shy", "wandering", "withered", "wild", "black", "young", "holy", "solitary", "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine", "polished", "ancient", "purple", "lively", "nameless", "protected", "fierce", "snowy", "floating", "serene", "placid", "afternoon", "calm", "cryptic", "desolate", "falling", "glacial", "limitless", "murmuring", "pacific", "whispering"];
+    nouns = ["waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning", "snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter", "forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook", "butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly", "feather", "grass", "haze", "mountain", "night", "pond", "darkness", "snowflake", "silence", "sound", "sky", "shape", "surf", "thunder", "violet", "water", "wildflower", "wave", "water", "resonance", "sun", "wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper", "frog", "smoke", "star", "savannah", "quarry", "mountainside", "riverbank", "canopy", "tree", "monastery", "frost", "shelf", "badlands", "crags", "lowlands", "badlands", "woodlands", "eyrie", "beach", "temple"];
+    String.prototype.firstUpperCase = function() {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+    };
+    randomDict = function() {
+      return (adjs[Math.floor(Math.random() * adjs.length)] + "-" + nouns[Math.floor(Math.random() * nouns.length)]).toLowerCase().firstUpperCase() + "-" + Math.floor(Math.random() * 10000);
+    };
     allLayouts = [
       {
         type: 'Dynamic Layout',
@@ -18,6 +26,12 @@
       }, {
         type: 'List Layout',
         view: 'ListLayout'
+      }, {
+        type: 'Dynamic Grid',
+        view: 'table'
+      }, {
+        type: 'Dynamic Repeating Layout',
+        view: 'RepeatingLayout'
       }
     ];
     window.models.Layout = (function(_super) {
@@ -69,6 +83,7 @@
         this.model.set("layout", true);
         layout.__super__.initialize.apply(this, arguments);
         self = this;
+        _.bindAll(this, "afterRender");
         this.$el.addClass("layout-wrapper");
         this.listenTo(this.model.get("child_els"), "add", function(m, c, o) {
           if ((c != null) && c.length) {
@@ -100,6 +115,12 @@
         });
       };
 
+      layout.prototype.afterRender = function() {
+        if (this.model.get("child_els").length > 0) {
+          return this.$el.children(".placeholder").hide();
+        }
+      };
+
       return layout;
 
     })(window.views.draggableElement);
@@ -108,12 +129,65 @@
         higher level event from firing.
     */
 
-    window.views["dynamicLayout"] = (function(_super) {
+    views["table"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
         _ref2 = _Class.__super__.constructor.apply(this, arguments);
         return _ref2;
+      }
+
+      _Class.prototype.tagName = 'table class="builder-element column six"';
+
+      _Class.prototype.template = $("#table-layout").html();
+
+      _Class.prototype.initialize = function() {
+        var self;
+        _Class.__super__.initialize.apply(this, arguments);
+        self = this;
+        return this.model.get("child_els").on("add", function(model, collection, options) {
+          if (model.get("type") !== "Property") {
+            collection.remove(model);
+            return self.model.collection.add(model);
+          } else {
+            model.set("view", "TableCell");
+            console.log(self.$el.find(".dummy"));
+            return self.$el.find(".dummy").first().append(self.dummyData());
+          }
+        });
+      };
+
+      _Class.prototype.dummyData = function() {
+        var cell_template, col, cols, dummy, row, rows, _i, _j;
+        cols = this.model.get("child_els").length;
+        rows = 5;
+        cell_template = "<td><%= word %></td>";
+        dummy = "";
+        for (row = _i = 0; 0 <= rows ? _i < rows : _i > rows; row = 0 <= rows ? ++_i : --_i) {
+          if (row > 0) {
+            dummy += "<tr>";
+          }
+          for (col = _j = 0; 0 <= cols ? _j < cols : _j > cols; col = 0 <= cols ? ++_j : --_j) {
+            dummy += _.template(cell_template, {
+              word: randomDict()
+            });
+          }
+          if (row > 0) {
+            dummy += "</tr>";
+          }
+        }
+        return dummy;
+      };
+
+      return _Class;
+
+    })(views["layout"]);
+    window.views["dynamicLayout"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref3 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref3;
       }
 
       _Class.prototype.configTemplate = $("#dynamic-layout-setup").html();
@@ -145,8 +219,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref3 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref3;
+        _ref4 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref4;
       }
 
       _Class.prototype.template = $("#dynamic-container").html();
@@ -165,8 +239,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref4 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref4;
+        _ref5 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref5;
       }
 
       _Class.prototype.events = {
@@ -240,8 +314,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref5 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref5;
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
       }
 
       _Class.prototype.template = $("#tab-layout").html();
@@ -292,8 +366,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref6 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref6;
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
       }
 
       _Class.prototype.initialize = function() {
@@ -313,8 +387,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref7 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref7;
+        _ref8 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref8;
       }
 
       _Class.prototype.template = $("#blank-layout").html();

@@ -21,7 +21,6 @@
       _Class.prototype.standards = [$("#change-styles").html()];
 
       _Class.prototype.initialize = function() {
-        this.change_queue = [];
         if (this.templates == null) {
           this.templates = [];
         }
@@ -30,39 +29,21 @@
 
       _Class.prototype.render = function() {
         var editor_content, self;
+        if (this.templates == null) {
+          this.templates = [];
+        }
         self = this;
         this.link_el = this.options.link_el;
         editor_content = "";
         this.templates = this.templates.concat([$("#finalize-editing").html()]);
         _.each(this.templates, function(template) {
-          console.log(self.model.toJSON());
           return editor_content += _.template(template, self.model.toJSON());
         });
         return this.$el.appendTo(document.body).html(editor_content);
       };
 
-      _Class.prototype.enqueue = function(name, func, opts) {
-        var index, prevDeclaration, queue;
-        queue = this.change_queue;
-        prevDeclaration = _.findWhere(queue, {
-          name: name
-        });
-        if (prevDeclaration != null) {
-          index = queue.indexOf(prevDeclaration);
-          queue[index] = prevDeclaration;
-          return;
-        }
-        if ((opts != null) && opts.pushBack === true) {
-          return queue.pushBack({
-            name: name,
-            func: func
-          });
-        } else {
-          return queue.push({
-            name: name,
-            func: func
-          });
-        }
+      _Class.prototype.enqueue = function(name, func) {
+        return this.change_queue[name] = func;
       };
 
       _Class.prototype.events = {
@@ -91,7 +72,7 @@
           cq = this.change_queue;
           _results = [];
           for (process in cq) {
-            _results.push(process = cq[process].func());
+            _results.push(process = cq[process]());
           }
           return _results;
         },
@@ -129,7 +110,11 @@
             $t.addClass("selected-choice").siblings().removeClass("selected-choice");
             if (this.model != null) {
               this.enqueue("columns", function() {
-                return self.model.set("columns", cols);
+                var classes;
+                self.model.set("columns", cols);
+                classes = self.model.get("classes");
+                classes.push("column " + cols);
+                return self.model.set("classes", classes);
               });
             }
             _.each(coltypes, function(type) {
@@ -152,7 +137,8 @@
             return this.enqueue("view", function() {
               self.model.set({
                 "layout": true,
-                "view": layout
+                "view": layout,
+                type: "Tab Layout"
               });
               return $(self.link_el).addClass("tab-layout");
             });
@@ -172,6 +158,14 @@
       }
 
       _Class.prototype.templates = [$("#button-editor").html()];
+
+      _Class.prototype.render = function() {
+        var modal;
+        _Class.__super__.render.apply(this, arguments);
+        this.cq = this.change_queue;
+        modal = this.el || $(".modal").first();
+        return this.$el = $(this.el);
+      };
 
       return _Class;
 
@@ -203,7 +197,6 @@
 
       _Class.prototype.initialize = function() {
         var self;
-        _Class.__super__.initialize.apply(this, arguments);
         self = this;
         return _.extend(this.events, {
           "change .label-position": function(e) {
@@ -211,6 +204,13 @@
             position = $(e.currentTarget).val();
             return self.enqueue("label_position", function() {
               return self.model.set("label_position", position);
+            });
+          },
+          "keyup .label-text": function(e) {
+            var label;
+            label = $(e.currentTarget).val();
+            return self.enqueue("label_text", function() {
+              return self.model.set("label_text", label);
             });
           }
         });

@@ -31,17 +31,31 @@
 html { height: 100%; }
 
 body {
-	background: url("../images/tweed.png");
+	background: url("../images/studioheader.png") no-repeat, url("../images/studiosidebar.png") 0px 48px no-repeat, #5e5e5e;
 	font-family: $opensans;
+	font-size: 15px;
 	text-shadow: 0px 1px 0px #fff;
 	color: #444;
 	position: relative;
 	min-height: 100%;
-	padding-top: 40px;
+	height: 100%;
+	padding-top: 10px;
+
+	&:before {
+		content: "";
+		display: block;
+		position: absolute;
+		left: 0;
+		top: 840px;
+		height: 100%;
+		width: 49px;
+		z-index: -1222;
+		background: #2C3035;
+	}
 
 	&:after {
 		content: "";
-		position: absolute;
+		position: fixed;
 		display: none;
 		left: 0;
 		top: 0px;
@@ -79,13 +93,25 @@ h3 {
 	padding: 5px 3px;
 }
 
+p {
+	line-height: 1.7;
+	&.nice-dialog {
+		text-align: center;
+		padding: 10px;
+		border: 1px solid #ddd;
+		margin: 10px 0;
+		@include border-radius(3px);
+	}
+}
+
 .tabs {
 	height: 40px;
 	background: none;
 	display: block;
-	width: 1200px;
-	max-width: 100%;
-	margin: 0px auto;
+	position: relative;
+	width: 80%;
+	left: 356px;
+	margin: 40px 0 0 0;
 
 	.add-section {
 		float: left;
@@ -127,15 +153,9 @@ h3 {
 
 header, footer {
 	// needs latest Compass, add '@import "compass"' to your scss
-	background-color: #424141; // Old browsers
-	@include filter-gradient(#424141, #262626, vertical); // IE6-9
-	@include background-image(linear-gradient(top,  #424141 0%,#262626 100%));
-	//needs latest Compass, add '@import "compass"' to your scss
-	// background-color: #aebcbf; // Old browsers
-	// @include filter-gradient(#aebcbf, #0a0809, vertical); // IE6-9
-	// @include background-image(linear-gradient(top,  #aebcbf 0%,#6e7774 50%,#0a0e0a 51%,#0a0809 100%));
 	@include clearfix();
 	@include border-radius(3px 3px 0 0 );
+	background: $dusky;
 	color: #f9f9f9;
 	text-shadow: 0px -1px 0px #111;
 	padding: 10px 5px 10px 10px;
@@ -203,13 +223,14 @@ footer {
 
 .container {
 	display: block;
-	width: 1200px;
-	max-width: 100%;
-	margin: 0px auto;
-	background: #f9f9f9;
+	width:  83%;
+	max-width: 80%;
+	margin-left: 356px;
+	min-height: 90%;
+	background: #eee;
 	position: relative;
+	margin-top: -17px;
 	@include box-shadow(0px 0px 9px #333);
-	@include border-radius(4px);
 }
 
 .modal {
@@ -235,13 +256,6 @@ footer {
 }
 
 ul.select-properties {
-	display: block;
-	width: 35%;
-	float: left;
-	// min-height: 200px;
-	position: relative;
-	// margin-top: 50px !important;
-
 	.add-property {
 		font-size: .88em;
 		padding: 0 15px 0 0;
@@ -322,7 +336,7 @@ ul.select-properties {
 		cursor: pointer;
 		padding: 4px 15px;
 		position: absolute;
-		right: 3px;
+		left: 3px;
 		top: 0px;
 		z-index: 11;	
 	}
@@ -397,6 +411,7 @@ ul.property-editor {
 	padding: 32px 10px 10px;
 	@include border-radius(3px);
 	position: relative;
+	margin-top: 100px;
 
 	&:before {
 		content: "Selected Properties";
@@ -447,19 +462,18 @@ ul.property-editor {
 }
 
 .sort-element {
-	background: $fadedblue;
 	font-family: 'icons';
 	position: absolute;
 	height: 100%;
 	width: 30px;
 	text-align: center;
 	display: block;
-	color: #444;
+	color: #f9f9f9;
 	font-size: .8em;
 }
 
 .right-arrow {
-	line-height: 300px;
+	line-height: 500px;
 	font-size: 3rem;
 	color: $strongblue;
 	@include opacity(.3);
@@ -496,10 +510,11 @@ ul.property-editor {
 
 ul.outside-draggables {
 	display: block;
-	margin: 10px 10px 0 0;
+	float: left;
+	margin: 10px 0 0 10px;
 	border-top: 1px solid #fff;
 	@include border-radius(3px 3px 0 0);
-	background: $strongblue;
+	background: $dusky;
 	color: #fff;
 	
 	li {
@@ -611,112 +626,15 @@ ul.outside-draggables {
 	}
 }
 
-.organize-elements {
-	
-	min-height: 100%;
-	margin: 10px;
-	padding: 5px;
-	width: 25.5%;
-	margin-left: -4%;
-	float: left;
-	position: relative;
-	background: #fff;
-	@include border-radius(3px);
-	@include box-shadow(0px 1px 2px #aaa);
-	border: 1px solid #ccc;
-
-	.ui-sortable-placeholder {
-		border: 1px dotted $strongblue;
-		visibility: visible !important;
-		background: #fff !important;
-	}
-
-	li {
-		position: relative;
-		padding-left: 25px;
-		min-height: 30px;
-		line-height: 30px;
-		display: block;
-		cursor: move;
-		width: 100%;
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis !important;
-
-		&:first-child {
-			@include border-radius(2px 2px 0 0);
-			.sort-element {
-				@include border-radius(2px 0 0 0);
-			}
-		}
-		&:last-child {
-			@include border-radius(0 0 2px 2px);
-			.sort-element {
-				@include border-radius(0 0 0 2px);
-			}
-			
-		}
-
-		&:nth-child(odd) {
-			background: $fadedblue;
-		}
-		&:nth-child(even) {
-			background: #fff;
-		}
-
-		.destroy-element, .activate-element { display: none;}
-
-		.sort-element {
-			left: 0px;
-			top: 0px;
-			cursor: pointer;
-			cursor: hand;
-			width: 20px;
-			text-align: center;
-		}
-
-		.child-list { 
-			margin-left: -12px !important;
-		}
-
-		&.out-of-flow {
-			background: #ddd !important;
-
-			> .destroy-element, > .activate-element { display: block;}
-			 .sort-element {background: #ccc; }
-
-			 li {
-				background: #ddd !important;
-			 }
-		}
-
-		.activate-element, .destroy-element {
-			position: absolute;
-			right: 10px;
-			font-family: 'icons';
-			color: #7FBA50;
-			cursor: pointer;
-		}
-		.destroy-element {
-			right: 33px;
-			color: #666;
-		}
-	}
-}
-
 section.builder-container {
-	float: right;
+	float: left;
+	width: 93%;
 	position: relative;
 	margin: 0px 10px 10px;
 	padding: 0;
 	@include border-radius(0 0 3px 3px);
 	@include box-shadow(0px 2px 4px #ccc);
 	border: 1px solid #ccc;
-
-	.sort-element {
-		top: 0;
-		right: 0;
-	}
 
 	&.no-grid {
 
@@ -865,7 +783,6 @@ section.builder-container {
 	cursor: pointer;
 	text-align: center;
 	background: $strongblue;
-	width: 55px;
 	border: 1px solid #f9f9f9;
 	border-bottom: none;
 	max-height: 25px;
@@ -878,7 +795,6 @@ section.builder-container {
 		float: left;
 		text-shadow: none;
 		padding: 0 6px;
-		width: 50%;
 		line-height: 25px;
 		color: white;
 		position: relative;
@@ -1189,5 +1105,191 @@ ul li.selected-choice {
 		&[data-layout="tabs"] {
 			background: url("../images/tabicon.jpg") no-repeat center 15px;
 		}
+	}
+}
+
+.control-section { 
+	height: 100%; 
+}
+
+.section-builder-wrap { 
+	padding: 12px 240px 12px 120px;
+	height: 100%;
+}
+
+.dark-sidebar {
+	background: $dusky;
+}
+
+.sidebar-controls {
+	position: absolute;
+	top: 0;
+	width: 100px;
+	background: $dusky;
+	height: 100%;
+	color: #f9f9f9;
+	text-shadow: none;
+
+	&.main-controls {
+		border-right: 1px solid #222;
+		left: 0;
+
+		li {
+			height: 80px;
+			padding-top: 50px;
+		}
+	}
+	&.existing-sections-layouts {
+		border-left: 1px solid #222;
+		right: 0;
+		overflow-y: scroll;
+	}
+	&.organize-elements {
+		right: 0;
+	}
+
+	li {
+		text-align: center;
+		vertical-align: bottom;
+		border-bottom: 1px solid #222;
+		border-top: 1px solid #777;
+		cursor: pointer;
+		position: relative;
+	
+		&[data-icon]:before {
+			position: absolute;
+			content: attr(data-icon);
+			font-family: 'icons';
+			top: 10px;
+			display: block;
+			width: 100%;
+			text-align: center;
+		}
+		&:last-of-type {
+			border-bottom: none;
+		}
+		&:hover {
+			background: $lightdusk;
+		}
+
+		&:hover::before {
+			text-shadow: 0px -1px 3px #fff;
+		}
+
+		&:hover ul { display: block; }
+
+		ul {
+			display: none;
+			max-height: 400px;
+			width: 200px;
+			z-index: 333;
+			position: absolute;
+			left: 100px;
+			top: 0;
+			background: $dusky;
+			border-left: 1px solid #777;
+			overflow-y: scroll;
+
+			li {
+				min-height: 30px;
+				padding-top: 0;
+				line-height: 40px;
+
+				&.ahead-of-flow {
+					background: #000;
+					color: #fff;
+
+					&:hover {
+						background: #aaa;
+					}
+				}
+			}
+		}
+	}
+}
+
+.organize-elements {
+	min-height: 100%;
+	padding: 0px 0 10px;
+	width: 18%;
+	min-height: 100%;
+	min-width: 130px;
+	height: 100%;
+	background: $dusky;
+	border-left: 1px solid #333;
+	border-bottom: 1px solid #333;
+	z-index: 9999;
+
+	.ui-sortable-placeholder {
+		border: 1px dotted $strongblue;
+		visibility: visible !important;
+		background: $strongblue !important;
+		@include box-shadow(0px 0px 40px $strongblue, inset 0px 0px 1px rgba(255,255,255,.9));
+	}
+
+	> li {
+		border-top: 1px solid $lightdusk;
+		border-bottom: 1px solid #222;
+		&.out-of-flow {
+			border-top-color: #666;
+		}
+	}
+
+	li {
+		position: relative;
+		padding-left: 40px;
+		min-height: 30px;
+		line-height: 30px;
+		display: block;
+		cursor: move;
+		width: 100%;
+		text-shadow: 0px -1px 0px #222;
+		color: #f9f9f9;
+		overflow: hidden;
+		white-space: nowrap;
+		text-align: left;
+		text-overflow: ellipsis !important;
+
+		.destroy-element, .activate-element { display: none;}
+
+		.sort-element {
+			left: 7px;
+			top: 0px;
+			cursor: pointer;
+			cursor: hand;
+			width: 20px;
+			text-align: center;
+		}
+
+		.child-list { 
+			margin-left: -12px !important;
+		}
+
+		&.out-of-flow {
+			background: #000;
+			padding-right: 60px;
+
+			> .destroy-element, > .activate-element { display: block;}
+			 .sort-element {background: #313131; }
+		}
+
+		.activate-element, .destroy-element {
+			position: absolute;
+			right: 10px;
+			font-family: 'icons';
+			color: #7FBA50;
+			cursor: pointer;
+		}
+		.destroy-element {
+			right: 33px;
+			color: #666;
+		}
+	}
+	li.organizer-header {
+		text-align: center;
+		font-size: 1.3em;
+		padding: 6px 0;
+		background: #313131;
+		border-bottom: 1px solid #000;
 	}
 }

@@ -15,6 +15,9 @@ $(document).ready ->
         $(document.body).addClass("active-modal").append(modal)
         modal
 
+    window.launchDraggableModal = (content) ->
+            
+
     $.fn.launchModal = (content) ->
         console.log $(@), "launching jquery modal"
         @addClass("modal").appendTo($("body").addClass("active-modal"))

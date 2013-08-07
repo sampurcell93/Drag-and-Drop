@@ -38,13 +38,17 @@
           "change:view": function(model, view, opts) {
             var collection, index;
             console.log("changing view");
-            index = model.collection.indexOf(model);
-            collection = self.collection;
-            if (collection != null) {
-              cc("COLLECTION");
-              collection.remove(self);
-              return collection.add(self, {
-                at: index
+            collection = model.collection;
+            index = collection.indexOf(model);
+            console.log(collection);
+            if ((collection != null) && typeof collection !== "undefined") {
+              console.log("modelling shit");
+              collection.remove(model, {
+                no_history: true
+              });
+              return collection.add(model, {
+                at: index,
+                no_history: true
               });
             }
           }
@@ -97,10 +101,14 @@
             return false;
           }
           _.each(putIn, function(model) {
-            return model.collection.remove(model);
+            return model.collection.remove(model, {
+              no_history: true
+            });
           });
         } else if (putIn.collection != null) {
-          putIn.collection.remove(putIn);
+          putIn.collection.remove(putIn, {
+            no_history: true
+          });
         }
         children = this.get("child_els");
         console.log(putIn instanceof models.Element);
@@ -189,12 +197,15 @@
       droppablePlaceholder.prototype.render = function() {
         var ghostFragment, self;
         self = this;
-        ghostFragment = $("<div/>").addClass("droppable-placeholder").text("");
+        ghostFragment = $("<div/>").addClass("droppable-placeholder").html("<div class='make-bigger'></div>");
         return ghostFragment.droppable({
           accept: ".builder-element, .outside-draggables li, .property",
           greedy: true,
           tolerance: 'pointer',
           over: function(e, ui) {
+            if ($(document.body).hasClass("active-modal")) {
+              return false;
+            }
             return $(e.target).css("opacity", 1);
           },
           out: function(e, ui) {
@@ -203,6 +214,9 @@
           drop: function(e, ui) {
             var curr, dropZone, insertAt, parent;
             $(".over").removeClass("over");
+            if ($(document.body).hasClass("active-modal")) {
+              return false;
+            }
             dropZone = $(e.target);
             if ((dropZone.closest(".builder-element").length)) {
               insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev());
@@ -250,10 +264,18 @@
       draggableElement.prototype.modelListeners = {};
 
       draggableElement.prototype.initialize = function() {
+        this.index = this.options.index;
+        _.bindAll(this, "render", "bindDrop", "bindDrag", "appendChild", "bindListeners");
+        this.on("bindListeners", this.bindListeners);
+        this.bindDrop();
+        this.bindDrag();
+        return this.bindListeners();
+      };
+
+      draggableElement.prototype.bindListeners = function() {
         var self;
         self = this;
-        this.index = this.options.index;
-        _.bindAll(this, "render", "bindDrop", "bindDrag", "appendChild");
+        this.stopListening();
         this.listenTo(this.model.get("child_els"), {
           'add': function(m, c, o) {
             if (!(typeof self.itemName === "undefined")) {
@@ -261,12 +283,17 @@
               m.set("view", self.itemName);
             }
             return self.appendChild(m, o);
-          },
-          "change": function() {
-            return cc("change");
           }
         });
         this.modelListeners = _.extend({}, this.modelListeners, {
+          "change:classes": function() {
+            console.log("changed classes");
+            return this.render(false);
+          },
+          "change:child_els": function() {
+            self.bindListeners();
+            return self.render();
+          },
           "change:inFlow": function(model) {
             if (model.get("inFlow") === true) {
               return self.$el.slideDown("fast").next(".droppable-placeholder").slideDown("fast").prev(".droppable-placeholder").slideDown("fast");
@@ -287,13 +314,13 @@
             }
           },
           "renderBase": function() {
-            return this.render(false);
+            return self.render(false);
           },
-          "render": this.render
+          "render": function() {
+            return self.render(true);
+          }
         });
-        this.listenTo(this.model, this.modelListeners);
-        this.bindDrop();
-        return this.bindDrag();
+        return this.listenTo(this.model, this.modelListeners);
       };
 
       draggableElement.prototype.render = function(do_children) {
@@ -333,6 +360,9 @@
         var $el, builderChildren, draggable, i, view;
         console.log("appending child!");
         $el = this.$el.children(".children");
+        if ($el.length === 0) {
+          $el = $el.find(".children").first();
+        }
         if (child['layout-element'] === true) {
           $el.addClass("selected-element");
         }
@@ -421,6 +451,9 @@
           tolerance: 'pointer',
           accept: '.builder-element, .outside-draggables li, .property',
           over: function(e) {
+            if ($(document.body).hasClass("active-modal")) {
+              return false;
+            }
             return $(e.target).addClass("over");
           },
           out: function(e) {
@@ -429,6 +462,9 @@
           drop: function(e, ui) {
             var builder, draggingModel, model, sect_interface, section;
             $(e.target).removeClass("over").parents().removeClass("over");
+            if ($(document.body).hasClass("active-modal")) {
+              return false;
+            }
             draggingModel = window.currentDraggingModel;
             if (typeof draggingModel === "undefined" || (draggingModel == null)) {
               return false;
@@ -474,6 +510,7 @@
       draggableElement.prototype.applyClasses = function() {
         var $el;
         $el = this.$el;
+        console.log(this.model.get("classes"));
         return _.each(this.model.get("classes"), function(style) {
           return $el.addClass(style);
         });
@@ -495,7 +532,9 @@
         });
         return _.each(selected, function(model) {
           if (model.collection != null) {
-            model.collection.remove(model);
+            model.collection.remove(model, {
+              no_history: true
+            });
           }
           return layout.get("child_els").add(model);
         });
@@ -573,6 +612,21 @@
         "click .set-options li": function(e) {
           this.unbindContextMenu(e);
           e.preventDefault();
+          return e.stopPropagation();
+        },
+        "click .quick-props": function(e) {
+          var attrs, prop, properties, property_item;
+          property_item = "<li><%=prop%> : <%= value %></li>";
+          properties = "<ul>";
+          attrs = this.model.attributes;
+          for (prop in attrs) {
+            properties += _.template(property_item, {
+              prop: prop,
+              value: attrs[prop]
+            });
+          }
+          properties += "</ul>";
+          window.launchModal(properties);
           return e.stopPropagation();
         },
         "click .remove-from-flow": function(e) {

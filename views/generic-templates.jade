@@ -20,7 +20,8 @@ script(type='text/template')#custom-header
 script(type='text/template')#custom-link
     <a href="<%= typeof link_href !== 'undefined' ? link_href : '#' %>" title="<%= typeof title !== 'undefined' ? title : 'Link' %>"><%= typeof title !== "undefined" ? title : 'Link' %></a>
 script(type='text/template')#generic-radio
-    <% var label = "<label class='no-drag main-label'><span class='label-text'>Radio Button</span>" %>
+    <% var label_text = typeof label_text !== "undefined" ? label_text : "Radio Button" %>
+    <% var label = "<label class='no-drag main-label'><span class='label-text'>" + label_text + "</span>" %>
     <% var labelpos = typeof label_position !== "undefined" ? label_position : false %>
     <% if (labelpos == "left" || labelpos == "top" || labelpos == false) { %>
     <%= label %>
@@ -40,4 +41,4 @@ script(type='text/template')#property-template
         h3 <% if (typeof property !== "undefined") { print(property.name.clean()) }%>
         label
         <% if (typeof property !== "undefined") { %> <input placeholder='<%= className + "." + property.name.clean() %>' /> <%}%>
-
+ 

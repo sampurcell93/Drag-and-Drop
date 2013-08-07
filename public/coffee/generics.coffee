@@ -157,10 +157,12 @@ $(document).ready ->
             super 
             self = @
             _.bindAll(@, "afterRender")
-            @model.on "change:label_position", ->
-                console.log "changed label pos"
-                self.render()
+            @model.on {
+                "change:label_position" : @render
+                "change:label_text" : @render
+            }
         afterRender: ->
+            console.log "just rendered radio"
             label_position = @model.get("label_position")
             if  label_position == "top" || label_position == "bottom"
                 console.log @$el.find("span.label-text").css("display", "block")
@@ -183,7 +185,10 @@ $(document).ready ->
         template: $("#dropdown").html()
         initialize: (options) ->
             super 
-
+    class window.views['TableCell'] extends window.views.genericElement
+        tagName: 'td class="builder-element"'
+        initialize: (options) ->
+            super 
 
     class window.views['BuilderWrapper'] extends window.views.genericElement
         controls: null

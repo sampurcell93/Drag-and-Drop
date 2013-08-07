@@ -12,7 +12,7 @@ script(type='text/template')#button-editor
 script(type='text/template')#link-editor
     label
         | Set link title:
-        <input type='text' class='title-setter w7' value='<%= typeof title !== "undefined" ? title: "Default Text"%>' />    
+        <input type='text' class='title-setter w7' value='<%= typeof title !== "undefined" ? title: ""%>' placeholder='Default Text' />    
     label
         | Set link destination:
         <input type='text' class='title-setter w7' placeholder="e.g. http://pega.com" value='<%= typeof link_href !== "undefined" ? title: ""%>' />    
@@ -27,6 +27,9 @@ script(type='text/template')#radio-editor
         <option value="top" <% if (pos == "top") print("selected") %>> Top</option>
         <option value="bottom" <% if (pos == "bottom") print("selected") %>> Bottom</option>
         </select>
+    label   
+        | Label Text: 
+        <input type='text' class='label-text w7 m10' value='<%= typeof label_text !== "undefined" ? label_text: ""%>' placeholder='Default Label' />    
 
 script#column-picker(type='text/template')
     h2 Choose a column layout

@@ -5,25 +5,67 @@
     history = window.views.history = {};
     window.models.Snap = Backbone.Model.extend();
     window.collections.Snapshots = Backbone.Collection.extend({
-      model: window.models.Snap
+      model: window.models.Snap,
+      initialize: function() {
+        return this.detached_head = false;
+      }
     });
     history.Snapshot = Backbone.View.extend({
       tagName: 'li',
       template: $("#snapshot").html(),
       initialize: function() {
-        return this.controller = this.options.controller;
+        var self;
+        this.controller = this.options.controller;
+        this.current = this.options.current;
+        self = this;
+        return this.listenTo(this.model, {
+          "aheadOfFlow": function() {
+            return self.$el.addClass("ahead-of-flow");
+          },
+          "insideFlow": function() {
+            return self.$el.removeClass("ahead-of-flow");
+          },
+          "destroy": function() {
+            cc("destroying model");
+            return self.remove();
+          }
+        });
       },
       events: {
-        "click": function() {
-          var snapshot;
+        "click": function(e) {
+          var ahead_flow, all_snaps, controller, inside_flow, model_index, snapshot;
+          all_snaps = this.model.collection;
+          model_index = all_snaps.indexOf(this.model);
+          controller = this.controller;
           snapshot = this.model.get("snapshot");
-          this.controller.model.set("currentSection", snapshot);
-          this.controller.organizer.collection = snapshot;
-          this.controller.organizer.render();
-          this.controller.builder.collection = snapshot;
-          console.log(this.controller.builder.scaffold);
-          this.controller.builder.scaffold.set("child_els", snapshot);
-          return this.controller.builder.scaffold.trigger("render");
+          ahead_flow = _.filter(this.model.collection.models, function(m, i) {
+            return i > model_index;
+          });
+          inside_flow = _.filter(this.model.collection.models, function(m, i) {
+            return i <= model_index;
+          });
+          _.each(ahead_flow, function(snap) {
+            return snap.set("aheadOfFlow", true).trigger("aheadOfFlow");
+          });
+          _.each(inside_flow, function(snap) {
+            return snap.set("aheadOfFlow", false).trigger("insideFlow");
+          });
+          controller.model.set("currentSection", snapshot);
+          controller.organizer.collection = snapshot;
+          controller.organizer.render();
+          controller.builder.collection = snapshot;
+          controller.builder.scaffold.set("child_els", snapshot);
+          if (model_index < all_snaps.length - 1) {
+            console.log("setting head to detached");
+            all_snaps.detached_head = true;
+          } else {
+            all_snaps.detached_head = false;
+          }
+          this.current.collection = snapshot;
+          this.current.bindListeners();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
         }
       },
       render: function() {
@@ -34,35 +76,58 @@
     return history.HistoryList = Backbone.View.extend({
       el: '.history ul',
       initialize: function() {
-        var self;
         this.controller = this.options.controller;
         this.snapshots = this.options.snapshots;
-        self = this;
+        _.bindAll(this, "makeHistory", "copyCollection", "render", "append", "bindListeners");
+        return this.bindListeners();
+      },
+      bindListeners: function() {
+        this.stopListening();
         return this.listenTo(this.collection, {
-          "all": function(operation, subject, collection) {
-            var clone, wrapper;
-            clone = self.copyCollection(self.collection);
-            wrapper = new models.Snap({
-              snapshot: clone
-            });
-            wrapper.set({
-              "opname": operation,
-              "title": subject.get("title"),
-              "type": subject.get("type")
-            });
-            self.snapshots.add(wrapper);
-            return self.append(wrapper);
+          "all": this.makeHistory
+        });
+      },
+      makeHistory: function(operation, subject, collection, options) {
+        var clone, wrapper;
+        if (!((options != null) && options.no_history === true)) {
+          if (this.snapshots.detached_head === true) {
+            console.log("changing detached head");
+            this.deleteForwardChanges();
           }
+          clone = this.copyCollection(collection);
+          if (clone === false) {
+            return;
+          }
+          wrapper = new models.Snap({
+            snapshot: clone
+          });
+          wrapper.set({
+            "opname": operation,
+            "title": subject.get("title" || null),
+            "type": subject.get("type" || null)
+          });
+          this.snapshots.add(wrapper);
+          return this.append(wrapper);
+        }
+      },
+      deleteForwardChanges: function() {
+        var ahead;
+        ahead = _.filter(this.snapshots.models, function(snap, i) {
+          return snap.get("aheadOfFlow") === true;
+        });
+        return _.each(ahead, function(snap) {
+          return snap.destroy();
         });
       },
       copyCollection: function(collection) {
         var copy;
-        console.log(collection.toJSON());
+        if ((collection == null) || (collection.toJSON == null)) {
+          return false;
+        }
         return copy = new collections.Elements(collection.toJSON());
       },
       render: function() {
         var self;
-        console.log("Rdnerind ugsadvshj");
         self = this;
         this.$el.empty();
         return _.each(this.snapshots.models, function(snapshot) {
@@ -74,7 +139,8 @@
         $el = this.$el;
         SnapItem = new history.Snapshot({
           model: snapshot,
-          controller: this.controller
+          controller: this.controller,
+          current: this
         });
         return $el.append(SnapItem.render().el);
       }

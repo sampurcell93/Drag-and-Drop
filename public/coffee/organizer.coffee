@@ -6,36 +6,42 @@ $(document).ready ->
             @wrapper = $(".control-section").eq(@controller.index)
             @$el = @wrapper.find(".organize-elements")
             @collection = @options.collection
-            @listenTo(@collection, {
-                "add": (model, collection, options) -> 
-                    unless (options.organizer? and options.organizer.render is false)
-                        that.append(model, options)
-            })
             ### Render the list, then apply the drag and drop, and sortable functions. ###
-            _.bindAll(this,"append","render")
+            _.bindAll(this,"append","render", "bindListeners")
             that = this
             @$el.sortable {
                 axis: 'y'
                 tolerance: 'touch'
                 connectWith: 'ul'
                 handle: '.sort-element'
-                items: '> li'
+                items: '> li.property'
                 cancel: ".out-of-flow"
                 start: (e,ui)->
-                    that.oldIndex = ui.item.index()
+                    that.oldIndex = ui.item.index() - 1
                     that.collection.at(that.oldIndex).trigger("sorting")
                 stop: (e, ui) ->
                     # that.collection.at(that.origIndex)
-                    that.collection.reorder $(ui.item).index(), that.oldIndex
+                    that.collection.reorder $(ui.item).index() - 1, that.oldIndex
                     # ui.item.removeClass("moving-sort")
                     ui.item.removeClass("moving-sort")
                 # stop: (e, ui) ->
             }
-            this
+            do @bindListeners
+            @
+        bindListeners: ->
+            console.log "binding lists organizer"
+            @stopListening()
+            that = @
+            @on "bindListeners", @bindListeners, @
+            @listenTo(@collection, {
+                "add": (model, collection, options) -> 
+                    unless (options.organizer? and options.organizer.render is false)
+                        that.append(model, options)
+            })
         render: (e) ->
             console.log "rendering this organizer", @collection.models.length
             $el = @$el
-            $el.children().remove()
+            $el.children().not(".organizer-header").remove()
             that = this
             outOfFlow = []
             index = that.options.index || sectionIndex
@@ -54,13 +60,13 @@ $(document).ready ->
                 itemView = new views.SortableElementItem(opts)
                 this.$el.append(itemView.render().el)
         appendAt: (element, opts) ->
-            pos = opts.at
+            pos = opts.at + 1
             opts.model = element
             itemView = new views.SortableElementItem(opts).render().el
             if pos >= @collection.length
                 this.$el.append(itemView)
-            else if pos is 0
-                this.$el.prepend(itemView)
+            else if pos is 1
+                this.$el.children(".organizer-header").after(itemView)
             else 
                 this.$el.children().eq(pos).before(itemView)
 
@@ -98,7 +104,6 @@ $(document).ready ->
             $el = @$el
             $el.html _.template @template, @model.toJSON()
             $el.draggable
-                zIndex: 11111
                 cancel: '.sort-element, .activate-element, .destroy-element'
                 revert: 'invalid'
                 helper: 'clone'

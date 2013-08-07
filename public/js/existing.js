@@ -4,7 +4,7 @@
     var sectionCollection;
     window.existingSectionsList = null;
     window.views.ExistingSectionsList = Backbone.View.extend({
-      el: '#existing-sections',
+      el: '.existing-sections-layouts',
       initialize: function() {
         return this.render();
       },

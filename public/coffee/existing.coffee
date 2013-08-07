@@ -4,7 +4,7 @@ $(document).ready ->
 
     # This is the view for the sidebar which holds existing sections
     window.views.ExistingSectionsList = Backbone.View.extend {
-        el: '#existing-sections'
+        el: '.existing-sections-layouts'
         initialize: ->
             @render()
         render: ->

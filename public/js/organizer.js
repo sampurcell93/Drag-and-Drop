@@ -8,40 +8,48 @@
         this.wrapper = $(".control-section").eq(this.controller.index);
         this.$el = this.wrapper.find(".organize-elements");
         this.collection = this.options.collection;
-        this.listenTo(this.collection, {
-          "add": function(model, collection, options) {
-            if (!((options.organizer != null) && options.organizer.render === false)) {
-              return that.append(model, options);
-            }
-          }
-        });
         /* Render the list, then apply the drag and drop, and sortable functions.*/
 
-        _.bindAll(this, "append", "render");
+        _.bindAll(this, "append", "render", "bindListeners");
         that = this;
         this.$el.sortable({
           axis: 'y',
           tolerance: 'touch',
           connectWith: 'ul',
           handle: '.sort-element',
-          items: '> li',
+          items: '> li.property',
           cancel: ".out-of-flow",
           start: function(e, ui) {
-            that.oldIndex = ui.item.index();
+            that.oldIndex = ui.item.index() - 1;
             return that.collection.at(that.oldIndex).trigger("sorting");
           },
           stop: function(e, ui) {
-            that.collection.reorder($(ui.item).index(), that.oldIndex);
+            that.collection.reorder($(ui.item).index() - 1, that.oldIndex);
             return ui.item.removeClass("moving-sort");
           }
         });
+        this.bindListeners();
         return this;
+      },
+      bindListeners: function() {
+        var that;
+        console.log("binding lists organizer");
+        this.stopListening();
+        that = this;
+        this.on("bindListeners", this.bindListeners, this);
+        return this.listenTo(this.collection, {
+          "add": function(model, collection, options) {
+            if (!((options.organizer != null) && options.organizer.render === false)) {
+              return that.append(model, options);
+            }
+          }
+        });
       },
       render: function(e) {
         var $el, index, outOfFlow, that;
         console.log("rendering this organizer", this.collection.models.length);
         $el = this.$el;
-        $el.children().remove();
+        $el.children().not(".organizer-header").remove();
         that = this;
         outOfFlow = [];
         index = that.options.index || sectionIndex;
@@ -67,13 +75,13 @@
       },
       appendAt: function(element, opts) {
         var itemView, pos;
-        pos = opts.at;
+        pos = opts.at + 1;
         opts.model = element;
         itemView = new views.SortableElementItem(opts).render().el;
         if (pos >= this.collection.length) {
           return this.$el.append(itemView);
-        } else if (pos === 0) {
-          return this.$el.prepend(itemView);
+        } else if (pos === 1) {
+          return this.$el.children(".organizer-header").after(itemView);
         } else {
           return this.$el.children().eq(pos).before(itemView);
         }
@@ -117,7 +125,6 @@
         $el = this.$el;
         $el.html(_.template(this.template, this.model.toJSON()));
         $el.draggable({
-          zIndex: 11111,
           cancel: '.sort-element, .activate-element, .destroy-element',
           revert: 'invalid',
           helper: 'clone',
