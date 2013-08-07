@@ -249,7 +249,7 @@ $(document).ready ->
             if child['layout-element'] is true then $el.addClass("selected-element")
             view = child.get("view") || "draggableElement"
             if child.get("inFlow") is true
-                i = @index || currIndex
+                i = currIndex
                 draggable = $(new views[view]({model: child, index: i}).render().el).addClass("builder-child")
                 if (opts? and !opts.at?)
                     $el.append(draggable)
@@ -260,7 +260,7 @@ $(document).ready ->
                         builderChildren.eq(opts.at).before(draggable)
                     else $el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
-                allSections.at(@index || currIndex).get("builder").removeExtraPlaceholders()
+                allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrag: ->
             that = this
             # Set the element to be draggable.
@@ -357,7 +357,7 @@ $(document).ready ->
 
         # Grabs all selected elements and groupes them into a barebones layout
         blankLayout: ->
-            collection = allSections.at(@index || currIndex).get("currentSection")
+            collection = allSections.at(currIndex).get("currentSection")
             selected = collection.gather()
             if selected.length is 0 or selected.length is 1 then return
             layoutIndex = collection.indexOf(selected[0])

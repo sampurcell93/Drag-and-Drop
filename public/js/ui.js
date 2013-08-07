@@ -34,9 +34,18 @@
       $(this).closest(".modal").remove();
       return $("body").removeClass("active-modal");
     });
-    return $(this).delegate(".modal .confirm", "click", function() {
+    $(this).delegate(".modal .confirm", "click", function() {
       $(document.body).removeClass("active-modal");
       return $(this).closest(".modal").remove();
+    });
+    return $(this).delegate("[data-switch-text]", "click", function() {
+      var $t, currtext, switchtext;
+      console.log("switch text");
+      $t = $(this);
+      switchtext = $t.data("switch-text");
+      currtext = $t.text();
+      $t.text(switchtext);
+      return $t.data("switch-text", currtext);
     });
   });
 

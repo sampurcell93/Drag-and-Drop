@@ -421,7 +421,7 @@ ul.property-editor {
 		width: 50%;
 		left: 50%;
 		margin-left: -25%;
-		background: #fff;
+		background: #eee;
 		padding: 0 15px;
 		text-align: center;
 		font-size: 1.4em;
@@ -469,6 +469,7 @@ ul.property-editor {
 	text-align: center;
 	display: block;
 	color: #f9f9f9;
+	background: $lightdusk;
 	font-size: .8em;
 }
 
@@ -1176,9 +1177,9 @@ ul li.selected-choice {
 			text-shadow: 0px -1px 3px #fff;
 		}
 
-		&:hover ul { display: block; }
+		&:hover .hidden-menu { display: block; }
 
-		ul {
+		.hidden-menu {
 			display: none;
 			max-height: 400px;
 			width: 200px;
@@ -1221,10 +1222,10 @@ ul li.selected-choice {
 	z-index: 9999;
 
 	.ui-sortable-placeholder {
-		border: 1px dotted $strongblue;
+		border: 1px solid #333;
 		visibility: visible !important;
 		background: $strongblue !important;
-		@include box-shadow(0px 0px 40px $strongblue, inset 0px 0px 1px rgba(255,255,255,.9));
+		@include box-shadow(0px 0px 30px $strongblue, inset 0px 0px 30px rgba(255,255,255,.6));
 	}
 
 	> li {

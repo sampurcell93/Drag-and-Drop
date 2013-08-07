@@ -368,7 +368,7 @@
         }
         view = child.get("view") || "draggableElement";
         if (child.get("inFlow") === true) {
-          i = this.index || currIndex;
+          i = currIndex;
           draggable = $(new views[view]({
             model: child,
             index: i
@@ -385,7 +385,7 @@
             }
           }
           globals.setPlaceholders($(draggable), this.model.get("child_els"));
-          return allSections.at(this.index || currIndex).get("builder").removeExtraPlaceholders();
+          return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
         }
       };
 
@@ -518,7 +518,7 @@
 
       draggableElement.prototype.blankLayout = function() {
         var collection, layout, layoutIndex, selected;
-        collection = allSections.at(this.index || currIndex).get("currentSection");
+        collection = allSections.at(currIndex).get("currentSection");
         selected = collection.gather();
         if (selected.length === 0 || selected.length === 1) {
           return;

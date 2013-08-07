@@ -9,23 +9,24 @@ include builder.jade
     script(type='text/template')#controller-wrap
            
             ul.sidebar-controls.main-controls
-                li(data-icon='k').generate-section Builder
-                li(data-icon='e').configure-interface No Grid
+                li(data-icon='k', data-switch-text='Configure').generate-section Build
                 li(data-icon='m').save-section Save
                 li(data-icon='n').history History
-                    ul
+                    ul.hidden-menu
+                li(data-icon='e', data-switch-text='With Grid').configure-interface Without Grid
 
             .section-builder-wrap
+                h2.section-title.clickme Default Section Title
                 p.nice-dialog
                     | Configure your data here. Start by choosing system properties to include in your section. They will be easily accessible while you build.
 
-                div.fl.w35.m10
+                div.fl.w45.m10
                     h2.m10.center Add Content to this Section
                     input#search-data-types(placeholder='Search Data Types').w9.mauto
                     ul.select-properties.class-list.m10
                 div.fl.w05.icon.center.right-arrow
                     span s
-                div.fl.w3.m30
+                div.fl.w4.m30
                     ul.property-editor
                 ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr
                 .clear  

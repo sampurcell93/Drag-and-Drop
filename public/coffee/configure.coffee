@@ -112,6 +112,14 @@ $(document).ready ->
                 collection: @model.get("currentSection")
             })
 
+             # We can think of a section as a collection of elements, so this pulls each collection from the database.
+            @sectionCollection = new collections.Elements()
+            @sectionCollection.fetch {
+                success: (coll) ->
+                    # Once the sections are pulled, generate the list.
+                    that.existingSectionsList = new views.ExistingSectionsList { collection : that.sectionCollection, controller: that.model }
+            }
+
             # The controller now has a reference to the builder
             @builder = new views.SectionBuilder({
                 controller: @model
@@ -151,12 +159,9 @@ $(document).ready ->
             if e?
                 $t = $(e.currentTarget)
                 $t.toggleClass "viewing-layout"
-                if $t.hasClass "viewing-layout"
-                    $t.text "Configuration" 
-                else $t.text "Builder"
             @$el.find(@wrap).slideToggle('fast')
         saveSection: ->
-            title = @$el.find(".section-title").text()
+            title = @model.get "title"
             if title == "" or typeof title is "undefined" or title == "Default Section Title"
                 alert "You need to enter a title"
                 return

@@ -6,9 +6,13 @@ $(document).ready ->
     window.views.ExistingSectionsList = Backbone.View.extend {
         el: '.existing-sections-layouts'
         initialize: ->
+            @controller = @options.controller
+            @wrapper = $(".control-section").eq(@controller.index)
+            @$el = @wrapper.find(@el)
             @render()
         render: ->
             $el = @$el
+            console.log @collection.models
             _.each @collection.models, (section) ->
                 section.set "inFlow", false
                 $el.append new views.SingleSectionWireFrame({model: section}).render().el
@@ -74,12 +78,4 @@ $(document).ready ->
                 if i < 4
                     $el.append new views.SectionThumbnail({model: child}).render().el
             this
-    }
-
-    # We can think of a section as a collection of elements, so this pulls each collection from the database.
-    sectionCollection = new collections.Elements()
-    sectionCollection.fetch {
-        success: (coll) ->
-            # Once the sections are pulled, generate the list.
-            existingSectionsList = new views.ExistingSectionsList { collection : sectionCollection }
     }

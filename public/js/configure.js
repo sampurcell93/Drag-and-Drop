@@ -113,6 +113,15 @@
           snapshots: this.snaps,
           collection: this.model.get("currentSection")
         });
+        this.sectionCollection = new collections.Elements();
+        this.sectionCollection.fetch({
+          success: function(coll) {
+            return that.existingSectionsList = new views.ExistingSectionsList({
+              collection: that.sectionCollection,
+              controller: that.model
+            });
+          }
+        });
         this.builder = new views.SectionBuilder({
           controller: this.model,
           collection: this.model.get("currentSection")
@@ -166,17 +175,12 @@
         if (e != null) {
           $t = $(e.currentTarget);
           $t.toggleClass("viewing-layout");
-          if ($t.hasClass("viewing-layout")) {
-            $t.text("Configuration");
-          } else {
-            $t.text("Builder");
-          }
         }
         return this.$el.find(this.wrap).slideToggle('fast');
       },
       saveSection: function() {
         var copy, title;
-        title = this.$el.find(".section-title").text();
+        title = this.model.get("title");
         if (title === "" || typeof title === "undefined" || title === "Default Section Title") {
           alert("You need to enter a title");
           return;

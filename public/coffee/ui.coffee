@@ -16,7 +16,7 @@ $(document).ready ->
         modal
 
     window.launchDraggableModal = (content) ->
-            
+
 
     $.fn.launchModal = (content) ->
         console.log $(@), "launching jquery modal"
@@ -36,4 +36,13 @@ $(document).ready ->
     $(@).delegate(".modal .confirm", "click", ->
         $(document.body).removeClass("active-modal")
         $(@).closest(".modal").remove()
+    )
+
+    $(@).delegate("[data-switch-text]", "click", ->
+        console.log "switch text"
+        $t = $ this
+        switchtext = $t.data("switch-text")
+        currtext = $t.text()
+        $t.text(switchtext)
+        $t.data("switch-text", currtext)
     )

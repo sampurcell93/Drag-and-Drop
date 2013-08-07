@@ -74,7 +74,7 @@ $(document).ready ->
     }); 
 
     window.views.SortableElementItem = Backbone.View.extend {
-        tagName: 'li class="property"'
+        tagName: 'li'
         template: $("#element-sortable-item").html()
         initialize: ->
             that = this
