@@ -99,6 +99,18 @@ $(document).ready ->
                 $t = $(e.currentTarget)
                 if ($t.val() == "")
                     $t.val($t.data("previous-val") || "")
+            'click .history': (e)->
+                $t      = $ e.currentTarget
+                left    = $t.offset().left + 300 + "px"
+                top     = $t.offset().top + "px"
+                console.log top, left
+                content = $t.find(".hidden-menu").html()
+                if $(".history-modal").length is 0
+                    modal   = window.launchDraggableModal(content, "ul")
+                    modal.addClass("history-modal history").attr("data-modal-name", "History").css({"top": top, "left": left})
+                else $(".history-modal").css({top: top, left: left})
+
+                console.log "history"
         setProps: ->
             that = this
             if !opts? 
@@ -113,11 +125,11 @@ $(document).ready ->
             })
 
              # We can think of a section as a collection of elements, so this pulls each collection from the database.
-            @sectionCollection = new collections.Elements()
-            @sectionCollection.fetch {
+            @existingSectionCollection = new collections.Elements()
+            @existingSectionCollection.fetch {
                 success: (coll) ->
                     # Once the sections are pulled, generate the list.
-                    that.existingSectionsList = new views.ExistingSectionsList { collection : that.sectionCollection, controller: that.model }
+                    that.existingSectionsList = new views.ExistingSectionsList {collection : coll, controller: that.model }
             }
 
             # The controller now has a reference to the builder

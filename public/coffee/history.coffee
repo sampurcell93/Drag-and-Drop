@@ -68,7 +68,7 @@ $ ->
 
 
     history.HistoryList = Backbone.View.extend
-        el: '.history ul'
+        el: '.history ul, .history-modal'
         initialize: ->
             @controller = @options.controller
             # Refers to the list of snapshots

@@ -3,17 +3,18 @@
   $(document).ready(function() {
     window.existingSectionsList = null;
     window.views.ExistingSectionsList = Backbone.View.extend({
-      el: '.existing-sections-layouts',
       initialize: function() {
         this.controller = this.options.controller;
         this.wrapper = $(".control-section").eq(this.controller.index);
-        this.$el = this.wrapper.find(this.el);
+        this.$el = $(".control-section").eq(this.controller.index).find(".existing-sections-layouts");
+        this.el = this.$el.get();
         return this.render();
       },
       render: function() {
         var $el;
         $el = this.$el;
-        console.log(this.collection.models);
+        console.log(this.collection.models, this.$el, this.controller.index);
+        console.log;
         return _.each(this.collection.models, function(section) {
           section.set("inFlow", false);
           return $el.append(new views.SingleSectionWireFrame({

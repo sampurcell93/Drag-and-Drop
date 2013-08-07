@@ -4,15 +4,16 @@ $(document).ready ->
 
     # This is the view for the sidebar which holds existing sections
     window.views.ExistingSectionsList = Backbone.View.extend {
-        el: '.existing-sections-layouts'
         initialize: ->
             @controller = @options.controller
             @wrapper = $(".control-section").eq(@controller.index)
-            @$el = @wrapper.find(@el)
+            @$el = $(".control-section").eq(@controller.index).find(".existing-sections-layouts")
+            @el = @$el.get()
             @render()
         render: ->
             $el = @$el
-            console.log @collection.models
+            console.log @collection.models, @$el, @controller.index
+            console.log 
             _.each @collection.models, (section) ->
                 section.set "inFlow", false
                 $el.append new views.SingleSectionWireFrame({model: section}).render().el

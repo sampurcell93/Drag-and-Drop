@@ -74,7 +74,7 @@
       }
     });
     return history.HistoryList = Backbone.View.extend({
-      el: '.history ul',
+      el: '.history ul, .history-modal',
       initialize: function() {
         this.controller = this.options.controller;
         this.snapshots = this.options.snapshots;

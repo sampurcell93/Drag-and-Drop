@@ -98,6 +98,27 @@
           if ($t.val() === "") {
             return $t.val($t.data("previous-val") || "");
           }
+        },
+        'click .history': function(e) {
+          var $t, content, left, modal, top;
+          $t = $(e.currentTarget);
+          left = $t.offset().left + 300 + "px";
+          top = $t.offset().top + "px";
+          console.log(top, left);
+          content = $t.find(".hidden-menu").html();
+          if ($(".history-modal").length === 0) {
+            modal = window.launchDraggableModal(content, "ul");
+            modal.addClass("history-modal history").attr("data-modal-name", "History").css({
+              "top": top,
+              "left": left
+            });
+          } else {
+            $(".history-modal").css({
+              top: top,
+              left: left
+            });
+          }
+          return console.log("history");
         }
       },
       setProps: function() {
@@ -113,11 +134,11 @@
           snapshots: this.snaps,
           collection: this.model.get("currentSection")
         });
-        this.sectionCollection = new collections.Elements();
-        this.sectionCollection.fetch({
+        this.existingSectionCollection = new collections.Elements();
+        this.existingSectionCollection.fetch({
           success: function(coll) {
             return that.existingSectionsList = new views.ExistingSectionsList({
-              collection: that.sectionCollection,
+              collection: coll,
               controller: that.model
             });
           }

@@ -19,10 +19,16 @@
       $(document.body).addClass("active-modal").append(modal);
       return modal;
     };
-    window.launchDraggableModal = function(content) {};
+    window.launchDraggableModal = function(content, tagname) {
+      var modal;
+      modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
+      modal.draggable();
+      modal.appendTo(document.body);
+      return modal;
+    };
     $.fn.launchModal = function(content) {
       console.log($(this), "launching jquery modal");
-      return this.addClass("modal").appendTo($("body").addClass("active-modal"));
+      return this.addClass("modal").prependTo($("body").addClass("active-modal"));
     };
     window.validNumber = function(num) {
       return !isNaN(parseInt(num));
