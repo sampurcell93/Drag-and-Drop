@@ -101,6 +101,7 @@ $ ->
                 op = options.opname || operation
                 if @snapshots.detached_head is true
                     @deleteForwardChanges()
+                    @snapshots.detached_head = false
                 # Copy current state
                 if @controller.model.get("currentSection")?
                     clone = @controller.model.get("currentSection").clone()

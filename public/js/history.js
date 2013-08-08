@@ -111,6 +111,7 @@
           op = options.opname || operation;
           if (this.snapshots.detached_head === true) {
             this.deleteForwardChanges();
+            this.snapshots.detached_head = false;
           }
           if (this.controller.model.get("currentSection") != null) {
             clone = this.controller.model.get("currentSection").clone();
