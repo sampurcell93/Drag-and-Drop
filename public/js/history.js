@@ -53,11 +53,11 @@
           });
           controller.model.set("currentSection", snapshot);
           controller.organizer.collection = snapshot;
+          controller.organizer.trigger("bindListeners");
           controller.organizer.render();
           controller.builder.collection = snapshot;
           controller.builder.scaffold.set("child_els", snapshot);
           if (model_index < all_snaps.length - 1) {
-            console.log("setting head to detached");
             all_snaps.detached_head = true;
           } else {
             all_snaps.detached_head = false;
@@ -79,7 +79,7 @@
       initialize: function() {
         this.controller = this.options.controller;
         this.snapshots = this.options.snapshots;
-        _.bindAll(this, "makeHistory", "copyCollection", "render", "append", "bindListeners");
+        _.bindAll(this, "makeHistory", "render", "append", "bindListeners");
         return this.bindListeners();
       },
       bindListeners: function() {
@@ -97,7 +97,46 @@
         this.listenTo(model, "all", this.makeHistory);
         return this.listenTo(model.get("child_els"), "all", this.makeHistory);
       },
-      makeHistory: function(operation, subject, collection, options) {},
+      makeHistory: function(operation, subject, collection, options) {
+        var clone, op, ops, snap;
+        cc("Making History.");
+        ops = ["change", "add", "remove"];
+        if (ops.indexOf(operation) === -1) {
+          return;
+        }
+        if (options == null) {
+          options = {};
+        }
+        if (!((options != null) && options.no_history === true)) {
+          op = options.opname || operation;
+          if (this.snapshots.detached_head === true) {
+            this.deleteForwardChanges();
+          }
+          if (this.controller.model.get("currentSection") != null) {
+            clone = this.controller.model.get("currentSection").clone();
+          }
+          if (clone === false) {
+            return;
+          }
+          snap = new models.Snap({
+            snapshot: clone
+          });
+          snap.set({
+            "opname": op,
+            "title": subject.get("title" || null),
+            "type": subject.get("type" || null)
+          });
+          if (this.snapshots.length >= window.history_length) {
+            this.snapshots.at(0).destroy();
+          }
+          if (op === "add") {
+            console.log("was added");
+            this.bindIndividualListener(subject);
+          }
+          this.snapshots.add(snap);
+          return this.append(snap);
+        }
+      },
       deleteForwardChanges: function() {
         var ahead;
         ahead = _.filter(this.snapshots.models, function(snap, i) {
@@ -106,21 +145,6 @@
         return _.each(ahead, function(snap) {
           return snap.destroy();
         });
-      },
-      copyCollection: function(collection) {
-        var copy;
-        if ((collection == null) || (collection.toJSON == null)) {
-          return false;
-        }
-        copy = new collections.Elements();
-        _.each(collection.models, function(element) {
-          var deep_copy_model;
-          deep_copy_model = element.clone();
-          deep_copy_model.set("child_els", element.modelify());
-          console.log(deep_copy_model.toJSON());
-          return copy.add(new models.Element(deep_copy_model.toJSON()));
-        });
-        return copy;
       },
       render: function() {
         var self;

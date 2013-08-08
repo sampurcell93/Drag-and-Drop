@@ -29,6 +29,7 @@
           }
         });
         this.bindListeners();
+        this.on("bindListeners", this.bindListeners, this);
         return this;
       },
       bindListeners: function() {
@@ -36,7 +37,6 @@
         console.log("binding lists organizer");
         this.stopListening();
         that = this;
-        this.on("bindListeners", this.bindListeners, this);
         return this.listenTo(this.collection, {
           "add": function(model, collection, options) {
             if (!((options.organizer != null) && options.organizer.render === false)) {

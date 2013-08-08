@@ -27,12 +27,12 @@ $(document).ready ->
                 # stop: (e, ui) ->
             }
             do @bindListeners
+            @on "bindListeners", @bindListeners, @
             @
         bindListeners: ->
             console.log "binding lists organizer"
             @stopListening()
             that = @
-            @on "bindListeners", @bindListeners, @
             @listenTo(@collection, {
                 "add": (model, collection, options) -> 
                     unless (options.organizer? and options.organizer.render is false)

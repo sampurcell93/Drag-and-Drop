@@ -48,14 +48,13 @@ $ ->
                 controller.model.set("currentSection", snapshot)
                 # Bind the organizer to the snap
                 controller.organizer.collection = snapshot
-                # controller.organizer.trigger("bindListeners")
+                controller.organizer.trigger("bindListeners")
                 controller.organizer.render()
                 # Bind the builder to the snap
                 controller.builder.collection = snapshot
                 # Link the snap to the builder
                 controller.builder.scaffold.set("child_els", snapshot)
                 if model_index < all_snaps.length - 1
-                    console.log "setting head to detached"
                     all_snaps.detached_head = true
                 else 
                     all_snaps.detached_head = false
@@ -76,7 +75,7 @@ $ ->
             @controller = @options.controller
             # Refers to the list of snapshots
             @snapshots = @options.snapshots
-            _.bindAll(@, "makeHistory", "copyCollection", "render", "append", "bindListeners")
+            _.bindAll(@, "makeHistory", "render", "append", "bindListeners")
             do @bindListeners
         bindListeners: ->
             @stopListening()
@@ -92,34 +91,38 @@ $ ->
             @listenTo model, "all", @makeHistory
             @listenTo model.get("child_els"), "all", @makeHistory
         makeHistory: (operation, subject, collection, options) ->
-            # cc "Making History."
-            # if !options? then options = {}
-            # unless options? and options.no_history is true
-            #     op = options.opname || operation
-            #     if @snapshots.detached_head is true
-            #         console.log "changing detached head"
-            #         @deleteForwardChanges()
-            #     # Copy current state
-            #     clone = @copyCollection(@controller.model.get("currentSection"))
-            #     # If there was a bogus collection passed in
-            #     if clone is false then return
-            #     wrapper = new models.Snap({snapshot: clone})
-            #     wrapper.set({
-            #         "opname": op
-            #         "title": subject.get "title" || null
-            #         "type": subject.get "type" || null
-            #     })
-            #     # For memory management purposes, destroy the oldest change.
-            #     if @snapshots.length >= window.history_length
-            #         @snapshots.at(0).destroy()
-            #     if op == "add"
-            #         console.log "was added"
-            #         @bindIndividualListener subject
+            cc "Making History."
+            # By using "all" instead of delegating to the desired events,
+            # we can keep parameters the same.
+            ops = ["change", "add", "remove"]
+            if ops.indexOf(operation) == -1 then return
+            if !options? then options = {}
+            unless (options? and options.no_history is true)
+                op = options.opname || operation
+                if @snapshots.detached_head is true
+                    @deleteForwardChanges()
+                # Copy current state
+                if @controller.model.get("currentSection")?
+                    clone = @controller.model.get("currentSection").clone()
+                # If there was a bogus collection passed in
+                if clone is false then return
+                snap = new models.Snap({snapshot: clone})
+                snap.set({
+                    "opname": op
+                    "title": subject.get "title" || null
+                    "type": subject.get "type" || null
+                })
+                # For memory management purposes, destroy the oldest change.
+                if @snapshots.length >= window.history_length
+                    @snapshots.at(0).destroy()
+                if op == "add"
+                    console.log "was added"
+                    @bindIndividualListener subject
 
-            #     # Add that state, or snapshot, to this ocllection and
-            #     # display it in a list of history, a la photoshop
-            #     @snapshots.add wrapper
-            #     @append wrapper
+                # Add that state, or snapshot, to this ocllection and
+                # display it in a list of history, a la photoshop
+                @snapshots.add snap
+                @append snap
         deleteForwardChanges: ->
             # Get all snapshots ahead of the current state
             ahead = _.filter @snapshots.models, (snap, i) ->
@@ -127,16 +130,6 @@ $ ->
             # Destroy all of them
             _.each ahead, (snap) ->
                 snap.destroy()
-
-        copyCollection: (collection) ->
-            if !collection? or !collection.toJSON? then return false
-            copy = new collections.Elements()
-            _.each collection.models, (element) ->
-                deep_copy_model = element.clone()
-                deep_copy_model.set("child_els", element.modelify())
-                console.log deep_copy_model.toJSON()
-                copy.add new models.Element(deep_copy_model.toJSON())
-            copy
         render: ->
             self = @
             @$el.empty()

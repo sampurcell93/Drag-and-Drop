@@ -495,7 +495,8 @@
       render: function() {
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
-        this.$el.append(_.template(this.template, item));
+        this.$el.append(_.template(this.template, item)).toggleClass("selected").find("input").trigger("click");
+        this.chooseProp();
         return this;
       },
       chooseProp: function(e) {

@@ -73,18 +73,13 @@
       };
 
       Element.prototype.modelify = function() {
-        var self, temp;
+        var clone, self, temp;
         self = this;
         temp = new collections.Elements();
         if (this.get("child_els") == null) {
           return false;
         }
-        _.each(this.get("child_els").models, function(model) {
-          var tempModel;
-          temp.add(tempModel = new models.Element(model.toJSON()));
-          return tempModel.set("child_els", self.modelify());
-        });
-        return temp;
+        return clone = this.get("child_els").clone();
       };
 
       Element.prototype.parse = function(response) {
@@ -108,7 +103,6 @@
             });
           });
         } else if (putIn.collection != null) {
-          console.log("Removing from beldn");
           putIn.collection.remove(putIn, {
             no_history: true
           });
@@ -184,6 +178,18 @@
           return models = models.concat(model.get("child_els").gather());
         });
         return models;
+      },
+      clone: function() {
+        var copy;
+        copy = new collections.Elements();
+        _.each(this.models, function(element) {
+          var children, deep_copy_model;
+          deep_copy_model = element.clone();
+          children = deep_copy_model.get("child_els");
+          deep_copy_model.set("child_els", children.clone());
+          return copy.add(new models.Element(deep_copy_model.toJSON()));
+        });
+        return copy;
       }
     });
     window.views.droppablePlaceholder = (function(_super) {
@@ -403,7 +409,7 @@
         var that;
         that = this;
         return this.$el.draggable({
-          cancel: ".no-drag",
+          cancel: ".no-drag, .context-menu",
           revert: true,
           scrollSensitivity: 100,
           helper: function() {
@@ -594,6 +600,9 @@
           return e.stopPropagation();
         },
         "click .group-elements": "blankLayout",
+        "click .destroy-element": function() {
+          return this.model.destroy();
+        },
         "click": function(e) {
           var layout;
           this.unbindContextMenu(e);

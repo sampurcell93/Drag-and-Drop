@@ -1960,7 +1960,6 @@ ul li.selected-choice {
 .draggable-modal {
   position: absolute !important;
   background: #3e4951;
-  border: 1px solid #333;
   color: #f9f9f9;
   text-shadow: none;
   z-index: 9999;
@@ -1968,29 +1967,18 @@ ul li.selected-choice {
   max-height: 400px;
   overflow: auto;
   padding-top: 30px;
-  border-top: 1px solid #5b747f;
   cursor: move;
+  border-top: 1px solid #5b747f;
 }
-/* line 1292, ../sass/screen.scss */
+/* line 1291, ../sass/screen.scss */
 .draggable-modal.moved {
-  -webkit-box-shadow: 0px 0px 50px #333333;
-  -moz-box-shadow: 0px 0px 50px #333333;
-  box-shadow: 0px 0px 50px #333333;
-  -webkit-border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -ms-border-radius: 3px 3px 0 0;
-  -o-border-radius: 3px 3px 0 0;
-  border-radius: 3px 3px 0 0;
+  background: rgba(62, 73, 81, 0.8);
+  -webkit-box-shadow: 0px 0px 30px #333333;
+  -moz-box-shadow: 0px 0px 30px #333333;
+  box-shadow: 0px 0px 30px #333333;
+  border: none;
 }
-/* line 1296, ../sass/screen.scss */
-.draggable-modal.moved:before {
-  -webkit-border-radius: 3px 3px 0 0;
-  -moz-border-radius: 3px 3px 0 0;
-  -ms-border-radius: 3px 3px 0 0;
-  -o-border-radius: 3px 3px 0 0;
-  border-radius: 3px 3px 0 0;
-}
-/* line 1301, ../sass/screen.scss */
+/* line 1297, ../sass/screen.scss */
 .draggable-modal:before {
   position: absolute;
   content: attr(data-modal-name);
@@ -2002,7 +1990,7 @@ ul li.selected-choice {
   text-align: center;
   padding: 3px 0;
 }
-/* line 1313, ../sass/screen.scss */
+/* line 1309, ../sass/screen.scss */
 .draggable-modal .close-arrow {
   position: absolute;
   top: 5px;
@@ -2010,44 +1998,44 @@ ul li.selected-choice {
   font-family: 'icons';
 }
 
-/* line 1321, ../sass/screen.scss */
+/* line 1317, ../sass/screen.scss */
 .history-modal {
   width: 100%;
   margin: 0;
   padding-bottom: 10px;
 }
-/* line 1326, ../sass/screen.scss */
+/* line 1322, ../sass/screen.scss */
 .history-modal li {
   cursor: pointer;
   list-style: none;
-  border-top: 1px solid #5b747f;
+  border-top: 1px solid #9CB1BA;
   border-bottom: 1px solid #222;
   padding: 3px 5px 3px 10px;
 }
-/* line 1333, ../sass/screen.scss */
+/* line 1329, ../sass/screen.scss */
 .history-modal li:hover {
   background: #5b747f;
 }
-/* line 1335, ../sass/screen.scss */
+/* line 1331, ../sass/screen.scss */
 .history-modal li:last-child {
   border-bottom: none;
 }
-/* line 1336, ../sass/screen.scss */
+/* line 1332, ../sass/screen.scss */
 .history-modal li:first-child {
   border-top: none;
 }
 
-/* line 1341, ../sass/screen.scss */
+/* line 1337, ../sass/screen.scss */
 .hidden-modal ul, .hidden-modal div {
   display: none;
 }
 
-/* line 1346, ../sass/screen.scss */
+/* line 1342, ../sass/screen.scss */
 .ahead-of-flow {
   background: #222;
   color: #fff;
 }
-/* line 1350, ../sass/screen.scss */
+/* line 1346, ../sass/screen.scss */
 .ahead-of-flow:hover {
   background: #222 !important;
 }

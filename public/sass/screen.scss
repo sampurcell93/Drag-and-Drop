@@ -1278,7 +1278,6 @@ ul li.selected-choice {
 .draggable-modal {
 	position: absolute !important;
 	background: $dusky;
-	border: 1px solid #333;
 	color: #f9f9f9;
 	text-shadow: none;
 	z-index: 9999;
@@ -1286,16 +1285,13 @@ ul li.selected-choice {
 	max-height: 400px;
 	overflow: auto;
 	padding-top: 30px;
-	border-top: 1px solid $lightdusk;
 	cursor: move;
+	border-top: 1px solid $lightdusk;
 
 	&.moved {
-		@include box-shadow(0px 0px 50px #333);
-		@include border-radius(3px 3px 0 0);
-
-		&:before {
-			@include border-radius(3px 3px 0 0);
-		}
+		background: rgba(62,73,81,.8);
+		@include box-shadow(0px 0px 30px #333);
+		border: none;
 	}
 
 	&:before {
@@ -1326,7 +1322,7 @@ ul li.selected-choice {
 	li {
 		cursor: pointer;
 		list-style: none;
-		border-top: 1px solid $lightdusk;
+		border-top: 1px solid #9CB1BA;
 		border-bottom: 1px solid #222;
 		padding: 3px 5px 3px 10px;
 

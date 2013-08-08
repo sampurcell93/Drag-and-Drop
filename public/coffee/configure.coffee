@@ -401,8 +401,8 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append(_.template @template,item)
-            # .toggleClass("selected").find("input").trigger "click"
-            # @chooseProp()
+            .toggleClass("selected").find("input").trigger "click"
+            @chooseProp()
             this
         chooseProp: (e) ->
             console.log "TesT"

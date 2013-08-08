@@ -4,6 +4,10 @@ $(document).ready ->
     window.collections = {} 
     window.propertyLink = $("#property-link").html()
     
+    # Uses point slope form to compute the slope
+    getSlope = (y1,y,x1,x) ->
+        (y-y1)/(x-x1)
+
     # If an array of template data is passed in loop through and append each in order
     window.launchModal =  (content) ->
         modal = $("<div />").addClass("modal")
@@ -26,10 +30,11 @@ $(document).ready ->
                 # Retrieve elements that the element is actually snapped to
                 snappedTo = $.map snapped, (element) ->
                     if element.snapping then element.item else null;
-                if snappedTo.length
-                    ui.helper.removeClass("moved")
+                # if snappedTo.length
+                    # ui.helper.removeClass("moved")
 
-            snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden)'
+
+            snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden)'
             cancel: '.close-arrow'
             containment: 'body'
         modal.appendTo(appendTo || document.body)
@@ -64,3 +69,16 @@ $(document).ready ->
     $(@).delegate ".close-arrow", "click", ->
         $(this).toggleClass("flipped")
         .siblings().toggle()
+
+$(window).on "resize", ->
+    ww = $(@).width()
+
+    $(".draggable-modal").each ->
+        $t    = $ this
+        width = $t.width()
+        edge  = $t.offset().left + width
+        diff = edge - ww
+        if edge > ww
+            cc $t.offset().left
+            cc $t.offset().left - diff + "px"
+            $t.css({left: $t.offset().left - diff + "px"})

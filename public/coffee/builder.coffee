@@ -48,10 +48,7 @@ $(document).ready ->
             self = @
             temp = new collections.Elements()
             if !@get("child_els")? then return false
-            _.each @get("child_els").models , (model) ->
-                temp.add tempModel = new models.Element(model.toJSON())
-                tempModel.set "child_els", self.modelify()
-            temp
+            clone = @get("child_els").clone()
         # JSON returns as a single model whose submodels are standard json objects, not backbone models.
         # MODELIFY each standard json object, and its children, recursively.
         parse: (response) ->
@@ -69,7 +66,6 @@ $(document).ready ->
                     model.collection.remove model, {no_history: true}
             # Remove the model from its current collection, if there is such.
             else if putIn.collection?
-                console.log "Removing from beldn"
                 putIn.collection.remove putIn, {no_history: true}
             # Get all current child elements, add the dropped element(s)
             # and put the collection back in
@@ -114,9 +110,18 @@ $(document).ready ->
             # If the model is selected, push onto array
                 if (model[prop] is true)
                     models.push model
-                # Call recusrively on each child collection
+                # Call recursively on each child collection
                 models = models.concat(model.get("child_els").gather())
             models
+        clone: ->
+            copy = new collections.Elements()
+            _.each @models, (element) ->
+                deep_copy_model = element.clone()
+                children = deep_copy_model.get("child_els")
+                deep_copy_model.set("child_els", children.clone())
+
+                copy.add new models.Element(deep_copy_model.toJSON())
+            copy
     }
 
     class window.views.droppablePlaceholder extends Backbone.View
@@ -267,7 +272,7 @@ $(document).ready ->
             that = this
             # Set the element to be draggable.
             @$el.draggable
-                cancel: ".no-drag"
+                cancel: ".no-drag, .context-menu"
                 revert: true
                 scrollSensitivity: 100
                 helper: ->
@@ -405,6 +410,8 @@ $(document).ready ->
                 # Stop the context menu from closing
                 e.stopPropagation()
             "click .group-elements": "blankLayout"
+            "click .destroy-element": ->
+                @model.destroy()
             "click": (e) ->
                 @unbindContextMenu(e)
                 @$el.find(".dropdown").hide()
