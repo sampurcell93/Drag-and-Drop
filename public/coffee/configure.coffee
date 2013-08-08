@@ -100,30 +100,13 @@ $(document).ready ->
                 if ($t.val() == "")
                     $t.val($t.data("previous-val") || "")
             'click .history': (e)->
-                $t      = $ e.currentTarget
-                left    = $t.offset().left + 300 + "px"
-                top     = $t.offset().top + "px"
-                console.log top, left
-                content = $t.find(".hidden-menu").html()
-                if $(".history-modal").length is 0
-                    modal   = window.launchDraggableModal(content, "ul")
-                    modal.addClass("history-modal history").attr("data-modal-name", "History").css({"top": top, "left": left})
-                else $(".history-modal").css({top: top, left: left})
-
-                console.log "history"
+                @$el.find(".history-modal").slideToggle("fast")
         setProps: ->
             that = this
             if !opts? 
                 opts = {}
             @model.index = allSections.length - 1 
-            # Render page scaffolding
-            @snaps = new collections.Snapshots()
-            @histList = new window.views.history.HistoryList({
-                controller: @
-                snapshots: @snaps
-                collection: @model.get("currentSection")
-            })
-
+           
              # We can think of a section as a collection of elements, so this pulls each collection from the database.
             @existingSectionCollection = new collections.Elements()
             @existingSectionCollection.fetch {
@@ -131,6 +114,14 @@ $(document).ready ->
                     # Once the sections are pulled, generate the list.
                     that.existingSectionsList = new views.ExistingSectionsList {collection : coll, controller: that.model }
             }
+            @snaps = new collections.Snapshots()
+            @histList = new views.history.HistoryList({
+                controller: @
+                snapshots: @snaps
+                collection: @model.get("currentSection")
+            })
+            modal = window.launchDraggableModal(@histList.render().el, null, @$el)
+            modal.css({top: "0px", left: "100px"}).attr("data-modal-name", "History - Recent 15")
 
             # The controller now has a reference to the builder
             @builder = new views.SectionBuilder({
@@ -410,8 +401,8 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append(_.template @template,item)
-            .toggleClass("selected").find("input").trigger "click"
-            @chooseProp()
+            # .toggleClass("selected").find("input").trigger "click"
+            # @chooseProp()
             this
         chooseProp: (e) ->
             console.log "TesT"

@@ -28,7 +28,6 @@ $(document).ready ->
                     index = collection.indexOf(model)
                     console.log collection
                     if collection? and typeof collection != "undefined"
-                        console.log "modelling shit"
                         collection.remove model, {no_history: true}
                         collection.add model, {at: index, no_history: true }
             }
@@ -48,7 +47,8 @@ $(document).ready ->
         modelify: ->
             self = @
             temp = new collections.Elements()
-            _.each @get("child_els"), (model) ->
+            if !@get("child_els")? then return false
+            _.each @get("child_els").models , (model) ->
                 temp.add tempModel = new models.Element(model.toJSON())
                 tempModel.set "child_els", self.modelify()
             temp
@@ -69,16 +69,15 @@ $(document).ready ->
                     model.collection.remove model, {no_history: true}
             # Remove the model from its current collection, if there is such.
             else if putIn.collection?
+                console.log "Removing from beldn"
                 putIn.collection.remove putIn, {no_history: true}
             # Get all current child elements, add the dropped element(s)
             # and put the collection back in
             children = @get "child_els"
             # We don't need to validate "at" because backbone will simply append if "at" is undefined
-            console.log putIn instanceof models.Element
-            children.add(putIn, {at: at})
+            children.add(putIn, {at: at, opname: "Switch"})
             @set "child_els", children
             true
-
 
     window.collections.Elements = Backbone.Collection.extend {
         model: models.Element
@@ -87,10 +86,10 @@ $(document).ready ->
             if !putIn? then return false
             if $.isArray(putIn) is true and putIn.length > 1
                  _.each putIn, (model) ->
-                    model.collection.remove model
+                    model.collection.remove model, {no_history: true}
             else if putIn.collection?
-                putIn.collection.remove putIn
-            @add putIn, {at: at}
+                putIn.collection.remove putIn, {no_history: true}
+            @add putIn, {at: at, opname: "Switch"}
             true
          # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
@@ -100,20 +99,23 @@ $(document).ready ->
             collection = collection || @
             temp = collection.at(originalIndex)
             # Remove it from the collection
-            collection.remove(temp, {organizer: {itemRender: false}})
+            collection.remove(temp, {organizer: {itemRender: false},  no_history: true})
             # Reinsert it at its new index
-            collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}})
+            collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}, opname: 'Switch'})
             this
         # Returns an array of all models that match the property, recursively. Defaults to layout item search
         gather: (prop) ->
-            # Normally would use _.find() here but we are looking for model properties - not their .get()/.set() attributes
+            # Normally would use _.filter() here but we are looking for model properties - not their .get()/.set() attributes
             prop = prop || "layout-item"
             models = []
             self = @
+            # check each model in collection
             _.each @models, (model) -> 
+            # If the model is selected, push onto array
                 if (model[prop] is true)
                     models.push model
-                models.concat(model.get("child_els").gather())
+                # Call recusrively on each child collection
+                models = models.concat(model.get("child_els").gather())
             models
     }
 
@@ -295,6 +297,7 @@ $(document).ready ->
                     if (ui.helper.hasClass("selected-element"))
                         allDraggingModels = section.gather()
                     else allDraggingModels = []
+                    console.log allDraggingModels.length
                     # When a drag starts, give the builder the model (or collection of such) so it can render on drop
                     if allDraggingModels.length > 1
                         window.currentDraggingModel = allDraggingModels
@@ -409,10 +412,9 @@ $(document).ready ->
                     layout = @model["layout-item"]
                     if (layout is false or typeof layout is "undefined")
                         @$el.trigger("select")
-                        @model["layout-item"] = true
                     else 
                         @$el.trigger("deselect")
-                        @model["layout-item"] = false
+
                     e.stopPropagation()
                     e.stopImmediatePropagation()
             "click .set-options": (e) ->

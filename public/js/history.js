@@ -2,6 +2,7 @@
 (function() {
   $(function() {
     var history;
+    window.history_length = 15;
     history = window.views.history = {};
     window.models.Snap = Backbone.Model.extend();
     window.collections.Snapshots = Backbone.Collection.extend({
@@ -74,7 +75,7 @@
       }
     });
     return history.HistoryList = Backbone.View.extend({
-      el: '.history ul, .history-modal',
+      tagName: 'div class="history-modal hidden"',
       initialize: function() {
         this.controller = this.options.controller;
         this.snapshots = this.options.snapshots;
@@ -82,34 +83,21 @@
         return this.bindListeners();
       },
       bindListeners: function() {
+        var self;
         this.stopListening();
-        return this.listenTo(this.collection, {
+        this.listenTo(this.collection, {
           "all": this.makeHistory
         });
+        self = this;
+        return _.each(this.collection.models, function(model) {
+          return self.bindIndividualListener(model);
+        });
       },
-      makeHistory: function(operation, subject, collection, options) {
-        var clone, wrapper;
-        if (!((options != null) && options.no_history === true)) {
-          if (this.snapshots.detached_head === true) {
-            console.log("changing detached head");
-            this.deleteForwardChanges();
-          }
-          clone = this.copyCollection(collection);
-          if (clone === false) {
-            return;
-          }
-          wrapper = new models.Snap({
-            snapshot: clone
-          });
-          wrapper.set({
-            "opname": operation,
-            "title": subject.get("title" || null),
-            "type": subject.get("type" || null)
-          });
-          this.snapshots.add(wrapper);
-          return this.append(wrapper);
-        }
+      bindIndividualListener: function(model) {
+        this.listenTo(model, "all", this.makeHistory);
+        return this.listenTo(model.get("child_els"), "all", this.makeHistory);
       },
+      makeHistory: function(operation, subject, collection, options) {},
       deleteForwardChanges: function() {
         var ahead;
         ahead = _.filter(this.snapshots.models, function(snap, i) {
@@ -124,15 +112,24 @@
         if ((collection == null) || (collection.toJSON == null)) {
           return false;
         }
-        return copy = new collections.Elements(collection.toJSON());
+        copy = new collections.Elements();
+        _.each(collection.models, function(element) {
+          var deep_copy_model;
+          deep_copy_model = element.clone();
+          deep_copy_model.set("child_els", element.modelify());
+          console.log(deep_copy_model.toJSON());
+          return copy.add(new models.Element(deep_copy_model.toJSON()));
+        });
+        return copy;
       },
       render: function() {
         var self;
         self = this;
         this.$el.empty();
-        return _.each(this.snapshots.models, function(snapshot) {
+        _.each(this.snapshots.models, function(snapshot) {
           return self.append(snapshot);
         });
+        return this;
       },
       append: function(snapshot) {
         var $el, SnapItem;

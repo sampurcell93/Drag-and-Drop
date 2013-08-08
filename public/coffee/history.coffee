@@ -1,4 +1,7 @@
 $ ->
+
+    window.history_length = 15
+
     history = window.views.history = {}
 
     window.models.Snap = Backbone.Model.extend()
@@ -68,7 +71,7 @@ $ ->
 
 
     history.HistoryList = Backbone.View.extend
-        el: '.history ul, .history-modal'
+        tagName: 'div class="history-modal hidden"'
         initialize: ->
             @controller = @options.controller
             # Refers to the list of snapshots
@@ -77,30 +80,46 @@ $ ->
             do @bindListeners
         bindListeners: ->
             @stopListening()
-            # @Collection refers to the actual section
+            # @Collection refers to the actual section            
             @listenTo @collection, {
                 # Whenever any event is fired, save the current state of the collection
                 "all": @makeHistory
             }
+            self = @
+            _.each @collection.models, (model) ->
+                self.bindIndividualListener model
+        bindIndividualListener: (model) ->
+            @listenTo model, "all", @makeHistory
+            @listenTo model.get("child_els"), "all", @makeHistory
         makeHistory: (operation, subject, collection, options) ->
-            unless options? and options.no_history is true
-                if @snapshots.detached_head is true
-                    console.log "changing detached head"
-                    @deleteForwardChanges()
-                # Copy current state
-                clone = @copyCollection(collection)
-                # If there was a bogus collection passed in
-                if clone is false then return
-                wrapper = new models.Snap({snapshot: clone})
-                wrapper.set({
-                    "opname": operation
-                    "title": subject.get "title" || null
-                    "type": subject.get "type" || null
-                })
-                # Add that state, or snapshot, to this ocllection and
-                # display it in a list of history, a la photoshop
-                @snapshots.add wrapper
-                @append wrapper
+            # cc "Making History."
+            # if !options? then options = {}
+            # unless options? and options.no_history is true
+            #     op = options.opname || operation
+            #     if @snapshots.detached_head is true
+            #         console.log "changing detached head"
+            #         @deleteForwardChanges()
+            #     # Copy current state
+            #     clone = @copyCollection(@controller.model.get("currentSection"))
+            #     # If there was a bogus collection passed in
+            #     if clone is false then return
+            #     wrapper = new models.Snap({snapshot: clone})
+            #     wrapper.set({
+            #         "opname": op
+            #         "title": subject.get "title" || null
+            #         "type": subject.get "type" || null
+            #     })
+            #     # For memory management purposes, destroy the oldest change.
+            #     if @snapshots.length >= window.history_length
+            #         @snapshots.at(0).destroy()
+            #     if op == "add"
+            #         console.log "was added"
+            #         @bindIndividualListener subject
+
+            #     # Add that state, or snapshot, to this ocllection and
+            #     # display it in a list of history, a la photoshop
+            #     @snapshots.add wrapper
+            #     @append wrapper
         deleteForwardChanges: ->
             # Get all snapshots ahead of the current state
             ahead = _.filter @snapshots.models, (snap, i) ->
@@ -111,12 +130,19 @@ $ ->
 
         copyCollection: (collection) ->
             if !collection? or !collection.toJSON? then return false
-            copy = new collections.Elements(collection.toJSON())
+            copy = new collections.Elements()
+            _.each collection.models, (element) ->
+                deep_copy_model = element.clone()
+                deep_copy_model.set("child_els", element.modelify())
+                console.log deep_copy_model.toJSON()
+                copy.add new models.Element(deep_copy_model.toJSON())
+            copy
         render: ->
             self = @
             @$el.empty()
             _.each @snapshots.models, (snapshot) ->
                 self.append snapshot
+            @
         append: (snapshot) ->
             $el = @$el
             SnapItem = new history.Snapshot({model: snapshot, controller: @controller, current: @})

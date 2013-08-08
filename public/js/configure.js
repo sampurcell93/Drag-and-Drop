@@ -100,40 +100,16 @@
           }
         },
         'click .history': function(e) {
-          var $t, content, left, modal, top;
-          $t = $(e.currentTarget);
-          left = $t.offset().left + 300 + "px";
-          top = $t.offset().top + "px";
-          console.log(top, left);
-          content = $t.find(".hidden-menu").html();
-          if ($(".history-modal").length === 0) {
-            modal = window.launchDraggableModal(content, "ul");
-            modal.addClass("history-modal history").attr("data-modal-name", "History").css({
-              "top": top,
-              "left": left
-            });
-          } else {
-            $(".history-modal").css({
-              top: top,
-              left: left
-            });
-          }
-          return console.log("history");
+          return this.$el.find(".history-modal").slideToggle("fast");
         }
       },
       setProps: function() {
-        var opts, that;
+        var modal, opts, that;
         that = this;
         if (typeof opts === "undefined" || opts === null) {
           opts = {};
         }
         this.model.index = allSections.length - 1;
-        this.snaps = new collections.Snapshots();
-        this.histList = new window.views.history.HistoryList({
-          controller: this,
-          snapshots: this.snaps,
-          collection: this.model.get("currentSection")
-        });
         this.existingSectionCollection = new collections.Elements();
         this.existingSectionCollection.fetch({
           success: function(coll) {
@@ -143,6 +119,17 @@
             });
           }
         });
+        this.snaps = new collections.Snapshots();
+        this.histList = new views.history.HistoryList({
+          controller: this,
+          snapshots: this.snaps,
+          collection: this.model.get("currentSection")
+        });
+        modal = window.launchDraggableModal(this.histList.render().el, null, this.$el);
+        modal.css({
+          top: "0px",
+          left: "100px"
+        }).attr("data-modal-name", "History - Recent 15");
         this.builder = new views.SectionBuilder({
           controller: this.model,
           collection: this.model.get("currentSection")
@@ -508,8 +495,7 @@
       render: function() {
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
-        this.$el.append(_.template(this.template, item)).toggleClass("selected").find("input").trigger("click");
-        this.chooseProp();
+        this.$el.append(_.template(this.template, item));
         return this;
       },
       chooseProp: function(e) {

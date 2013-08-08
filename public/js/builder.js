@@ -42,7 +42,6 @@
             index = collection.indexOf(model);
             console.log(collection);
             if ((collection != null) && typeof collection !== "undefined") {
-              console.log("modelling shit");
               collection.remove(model, {
                 no_history: true
               });
@@ -77,7 +76,10 @@
         var self, temp;
         self = this;
         temp = new collections.Elements();
-        _.each(this.get("child_els"), function(model) {
+        if (this.get("child_els") == null) {
+          return false;
+        }
+        _.each(this.get("child_els").models, function(model) {
           var tempModel;
           temp.add(tempModel = new models.Element(model.toJSON()));
           return tempModel.set("child_els", self.modelify());
@@ -106,14 +108,15 @@
             });
           });
         } else if (putIn.collection != null) {
+          console.log("Removing from beldn");
           putIn.collection.remove(putIn, {
             no_history: true
           });
         }
         children = this.get("child_els");
-        console.log(putIn instanceof models.Element);
         children.add(putIn, {
-          at: at
+          at: at,
+          opname: "Switch"
         });
         this.set("child_els", children);
         return true;
@@ -131,13 +134,18 @@
         }
         if ($.isArray(putIn) === true && putIn.length > 1) {
           _.each(putIn, function(model) {
-            return model.collection.remove(model);
+            return model.collection.remove(model, {
+              no_history: true
+            });
           });
         } else if (putIn.collection != null) {
-          putIn.collection.remove(putIn);
+          putIn.collection.remove(putIn, {
+            no_history: true
+          });
         }
         this.add(putIn, {
-          at: at
+          at: at,
+          opname: "Switch"
         });
         return true;
       },
@@ -151,14 +159,16 @@
         collection.remove(temp, {
           organizer: {
             itemRender: false
-          }
+          },
+          no_history: true
         });
         collection.add(temp, {
           at: newIndex,
           organizer: {
             itemRender: false,
             render: false
-          }
+          },
+          opname: 'Switch'
         });
         return this;
       },
@@ -171,7 +181,7 @@
           if (model[prop] === true) {
             models.push(model);
           }
-          return models.concat(model.get("child_els").gather());
+          return models = models.concat(model.get("child_els").gather());
         });
         return models;
       }
@@ -431,6 +441,7 @@
             } else {
               allDraggingModels = [];
             }
+            console.log(allDraggingModels.length);
             if (allDraggingModels.length > 1) {
               return window.currentDraggingModel = allDraggingModels;
             } else {
@@ -591,10 +602,8 @@
             layout = this.model["layout-item"];
             if (layout === false || typeof layout === "undefined") {
               this.$el.trigger("select");
-              this.model["layout-item"] = true;
             } else {
               this.$el.trigger("deselect");
-              this.model["layout-item"] = false;
             }
             e.stopPropagation();
             return e.stopImmediatePropagation();

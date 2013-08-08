@@ -88,7 +88,7 @@
       }
     });
     return window.views.SortableElementItem = Backbone.View.extend({
-      tagName: 'li',
+      tagName: 'li class="property"',
       template: $("#element-sortable-item").html(),
       initialize: function() {
         var that;

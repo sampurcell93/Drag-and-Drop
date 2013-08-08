@@ -31,7 +31,7 @@
 html { height: 100%; }
 
 body {
-	background: url("../images/studioheader.png") no-repeat, url("../images/studiosidebar.png") 0px 48px no-repeat, #5e5e5e;
+	background: url("../images/studioheader.png") no-repeat, url("../images/studiosidebar.png") 0px 48px no-repeat, url("../images/studiosidefill.png") repeat-y, #5e5e5e;
 	font-family: $opensans;
 	font-size: 15px;
 	text-shadow: 0px 1px 0px #fff;
@@ -40,18 +40,6 @@ body {
 	min-height: 100%;
 	height: 100%;
 	padding-top: 10px;
-
-	&:before {
-		content: "";
-		display: block;
-		position: absolute;
-		left: 0;
-		top: 840px;
-		height: 100%;
-		width: 49px;
-		z-index: -1222;
-		background: #2C3035;
-	}
 
 	&:after {
 		content: "";
@@ -270,7 +258,7 @@ ul.select-properties {
 		position: relative;
 		border-top: 1px solid #fff;
 		@include box-shadow(0px -2px 6px #ccc);
-		padding: 0  0 0px 30px !important;
+		padding: 0  0 0px 3px;
 
 		&:first-child {
 			@include border-radius(3px 3px 0 0);
@@ -315,10 +303,6 @@ ul.select-properties {
 		text-align: center;	
 		@include transition(all .3s ease-in-out);
 		color: #999;
-
-		&.flipped {
-			@include transform(rotate(180deg));
-		}
 	}
 
 	.close {
@@ -388,11 +372,13 @@ ul.select-properties {
 	}
 
 	div {
-		padding-left: 60px;
 		&:focus {
 			outline: 1px solid #fff;
 		}
 	}
+}
+.flipped {
+	@include transform(rotate(180deg));
 }
 
 
@@ -1113,7 +1099,7 @@ ul li.selected-choice {
 }
 
 .section-builder-wrap { 
-	padding: 12px 240px 12px 120px;
+	padding: 40px 240px 12px 120px;
 	height: 100%;
 }
 
@@ -1131,7 +1117,6 @@ ul li.selected-choice {
 	text-shadow: none;
 
 	&.main-controls {
-		border-right: 1px solid #222;
 		left: 0;
 
 		li {
@@ -1156,7 +1141,7 @@ ul li.selected-choice {
 		text-align: center;
 		vertical-align: bottom;
 		border-bottom: 1px solid #222;
-		border-top: 1px solid #777;
+		border-top: 1px solid $lightdusk;
 		cursor: pointer;
 		position: relative;
 	
@@ -1173,7 +1158,8 @@ ul li.selected-choice {
 			border-bottom: none;
 		}
 		&:hover {
-			background: $lightdusk;
+			background: #333;
+			border-top-color: $dusky;
 		}
 
 		&:hover::before {
@@ -1198,15 +1184,6 @@ ul li.selected-choice {
 				min-height: 30px;
 				padding-top: 0;
 				line-height: 40px;
-
-				&.ahead-of-flow {
-					background: #000;
-					color: #fff;
-
-					&:hover {
-						background: #aaa;
-					}
-				}
 			}
 		}
 	}
@@ -1241,7 +1218,7 @@ ul li.selected-choice {
 
 	li {
 		position: relative;
-		padding-left: 40px;
+		padding-left: 30px;
 		min-height: 30px;
 		line-height: 30px;
 		display: block;
@@ -1301,37 +1278,74 @@ ul li.selected-choice {
 .draggable-modal {
 	position: absolute !important;
 	background: $dusky;
-	padding: 10px;
-	@include box-shadow(0px 0px 30px #333);
+	border: 1px solid #333;
 	color: #f9f9f9;
 	text-shadow: none;
 	z-index: 9999;
+	min-width: 220px;
+	max-height: 400px;
+	overflow: auto;
+	padding-top: 30px;
+	border-top: 1px solid $lightdusk;
+	cursor: move;
+
+	&.moved {
+		@include box-shadow(0px 0px 50px #333);
+		@include border-radius(3px 3px 0 0);
+
+		&:before {
+			@include border-radius(3px 3px 0 0);
+		}
+	}
 
 	&:before {
 		position: absolute;
 		content: attr(data-modal-name);
-		top: -25px;
+		top: 0;
+		left: 0;
 		height: 20px;
 		width: 100%;
 		color: #f9f9f9;
-		// needs latest Compass, add '@import "compass"' to your scss
-		background-color: #2092cc; // Old browsers
-		@include filter-gradient(#2092cc, #2c3942, vertical); // IE6-9
-		@include background-image(linear-gradient(top,  #2092cc 0%,#3e4951 0%,#2c3942 98%));
-		@include border-radius(3px 3px 0 0);
 		text-align: center;
 		padding: 3px 0;
-		border-bottom: 1px solid #222;
+	}
+
+	.close-arrow {
+		position: absolute;
+		top: 5px;
+		right:5px;
+		font-family: 'icons';
 	}
 }
 
 .history-modal {
-	width: 200px;
-	padding: 0;
+	width: 100%;
+	margin: 0;
+	padding-bottom: 10px;
 
 	li {
+		cursor: pointer;
+		list-style: none;
 		border-top: 1px solid $lightdusk;
 		border-bottom: 1px solid #222;
-		padding: 3px 5px;
+		padding: 3px 5px 3px 10px;
+
+		&:hover { background: $lightdusk; }
+
+		&:last-child { border-bottom: none;}
+		&:first-child { border-top: none; }
 	}
+}
+
+.hidden-modal {
+	ul, div {
+		display: none;
+	}
+}
+
+.ahead-of-flow {
+	background: #222;
+	color: #fff;
+
+	&:hover { background: #222 !important; }
 }

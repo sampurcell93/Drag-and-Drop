@@ -15,14 +15,28 @@ $(document).ready ->
         $(document.body).addClass("active-modal").append(modal)
         modal
 
-    window.launchDraggableModal = (content, tagname) ->
+    window.launchDraggableModal = (content, tagname, appendTo) ->
         modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
-        modal.draggable()
-        modal.appendTo(document.body)
+        modal.draggable
+            start: (e, ui) ->
+                ui.helper.addClass("moved")
+            stop: (e, ui) ->
+                # Get all snappable elements on page
+                snapped = $(this).data('uiDraggable').snapElements
+                # Retrieve elements that the element is actually snapped to
+                snappedTo = $.map snapped, (element) ->
+                    if element.snapping then element.item else null;
+                if snappedTo.length
+                    ui.helper.removeClass("moved")
+
+            snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden)'
+            cancel: '.close-arrow'
+            containment: 'body'
+        modal.appendTo(appendTo || document.body)
+        modal.append($("<div/>").addClass("close-arrow pointer").text("q"))
         modal
 
     $.fn.launchModal = (content) ->
-        console.log $(@), "launching jquery modal"
         @addClass("modal").prependTo($("body").addClass("active-modal"))
 
 
@@ -36,16 +50,17 @@ $(document).ready ->
         $(@).closest(".modal").remove()
         $("body").removeClass("active-modal")
 
-    $(@).delegate(".modal .confirm", "click", ->
+    $(@).delegate ".modal .confirm", "click", ->
         $(document.body).removeClass("active-modal")
         $(@).closest(".modal").remove()
-    )
 
-    $(@).delegate("[data-switch-text]", "click", ->
-        console.log "switch text"
+    $(@).delegate "[data-switch-text]", "click", ->
         $t = $ this
         switchtext = $t.data("switch-text")
         currtext = $t.text()
         $t.text(switchtext)
         $t.data("switch-text", currtext)
-    )
+
+    $(@).delegate ".close-arrow", "click", ->
+        $(this).toggleClass("flipped")
+        .siblings().toggle()

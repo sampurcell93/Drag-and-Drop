@@ -19,15 +19,36 @@
       $(document.body).addClass("active-modal").append(modal);
       return modal;
     };
-    window.launchDraggableModal = function(content, tagname) {
+    window.launchDraggableModal = function(content, tagname, appendTo) {
       var modal;
       modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
-      modal.draggable();
-      modal.appendTo(document.body);
+      modal.draggable({
+        start: function(e, ui) {
+          return ui.helper.addClass("moved");
+        },
+        stop: function(e, ui) {
+          var snapped, snappedTo;
+          snapped = $(this).data('uiDraggable').snapElements;
+          snappedTo = $.map(snapped, function(element) {
+            if (element.snapping) {
+              return element.item;
+            } else {
+              return null;
+            }
+          });
+          if (snappedTo.length) {
+            return ui.helper.removeClass("moved");
+          }
+        },
+        snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden)',
+        cancel: '.close-arrow',
+        containment: 'body'
+      });
+      modal.appendTo(appendTo || document.body);
+      modal.append($("<div/>").addClass("close-arrow pointer").text("q"));
       return modal;
     };
     $.fn.launchModal = function(content) {
-      console.log($(this), "launching jquery modal");
       return this.addClass("modal").prependTo($("body").addClass("active-modal"));
     };
     window.validNumber = function(num) {
@@ -44,14 +65,16 @@
       $(document.body).removeClass("active-modal");
       return $(this).closest(".modal").remove();
     });
-    return $(this).delegate("[data-switch-text]", "click", function() {
+    $(this).delegate("[data-switch-text]", "click", function() {
       var $t, currtext, switchtext;
-      console.log("switch text");
       $t = $(this);
       switchtext = $t.data("switch-text");
       currtext = $t.text();
       $t.text(switchtext);
       return $t.data("switch-text", currtext);
+    });
+    return $(this).delegate(".close-arrow", "click", function() {
+      return $(this).toggleClass("flipped").siblings().toggle();
     });
   });
 
