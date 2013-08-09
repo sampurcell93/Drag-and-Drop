@@ -205,7 +205,6 @@ $(document).ready ->
 
             @modelListeners = _.extend({}, @modelListeners, { 
                 "change:classes": ->
-                    console.log "changed classes"
                     @render(false)
                 "change:child_els": ->
                     self.bindListeners()
@@ -408,45 +407,6 @@ $(document).ready ->
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
             else if !menu.length then return false
             menu.remove()
-        getProps: (attrs) ->
-            property_item = "<li><%=prop.clean() %>: <%= value %></li>";
-            properties = ""
-            for prop of attrs
-                unless @disregardAttrs.indexOf(prop) != -1
-                    properties +=  _.template property_item, {
-                        prop: prop
-                        value: @formatAttributes(attrs[prop])
-                    }
-            properties
-        disregardAttrs: ["inFlow", "view", "styles", "property"]
-        quickAttrs: (e) ->
-                if @$el.hasClass("builder-scaffold") then return false
-                properties = "<ul>"
-                attrs = @model.attributes
-                properties += @getProps(attrs)
-                properties += "</ul>"   
-                $(".quick-props").find("ul").html(properties)
-                if e? then e.stopPropagation()
-        formatAttributes: (data) ->
-            if (typeof data == "string")
-                return data
-            else if $.isArray(data)
-                items = ""
-                if data.length is 0 then return "None"
-                _.each data, (item) ->
-                    items += "<span style='color: red'>" + item + "</span>"
-                return items
-            else 
-                return @formatObject(data.models)
-        formatObject: (obj) ->
-            self = @
-            items = "<div class='close-arrow pointer'>p</div><ul class='hidden'>"
-            if obj.length is 0 then return "None"
-            _.each obj, (model) ->
-                items += "<li>" + self.getProps(model.attributes) + "</li>"
-            items += "</ul>"
-            items
-
         # Default events for any draggable - basically configuration settings.
         events: 
             # for debugging
@@ -484,7 +444,8 @@ $(document).ready ->
                 # So as to stop the parent list from closing
                 e.preventDefault()
                 e.stopPropagation()          
-            "click .view-attrs": "quickAttrs"
+            "click .view-attrs": ->
+                new views.toolbelt.Actives({model: @model}).render()
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 # e.stopImmediatePropagation()

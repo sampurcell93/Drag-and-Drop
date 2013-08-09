@@ -139,7 +139,7 @@ $(document).ready ->
             hist_modal.attr("data-modal-name", "History - Recent 15")
 
             props_modal = window.launchDraggableModal("<ul></ul>", null, $o_el)
-            props_modal.addClass("quick-props").attr("data-modal-name", "Active Attributes")
+            props_modal.addClass("quick-props").attr("data-modal-name", "Editable Attributes")
 
             css_modal = window.launchDraggableModal("<ul></ul>", null, $o_el)
             css_modal.addClass("quick-css").attr("data-modal-name", "Skin Format")

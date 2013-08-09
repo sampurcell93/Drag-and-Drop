@@ -317,7 +317,6 @@
         });
         this.modelListeners = _.extend({}, this.modelListeners, {
           "change:classes": function() {
-            console.log("changed classes");
             return this.render(false);
           },
           "change:child_els": function() {
@@ -604,70 +603,6 @@
         return menu.remove();
       };
 
-      draggableElement.prototype.getProps = function(attrs) {
-        var prop, properties, property_item;
-        property_item = "<li><%=prop.clean() %>: <%= value %></li>";
-        properties = "";
-        for (prop in attrs) {
-          if (this.disregardAttrs.indexOf(prop) === -1) {
-            properties += _.template(property_item, {
-              prop: prop,
-              value: this.formatAttributes(attrs[prop])
-            });
-          }
-        }
-        return properties;
-      };
-
-      draggableElement.prototype.disregardAttrs = ["inFlow", "view", "styles", "property"];
-
-      draggableElement.prototype.quickAttrs = function(e) {
-        var attrs, properties;
-        if (this.$el.hasClass("builder-scaffold")) {
-          return false;
-        }
-        properties = "<ul>";
-        attrs = this.model.attributes;
-        properties += this.getProps(attrs);
-        properties += "</ul>";
-        $(".quick-props").find("ul").html(properties);
-        if (e != null) {
-          return e.stopPropagation();
-        }
-      };
-
-      draggableElement.prototype.formatAttributes = function(data) {
-        var items;
-        if (typeof data === "string") {
-          return data;
-        } else if ($.isArray(data)) {
-          items = "";
-          if (data.length === 0) {
-            return "None";
-          }
-          _.each(data, function(item) {
-            return items += "<span style='color: red'>" + item + "</span>";
-          });
-          return items;
-        } else {
-          return this.formatObject(data.models);
-        }
-      };
-
-      draggableElement.prototype.formatObject = function(obj) {
-        var items, self;
-        self = this;
-        items = "<div class='close-arrow pointer'>p</div><ul class='hidden'>";
-        if (obj.length === 0) {
-          return "None";
-        }
-        _.each(obj, function(model) {
-          return items += "<li>" + self.getProps(model.attributes) + "</li>";
-        });
-        items += "</ul>";
-        return items;
-      };
-
       draggableElement.prototype.events = {
         "dblclick": function(e) {
           console.log(this.model);
@@ -710,7 +645,11 @@
           e.preventDefault();
           return e.stopPropagation();
         },
-        "click .view-attrs": "quickAttrs",
+        "click .view-attrs": function() {
+          return new views.toolbelt.Actives({
+            model: this.model
+          }).render();
+        },
         "click .remove-from-flow": function(e) {
           e.stopPropagation();
           return this.removeFromFlow(e);

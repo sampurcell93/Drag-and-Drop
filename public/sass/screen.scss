@@ -1161,6 +1161,8 @@ ul li.selected-choice {
 		&:hover {
 			background: #333;
 			border-top-color: $dusky;
+
+			li:empty { background: #000; }
 		}
 
 		&:hover::before {
@@ -1311,10 +1313,6 @@ ul li.selected-choice {
 		margin: 0;
 		background: rgba(62,73,81,.94) !important;
 
-		> li:hover {
-			background: $lightdusk;
-		}
-
 		li {
 			text-align: left;
 			text-indent: 10px;
@@ -1334,11 +1332,15 @@ ul li.selected-choice {
 				padding-top: 10px;
 				width: 100%;
 
-				> li{
+			
+				>li:hover {
+					background: $dusky !important;
 				}
+
 				li:empty {
 					background: #333;
 					border: none;
+
 				}
 
 			}
