@@ -103,9 +103,8 @@
         genericElement.__super__.initialize.apply(this, arguments);
         return $.extend(this.events, {
           "keyup .title-setter": function(e) {
-            this.model.set({
-              'customHeader': $(e.currentTarget).val(),
-              'title': $(e.currentTarget).val()
+            this.model.set('title', $(e.currentTarget).val(), {
+              no_history: true
             });
             return e.stopPropagation();
           }

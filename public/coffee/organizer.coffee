@@ -3,12 +3,13 @@ $(document).ready ->
     window.views.ElementOrganizer = Backbone.View.extend({
         initialize: ->
             @controller = @options.controller
-            @wrapper = $(".control-section").eq(@controller.index)
+            @wrapper = $(".control-section").eq(currIndex)
             @$el = @wrapper.find(".organize-elements")
             @collection = @options.collection
             ### Render the list, then apply the drag and drop, and sortable functions. ###
             _.bindAll(this,"append","render", "bindListeners")
             that = this
+
             @$el.sortable {
                 axis: 'y'
                 tolerance: 'touch'
@@ -37,11 +38,15 @@ $(document).ready ->
                 "add": (model, collection, options) -> 
                     unless (options.organizer? and options.organizer.render is false)
                         that.append(model, options)
+                "remove": ->
+                    if that.collection.length is 0
+                        console.log "empty collection"
+                        $("<li/>").addClass("center placeholder").text("No Content Here.").appendTo(that.$el)
             })
         render: (e) ->
             console.log "rendering this organizer", @collection.models.length
             $el = @$el
-            $el.children().not(".organizer-header").remove()
+            $el.children().not(".organizer-header, .placeholder").remove()
             that = this
             outOfFlow = []
             index = that.options.index || sectionIndex
@@ -52,6 +57,7 @@ $(document).ready ->
         append: ( element, options ) -> 
             # Because the only mechanism of sorting is the sortable ui itself,
             # no method should insert elements into the list, aside from appending at the end.
+            @$el.find(".placeholder").remove()
             if options? and options.at? then @appendAt element, options
             else 
                 opts = this.options
@@ -111,7 +117,7 @@ $(document).ready ->
                     if (self.model.get("type") == "Property")
                         clone = self.model.clone()
                         clone.collection = null;
-                        children = clone.get("child_els")
+                        children = clone.get("child_els").clone()
                         children.reset()
                         clone.set("child_els", children)
                         window.currentDraggingModel = clone

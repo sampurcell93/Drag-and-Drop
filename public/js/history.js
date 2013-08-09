@@ -27,7 +27,6 @@
             return self.$el.removeClass("ahead-of-flow");
           },
           "destroy": function() {
-            cc("destroying model");
             return self.remove();
           }
         });
@@ -62,8 +61,7 @@
           } else {
             all_snaps.detached_head = false;
           }
-          this.current.collection = snapshot;
-          this.current.bindListeners();
+          this.current.oneAhead(snapshot).bindListeners();
           e.stopPropagation();
           e.stopImmediatePropagation();
           return false;
@@ -75,7 +73,7 @@
       }
     });
     return history.HistoryList = Backbone.View.extend({
-      tagName: 'div class="history-modal hidden"',
+      tagName: 'div class="history-modal"',
       initialize: function() {
         this.controller = this.options.controller;
         this.snapshots = this.options.snapshots;
@@ -89,13 +87,18 @@
           "all": this.makeHistory
         });
         self = this;
-        return _.each(this.collection.models, function(model) {
+        _.each(this.collection.models, function(model) {
           return self.bindIndividualListener(model);
         });
+        return this;
       },
       bindIndividualListener: function(model) {
         this.listenTo(model, "all", this.makeHistory);
-        return this.listenTo(model.get("child_els"), "all", this.makeHistory);
+        return this;
+      },
+      oneAhead: function(snapshot) {
+        this.collection = snapshot;
+        return this;
       },
       makeHistory: function(operation, subject, collection, options) {
         var clone, op, ops, snap;
@@ -103,6 +106,9 @@
         ops = ["change", "add", "remove"];
         if (ops.indexOf(operation) === -1) {
           return;
+        }
+        if (operation === "change") {
+          options = collection;
         }
         if (options == null) {
           options = {};
@@ -128,29 +134,36 @@
             "type": subject.get("type" || null)
           });
           if (this.snapshots.length >= window.history_length) {
-            this.snapshots.at(0).destroy();
+            this.snapshots.at(0).destroy({
+              no_history: true
+            });
           }
           if (op === "add") {
             console.log("was added");
             this.bindIndividualListener(subject);
           }
           this.snapshots.add(snap);
-          return this.append(snap);
+          this.append(snap);
         }
+        return this;
       },
       deleteForwardChanges: function() {
         var ahead;
         ahead = _.filter(this.snapshots.models, function(snap, i) {
           return snap.get("aheadOfFlow") === true;
         });
-        return _.each(ahead, function(snap) {
+        _.each(ahead, function(snap) {
           return snap.destroy();
         });
+        return this;
       },
       render: function() {
         var self;
         self = this;
         this.$el.empty();
+        if (this.snapshots.length === 0) {
+          $("<li/>").addClass("placeholder center").text("No History Here.").appendTo(this.$el);
+        }
         _.each(this.snapshots.models, function(snapshot) {
           return self.append(snapshot);
         });
@@ -159,12 +172,14 @@
       append: function(snapshot) {
         var $el, SnapItem;
         $el = this.$el;
+        $el.find(".placeholder").hide();
         SnapItem = new history.Snapshot({
           model: snapshot,
           controller: this.controller,
           current: this
         });
-        return $el.append(SnapItem.render().el);
+        $el.append(SnapItem.render().el);
+        return this;
       }
     });
   });

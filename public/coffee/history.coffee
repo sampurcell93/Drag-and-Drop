@@ -24,7 +24,6 @@ $ ->
                 "insideFlow": ->
                     self.$el.removeClass("ahead-of-flow")
                 "destroy": ->
-                    cc "destroying model"
                     self.remove()
             }
         events:
@@ -58,9 +57,8 @@ $ ->
                     all_snaps.detached_head = true
                 else 
                     all_snaps.detached_head = false
-                # Set the history list's current collection to the snapshot - now ce can overwrite
-                @current.collection = snapshot
-                @current.bindListeners()
+                # Set the history list's current collection to the snapshot - now we can overwrite
+                @current.oneAhead(snapshot).bindListeners()
                 e.stopPropagation()
                 e.stopImmediatePropagation()
                 false
@@ -70,7 +68,7 @@ $ ->
 
 
     history.HistoryList = Backbone.View.extend
-        tagName: 'div class="history-modal hidden"'
+        tagName: 'div class="history-modal"'
         initialize: ->
             @controller = @options.controller
             # Refers to the list of snapshots
@@ -87,15 +85,24 @@ $ ->
             self = @
             _.each @collection.models, (model) ->
                 self.bindIndividualListener model
+            @
         bindIndividualListener: (model) ->
             @listenTo model, "all", @makeHistory
-            @listenTo model.get("child_els"), "all", @makeHistory
+            @
+        # Bug fix - when the head is detached the history is linked to a collection already in the history.
+        # When this snapshot is edited, the changes apply to the current state, and ALSO make a new, identical state, 
+        # resulting in state duplication. This offsets the collection.
+        oneAhead: (snapshot)->
+            @collection = snapshot
+            @
         makeHistory: (operation, subject, collection, options) ->
             cc "Making History."
             # By using "all" instead of delegating to the desired events,
             # we can keep parameters the same.
             ops = ["change", "add", "remove"]
             if ops.indexOf(operation) == -1 then return
+            if operation == "change"
+                options = collection
             if !options? then options = {}
             unless (options? and options.no_history is true)
                 op = options.opname || operation
@@ -115,7 +122,7 @@ $ ->
                 })
                 # For memory management purposes, destroy the oldest change.
                 if @snapshots.length >= window.history_length
-                    @snapshots.at(0).destroy()
+                    @snapshots.at(0).destroy({no_history: true})
                 if op == "add"
                     console.log "was added"
                     @bindIndividualListener subject
@@ -124,20 +131,26 @@ $ ->
                 # display it in a list of history, a la photoshop
                 @snapshots.add snap
                 @append snap
+            @
         deleteForwardChanges: ->
             # Get all snapshots ahead of the current state
             ahead = _.filter @snapshots.models, (snap, i) ->
                 snap.get("aheadOfFlow") == true
-            # Destroy all of them
+            # Destroy all of them. Woo! No garbage!
             _.each ahead, (snap) ->
                 snap.destroy()
+            @
         render: ->
             self = @
             @$el.empty()
+            if @snapshots.length is 0
+                $("<li/>").addClass("placeholder center").text("No History Here.").appendTo(@$el)
             _.each @snapshots.models, (snapshot) ->
                 self.append snapshot
             @
         append: (snapshot) ->
             $el = @$el
+            $el.find(".placeholder").hide()
             SnapItem = new history.Snapshot({model: snapshot, controller: @controller, current: @})
             $el.append SnapItem.render().el
+            @

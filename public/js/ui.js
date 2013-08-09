@@ -27,6 +27,7 @@
       var modal;
       modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
       modal.draggable({
+        revert: 'invalid',
         start: function(e, ui) {
           return ui.helper.addClass("moved");
         },
@@ -41,9 +42,9 @@
             }
           });
         },
-        snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden)',
+        snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)',
         cancel: '.close-arrow',
-        containment: 'body'
+        containment: '.container'
       });
       modal.appendTo(appendTo || document.body);
       modal.append($("<div/>").addClass("close-arrow pointer").text("q"));
@@ -76,25 +77,6 @@
     });
     return $(this).delegate(".close-arrow", "click", function() {
       return $(this).toggleClass("flipped").siblings().toggle();
-    });
-  });
-
-  $(window).on("resize", function() {
-    var ww;
-    ww = $(this).width();
-    return $(".draggable-modal").each(function() {
-      var $t, diff, edge, width;
-      $t = $(this);
-      width = $t.width();
-      edge = $t.offset().left + width;
-      diff = edge - ww;
-      if (edge > ww) {
-        cc($t.offset().left);
-        cc($t.offset().left - diff + "px");
-        return $t.css({
-          left: $t.offset().left - diff + "px"
-        });
-      }
     });
   });
 

@@ -113,11 +113,7 @@ $(document).ready ->
             $.extend(@events, {
                 # When they edit an input, update the model's display title.
                 "keyup .title-setter": (e) ->
-                    @model.set {
-                        # Modularize this ; todo
-                        'customHeader': $(e.currentTarget).val()
-                        'title': $(e.currentTarget).val()
-                    }
+                    @model.set('title', $(e.currentTarget).val(), {no_history: true})
                     e.stopPropagation()
             })
 

@@ -22,6 +22,7 @@ $(document).ready ->
     window.launchDraggableModal = (content, tagname, appendTo) ->
         modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
         modal.draggable
+            revert: 'invalid'
             start: (e, ui) ->
                 ui.helper.addClass("moved")
             stop: (e, ui) ->
@@ -34,9 +35,9 @@ $(document).ready ->
                     # ui.helper.removeClass("moved")
 
 
-            snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden)'
+            snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)'
             cancel: '.close-arrow'
-            containment: 'body'
+            containment: '.container'
         modal.appendTo(appendTo || document.body)
         modal.append($("<div/>").addClass("close-arrow pointer").text("q"))
         modal
@@ -69,16 +70,3 @@ $(document).ready ->
     $(@).delegate ".close-arrow", "click", ->
         $(this).toggleClass("flipped")
         .siblings().toggle()
-
-$(window).on "resize", ->
-    ww = $(@).width()
-
-    $(".draggable-modal").each ->
-        $t    = $ this
-        width = $t.width()
-        edge  = $t.offset().left + width
-        diff = edge - ww
-        if edge > ww
-            cc $t.offset().left
-            cc $t.offset().left - diff + "px"
-            $t.css({left: $t.offset().left - diff + "px"})

@@ -37,7 +37,6 @@
         return this.on({
           "change:view": function(model, view, opts) {
             var collection, index;
-            console.log("changing view");
             collection = model.collection;
             index = collection.indexOf(model);
             console.log(collection);
@@ -61,7 +60,23 @@
         return {
           "child_els": child_els,
           "inFlow": true,
-          classes: []
+          classes: [],
+          styles: {
+            background: null,
+            border: {
+              left: {},
+              right: {},
+              top: {},
+              bottom: {}
+            },
+            'box-shadow': null,
+            color: null,
+            font: {
+              size: null,
+              weight: null
+            },
+            opacity: null
+          }
         };
       };
 
@@ -110,7 +125,7 @@
         children = this.get("child_els");
         children.add(putIn, {
           at: at,
-          opname: "Switch"
+          opname: 'Switch'
         });
         this.set("child_els", children);
         return true;
@@ -186,8 +201,12 @@
           var children, deep_copy_model;
           deep_copy_model = element.clone();
           children = deep_copy_model.get("child_els");
-          deep_copy_model.set("child_els", children.clone());
-          return copy.add(new models.Element(deep_copy_model.toJSON()));
+          deep_copy_model.set("child_els", children.clone(), {
+            no_history: true
+          });
+          return copy.add(new models.Element(deep_copy_model.toJSON()), {
+            no_history: true
+          });
         });
         return copy;
       }
@@ -204,10 +223,6 @@
         "remove": function() {
           return this.remove();
         }
-      };
-
-      droppablePlaceholder.prototype.initialize = function() {
-        return this.index = this.options.index;
       };
 
       droppablePlaceholder.prototype.render = function() {
@@ -280,7 +295,6 @@
       draggableElement.prototype.modelListeners = {};
 
       draggableElement.prototype.initialize = function() {
-        this.index = this.options.index;
         _.bindAll(this, "render", "bindDrop", "bindDrag", "appendChild", "bindListeners");
         this.on("bindListeners", this.bindListeners);
         this.bindDrop();
@@ -439,7 +453,7 @@
             if (e.shiftKey === true) {
               return false;
             }
-            sect_interface = allSections.at(that.index);
+            sect_interface = allSections.at(currIndex);
             section = sect_interface.get("currentSection");
             ui.helper.addClass("dragging");
             if (ui.helper.hasClass("selected-element")) {
@@ -533,7 +547,7 @@
         });
       };
 
-      draggableElement.prototype.blankLayout = function() {
+      draggableElement.prototype.blankLayout = function(e) {
         var collection, layout, layoutIndex, selected;
         collection = allSections.at(currIndex).get("currentSection");
         selected = collection.gather();
@@ -547,7 +561,7 @@
         }), {
           at: layoutIndex
         });
-        return _.each(selected, function(model) {
+        _.each(selected, function(model) {
           if (model.collection != null) {
             model.collection.remove(model, {
               no_history: true
@@ -555,6 +569,7 @@
           }
           return layout.get("child_els").add(model);
         });
+        return this;
       };
 
       draggableElement.prototype.bindContextMenu = function(e) {
@@ -581,7 +596,6 @@
       draggableElement.prototype.unbindContextMenu = function(e) {
         var menu;
         menu = $(".context-menu");
-        console.log(menu.length, $(e.currentTarget).hasClass("context-menu"));
         if ((e != null) && $(e.currentTarget).hasClass("context-menu")) {
           return false;
         } else if (!menu.length) {
@@ -590,9 +604,73 @@
         return menu.remove();
       };
 
+      draggableElement.prototype.getProps = function(attrs) {
+        var prop, properties, property_item;
+        property_item = "<li><%=prop.clean() %>: <%= value %></li>";
+        properties = "";
+        for (prop in attrs) {
+          if (this.disregardAttrs.indexOf(prop) === -1) {
+            properties += _.template(property_item, {
+              prop: prop,
+              value: this.formatAttributes(attrs[prop])
+            });
+          }
+        }
+        return properties;
+      };
+
+      draggableElement.prototype.disregardAttrs = ["inFlow", "view", "styles", "property"];
+
+      draggableElement.prototype.quickAttrs = function(e) {
+        var attrs, properties;
+        if (this.$el.hasClass("builder-scaffold")) {
+          return false;
+        }
+        properties = "<ul>";
+        attrs = this.model.attributes;
+        properties += this.getProps(attrs);
+        properties += "</ul>";
+        $(".quick-props").find("ul").html(properties);
+        if (e != null) {
+          return e.stopPropagation();
+        }
+      };
+
+      draggableElement.prototype.formatAttributes = function(data) {
+        var items;
+        if (typeof data === "string") {
+          return data;
+        } else if ($.isArray(data)) {
+          items = "";
+          if (data.length === 0) {
+            return "None";
+          }
+          _.each(data, function(item) {
+            return items += "<span style='color: red'>" + item + "</span>";
+          });
+          return items;
+        } else {
+          return this.formatObject(data.models);
+        }
+      };
+
+      draggableElement.prototype.formatObject = function(obj) {
+        var items, self;
+        self = this;
+        items = "<div class='close-arrow pointer'>p</div><ul class='hidden'>";
+        if (obj.length === 0) {
+          return "None";
+        }
+        _.each(obj, function(model) {
+          return items += "<li>" + self.getProps(model.attributes) + "</li>";
+        });
+        items += "</ul>";
+        return items;
+      };
+
       draggableElement.prototype.events = {
         "dblclick": function(e) {
-          console.log(this.model, this.$el.index());
+          console.log(this.model);
           return e.stopPropagation();
         },
         "contextmenu": "bindContextMenu",
@@ -614,9 +692,9 @@
             } else {
               this.$el.trigger("deselect");
             }
-            e.stopPropagation();
-            return e.stopImmediatePropagation();
           }
+          e.stopPropagation();
+          return e.stopImmediatePropagation();
         },
         "click .set-options": function(e) {
           var $t, dropdown;
@@ -632,21 +710,7 @@
           e.preventDefault();
           return e.stopPropagation();
         },
-        "click .quick-props": function(e) {
-          var attrs, prop, properties, property_item;
-          property_item = "<li><%=prop%> : <%= value %></li>";
-          properties = "<ul>";
-          attrs = this.model.attributes;
-          for (prop in attrs) {
-            properties += _.template(property_item, {
-              prop: prop,
-              value: attrs[prop]
-            });
-          }
-          properties += "</ul>";
-          window.launchModal(properties);
-          return e.stopPropagation();
-        },
+        "click .view-attrs": "quickAttrs",
         "click .remove-from-flow": function(e) {
           e.stopPropagation();
           return this.removeFromFlow(e);

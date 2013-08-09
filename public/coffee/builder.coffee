@@ -23,7 +23,6 @@ $(document).ready ->
             self = @
             @on {
                 "change:view": (model,view,opts) ->
-                    console.log "changing view"
                     collection = model.collection
                     index = collection.indexOf(model)
                     console.log collection
@@ -38,6 +37,22 @@ $(document).ready ->
                 "child_els": child_els
                 "inFlow": true
                 classes: []
+                styles: {
+                    background: null
+                    border: {
+                        left: {}
+                        right: {}
+                        top: {}
+                        bottom: {}
+                    }
+                    'box-shadow': null
+                    color: null
+                    font: {
+                        size: null
+                        weight: null
+                    }
+                    opacity: null
+                }
             }
         url: ->
             url = "/section/"
@@ -71,7 +86,7 @@ $(document).ready ->
             # and put the collection back in
             children = @get "child_els"
             # We don't need to validate "at" because backbone will simply append if "at" is undefined
-            children.add(putIn, {at: at, opname: "Switch"})
+            children.add(putIn, {at: at, opname: 'Switch'})
             @set "child_els", children
             true
 
@@ -118,9 +133,8 @@ $(document).ready ->
             _.each @models, (element) ->
                 deep_copy_model = element.clone()
                 children = deep_copy_model.get("child_els")
-                deep_copy_model.set("child_els", children.clone())
-
-                copy.add new models.Element(deep_copy_model.toJSON())
+                deep_copy_model.set("child_els", children.clone(), {no_history: true})
+                copy.add new models.Element(deep_copy_model.toJSON()), {no_history: true}
             copy
     }
 
@@ -128,8 +142,6 @@ $(document).ready ->
         events:
             "remove": ->
                 do @remove
-        initialize: ->
-            @index = @options.index
         render: ->
             self = @
             ghostFragment = $("<div/>").addClass("droppable-placeholder").html("<div class='make-bigger'></div>")
@@ -171,7 +183,6 @@ $(document).ready ->
         tagName: 'div class="builder-element"'
         modelListeners: {}
         initialize: ->
-            @index = @options.index
             _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild","bindListeners")
             @on "bindListeners", @bindListeners
             # Bind the drag event to the el
@@ -296,7 +307,7 @@ $(document).ready ->
                 cursor: "move"
                 start: (e, ui) ->
                     if e.shiftKey is true then return false
-                    sect_interface = allSections.at(that.index)
+                    sect_interface = allSections.at(currIndex)
                     section = sect_interface.get("currentSection")
                     ui.helper.addClass("dragging")
                     if (ui.helper.hasClass("selected-element"))
@@ -364,7 +375,7 @@ $(document).ready ->
                 $el.addClass(style)
 
         # Grabs all selected elements and groupes them into a barebones layout
-        blankLayout: ->
+        blankLayout: (e) ->
             collection = allSections.at(currIndex).get("currentSection")
             selected = collection.gather()
             if selected.length is 0 or selected.length is 1 then return
@@ -374,6 +385,7 @@ $(document).ready ->
                 if model.collection?
                     model.collection.remove model, {no_history: true}
                 layout.get("child_els").add model
+            @
         bindContextMenu:  (e) ->
             if !@contextMenu? then return true
             else if e.shiftKey is true
@@ -393,16 +405,53 @@ $(document).ready ->
             false
         unbindContextMenu: (e) ->
             menu = $(".context-menu") 
-            console.log menu.length, $(e.currentTarget).hasClass("context-menu")
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
             else if !menu.length then return false
             menu.remove()
+        getProps: (attrs) ->
+            property_item = "<li><%=prop.clean() %>: <%= value %></li>";
+            properties = ""
+            for prop of attrs
+                unless @disregardAttrs.indexOf(prop) != -1
+                    properties +=  _.template property_item, {
+                        prop: prop
+                        value: @formatAttributes(attrs[prop])
+                    }
+            properties
+        disregardAttrs: ["inFlow", "view", "styles", "property"]
+        quickAttrs: (e) ->
+                if @$el.hasClass("builder-scaffold") then return false
+                properties = "<ul>"
+                attrs = @model.attributes
+                properties += @getProps(attrs)
+                properties += "</ul>"   
+                $(".quick-props").find("ul").html(properties)
+                if e? then e.stopPropagation()
+        formatAttributes: (data) ->
+            if (typeof data == "string")
+                return data
+            else if $.isArray(data)
+                items = ""
+                if data.length is 0 then return "None"
+                _.each data, (item) ->
+                    items += "<span style='color: red'>" + item + "</span>"
+                return items
+            else 
+                return @formatObject(data.models)
+        formatObject: (obj) ->
+            self = @
+            items = "<div class='close-arrow pointer'>p</div><ul class='hidden'>"
+            if obj.length is 0 then return "None"
+            _.each obj, (model) ->
+                items += "<li>" + self.getProps(model.attributes) + "</li>"
+            items += "</ul>"
+            items
 
         # Default events for any draggable - basically configuration settings.
         events: 
             # for debugging
             "dblclick": (e) ->
-                console.log @model, @$el.index()
+                console.log @model
                 e.stopPropagation()
             # for right click functionality users expect
             "contextmenu": "bindContextMenu"
@@ -421,9 +470,8 @@ $(document).ready ->
                         @$el.trigger("select")
                     else 
                         @$el.trigger("deselect")
-
-                    e.stopPropagation()
-                    e.stopImmediatePropagation()
+                e.stopPropagation()
+                e.stopImmediatePropagation()
             "click .set-options": (e) ->
                 @unbindContextMenu(e)
                 $t = $(e.currentTarget)
@@ -436,18 +484,7 @@ $(document).ready ->
                 # So as to stop the parent list from closing
                 e.preventDefault()
                 e.stopPropagation()          
-            "click .quick-props": (e) ->
-                property_item = "<li><%=prop%> : <%= value %></li>";
-                properties = "<ul>"
-                attrs = @model.attributes
-                for prop of attrs
-                    properties +=  _.template property_item, {
-                        prop: prop
-                        value: attrs[prop]
-                    }
-                properties += "</ul>"   
-                window.launchModal(properties)
-                e.stopPropagation()
+            "click .view-attrs": "quickAttrs"
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 # e.stopImmediatePropagation()

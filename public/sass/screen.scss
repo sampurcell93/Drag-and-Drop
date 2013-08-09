@@ -547,7 +547,7 @@ ul.outside-draggables {
 			li {
 				width: 100%;
 				background: #fff;
-				color: $strongblue;
+				color: $dusky;
 				position: relative;
 				left: -3px;
 				min-width: 0%;
@@ -555,7 +555,7 @@ ul.outside-draggables {
 
 			li:hover {
 				color: #f9f9f9;
-				background: $strongblue;
+				background: $dusky;
 			}
 		}
 
@@ -1133,8 +1133,9 @@ ul li.selected-choice {
 		right: 0;
 		overflow-y: scroll;
 	}
-	&.organize-elements {
+	&.accessories {
 		right: 0;
+		width: 18%;
 	}
 
 	li {
@@ -1190,16 +1191,13 @@ ul li.selected-choice {
 }
 
 .organize-elements {
-	min-height: 100%;
 	padding: 0px 0 10px;
-	width: 18%;
-	min-height: 100%;
+	width: 100%;
 	min-width: 130px;
-	height: 100%;
 	background: $dusky;
 	border-left: 1px solid #333;
 	border-bottom: 1px solid #333;
-	z-index: 9999;
+	z-index: 998;
 
 	.ui-sortable-placeholder {
 		border: 1px solid #333;
@@ -1277,33 +1275,28 @@ ul li.selected-choice {
 
 .draggable-modal {
 	position: absolute !important;
-	background: $dusky;
 	color: #f9f9f9;
 	text-shadow: none;
-	z-index: 9999;
-	min-width: 220px;
+	z-index: 999;
+	width: 220px;
 	max-height: 400px;
-	overflow: auto;
-	padding-top: 30px;
+	padding-top: 29px;
 	cursor: move;
 	border-top: 1px solid $lightdusk;
-
-	&.moved {
-		background: rgba(62,73,81,.8);
-		@include box-shadow(0px 0px 30px #333);
-		border: none;
-	}
 
 	&:before {
 		position: absolute;
 		content: attr(data-modal-name);
 		top: 0;
 		left: 0;
-		height: 20px;
+		height: 23px;
 		width: 100%;
 		color: #f9f9f9;
 		text-align: center;
-		padding: 3px 0;
+		padding: 6px 0 0 ;
+		font-size: 1.1em;
+		background: #313131;
+		border-bottom: 1px solid #000;
 	}
 
 	.close-arrow {
@@ -1312,26 +1305,48 @@ ul li.selected-choice {
 		right:5px;
 		font-family: 'icons';
 	}
-}
 
-.history-modal {
-	width: 100%;
-	margin: 0;
-	padding-bottom: 10px;
+	> ul, .history-modal {
+		width: 100%;
+		margin: 0;
+		background: rgba(62,73,81,.94) !important;
 
-	li {
-		cursor: pointer;
-		list-style: none;
-		border-top: 1px solid #9CB1BA;
-		border-bottom: 1px solid #222;
-		padding: 3px 5px 3px 10px;
+		> li:hover {
+			background: $lightdusk;
+		}
 
-		&:hover { background: $lightdusk; }
+		li {
+			text-align: left;
+			text-indent: 10px;
+			cursor: pointer;
+			list-style: none;
+			// border-top: 1px solid #9CB1BA;
+			// border-bottom: 1px solid #222;
+			padding: 3px 5px 3px 10px;
 
-		&:last-child { border-bottom: none;}
-		&:first-child { border-top: none; }
+			&:last-child { border-bottom: none;}
+			&:first-child { 
+				border-top: none; 
+				padding-top: 4px;
+			}
+
+			ul {
+				padding-top: 10px;
+				width: 100%;
+
+				> li{
+				}
+				li:empty {
+					background: #333;
+					border: none;
+				}
+
+			}
+		}
 	}
 }
+
+
 
 .hidden-modal {
 	ul, div {
@@ -1342,6 +1357,29 @@ ul li.selected-choice {
 .ahead-of-flow {
 	background: #222;
 	color: #fff;
+	border-top: none;
 
 	&:hover { background: #222 !important; }
+}
+
+.accessories {
+	.draggable-modal {
+		position: relative !important;
+		width: 100%;
+		margin: 3px auto 10px;
+
+		> ul {
+			max-height: 400px;
+			overflow: auto;
+		}
+	}
+
+	.placeholder {
+		border: 1px solid $lightdusk !important;
+		text-align: center;
+		margin: 7px auto;
+		width: 90%;
+		@include border-radius(3px);
+
+	}
 }

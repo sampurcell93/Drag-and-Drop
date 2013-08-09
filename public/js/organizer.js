@@ -5,7 +5,7 @@
       initialize: function() {
         var that;
         this.controller = this.options.controller;
-        this.wrapper = $(".control-section").eq(this.controller.index);
+        this.wrapper = $(".control-section").eq(currIndex);
         this.$el = this.wrapper.find(".organize-elements");
         this.collection = this.options.collection;
         /* Render the list, then apply the drag and drop, and sortable functions.*/
@@ -42,6 +42,12 @@
             if (!((options.organizer != null) && options.organizer.render === false)) {
               return that.append(model, options);
             }
+          },
+          "remove": function() {
+            if (that.collection.length === 0) {
+              console.log("empty collection");
+              return $("<li/>").addClass("center placeholder").text("No Content Here.").appendTo(that.$el);
+            }
           }
         });
       },
@@ -49,7 +55,7 @@
         var $el, index, outOfFlow, that;
         console.log("rendering this organizer", this.collection.models.length);
         $el = this.$el;
-        $el.children().not(".organizer-header").remove();
+        $el.children().not(".organizer-header, .placeholder").remove();
         that = this;
         outOfFlow = [];
         index = that.options.index || sectionIndex;
@@ -63,6 +69,7 @@
       },
       append: function(element, options) {
         var itemView, opts;
+        this.$el.find(".placeholder").remove();
         if ((options != null) && (options.at != null)) {
           return this.appendAt(element, options);
         } else {
@@ -133,7 +140,7 @@
             if (self.model.get("type") === "Property") {
               clone = self.model.clone();
               clone.collection = null;
-              children = clone.get("child_els");
+              children = clone.get("child_els").clone();
               children.reset();
               clone.set("child_els", children);
               return window.currentDraggingModel = clone;

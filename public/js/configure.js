@@ -40,11 +40,14 @@
       },
       render: function(i) {
         this.$el.addClass("control-section").attr("id", "section-" + i).html(_.template(this.template, this.model.toJSON()));
-        this.$el.droppable({
-          accept: '.builder-element',
+        $(".container").droppable({
+          accept: '.builder-element, .draggable-modal',
           drop: function(e, ui) {
             var models;
             models = window.currentDraggingModel;
+            if (models == null) {
+              return false;
+            }
             if ($.isArray(models) === true) {
               return _.each(models, function(model) {
                 return model.set("inFlow", false);
@@ -104,7 +107,7 @@
         }
       },
       setProps: function() {
-        var modal, opts, that;
+        var $o_el, css_modal, hist_modal, opts, props_modal, that;
         that = this;
         if (typeof opts === "undefined" || opts === null) {
           opts = {};
@@ -125,11 +128,6 @@
           snapshots: this.snaps,
           collection: this.model.get("currentSection")
         });
-        modal = window.launchDraggableModal(this.histList.render().el, null, this.$el);
-        modal.css({
-          top: "0px",
-          left: "100px"
-        }).attr("data-modal-name", "History - Recent 15");
         this.builder = new views.SectionBuilder({
           controller: this.model,
           collection: this.model.get("currentSection")
@@ -137,6 +135,25 @@
         this.organizer = new views.ElementOrganizer({
           controller: this.model,
           collection: this.model.get("currentSection")
+        });
+        $o_el = this.$el.find(".accessories");
+        hist_modal = window.launchDraggableModal(this.histList.render().el, null, $o_el);
+        hist_modal.attr("data-modal-name", "History - Recent 15");
+        props_modal = window.launchDraggableModal("<ul></ul>", null, $o_el);
+        props_modal.addClass("quick-props").attr("data-modal-name", "Active Attributes");
+        css_modal = window.launchDraggableModal("<ul></ul>", null, $o_el);
+        css_modal.addClass("quick-css").attr("data-modal-name", "Skin Format");
+        $o_el.droppable({
+          accept: '.moved',
+          greedy: true,
+          out: function(e, ui) {
+            return ui.draggable.addClass("moved");
+          },
+          drop: function(e, ui) {
+            return ui.draggable.css({
+              "position": "relative"
+            }).removeClass("moved");
+          }
         });
         this.classes = new collections.ClassList({
           controller: this.model
@@ -495,8 +512,7 @@
       render: function() {
         var item;
         item = $.extend({}, this.model.toJSON(), this.options);
-        this.$el.append(_.template(this.template, item)).toggleClass("selected").find("input").trigger("click");
-        this.chooseProp();
+        this.$el.append(_.template(this.template, item));
         return this;
       },
       chooseProp: function(e) {

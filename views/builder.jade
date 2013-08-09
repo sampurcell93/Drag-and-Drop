@@ -15,7 +15,7 @@ script(type='text/template')#draggable-element
 script(type='text/template')#drag-controls
     <% var layout = typeof layout !== "undefined" && layout == true ? true : false %>
     ul.config-menu-wrap.no-drag 
-        li.icon.quick-props b
+        li.icon.view-attrs b
         li.icon.set-options e
             ul.dropdown
                 li.config-panel Configure <%= layout == true ? "Group" : "Element" %>
@@ -30,4 +30,5 @@ script(type='text/template')#context-menu-default
     li.copy-element Copy Element
     li.destroy-element Delete Element
 script(type='text/template')#snapshot
-    | <%= opname.clean() %>ed <%= typeof title !== "undefined" ? title : type %>
+    |<%= opname.clean() %><%= opname.slice(-1) == "e"?"d":"ed" %>
+    |<%= typeof title !== "undefined" ? title : type %>

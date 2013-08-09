@@ -62,10 +62,11 @@ $(document).ready ->
                 self.$el.find(".section-title").text(model.get("title"))
         render: (i) ->
             @$el.addClass("control-section").attr("id","section-" + i).html _.template @template, @model.toJSON()
-            @$el.droppable
-                accept: '.builder-element'
+            $(".container").droppable
+                accept: '.builder-element, .draggable-modal'
                 drop: (e, ui) ->
                     models = window.currentDraggingModel
+                    if !models? then return false
                     if $.isArray(models) is true
                         _.each models, (model) ->
                             model.set("inFlow", false)
@@ -120,8 +121,6 @@ $(document).ready ->
                 snapshots: @snaps
                 collection: @model.get("currentSection")
             })
-            modal = window.launchDraggableModal(@histList.render().el, null, @$el)
-            modal.css({top: "0px", left: "100px"}).attr("data-modal-name", "History - Recent 15")
 
             # The controller now has a reference to the builder
             @builder = new views.SectionBuilder({
@@ -135,6 +134,24 @@ $(document).ready ->
                 controller: @model
                 collection: @model.get("currentSection")
             }
+            $o_el = @$el.find(".accessories")
+            hist_modal = window.launchDraggableModal(@histList.render().el, null, $o_el)
+            hist_modal.attr("data-modal-name", "History - Recent 15")
+
+            props_modal = window.launchDraggableModal("<ul></ul>", null, $o_el)
+            props_modal.addClass("quick-props").attr("data-modal-name", "Active Attributes")
+
+            css_modal = window.launchDraggableModal("<ul></ul>", null, $o_el)
+            css_modal.addClass("quick-css").attr("data-modal-name", "Skin Format")
+
+            $o_el.droppable
+                accept: '.moved'
+                greedy: true
+                out: (e,ui) ->
+                    ui.draggable.addClass("moved")
+                drop: (e,ui) ->
+                    ui.draggable.css({"position": "relative"}).removeClass("moved")
+
             # All classes
             @classes =  new collections.ClassList({controller: @model})
             @classes.fetch({
@@ -401,8 +418,8 @@ $(document).ready ->
         render: ->
             item = $.extend({}, @model.toJSON(), @options)
             @$el.append(_.template @template,item)
-            .toggleClass("selected").find("input").trigger "click"
-            @chooseProp()
+            # .toggleClass("selected").find("input").trigger "click"
+            # @chooseProp()
             this
         chooseProp: (e) ->
             console.log "TesT"
