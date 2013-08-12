@@ -27,7 +27,7 @@
 
       Actives.prototype.getProps = function(attrs) {
         var prop, properties, property_item;
-        property_item = "<li><%=prop.clean() %>: <%= value %></li>";
+        property_item = "<li data-attr='<%=prop%>'><%=prop.clean() %>: <span contentEditable><%= value %></span></li>";
         properties = "";
         for (prop in attrs) {
           if (this.disregardAttrs.indexOf(prop) === -1) {
@@ -85,8 +85,14 @@
         _.each(obj, function(model) {
           return items += "<li>" + self.getProps(model.attributes) + "</li>";
         });
-        items += "</ul>";
+        items += "</ul></div>";
         return items;
+      };
+
+      Actives.prototype.events = {
+        "click li": function(e) {
+          return e.stopPropagation();
+        }
       };
 
       return Actives;

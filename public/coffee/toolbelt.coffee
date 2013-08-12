@@ -10,7 +10,7 @@ $ ->
         render: ->
             @quickAttrs()
         getProps: (attrs) ->
-            property_item = "<li><%=prop.clean() %>: <%= value %></li>";
+            property_item = "<li data-attr='<%=prop%>'><%=prop.clean() %>: <span contentEditable><%= value %></span></li>";
             properties = ""
             for prop of attrs
                 unless @disregardAttrs.indexOf(prop) != -1
@@ -45,5 +45,8 @@ $ ->
             if obj.length is 0 then return "None"
             _.each obj, (model) ->
                 items += "<li>" + self.getProps(model.attributes) + "</li>"
-            items += "</ul>"
+            items += "</ul></div>"
             items
+        events: 
+            "click li": (e) ->
+                e.stopPropagation()

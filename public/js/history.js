@@ -37,7 +37,7 @@
           all_snaps = this.model.collection;
           model_index = all_snaps.indexOf(this.model);
           controller = this.controller;
-          snapshot = this.model.get("snapshot");
+          snapshot = this.model.get("snapshot").clone();
           ahead_flow = _.filter(this.model.collection.models, function(m, i) {
             return i > model_index;
           });
@@ -80,14 +80,15 @@
         _.bindAll(this, "makeHistory", "render", "append", "bindListeners");
         return this.bindListeners();
       },
-      bindListeners: function() {
-        var self;
+      bindListeners: function(collection) {
+        var coll, self;
         this.stopListening();
-        this.listenTo(this.collection, {
+        coll = collection || this.collection;
+        this.listenTo(coll, {
           "all": this.makeHistory
         });
         self = this;
-        _.each(this.collection.models, function(model) {
+        _.each(coll.models, function(model) {
           return self.bindIndividualListener(model);
         });
         return this;

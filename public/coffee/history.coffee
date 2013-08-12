@@ -31,7 +31,7 @@ $ ->
                 all_snaps = @model.collection
                 model_index = all_snaps.indexOf(@model)
                 controller  = @controller
-                snapshot   = @model.get("snapshot")
+                snapshot   = @model.get("snapshot").clone()
                 # Get every model ahead of this one in the flow
                 ahead_flow  = _.filter @model.collection.models, (m, i) ->
                     i > model_index
@@ -57,7 +57,6 @@ $ ->
                     all_snaps.detached_head = true
                 else 
                     all_snaps.detached_head = false
-                # Set the history list's current collection to the snapshot - now we can overwrite
                 @current.oneAhead(snapshot).bindListeners()
                 e.stopPropagation()
                 e.stopImmediatePropagation()
@@ -75,26 +74,30 @@ $ ->
             @snapshots = @options.snapshots
             _.bindAll(@, "makeHistory", "render", "append", "bindListeners")
             do @bindListeners
-        bindListeners: ->
+        # Add watcher to collection
+        bindListeners: (collection) ->
             @stopListening()
+            coll = collection || @collection
             # @Collection refers to the actual section            
-            @listenTo @collection, {
+            @listenTo coll, {
                 # Whenever any event is fired, save the current state of the collection
                 "all": @makeHistory
             }
             self = @
-            _.each @collection.models, (model) ->
+            _.each coll.models, (model) ->
                 self.bindIndividualListener model
             @
+        # Add watcher to each model in the collection
         bindIndividualListener: (model) ->
             @listenTo model, "all", @makeHistory
+            # @listenTo model.get("child_els"), "all", @makeHistory
             @
         # Bug fix - when the head is detached the history is linked to a collection already in the history.
         # When this snapshot is edited, the changes apply to the current state, and ALSO make a new, identical state, 
         # resulting in state duplication. This offsets the collection.
         oneAhead: (snapshot)->
             @collection = snapshot
-            @
+            @ 
         makeHistory: (operation, subject, collection, options) ->
             cc "Making History."
             # By using "all" instead of delegating to the desired events,
