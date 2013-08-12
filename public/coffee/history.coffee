@@ -113,10 +113,10 @@ $ ->
             @collection = snapshot
             @ 
         selectLast: ->
+            last = @last_snap
             # Shit may have been destroyed - check that the snap is still there
-            console.log @last_snap, @snapshots.length
-            if @last_snap < @snapshots.length and @last_snap >= 0
-                @snapshots.at(@last_snap).trigger("select")
+            if last < @snapshots.length and last >= 0
+                @snapshots.at(last).trigger("select")
         makeHistory: (operation, subject, collection, options) ->
             cc "Making History."
             # By using "all" instead of delegating to the desired events,
@@ -136,7 +136,6 @@ $ ->
                     try 
                         clone = @controller.model.get("currentSection").clone()
                     catch e
-                        console.log e
                         return false;
                 snap = new models.Snap({snapshot: clone})
                 snap.set({

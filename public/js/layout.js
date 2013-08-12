@@ -83,7 +83,7 @@
         this.model.set("layout", true);
         layout.__super__.initialize.apply(this, arguments);
         self = this;
-        _.bindAll(this, "afterRender");
+        _.bindAll(this, "afterRender", "bindDrop");
         this.$el.addClass("layout-wrapper");
         this.listenTo(this.model.get("child_els"), "add", function(m, c, o) {
           if ((c != null) && c.length) {
@@ -111,6 +111,53 @@
             }
             children.reset();
             return model.destroy();
+          }
+        });
+      };
+
+      layout.prototype.bindDrop = function() {
+        var that;
+        that = this;
+        return this.$el.droppable({
+          greedy: true,
+          tolerance: 'pointer',
+          accept: '.builder-element, .outside-draggables li, .property',
+          over: function(e) {
+            if ($(document.body).hasClass("active-modal")) {
+              return false;
+            }
+            return $(e.target).addClass("over");
+          },
+          out: function(e) {
+            return $(e.target).removeClass("over").parents().removeClass("over");
+          },
+          drop: function(e, ui) {
+            var builder, draggingModel, model, sect_interface, section;
+            $(e.target).removeClass("over").parents().removeClass("over");
+            if ($(document.body).hasClass("active-modal")) {
+              return false;
+            }
+            draggingModel = window.currentDraggingModel;
+            if (typeof draggingModel === "undefined" || (draggingModel == null)) {
+              return false;
+            } else if (draggingModel === that.model) {
+              return false;
+            }
+            sect_interface = allSections.at(that.index || currIndex);
+            section = sect_interface.get("currentSection");
+            builder = sect_interface.get("builder");
+            model = that.model;
+            if (draggingModel.collection !== model.get("child_els")) {
+              if (model.blend(draggingModel) === true) {
+                $(ui.helper).remove();
+                ui.draggable.data('dropped', true);
+                delete window.currentDraggingModel;
+                window.currentDraggingModel = null;
+              }
+            }
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return true;
           }
         });
       };

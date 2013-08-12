@@ -186,7 +186,7 @@ $(document).ready ->
         initialize: (options) ->
             super 
 
-    class window.views['BuilderWrapper'] extends window.views.genericElement
+    class window.views['BuilderWrapper'] extends window.views.layout
         controls: null
         contextMenu: null
         initialize: ->

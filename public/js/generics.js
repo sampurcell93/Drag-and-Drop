@@ -358,7 +358,7 @@
 
       return _Class;
 
-    })(window.views.genericElement);
+    })(window.views.layout);
   });
 
 }).call(this);

@@ -57,7 +57,7 @@
       Actives.prototype.formatAttributes = function(data) {
         var items;
         if (typeof data === "string") {
-          return data;
+          return "<span contentEditable>" + data + "</span>";
         } else if ($.isArray(data)) {
           items = "";
           if (data.length === 0) {

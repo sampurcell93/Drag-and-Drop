@@ -29,7 +29,7 @@ $ ->
                 $(".quick-props").find("ul").html(properties)
         formatAttributes: (data) ->
             if (typeof data == "string")
-                return data
+                return "<span contentEditable>" + data + "</span>"
             else if $.isArray(data)
                 items = ""
                 if data.length is 0 then return "None"

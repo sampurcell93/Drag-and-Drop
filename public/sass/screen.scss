@@ -681,7 +681,11 @@ section.builder-container {
 		outline: none;
 		margin: 0;
 		cursor: auto;
+		background: #fff;
+		outline: 1px solid $strongblue;
 		min-height: 100px;
+
+		&:hover { background: white; }
 	}
 
  	&:hover { 

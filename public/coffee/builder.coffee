@@ -136,6 +136,15 @@ $(document).ready ->
                 deep_copy_model.set("child_els", children.clone(), {no_history: true})
                 copy.add new models.Element(deep_copy_model.toJSON()), {no_history: true}
             copy
+        compare: (collection) ->
+            self = @
+            comparison = true
+            _.each collection.models, (model, i) ->
+                if JSON.stringify(model.attributes) != JSON.stringify(self.at(i).attributes)
+                    console.log  JSON.stringify(model.attributes), JSON.stringify(self.at(i).attributes)
+                    cc "faseeeeee"
+                    comparison = false
+            comparison
     }
 
     class window.views.droppablePlaceholder extends Backbone.View
@@ -322,38 +331,6 @@ $(document).ready ->
                 stop: (e, ui) ->
                     $(ui.helper).removeClass("dragging")
         bindDrop: ->
-            that = this
-            @$el.droppable {
-              greedy:true                                          # intercepts events from parent
-              tolerance: 'pointer'                                 # only the location of the mouse determines drop zone.
-              accept: '.builder-element, .outside-draggables li, .property'
-              over: (e) ->
-                if $(document.body).hasClass("active-modal") then return false
-                $(e.target).addClass("over")
-              out: (e)->
-                $(e.target).removeClass("over").parents().removeClass("over")
-              drop: (e,ui) ->
-                $(e.target).removeClass("over").parents().removeClass("over")
-                if $(document.body).hasClass("active-modal") then return false
-                draggingModel = window.currentDraggingModel
-                if typeof draggingModel is "undefined" or !draggingModel? then return false
-                else if draggingModel is that.model then return false
-                sect_interface = allSections.at(that.index || currIndex)
-                section = sect_interface.get("currentSection")
-                builder = sect_interface.get("builder")
-                model = that.model
-                # if the dragged element is a direct child of its new parent, do nothing
-                unless draggingModel.collection is model.get("child_els")
-                 if model.blend(draggingModel) is true
-                    $(ui.helper).remove()
-                    # Lets the drag element know that it was a success
-                    ui.draggable.data('dropped', true)
-                    delete window.currentDraggingModel
-                    window.currentDraggingModel = null
-                e.stopPropagation()
-                e.stopImmediatePropagation()
-                true
-            }
         removeFromFlow: (e) ->        #  When they click the "X" in the config - remove the el from the builder
             that = @
             destroy = ->

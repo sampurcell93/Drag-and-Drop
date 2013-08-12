@@ -119,9 +119,10 @@
         return this;
       },
       selectLast: function() {
-        console.log(this.last_snap, this.snapshots.length);
-        if (this.last_snap < this.snapshots.length && this.last_snap >= 0) {
-          return this.snapshots.at(this.last_snap).trigger("select");
+        var last;
+        last = this.last_snap;
+        if (last < this.snapshots.length && last >= 0) {
+          return this.snapshots.at(last).trigger("select");
         }
       },
       makeHistory: function(operation, subject, collection, options) {
@@ -148,7 +149,6 @@
               clone = this.controller.model.get("currentSection").clone();
             } catch (_error) {
               e = _error;
-              console.log(e);
               return false;
             }
           }
