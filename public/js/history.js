@@ -19,7 +19,7 @@
         this.controller = this.options.controller;
         this.current = this.options.current;
         self = this;
-        return this.listenTo(this.model, {
+        this.listenTo(this.model, {
           "aheadOfFlow": function() {
             return self.$el.addClass("ahead-of-flow");
           },
@@ -30,14 +30,16 @@
             return self.remove();
           }
         });
+        return this;
       },
       events: {
         "click": function(e) {
-          var ahead_flow, all_snaps, controller, inside_flow, model_index, snapshot;
+          var $t, ahead_flow, all_snaps, controller, inside_flow, model_index, snapshot;
           all_snaps = this.model.collection;
           model_index = all_snaps.indexOf(this.model);
           controller = this.controller;
           snapshot = this.model.get("snapshot").clone();
+          $t = $(e.currentTarget);
           ahead_flow = _.filter(this.model.collection.models, function(m, i) {
             return i > model_index;
           });
@@ -64,6 +66,7 @@
           this.current.oneAhead(snapshot).bindListeners();
           e.stopPropagation();
           e.stopImmediatePropagation();
+          $t.addClass("selected-history").siblings().removeClass("selected-history");
           return false;
         }
       },
@@ -78,7 +81,8 @@
         this.controller = this.options.controller;
         this.snapshots = this.options.snapshots;
         _.bindAll(this, "makeHistory", "render", "append", "bindListeners");
-        return this.bindListeners();
+        this.bindListeners();
+        return this;
       },
       bindListeners: function(collection) {
         var coll, self;
@@ -95,6 +99,7 @@
       },
       bindIndividualListener: function(model) {
         this.listenTo(model, "all", this.makeHistory);
+        this.listenTo(model.get("child_els"), "all", this.makeHistory);
         return this;
       },
       oneAhead: function(snapshot) {
@@ -174,12 +179,14 @@
         var $el, SnapItem;
         $el = this.$el;
         $el.find(".placeholder").hide();
+        $el.find(".selected-history").removeClass("selected-history");
         SnapItem = new history.Snapshot({
           model: snapshot,
           controller: this.controller,
           current: this
         });
         $el.append(SnapItem.render().el);
+        $el.children().last().addClass("selected-history");
         return this;
       }
     });

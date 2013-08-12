@@ -26,12 +26,14 @@ $ ->
                 "destroy": ->
                     self.remove()
             }
+            @
         events:
             "click": (e) -> 
                 all_snaps = @model.collection
                 model_index = all_snaps.indexOf(@model)
                 controller  = @controller
                 snapshot   = @model.get("snapshot").clone()
+                $t = $ e.currentTarget
                 # Get every model ahead of this one in the flow
                 ahead_flow  = _.filter @model.collection.models, (m, i) ->
                     i > model_index
@@ -60,6 +62,7 @@ $ ->
                 @current.oneAhead(snapshot).bindListeners()
                 e.stopPropagation()
                 e.stopImmediatePropagation()
+                $t.addClass("selected-history").siblings().removeClass("selected-history")
                 false
         render: ->
             @$el.html(_.template @template, @model.toJSON())
@@ -74,6 +77,7 @@ $ ->
             @snapshots = @options.snapshots
             _.bindAll(@, "makeHistory", "render", "append", "bindListeners")
             do @bindListeners
+            @
         # Add watcher to collection
         bindListeners: (collection) ->
             @stopListening()
@@ -90,7 +94,7 @@ $ ->
         # Add watcher to each model in the collection
         bindIndividualListener: (model) ->
             @listenTo model, "all", @makeHistory
-            # @listenTo model.get("child_els"), "all", @makeHistory
+            @listenTo model.get("child_els"), "all", @makeHistory
             @
         # Bug fix - when the head is detached the history is linked to a collection already in the history.
         # When this snapshot is edited, the changes apply to the current state, and ALSO make a new, identical state, 
@@ -154,6 +158,8 @@ $ ->
         append: (snapshot) ->
             $el = @$el
             $el.find(".placeholder").hide()
+            $el.find(".selected-history").removeClass("selected-history")
             SnapItem = new history.Snapshot({model: snapshot, controller: @controller, current: @})
             $el.append SnapItem.render().el
+            $el.children().last().addClass("selected-history")
             @
