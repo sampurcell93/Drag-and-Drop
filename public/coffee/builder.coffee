@@ -110,7 +110,7 @@ $(document).ready ->
             collection = collection || @
             temp = collection.at(originalIndex)
             # Remove it from the collection
-            collection.remove(temp, {organizer: {itemRender: false},  no_history: true})
+            collection.remove(temp, {organizer: {itemRender: false, render: false},  no_history: true})
             # Reinsert it at its new index
             collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}})
             this
@@ -160,7 +160,7 @@ $(document).ready ->
                     dropZone = $(e.target)
                     if (dropZone.closest(".builder-element").length)
                         insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev())
-                    else 
+                    else   
                         insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev())
                     # if (ui.draggable.index() > dropZone.index() or ui.draggable.hasClass("generic-item"))
                     insertAt += 1
@@ -180,7 +180,8 @@ $(document).ready ->
         template: $("#draggable-element").html()
         controls: $("#drag-controls").html()
         contextMenu: $("#context-menu-default").html()
-        tagName: 'div class="builder-element"'
+        tagName: 'div'
+        className: 'builder-element'
         modelListeners: {}
         initialize: ->
             _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild","bindListeners")
@@ -248,6 +249,7 @@ $(document).ready ->
             if $el.children(".children").length is 0
                     $el.append("<ul class='children'></ul>")
             if children? and do_children is true
+                if children.length > 0 then @$el.children(".placeholder").hide()
                 _.each children.models , (el) ->
                     that.appendChild el, {}
             @applyClasses()
@@ -379,7 +381,7 @@ $(document).ready ->
             selected = collection.gather()
             if selected.length is 0 or selected.length is 1 then return
             layoutIndex = collection.indexOf(selected[0])
-            collection.add(layout = new models.Element({view: 'BlankLayout', type: 'Blank Layout'}), {at: layoutIndex})
+            collection.add(layout = new models.Element({view: 'BlankLayout', type: 'Blank Layout'}), {at: layoutIndex, no_history: true})
             _.each selected , (model) ->
                 if model.collection?
                     model.collection.remove model, {no_history: true}

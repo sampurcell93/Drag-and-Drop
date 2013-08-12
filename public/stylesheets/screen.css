@@ -721,7 +721,7 @@ footer {
 /* line 212, ../sass/screen.scss */
 .container {
   display: block;
-  width: 83%;
+  width: calc(100% - 363px);
   max-width: 80%;
   margin-left: 356px;
   min-height: 90%;
@@ -1204,8 +1204,8 @@ section.builder-container {
 /* line 627, ../sass/screen.scss */
 section.builder-container.no-grid .builder-element {
   outline-color: transparent !important;
-  margin-left: 0;
-  margin-right: 0;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 /* line 632, ../sass/screen.scss */
 section.builder-container.no-grid .builder-element textarea, section.builder-container.no-grid .builder-element .title-setter {
@@ -1246,22 +1246,20 @@ section.builder-container.no-grid .droppable-placeholder {
   *zoom: 1;
   cursor: move;
   text-overflow: ellipsis;
-  display: inline-block;
-  width: 98%;
 }
-/* line 669, ../sass/screen.scss */
+/* line 667, ../sass/screen.scss */
 .builder-element ul, .builder-element ol, .builder-element dl {
   list-style-position: inside !important;
 }
-/* line 672, ../sass/screen.scss */
+/* line 670, ../sass/screen.scss */
 .builder-element ul li, .builder-element ol li, .builder-element dl li {
   list-style-position: inside !important;
 }
-/* line 677, ../sass/screen.scss */
+/* line 675, ../sass/screen.scss */
 .builder-element.width-5 {
   width: 500px !important;
 }
-/* line 681, ../sass/screen.scss */
+/* line 679, ../sass/screen.scss */
 .builder-element.builder-scaffold {
   width: 100%;
   outline: none;
@@ -1269,51 +1267,51 @@ section.builder-container.no-grid .droppable-placeholder {
   cursor: auto;
   min-height: 100px;
 }
-/* line 689, ../sass/screen.scss */
+/* line 687, ../sass/screen.scss */
 .builder-element:hover {
   outline-color: #2092cc;
   -webkit-box-shadow: 0px 0px 4px #82b7e0;
   -moz-box-shadow: 0px 0px 4px #82b7e0;
   box-shadow: 0px 0px 4px #82b7e0;
 }
-/* line 693, ../sass/screen.scss */
+/* line 691, ../sass/screen.scss */
 .builder-element:hover > .config-menu-wrap {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
-/* line 698, ../sass/screen.scss */
+/* line 696, ../sass/screen.scss */
 .builder-element.builder-child {
   outline: 1px dashed #82b7e0;
 }
-/* line 703, ../sass/screen.scss */
+/* line 701, ../sass/screen.scss */
 .builder-element input {
   margin: 10px 0;
   width: 65%;
 }
-/* line 708, ../sass/screen.scss */
+/* line 706, ../sass/screen.scss */
 .builder-element.selected-element {
   outline: 1px dashed #FF6100 !important;
-  -webkit-box-shadow: 0px 0px 16px #cccccc;
-  -moz-box-shadow: 0px 0px 16px #cccccc;
-  box-shadow: 0px 0px 16px #cccccc;
+  -webkit-box-shadow: 0px 0px 3px #cccccc;
+  -moz-box-shadow: 0px 0px 3px #cccccc;
+  box-shadow: 0px 0px 3px #cccccc;
 }
-/* line 715, ../sass/screen.scss */
+/* line 713, ../sass/screen.scss */
 .builder-element:before, .builder-element:after {
   content: " ";
   /* 1 */
   display: table;
   /* 2 */
 }
-/* line 719, ../sass/screen.scss */
+/* line 717, ../sass/screen.scss */
 .builder-element:after {
   clear: both;
 }
-/* line 723, ../sass/screen.scss */
+/* line 721, ../sass/screen.scss */
 .builder-element textarea {
   color: #363636;
 }
 
-/* line 726, ../sass/screen.scss */
+/* line 724, ../sass/screen.scss */
 .droppable-placeholder {
   width: 100%;
   position: relative;
@@ -1329,7 +1327,7 @@ section.builder-container.no-grid .droppable-placeholder {
   border: 2px dashed orange;
 }
 
-/* line 755, ../sass/screen.scss */
+/* line 753, ../sass/screen.scss */
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
@@ -1337,7 +1335,7 @@ section.builder-container.no-grid .droppable-placeholder {
   background: rgba(125, 185, 232, 0.4);
 }
 
-/* line 762, ../sass/screen.scss */
+/* line 760, ../sass/screen.scss */
 .config-menu-wrap {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -1362,7 +1360,7 @@ section.builder-container.no-grid .droppable-placeholder {
   -o-border-radius: 3px 3px 0 0;
   border-radius: 3px 3px 0 0;
 }
-/* line 778, ../sass/screen.scss */
+/* line 776, ../sass/screen.scss */
 .config-menu-wrap li {
   cursor: pointer;
   -webkit-transition: all 0.1s ease-in-out;
@@ -1376,12 +1374,12 @@ section.builder-container.no-grid .droppable-placeholder {
   color: white;
   position: relative;
 }
-/* line 788, ../sass/screen.scss */
+/* line 786, ../sass/screen.scss */
 .config-menu-wrap li li {
   color: #333;
 }
 
-/* line 793, ../sass/screen.scss */
+/* line 791, ../sass/screen.scss */
 .set-options .dropdown {
   position: absolute;
   top: 100%;
@@ -1401,7 +1399,7 @@ section.builder-container.no-grid .droppable-placeholder {
   z-index: 111;
   background: #fff;
 }
-/* line 807, ../sass/screen.scss */
+/* line 805, ../sass/screen.scss */
 .set-options .dropdown li {
   display: block;
   height: 33px;
@@ -1411,14 +1409,14 @@ section.builder-container.no-grid .droppable-placeholder {
   width: 100%;
   line-height: 33px;
 }
-/* line 816, ../sass/screen.scss */
+/* line 814, ../sass/screen.scss */
 .set-options .dropdown li:hover {
   background: #2092cc;
   color: #fff;
   text-shadow: none;
 }
 
-/* line 824, ../sass/screen.scss */
+/* line 822, ../sass/screen.scss */
 button {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1427,44 +1425,44 @@ button {
   border-radius: 2px;
 }
 
-/* line 828, ../sass/screen.scss */
+/* line 826, ../sass/screen.scss */
 .view-section {
   cursor: pointer;
 }
 
-/* line 832, ../sass/screen.scss */
+/* line 830, ../sass/screen.scss */
 .generic-list {
   width: 80%;
 }
-/* line 834, ../sass/screen.scss */
+/* line 832, ../sass/screen.scss */
 .generic-list li {
   border: 1px dotted #2092cc;
   padding: 6px 4px;
   border-bottom-color: transparent;
 }
-/* line 839, ../sass/screen.scss */
+/* line 837, ../sass/screen.scss */
 .generic-list li:last-of-type {
   border-bottom-color: #2092cc;
 }
 
-/* line 845, ../sass/screen.scss */
+/* line 843, ../sass/screen.scss */
 ul.generic-list {
   list-style: circle;
 }
 
-/* line 848, ../sass/screen.scss */
+/* line 846, ../sass/screen.scss */
 ol.generic-list {
   list-style: decimal;
 }
 
-/* line 852, ../sass/screen.scss */
+/* line 850, ../sass/screen.scss */
 .add-list-item {
   display: block;
   padding: 6px;
   cursor: pointer;
 }
 
-/* line 858, ../sass/screen.scss */
+/* line 856, ../sass/screen.scss */
 .property-link {
   outline: 1px solid #ccc;
   -webkit-border-radius: 3px;
@@ -1479,30 +1477,30 @@ ol.generic-list {
   margin: 0px 6px;
 }
 
-/* line 868, ../sass/screen.scss */
+/* line 866, ../sass/screen.scss */
 .layout-wrapper {
   outline: 1px solid #7BF5F5 !important;
   padding: 10px 0 10px;
 }
-/* line 872, ../sass/screen.scss */
+/* line 870, ../sass/screen.scss */
 .layout-wrapper:hover {
   background: #FBF9DE;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
-/* line 877, ../sass/screen.scss */
+/* line 875, ../sass/screen.scss */
 .layout-wrapper.column.one > .droppable-placeholder {
   width: 100%;
   display: block !important;
   height: 10px;
 }
-/* line 885, ../sass/screen.scss */
+/* line 883, ../sass/screen.scss */
 .layout-wrapper.column > ul.children > .builder-element {
   display: inline-block !important;
   margin: 2px 0 1px 0;
 }
-/* line 889, ../sass/screen.scss */
+/* line 887, ../sass/screen.scss */
 .layout-wrapper.column > ul.children > .droppable-placeholder {
   width: 1% !important;
   background: orange;
@@ -1510,27 +1508,27 @@ ol.generic-list {
   margin: 0;
   min-height: 41px;
 }
-/* line 903, ../sass/screen.scss */
+/* line 901, ../sass/screen.scss */
 .layout-wrapper.column.two > ul.children > .builder-element:nth-of-type(4n+6), .layout-wrapper.column.three > ul.children > .builder-element:nth-of-type(6n+8), .layout-wrapper.column.four > ul.children > .builder-element:nth-of-type(8n+10), .layout-wrapper.column.five > ul.children > .builder-element:nth-of-type(10n+12), .layout-wrapper.column.six > ul.children > .builder-element:nth-of-type(12n+14) {
   margin-left: 1% !important;
 }
-/* line 906, ../sass/screen.scss */
+/* line 904, ../sass/screen.scss */
 .layout-wrapper.column.two > ul.children > .builder-element {
   width: 48.5%;
 }
-/* line 910, ../sass/screen.scss */
+/* line 908, ../sass/screen.scss */
 .layout-wrapper.column.three > ul.children > .builder-element {
   width: 32%;
 }
-/* line 914, ../sass/screen.scss */
+/* line 912, ../sass/screen.scss */
 .layout-wrapper.column.four > ul.children > .builder-element {
   width: 23.75%;
 }
-/* line 918, ../sass/screen.scss */
+/* line 916, ../sass/screen.scss */
 .layout-wrapper.column.five > ul.children > .builder-element {
   width: 18.8%;
 }
-/* line 922, ../sass/screen.scss */
+/* line 920, ../sass/screen.scss */
 .layout-wrapper.column.six > ul.children > .builder-element {
   width: 15.5%;
 }
@@ -1539,12 +1537,12 @@ ol.generic-list {
   width: 27.5%;
   margin-left: -5%;
 }
-/* line 934, ../sass/screen.scss */
+/* line 932, ../sass/screen.scss */
 .choose-columns {
   border-top: 1px solid #ccc;
   padding-top: 30px;
 }
-/* line 939, ../sass/screen.scss */
+/* line 937, ../sass/screen.scss */
 .choose-columns li {
   width: 16%;
   text-shadow: none;
@@ -1556,57 +1554,57 @@ ol.generic-list {
   background: url("../images/columnsprite.png") no-repeat center;
   cursor: pointer;
 }
-/* line 950, ../sass/screen.scss */
+/* line 948, ../sass/screen.scss */
 .choose-columns li:nth-child(1) {
   background: #c5d4e8;
 }
-/* line 951, ../sass/screen.scss */
+/* line 949, ../sass/screen.scss */
 .choose-columns li:nth-child(2) {
   background-position: 0 0px;
 }
-/* line 952, ../sass/screen.scss */
+/* line 950, ../sass/screen.scss */
 .choose-columns li:nth-child(3) {
   background-position: 0 -79px;
 }
-/* line 953, ../sass/screen.scss */
+/* line 951, ../sass/screen.scss */
 .choose-columns li:nth-child(4) {
   background-position: 0 -159px;
 }
-/* line 954, ../sass/screen.scss */
+/* line 952, ../sass/screen.scss */
 .choose-columns li:nth-child(5) {
   background-position: 0 -240px;
 }
-/* line 955, ../sass/screen.scss */
+/* line 953, ../sass/screen.scss */
 .choose-columns li:nth-child(6) {
   background-position: 0 -320px;
 }
 
-/* line 959, ../sass/screen.scss */
+/* line 957, ../sass/screen.scss */
 ul li.selected-choice {
   outline: 2px solid #2092cc !important;
 }
 
-/* line 963, ../sass/screen.scss */
+/* line 961, ../sass/screen.scss */
 .no-drag {
   cursor: auto;
 }
 
-/* line 965, ../sass/screen.scss */
+/* line 963, ../sass/screen.scss */
 .tab-layout {
   position: relative;
 }
-/* line 969, ../sass/screen.scss */
+/* line 967, ../sass/screen.scss */
 .tab-layout > ul.children > .droppable-placeholder {
   display: inline-block;
   width: 1%;
   margin: 0;
 }
-/* line 975, ../sass/screen.scss */
+/* line 973, ../sass/screen.scss */
 .tab-layout > ul.children > .droppable-placeholder {
   height: 41px !important;
   min-height: none !important;
 }
-/* line 980, ../sass/screen.scss */
+/* line 978, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element {
   position: static;
   -webkit-border-radius: 3px 3px 0 0;
@@ -1621,13 +1619,13 @@ ul li.selected-choice {
   white-space: nowrap;
   margin: 0 -4px 0 -4px !important;
 }
-/* line 990, ../sass/screen.scss */
+/* line 988, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element:hover {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
-/* line 994, ../sass/screen.scss */
+/* line 992, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element > h3:first-of-type {
   cursor: pointer;
   position: relative;
@@ -1646,16 +1644,16 @@ ul li.selected-choice {
   padding: 0;
   font-size: 1em;
 }
-/* line 1008, ../sass/screen.scss */
+/* line 1006, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element > h3:first-of-type:hover {
   background: #eee;
 }
-/* line 1010, ../sass/screen.scss */
+/* line 1008, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element > h3:first-of-type:focus {
   outline: none;
   background: #ddd;
 }
-/* line 1015, ../sass/screen.scss */
+/* line 1013, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element.active-tab > ul.children {
   display: block;
   z-index: 11;
@@ -1663,7 +1661,7 @@ ul li.selected-choice {
   outline: 1px dotted #2092cc;
   padding: 3px 7px;
 }
-/* line 1023, ../sass/screen.scss */
+/* line 1021, ../sass/screen.scss */
 .tab-layout > ul.children > .builder-element > ul.children {
   z-index: -11;
   display: none;
@@ -1674,12 +1672,12 @@ ul li.selected-choice {
   border: 100%;
 }
 
-/* line 1039, ../sass/screen.scss */
+/* line 1037, ../sass/screen.scss */
 .list-layout > ul.children > .builder-element {
   list-style: disc !important;
 }
 
-/* line 1045, ../sass/screen.scss */
+/* line 1043, ../sass/screen.scss */
 .context-menu {
   position: absolute;
   background: #f9f9f9;
@@ -1707,12 +1705,12 @@ ul li.selected-choice {
   display: block;
   cursor: pointer;
 }
-/* line 1062, ../sass/screen.scss */
+/* line 1060, ../sass/screen.scss */
 .context-menu li {
   text-align: center;
   padding: 10px;
 }
-/* line 1066, ../sass/screen.scss */
+/* line 1064, ../sass/screen.scss */
 .context-menu li:first-of-type {
   -webkit-border-radius: 3px 3px 0 0;
   -moz-border-radius: 3px 3px 0 0;
@@ -1720,7 +1718,7 @@ ul li.selected-choice {
   -o-border-radius: 3px 3px 0 0;
   border-radius: 3px 3px 0 0;
 }
-/* line 1069, ../sass/screen.scss */
+/* line 1067, ../sass/screen.scss */
 .context-menu li:last-of-type {
   -webkit-border-radius: 0 0 3px 3px;
   -moz-border-radius: 0 0 3px 3px;
@@ -1728,81 +1726,81 @@ ul li.selected-choice {
   -o-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
 }
-/* line 1073, ../sass/screen.scss */
+/* line 1071, ../sass/screen.scss */
 .context-menu li:hover {
   background: #2092cc;
   color: #f9f9f9;
   text-shadow: none;
 }
 
-/* line 1081, ../sass/screen.scss */
+/* line 1079, ../sass/screen.scss */
 .choose-layout {
   width: 95%;
   margin: 0 auto;
 }
-/* line 1085, ../sass/screen.scss */
+/* line 1083, ../sass/screen.scss */
 .choose-layout li {
   display: inline-block;
   height: 85px;
   width: 85px;
   text-align: center;
 }
-/* line 1091, ../sass/screen.scss */
+/* line 1089, ../sass/screen.scss */
 .choose-layout li[data-layout="tabs"] {
   background: url("../images/tabicon.jpg") no-repeat center 15px;
 }
 
-/* line 1097, ../sass/screen.scss */
+/* line 1095, ../sass/screen.scss */
 .control-section {
   height: 100%;
 }
 
-/* line 1101, ../sass/screen.scss */
+/* line 1099, ../sass/screen.scss */
 .section-builder-wrap {
-  padding: 40px 240px 12px 120px;
+  padding: 40px 240px 12px 90px;
   height: 100%;
 }
 
-/* line 1106, ../sass/screen.scss */
+/* line 1104, ../sass/screen.scss */
 .dark-sidebar {
   background: #3e4951;
 }
 
-/* line 1110, ../sass/screen.scss */
+/* line 1108, ../sass/screen.scss */
 .sidebar-controls {
   position: absolute;
   top: 0;
-  width: 100px;
+  width: 80px;
   background: #3e4951;
   height: 100%;
   color: #f9f9f9;
   text-shadow: none;
 }
-/* line 1119, ../sass/screen.scss */
+/* line 1117, ../sass/screen.scss */
 .sidebar-controls.main-controls {
   left: 0;
 }
-/* line 1122, ../sass/screen.scss */
+/* line 1120, ../sass/screen.scss */
 .sidebar-controls.main-controls li {
   height: 80px;
   padding-top: 50px;
 }
-/* line 1126, ../sass/screen.scss */
+/* line 1124, ../sass/screen.scss */
 .sidebar-controls.main-controls li li {
   height: auto;
 }
-/* line 1131, ../sass/screen.scss */
+/* line 1129, ../sass/screen.scss */
 .sidebar-controls.existing-sections-layouts {
   border-left: 1px solid #222;
   right: 0;
   overflow-y: scroll;
 }
-/* line 1136, ../sass/screen.scss */
+/* line 1134, ../sass/screen.scss */
 .sidebar-controls.accessories {
   right: 0;
   width: 18%;
 }
-/* line 1141, ../sass/screen.scss */
+/* line 1139, ../sass/screen.scss */
 .sidebar-controls li {
   text-align: center;
   vertical-align: bottom;
@@ -1811,7 +1809,7 @@ ul li.selected-choice {
   cursor: pointer;
   position: relative;
 }
-/* line 1149, ../sass/screen.scss */
+/* line 1147, ../sass/screen.scss */
 .sidebar-controls li[data-icon]:before {
   position: absolute;
   content: attr(data-icon);
@@ -1821,28 +1819,28 @@ ul li.selected-choice {
   width: 100%;
   text-align: center;
 }
-/* line 1158, ../sass/screen.scss */
+/* line 1156, ../sass/screen.scss */
 .sidebar-controls li:last-of-type {
   border-bottom: none;
 }
-/* line 1161, ../sass/screen.scss */
+/* line 1159, ../sass/screen.scss */
 .sidebar-controls li:hover {
   background: #333;
   border-top-color: #3e4951;
 }
-/* line 1165, ../sass/screen.scss */
+/* line 1163, ../sass/screen.scss */
 .sidebar-controls li:hover li:empty {
   background: #000;
 }
-/* line 1168, ../sass/screen.scss */
+/* line 1166, ../sass/screen.scss */
 .sidebar-controls li:hover::before {
   text-shadow: 0px -1px 3px #fff;
 }
-/* line 1172, ../sass/screen.scss */
+/* line 1170, ../sass/screen.scss */
 .sidebar-controls li:hover .hidden-menu {
   display: block;
 }
-/* line 1174, ../sass/screen.scss */
+/* line 1172, ../sass/screen.scss */
 .sidebar-controls li .hidden-menu {
   display: none;
   max-height: 400px;
@@ -1855,14 +1853,14 @@ ul li.selected-choice {
   border-left: 1px solid #777;
   overflow-y: scroll;
 }
-/* line 1186, ../sass/screen.scss */
+/* line 1184, ../sass/screen.scss */
 .sidebar-controls li .hidden-menu li {
   min-height: 30px;
   padding-top: 0;
   line-height: 40px;
 }
 
-/* line 1195, ../sass/screen.scss */
+/* line 1193, ../sass/screen.scss */
 .organize-elements {
   padding: 0px 0 10px;
   width: 100%;
@@ -1872,7 +1870,7 @@ ul li.selected-choice {
   border-bottom: 1px solid #333;
   z-index: 998;
 }
-/* line 1204, ../sass/screen.scss */
+/* line 1202, ../sass/screen.scss */
 .organize-elements .ui-sortable-placeholder {
   border: 1px solid #333;
   visibility: visible !important;
@@ -1881,16 +1879,16 @@ ul li.selected-choice {
   -moz-box-shadow: 0px 0px 30px #2092cc, inset 0px 0px 30px rgba(255, 255, 255, 0.6);
   box-shadow: 0px 0px 30px #2092cc, inset 0px 0px 30px rgba(255, 255, 255, 0.6);
 }
-/* line 1211, ../sass/screen.scss */
+/* line 1209, ../sass/screen.scss */
 .organize-elements > li {
   border-top: 1px solid #5b747f;
   border-bottom: 1px solid #222;
 }
-/* line 1214, ../sass/screen.scss */
+/* line 1212, ../sass/screen.scss */
 .organize-elements > li.out-of-flow {
   border-top-color: #666;
 }
-/* line 1219, ../sass/screen.scss */
+/* line 1217, ../sass/screen.scss */
 .organize-elements li {
   position: relative;
   padding-left: 30px;
@@ -1906,11 +1904,11 @@ ul li.selected-choice {
   text-align: left;
   text-overflow: ellipsis !important;
 }
-/* line 1234, ../sass/screen.scss */
+/* line 1232, ../sass/screen.scss */
 .organize-elements li .destroy-element, .organize-elements li .activate-element {
   display: none;
 }
-/* line 1236, ../sass/screen.scss */
+/* line 1234, ../sass/screen.scss */
 .organize-elements li .sort-element {
   left: 7px;
   top: 0px;
@@ -1919,24 +1917,24 @@ ul li.selected-choice {
   width: 20px;
   text-align: center;
 }
-/* line 1245, ../sass/screen.scss */
+/* line 1243, ../sass/screen.scss */
 .organize-elements li .child-list {
   margin-left: -12px !important;
 }
-/* line 1249, ../sass/screen.scss */
+/* line 1247, ../sass/screen.scss */
 .organize-elements li.out-of-flow {
   background: #000;
   padding-right: 60px;
 }
-/* line 1253, ../sass/screen.scss */
+/* line 1251, ../sass/screen.scss */
 .organize-elements li.out-of-flow > .destroy-element, .organize-elements li.out-of-flow > .activate-element {
   display: block;
 }
-/* line 1254, ../sass/screen.scss */
+/* line 1252, ../sass/screen.scss */
 .organize-elements li.out-of-flow .sort-element {
   background: #313131;
 }
-/* line 1257, ../sass/screen.scss */
+/* line 1255, ../sass/screen.scss */
 .organize-elements li .activate-element, .organize-elements li .destroy-element {
   position: absolute;
   right: 10px;
@@ -1944,12 +1942,12 @@ ul li.selected-choice {
   color: #7FBA50;
   cursor: pointer;
 }
-/* line 1264, ../sass/screen.scss */
+/* line 1262, ../sass/screen.scss */
 .organize-elements li .destroy-element {
   right: 33px;
   color: #666;
 }
-/* line 1269, ../sass/screen.scss */
+/* line 1267, ../sass/screen.scss */
 .organize-elements li.organizer-header {
   text-align: center;
   font-size: 1.3em;
@@ -1958,7 +1956,7 @@ ul li.selected-choice {
   border-bottom: 1px solid #000;
 }
 
-/* line 1278, ../sass/screen.scss */
+/* line 1276, ../sass/screen.scss */
 .draggable-modal {
   position: absolute !important;
   color: #f9f9f9;
@@ -1970,7 +1968,7 @@ ul li.selected-choice {
   cursor: move;
   border-top: 1px solid #5b747f;
 }
-/* line 1289, ../sass/screen.scss */
+/* line 1287, ../sass/screen.scss */
 .draggable-modal:before {
   position: absolute;
   content: attr(data-modal-name);
@@ -1985,20 +1983,20 @@ ul li.selected-choice {
   background: #313131;
   border-bottom: 1px solid #000;
 }
-/* line 1304, ../sass/screen.scss */
+/* line 1302, ../sass/screen.scss */
 .draggable-modal .close-arrow {
   position: absolute;
   top: 5px;
   right: 5px;
   font-family: 'icons';
 }
-/* line 1311, ../sass/screen.scss */
+/* line 1309, ../sass/screen.scss */
 .draggable-modal > ul, .draggable-modal .history-modal {
   width: 100%;
   margin: 0;
   background: rgba(62, 73, 81, 0.94) !important;
 }
-/* line 1316, ../sass/screen.scss */
+/* line 1314, ../sass/screen.scss */
 .draggable-modal > ul li, .draggable-modal .history-modal li {
   text-align: left;
   text-indent: 10px;
@@ -2006,66 +2004,71 @@ ul li.selected-choice {
   list-style: none;
   padding: 3px 5px 3px 10px;
 }
-/* line 1325, ../sass/screen.scss */
+/* line 1323, ../sass/screen.scss */
 .draggable-modal > ul li:last-child, .draggable-modal .history-modal li:last-child {
   border-bottom: none;
 }
-/* line 1326, ../sass/screen.scss */
+/* line 1324, ../sass/screen.scss */
 .draggable-modal > ul li:first-child, .draggable-modal .history-modal li:first-child {
   border-top: none;
   padding-top: 4px;
 }
-/* line 1331, ../sass/screen.scss */
+/* line 1329, ../sass/screen.scss */
 .draggable-modal > ul li.selected-history, .draggable-modal .history-modal li.selected-history {
   background: #5b747f;
 }
-/* line 1333, ../sass/screen.scss */
+/* line 1331, ../sass/screen.scss */
 .draggable-modal > ul li ul, .draggable-modal .history-modal li ul {
   padding-top: 10px;
   width: 100%;
 }
-/* line 1338, ../sass/screen.scss */
+/* line 1336, ../sass/screen.scss */
 .draggable-modal > ul li ul > li:hover, .draggable-modal .history-modal li ul > li:hover {
   background: #3e4951 !important;
 }
-/* line 1342, ../sass/screen.scss */
+/* line 1340, ../sass/screen.scss */
 .draggable-modal > ul li ul li:empty, .draggable-modal .history-modal li ul li:empty {
   background: #333;
   border: none;
 }
 
-/* line 1356, ../sass/screen.scss */
+/* line 1354, ../sass/screen.scss */
 .hidden-modal ul, .hidden-modal div {
   display: none;
 }
 
-/* line 1361, ../sass/screen.scss */
+/* line 1359, ../sass/screen.scss */
 .ahead-of-flow {
   background: #222;
   color: #fff;
   border-top: none;
 }
-/* line 1366, ../sass/screen.scss */
+/* line 1364, ../sass/screen.scss */
 .ahead-of-flow:hover {
   background: #222 !important;
 }
 
-/* line 1370, ../sass/screen.scss */
+/* line 1367, ../sass/screen.scss */
+.accessories {
+  overflow: auto;
+}
+/* line 1371, ../sass/screen.scss */
 .accessories .draggable-modal {
   position: relative !important;
   width: 100%;
   margin: 3px auto 10px;
 }
-/* line 1375, ../sass/screen.scss */
+/* line 1376, ../sass/screen.scss */
 .accessories .draggable-modal > ul {
   max-height: 400px;
   overflow: auto;
 }
-/* line 1381, ../sass/screen.scss */
+/* line 1382, ../sass/screen.scss */
 .accessories .placeholder {
   border: 1px solid #5b747f !important;
-  text-align: center;
   margin: 7px auto;
+  text-align: center !important;
+  padding: 0;
   width: 90%;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -2074,14 +2077,14 @@ ul li.selected-choice {
   border-radius: 3px;
 }
 
-/* line 1392, ../sass/screen.scss */
+/* line 1394, ../sass/screen.scss */
 [data-attr] span[contentEditable], [data-attr] span[contenteditable] {
   padding: 2px 10px;
   background: #222;
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
 }
-/* line 1398, ../sass/screen.scss */
+/* line 1400, ../sass/screen.scss */
 [data-attr] span[contentEditable]:focus, [data-attr] span[contenteditable]:focus {
   outline: none;
   border-left: 1px solid #5b747f;

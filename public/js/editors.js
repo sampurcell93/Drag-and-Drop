@@ -64,7 +64,9 @@
           var self;
           self = this;
           return this.enqueue("title", function() {
-            return self.model.set("title", self.$el.find(".title-setter").val());
+            return self.model.set("title", self.$el.find(".title-setter").val(), {
+              no_history: true
+            });
           });
         },
         "click .confirm": function() {

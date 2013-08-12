@@ -211,7 +211,7 @@ footer {
 
 .container {
 	display: block;
-	width:  83%;
+	width:  calc(100% - 363px);
 	max-width: 80%;
 	margin-left: 356px;
 	min-height: 90%;
@@ -626,8 +626,8 @@ section.builder-container {
 
 		 .builder-element {
 			outline-color: transparent !important;
-			margin-left: 0;
-			margin-right: 0;
+			margin-top: 2px;
+			margin-bottom: 2px;
 
 			textarea, .title-setter{
 				border: none;
@@ -663,8 +663,6 @@ section.builder-container {
  	*zoom: 1;
  	cursor: move;
  	text-overflow: ellipsis;
- 	display: inline-block;
- 	width: 98%;
 
  	ul, ol, dl {
  		list-style-position: inside !important;
@@ -707,7 +705,7 @@ section.builder-container {
 
 	&.selected-element {
 		outline: 1px dashed #FF6100 !important;
-		@include box-shadow(0px 0px 16px #ccc);
+		@include box-shadow(0px 0px 3px #ccc);
 		// background: #FFCA8E;
 	}
 
@@ -1099,7 +1097,7 @@ ul li.selected-choice {
 }
 
 .section-builder-wrap { 
-	padding: 40px 240px 12px 120px;
+	padding: 40px 240px 12px 90px;
 	height: 100%;
 }
 
@@ -1110,7 +1108,7 @@ ul li.selected-choice {
 .sidebar-controls {
 	position: absolute;
 	top: 0;
-	width: 100px;
+	width: 80px;
 	background: $dusky;
 	height: 100%;
 	color: #f9f9f9;
@@ -1367,6 +1365,9 @@ ul li.selected-choice {
 }
 
 .accessories {
+	
+	overflow: auto;
+
 	.draggable-modal {
 		position: relative !important;
 		width: 100%;
@@ -1380,8 +1381,9 @@ ul li.selected-choice {
 
 	.placeholder {
 		border: 1px solid $lightdusk !important;
-		text-align: center;
 		margin: 7px auto;
+		text-align: center !important;
+		padding: 0;
 		width: 90%;
 		@include border-radius(3px);
 

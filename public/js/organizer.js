@@ -45,17 +45,18 @@
           },
           "remove": function() {
             if (that.collection.length === 0) {
-              console.log("empty collection");
-              return $("<li/>").addClass("center placeholder").text("No Content Here.").appendTo(that.$el);
+              return $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(that.$el);
             }
           }
         });
       },
       render: function(e) {
         var $el, index, outOfFlow, that;
-        console.log("rendering this organizer", this.collection.models.length);
         $el = this.$el;
         $el.children().not(".organizer-header, .placeholder").remove();
+        if (this.collection.length === 0) {
+          $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(this.$el);
+        }
         that = this;
         outOfFlow = [];
         index = that.options.index || sectionIndex;
@@ -95,7 +96,8 @@
       }
     });
     return window.views.SortableElementItem = Backbone.View.extend({
-      tagName: 'li class="property"',
+      tagName: 'li',
+      className: 'property',
       template: $("#element-sortable-item").html(),
       initialize: function() {
         var that;

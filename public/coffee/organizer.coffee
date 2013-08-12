@@ -40,13 +40,13 @@ $(document).ready ->
                         that.append(model, options)
                 "remove": ->
                     if that.collection.length is 0
-                        console.log "empty collection"
-                        $("<li/>").addClass("center placeholder").text("No Content Here.").appendTo(that.$el)
+                        $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(that.$el)
             })
         render: (e) ->
-            console.log "rendering this organizer", @collection.models.length
             $el = @$el
             $el.children().not(".organizer-header, .placeholder").remove()
+            if @collection.length is 0
+                $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(@$el)
             that = this
             outOfFlow = []
             index = that.options.index || sectionIndex
@@ -80,7 +80,8 @@ $(document).ready ->
     }); 
 
     window.views.SortableElementItem = Backbone.View.extend {
-        tagName: 'li class="property"'
+        tagName: 'li'
+        className: 'property'
         template: $("#element-sortable-item").html()
         initialize: ->
             that = this

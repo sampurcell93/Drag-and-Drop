@@ -25,6 +25,8 @@ $ ->
                     self.$el.removeClass("ahead-of-flow")
                 "destroy": ->
                     self.remove()
+                "select": ->
+                    self.$el.trigger("click")
             }
             @
         events:
@@ -33,6 +35,7 @@ $ ->
                 model_index = all_snaps.indexOf(@model)
                 controller  = @controller
                 snapshot   = @model.get("snapshot").clone()
+                @current.last_snap = @$el.siblings(".selected-history").first().index() - 1
                 $t = $ e.currentTarget
                 # Get every model ahead of this one in the flow
                 ahead_flow  = _.filter @model.collection.models, (m, i) ->
@@ -59,7 +62,9 @@ $ ->
                     all_snaps.detached_head = true
                 else 
                     all_snaps.detached_head = false
-                @current.oneAhead(snapshot).bindListeners()
+                # For ctrl-z purposes, we need to save the last model that was looked at
+                @current.collection = snapshot
+                @current.bindListeners()
                 e.stopPropagation()
                 e.stopImmediatePropagation()
                 $t.addClass("selected-history").siblings().removeClass("selected-history")
@@ -70,7 +75,8 @@ $ ->
 
 
     history.HistoryList = Backbone.View.extend
-        tagName: 'div class="history-modal"'
+        tagName: 'div'
+        className: 'history-modal'
         initialize: ->
             @controller = @options.controller
             # Refers to the list of snapshots
@@ -93,7 +99,6 @@ $ ->
             @
         # Add watcher to each model in the collection
         bindIndividualListener: (model) ->
-            console.log model
             children = model.get("child_els")
             self     = @
             @listenTo model, "all", @makeHistory
@@ -107,6 +112,11 @@ $ ->
         oneAhead: (snapshot)->
             @collection = snapshot
             @ 
+        selectLast: ->
+            # Shit may have been destroyed - check that the snap is still there
+            console.log @last_snap, @snapshots.length
+            if @last_snap < @snapshots.length and @last_snap >= 0
+                @snapshots.at(@last_snap).trigger("select")
         makeHistory: (operation, subject, collection, options) ->
             cc "Making History."
             # By using "all" instead of delegating to the desired events,
@@ -123,9 +133,11 @@ $ ->
                     @snapshots.detached_head = false
                 # Copy current state
                 if @controller.model.get("currentSection")?
-                    clone = @controller.model.get("currentSection").clone()
-                # If there was a bogus collection passed in
-                if clone is false then return
+                    try 
+                        clone = @controller.model.get("currentSection").clone()
+                    catch e
+                        console.log e
+                        return false;
                 snap = new models.Snap({snapshot: clone})
                 snap.set({
                     "opname": op
@@ -142,6 +154,7 @@ $ ->
                 # display it in a list of history, a la photoshop
                 @snapshots.add snap
                 @append snap
+                @last_snap = @snapshots.length - 2
             @
         deleteForwardChanges: ->
             # Get all snapshots ahead of the current state
@@ -155,7 +168,7 @@ $ ->
             self = @
             @$el.empty()
             if @snapshots.length is 0
-                $("<li/>").addClass("placeholder center").text("No History Here.").appendTo(@$el)
+                $("<li/>").addClass("placeholder p10 center").text("No History Here.").appendTo(@$el)
             _.each @snapshots.models, (snapshot) ->
                 self.append snapshot
             @

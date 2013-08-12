@@ -165,7 +165,8 @@
         temp = collection.at(originalIndex);
         collection.remove(temp, {
           organizer: {
-            itemRender: false
+            itemRender: false,
+            render: false
           },
           no_history: true
         });
@@ -287,7 +288,9 @@
 
       draggableElement.prototype.contextMenu = $("#context-menu-default").html();
 
-      draggableElement.prototype.tagName = 'div class="builder-element"';
+      draggableElement.prototype.tagName = 'div';
+
+      draggableElement.prototype.className = 'builder-element';
 
       draggableElement.prototype.modelListeners = {};
 
@@ -370,6 +373,9 @@
           $el.append("<ul class='children'></ul>");
         }
         if ((children != null) && do_children === true) {
+          if (children.length > 0) {
+            this.$el.children(".placeholder").hide();
+          }
           _.each(children.models, function(el) {
             return that.appendChild(el, {});
           });
@@ -555,7 +561,8 @@
           view: 'BlankLayout',
           type: 'Blank Layout'
         }), {
-          at: layoutIndex
+          at: layoutIndex,
+          no_history: true
         });
         _.each(selected, function(model) {
           if (model.collection != null) {

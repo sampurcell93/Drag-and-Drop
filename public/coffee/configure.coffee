@@ -68,6 +68,7 @@ $(document).ready ->
                     models = window.currentDraggingModel
                     if !models? then return false
                     if $.isArray(models) is true
+                        ui.helper.remove()
                         _.each models, (model) ->
                             model.set("inFlow", false)
                     else 
@@ -115,24 +116,25 @@ $(document).ready ->
                     # Once the sections are pulled, generate the list.
                     that.existingSectionsList = new views.ExistingSectionsList {collection : coll, controller: that.model }
             }
+            section = @model.get("currentSection")
             @snaps = new collections.Snapshots()
             @histList = new views.history.HistoryList({
                 controller: @
                 snapshots: @snaps
-                collection: @model.get("currentSection")
+                collection: section
             })
 
             # The controller now has a reference to the builder
             @builder = new views.SectionBuilder({
                 controller: @model
-                collection: @model.get("currentSection")
+                collection: section
             })
             # Link this controller to the scaffolding - which is linked to the collection itself.
             # Through this narrow channel, the controller gains access to the architecture of the section,
             # and also to the intricacies of the build.
             @organizer = new views.ElementOrganizer {
                 controller: @model
-                collection: @model.get("currentSection")
+                collection: section
             }
             $o_el = @$el.find(".accessories")
             hist_modal = window.launchDraggableModal(@histList.render().el, null, $o_el)
@@ -169,6 +171,7 @@ $(document).ready ->
                 builder: @builder
                 organizer: @organizer
                 snaps: @snaps
+                controller: @
             })
             this
 
@@ -456,3 +459,22 @@ $(document).ready ->
     allSections.add new models.SectionController()
     window.sectionTabs = new views.SectionTabs({collection: allSections})
     window.sectionList = new views.AllSectionControllers({collection: allSections})
+
+    ctrlDown = false
+    ctrlKey  = 17
+    vKey     = 86
+    cKey     = 67
+
+    # When a user presses the ctrl key, enter "command mode"
+    $(@).keydown (e) ->
+        keyCode = e.keyCode || e.which
+        if keyCode == ctrlKey then ctrlDown = true
+
+    # When they go up, 
+    $(@).keyup (e) ->
+        keyCode = e.keyCode || e.which
+        if keyCode == ctrlKey
+            ctrlDown = false
+        if keyCode == 90 and ctrlDown is true
+            snaps = allSections.at(currIndex).toJSON().controller.histList
+            snaps.selectLast()

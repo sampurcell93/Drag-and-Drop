@@ -219,6 +219,5 @@ $(document).ready ->
                     if (e.shiftKey is true) then return 
                     $item = $(ui.unselecting)
                     $item.trigger "deselect"
-                    that.$el.find(".selected-element").trigger("deselect")
             }
             @$el.addClass("builder-scaffold")

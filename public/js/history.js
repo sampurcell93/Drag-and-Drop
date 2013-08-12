@@ -28,6 +28,9 @@
           },
           "destroy": function() {
             return self.remove();
+          },
+          "select": function() {
+            return self.$el.trigger("click");
           }
         });
         return this;
@@ -39,6 +42,7 @@
           model_index = all_snaps.indexOf(this.model);
           controller = this.controller;
           snapshot = this.model.get("snapshot").clone();
+          this.current.last_snap = this.$el.siblings(".selected-history").first().index() - 1;
           $t = $(e.currentTarget);
           ahead_flow = _.filter(this.model.collection.models, function(m, i) {
             return i > model_index;
@@ -63,7 +67,8 @@
           } else {
             all_snaps.detached_head = false;
           }
-          this.current.oneAhead(snapshot).bindListeners();
+          this.current.collection = snapshot;
+          this.current.bindListeners();
           e.stopPropagation();
           e.stopImmediatePropagation();
           $t.addClass("selected-history").siblings().removeClass("selected-history");
@@ -76,7 +81,8 @@
       }
     });
     return history.HistoryList = Backbone.View.extend({
-      tagName: 'div class="history-modal"',
+      tagName: 'div',
+      className: 'history-modal',
       initialize: function() {
         this.controller = this.options.controller;
         this.snapshots = this.options.snapshots;
@@ -99,7 +105,6 @@
       },
       bindIndividualListener: function(model) {
         var children, self;
-        console.log(model);
         children = model.get("child_els");
         self = this;
         this.listenTo(model, "all", this.makeHistory);
@@ -113,8 +118,14 @@
         this.collection = snapshot;
         return this;
       },
+      selectLast: function() {
+        console.log(this.last_snap, this.snapshots.length);
+        if (this.last_snap < this.snapshots.length && this.last_snap >= 0) {
+          return this.snapshots.at(this.last_snap).trigger("select");
+        }
+      },
       makeHistory: function(operation, subject, collection, options) {
-        var clone, op, ops, snap;
+        var clone, e, op, ops, snap;
         cc("Making History.");
         ops = ["change", "add", "remove"];
         if (ops.indexOf(operation) === -1) {
@@ -133,10 +144,13 @@
             this.snapshots.detached_head = false;
           }
           if (this.controller.model.get("currentSection") != null) {
-            clone = this.controller.model.get("currentSection").clone();
-          }
-          if (clone === false) {
-            return;
+            try {
+              clone = this.controller.model.get("currentSection").clone();
+            } catch (_error) {
+              e = _error;
+              console.log(e);
+              return false;
+            }
           }
           snap = new models.Snap({
             snapshot: clone
@@ -156,6 +170,7 @@
           }
           this.snapshots.add(snap);
           this.append(snap);
+          this.last_snap = this.snapshots.length - 2;
         }
         return this;
       },
@@ -174,7 +189,7 @@
         self = this;
         this.$el.empty();
         if (this.snapshots.length === 0) {
-          $("<li/>").addClass("placeholder center").text("No History Here.").appendTo(this.$el);
+          $("<li/>").addClass("placeholder p10 center").text("No History Here.").appendTo(this.$el);
         }
         _.each(this.snapshots.models, function(snapshot) {
           return self.append(snapshot);

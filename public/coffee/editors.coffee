@@ -44,7 +44,7 @@ $ ->
             "keyup .title-setter": ->
                 self = @
                 @enqueue("title", ->
-                    self.model.set("title", self.$el.find(".title-setter").val())
+                    self.model.set("title", self.$el.find(".title-setter").val(), { no_history: true })
                 )
             "click .confirm": ->
                 cq = @change_queue

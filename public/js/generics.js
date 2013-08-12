@@ -350,8 +350,7 @@
               return;
             }
             $item = $(ui.unselecting);
-            $item.trigger("deselect");
-            return that.$el.find(".selected-element").trigger("deselect");
+            return $item.trigger("deselect");
           }
         });
         return this.$el.addClass("builder-scaffold");

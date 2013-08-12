@@ -27,7 +27,7 @@
 
       Actives.prototype.getProps = function(attrs) {
         var prop, properties, property_item;
-        property_item = "<li data-attr='<%=prop%>'><%=prop.clean() %>: <span contentEditable><%= value %></span></li>";
+        property_item = "<li data-attr='<%=prop%>'><%=prop.clean() %>: <%= value %></li>";
         properties = "";
         for (prop in attrs) {
           if (this.disregardAttrs.indexOf(prop) === -1) {
@@ -87,12 +87,6 @@
         });
         items += "</ul></div>";
         return items;
-      };
-
-      Actives.prototype.events = {
-        "click li": function(e) {
-          return e.stopPropagation();
-        }
       };
 
       return Actives;
