@@ -93,8 +93,13 @@ $ ->
             @
         # Add watcher to each model in the collection
         bindIndividualListener: (model) ->
+            console.log model
+            children = model.get("child_els")
+            self     = @
             @listenTo model, "all", @makeHistory
-            @listenTo model.get("child_els"), "all", @makeHistory
+            @listenTo children, "all", @makeHistory
+            _.each children.models, (child) ->
+                self.bindIndividualListener child
             @
         # Bug fix - when the head is detached the history is linked to a collection already in the history.
         # When this snapshot is edited, the changes apply to the current state, and ALSO make a new, identical state, 
@@ -131,7 +136,6 @@ $ ->
                 if @snapshots.length >= window.history_length
                     @snapshots.at(0).destroy({no_history: true})
                 if op == "add"
-                    console.log "was added"
                     @bindIndividualListener subject
 
                 # Add that state, or snapshot, to this ocllection and

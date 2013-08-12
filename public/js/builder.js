@@ -124,8 +124,7 @@
         }
         children = this.get("child_els");
         children.add(putIn, {
-          at: at,
-          opname: 'Switch'
+          at: at
         });
         this.set("child_els", children);
         return true;
@@ -153,8 +152,7 @@
           });
         }
         this.add(putIn, {
-          at: at,
-          opname: "Switch"
+          at: at
         });
         return true;
       },
@@ -176,8 +174,7 @@
           organizer: {
             itemRender: false,
             render: false
-          },
-          opname: 'Switch'
+          }
         });
         return this;
       },
@@ -568,6 +565,9 @@
           }
           return layout.get("child_els").add(model);
         });
+        if (e != null) {
+          e.stopPropagation();
+        }
         return this;
       };
 

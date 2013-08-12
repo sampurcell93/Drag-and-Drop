@@ -98,8 +98,15 @@
         return this;
       },
       bindIndividualListener: function(model) {
+        var children, self;
+        console.log(model);
+        children = model.get("child_els");
+        self = this;
         this.listenTo(model, "all", this.makeHistory);
-        this.listenTo(model.get("child_els"), "all", this.makeHistory);
+        this.listenTo(children, "all", this.makeHistory);
+        _.each(children.models, function(child) {
+          return self.bindIndividualListener(child);
+        });
         return this;
       },
       oneAhead: function(snapshot) {
@@ -145,7 +152,6 @@
             });
           }
           if (op === "add") {
-            console.log("was added");
             this.bindIndividualListener(subject);
           }
           this.snapshots.add(snap);

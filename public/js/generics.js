@@ -335,7 +335,7 @@
         this.$el.selectable({
           filter: '.builder-element:not(.builder-scaffold)',
           tolerance: 'touch',
-          cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag",
+          cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag, .context-menu",
           stop: function(e) {
             if (e.shiftKey === true) {
               return that.blankLayout();

@@ -86,7 +86,7 @@ $(document).ready ->
             # and put the collection back in
             children = @get "child_els"
             # We don't need to validate "at" because backbone will simply append if "at" is undefined
-            children.add(putIn, {at: at, opname: 'Switch'})
+            children.add(putIn, {at: at})
             @set "child_els", children
             true
 
@@ -100,7 +100,7 @@ $(document).ready ->
                     model.collection.remove model, {no_history: true}
             else if putIn.collection?
                 putIn.collection.remove putIn, {no_history: true}
-            @add putIn, {at: at, opname: "Switch"}
+            @add putIn, {at: at}
             true
          # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
@@ -112,7 +112,7 @@ $(document).ready ->
             # Remove it from the collection
             collection.remove(temp, {organizer: {itemRender: false},  no_history: true})
             # Reinsert it at its new index
-            collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}, opname: 'Switch'})
+            collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}})
             this
         # Returns an array of all models that match the property, recursively. Defaults to layout item search
         gather: (prop) ->
@@ -384,6 +384,7 @@ $(document).ready ->
                 if model.collection?
                     model.collection.remove model, {no_history: true}
                 layout.get("child_els").add model
+            if e? then e.stopPropagation()
             @
         bindContextMenu:  (e) ->
             if !@contextMenu? then return true
