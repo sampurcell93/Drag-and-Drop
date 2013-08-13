@@ -28,7 +28,15 @@ script(type='text/template')#property-link
 script(type='text/template')#context-menu-default
     li.group-elements Group selected
     li.copy-element Copy Element
+    <% if (typeof window.copiedModel !== "undefined" && typeof layout !== "undefined" && window.copiedModel != null) {%>
+    li.paste-element Paste Element
+    <% } %>
     li.destroy-element Delete Element
 script(type='text/template')#snapshot
     |<%= opname.clean() %><%= opname.slice(-1) == "e"?"d":"ed" %>
     |<%= typeof title !== "undefined" ? title : type %>
+
+script(type='text/template')#placeholder-context
+    <% if (typeof window.copiedModel !== "undefined") {%>
+    li.paste-element Paste Element
+    <% } %>

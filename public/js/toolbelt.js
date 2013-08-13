@@ -37,7 +37,7 @@
         return properties;
       };
 
-      Actives.prototype.disregardAttrs = ["inFlow", "view", "styles", "property"];
+      Actives.prototype.disregardAttrs = ["inFlow", "view", "styles", "property", "layout"];
 
       Actives.prototype.editables = ["title"];
 

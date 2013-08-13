@@ -79,7 +79,7 @@
       return $t.data("switch-text", currtext);
     });
     return $(this).delegate(".close-arrow", "click", function() {
-      return $(this).toggleClass("flipped").siblings().toggle();
+      return $(this).toggleClass("flipped").siblings(":not(.drag-handle)").toggle();
     });
   });
 

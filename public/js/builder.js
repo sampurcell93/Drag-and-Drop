@@ -10,6 +10,7 @@
     */
 
     var _ref, _ref1, _ref2;
+    window.copiedModel = null;
     window.globals = {
       setPlaceholders: function(draggable, collection) {
         var after, before;
@@ -132,6 +133,19 @@
         return true;
       };
 
+      Element.prototype.deepCopy = function() {
+        var children, clone, model, self;
+        model = this;
+        clone = model.clone();
+        children = clone.get("child_els").clone();
+        self = this;
+        _.each(children.models, function(child) {
+          return child = child.deepCopy();
+        });
+        clone.set("child_els", children);
+        return clone;
+      };
+
       return Element;
 
     })(Backbone.Model);
@@ -233,16 +247,43 @@
         return _ref1;
       }
 
+      droppablePlaceholder.prototype.contextMenu = $("#placeholder-context").html();
+
+      droppablePlaceholder.prototype.tagName = 'div';
+
+      droppablePlaceholder.prototype.className = 'droppable-placeholder';
+
+      droppablePlaceholder.prototype.initialize = function() {
+        return console.log(this.events);
+      };
+
       droppablePlaceholder.prototype.events = {
+        "click": function() {
+          return cc("yolo");
+        },
         "remove": function() {
           return this.remove();
+        },
+        "contextmenu": function(e) {
+          var $el, pageX, pageY;
+          this.$("ul").remove();
+          e.preventDefault();
+          $el = this.$el;
+          pageX = e.pageX - $el.offset().left;
+          pageY = e.pageY - $el.offset().top;
+          $("<ul />").html(_.template(this.contextMenu, {})).addClass("context-menu").css({
+            "top": pageY + "px",
+            "left": pageX + "px"
+          }).appendTo(this.$el);
+          e.stopPropagation();
+          return false;
         }
       };
 
       droppablePlaceholder.prototype.render = function() {
         var ghostFragment, self;
         self = this;
-        ghostFragment = $("<div/>").addClass("droppable-placeholder").html("<div class='make-bigger'></div>");
+        ghostFragment = this.$el;
         return ghostFragment.droppable({
           accept: ".builder-element, .outside-draggables li, .property",
           greedy: true,
@@ -251,10 +292,10 @@
             if ($(document.body).hasClass("active-modal")) {
               return false;
             }
-            return $(e.target).css("opacity", 1);
+            return $(e.target).addClass("show");
           },
           out: function(e, ui) {
-            return $(e.target).css("opacity", 0);
+            return $(e.target).removeClass("show").find("ul").remove();
           },
           drop: function(e, ui) {
             var curr, dropZone, insertAt, parent;
@@ -397,6 +438,7 @@
         }
         this.applyClasses();
         this.checkPlaceholder();
+        this.$(".view-attrs").first().trigger("click");
         (this.afterRender || function() {
           return $el.hide().fadeIn(325);
         })();
@@ -559,7 +601,7 @@
         $el = this.$el;
         pageX = e.pageX - $el.offset().left;
         pageY = e.pageY - $el.offset().top;
-        $("<ul />").html(_.template(this.contextMenu, {})).addClass("context-menu").css({
+        $("<ul />").html(_.template(this.contextMenu, this.model.toJSON())).addClass("context-menu").css({
           "top": pageY + "px",
           "left": pageX + "px"
         }).appendTo(this.$el);
@@ -584,12 +626,18 @@
           return e.stopPropagation();
         },
         "contextmenu": "bindContextMenu",
-        "click .context-menu": function(e) {
-          return e.stopPropagation();
+        "click .context-menu > li.copy-element": function() {
+          var copy;
+          copy = this.model.deepCopy();
+          return window.copiedModel = copy;
         },
         "click .group-elements": "blankLayout",
         "click .destroy-element": function() {
           return this.model.destroy();
+        },
+        "click .context-menu": function(e) {
+          $(e.currentTarget).remove();
+          return e.stopPropagation();
         },
         "click": function(e) {
           var layout;

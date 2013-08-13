@@ -72,4 +72,4 @@ $(document).ready ->
 
     $(@).delegate ".close-arrow", "click", ->
         $(this).toggleClass("flipped")
-        .siblings().toggle()
+        .siblings(":not(.drag-handle)").toggle()

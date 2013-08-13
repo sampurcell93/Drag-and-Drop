@@ -16,7 +16,7 @@
     allLayouts = [
       {
         type: 'Dynamic Layout',
-        view: 'dynamicLayout'
+        view: 'DynamicLayout'
       }, {
         type: 'Dynamic Container',
         view: 'dynamicContainer'
@@ -111,6 +111,16 @@
             }
             children.reset();
             return model.destroy();
+          },
+          "click .paste-element": function() {
+            var copy;
+            copy = window.copiedModel;
+            if (copy != null) {
+              window.copiedModel = copy.deepCopy();
+              return this.model.get("child_els").add(copy);
+            } else {
+              return alert("Something went wrong.....");
+            }
           }
         });
         this.bindDrop();

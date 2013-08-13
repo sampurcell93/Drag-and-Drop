@@ -4,6 +4,8 @@ $(document).ready ->
         global namespace and still have access to other scripts 
     ###
 
+    window.copiedModel = null
+
     window.globals =
          setPlaceholders: (draggable, collection) ->
             draggable
@@ -91,6 +93,16 @@ $(document).ready ->
             children.add(putIn, {at: at})
             @set "child_els", children
             true
+        deepCopy: ->
+            model = @
+            clone = model.clone()
+            children = clone.get("child_els").clone()
+            self = @
+            _.each children.models, (child) ->
+                child = child.deepCopy()
+            clone.set("child_els", children)
+            clone
+
 
     window.collections.Elements = Backbone.Collection.extend {
         model: models.Element
@@ -151,21 +163,41 @@ $(document).ready ->
     }
 
     class window.views.droppablePlaceholder extends Backbone.View
+        contextMenu: $("#placeholder-context").html()
+        tagName: 'div'
+        className: 'droppable-placeholder'
+        initialize: ->
+            console.log @events
         events:
+            "click": ->
+                cc "yolo"
             "remove": ->
                 do @remove
+            "contextmenu": (e) ->
+                @$("ul").remove()
+                e.preventDefault()
+                $el = @$el
+                pageX = e.pageX - $el.offset().left
+                pageY = e.pageY - $el.offset().top
+                # Remove all other right click menus
+                $("<ul />").html(_.template(@contextMenu, {})).
+                addClass("context-menu").
+                css({"top":pageY + "px", "left": pageX + "px"}).
+                appendTo(@$el)
+                e.stopPropagation()
+                false
         render: ->
             self = @
-            ghostFragment = $("<div/>").addClass("droppable-placeholder").html("<div class='make-bigger'></div>")
+            ghostFragment = @$el
             ghostFragment.droppable
                 accept: ".builder-element, .outside-draggables li, .property"
                 greedy: true
                 tolerance: 'pointer' 
                 over: (e, ui) ->
                     if $(document.body).hasClass("active-modal") then return false
-                    $(e.target).css("opacity", 1)
+                    $(e.target).addClass("show")
                 out: (e, ui) ->
-                    $(e.target).css("opacity", 0)
+                    $(e.target).removeClass("show").find("ul").remove()
                 drop: (e,ui) ->
                     $(".over").removeClass("over")
                     if $(document.body).hasClass("active-modal") then return false
@@ -264,6 +296,7 @@ $(document).ready ->
                     that.appendChild el, {}
             @applyClasses()
             @checkPlaceholder()
+            @$(".view-attrs").first().trigger("click")
             (@afterRender || -> 
                 $el.hide().fadeIn(325)
             )()
@@ -376,7 +409,7 @@ $(document).ready ->
             pageX = e.pageX - $el.offset().left
             pageY = e.pageY - $el.offset().top
             # Remove all other right click menus
-            $("<ul />").html(_.template(@contextMenu, {})).
+            $("<ul />").html(_.template(@contextMenu, @model.toJSON())).
             addClass("context-menu").
             css({"top":pageY + "px", "left": pageX + "px"}).
             appendTo(@$el)
@@ -395,12 +428,16 @@ $(document).ready ->
                 e.stopPropagation()
             # for right click functionality users expect
             "contextmenu": "bindContextMenu"
-            "click .context-menu": (e) ->
-                # Stop the context menu from closing
-                e.stopPropagation()
+            "click .context-menu > li.copy-element": ->
+                copy = @model.deepCopy()
+                window.copiedModel = copy
             "click .group-elements": "blankLayout"
             "click .destroy-element": ->
                 @model.destroy()
+            "click .context-menu": (e) ->
+                # Stop the context menu from closing
+                $(e.currentTarget).remove()
+                e.stopPropagation()
             "click": (e) ->
                 @unbindContextMenu(e)
                 @$el.find(".dropdown").hide()

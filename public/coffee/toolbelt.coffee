@@ -18,7 +18,7 @@ $ ->
                         value: @formatAttributes(attrs[prop])
                     }
             properties
-        disregardAttrs: ["inFlow", "view", "styles", "property"]
+        disregardAttrs: ["inFlow", "view", "styles", "property", "layout"]
         editables: ["title"]
         quickAttrs: (e) ->
                 if @$el.hasClass("builder-scaffold") then return false

@@ -730,10 +730,13 @@ section.builder-container {
 	position: relative;
 	left: 0;
 	margin: 2px auto;
-	@include opacity(0);
 	@include transition(all .2s ease-in-out);
 	height: 14px;
-	border: 2px dashed orange;
+	border: 2px dashed transparent;
+
+	&.show {
+		border: 2px dashed $pegaorange;
+	}
 
 	// &:after, &:before {
 	// 	content: "";

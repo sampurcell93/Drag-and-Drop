@@ -37,7 +37,7 @@ $(document).ready ->
     allLayouts =[
         {
             type: 'Dynamic Layout'
-            view: 'dynamicLayout'
+            view: 'DynamicLayout'
         },
         {
             type: 'Dynamic Container'
@@ -116,6 +116,12 @@ $(document).ready ->
                     children.reset()
                     # Destroy the layout/group
                     model.destroy()
+                "click .paste-element": ->
+                    copy = window.copiedModel
+                    if copy?
+                        window.copiedModel = copy.deepCopy()
+                        @model.get("child_els").add copy
+                    else alert("Something went wrong.....")
                 }
             do @bindDrop
             @
