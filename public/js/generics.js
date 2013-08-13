@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var generics, _ref, _ref1, _ref10, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var generics, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     generics = [
       {
         "type": "Button",
@@ -272,7 +272,7 @@
       return _Class;
 
     })(window.views.genericElement);
-    window.views['TableCell'] = (function(_super) {
+    return window.views['TableCell'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -289,76 +289,6 @@
       return _Class;
 
     })(window.views.genericElement);
-    return window.views['BuilderWrapper'] = (function(_super) {
-      __extends(_Class, _super);
-
-      function _Class() {
-        _ref10 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref10;
-      }
-
-      _Class.prototype.controls = null;
-
-      _Class.prototype.contextMenu = null;
-
-      _Class.prototype.initialize = function() {
-        var self;
-        _Class.__super__.initialize.apply(this, arguments);
-        self = this;
-        _.bindAll(this, "afterRender");
-        if (this.model.get("child_els").length === 0) {
-          $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(this.$el);
-        }
-        return this.model.on({
-          "render": function() {
-            return self.render(true);
-          }
-        });
-      };
-
-      _Class.prototype.template = $("#builder-wrap").html();
-
-      _Class.prototype.appendChild = function() {
-        _Class.__super__.appendChild.apply(this, arguments);
-        if (this.model.get("child_els").length === 0) {
-          return $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(this.$el);
-        } else {
-          return this.$el.children(".placeholder").remove();
-        }
-      };
-
-      _Class.prototype.bindDrag = function() {};
-
-      _Class.prototype.afterRender = function() {
-        var that;
-        that = this;
-        this.$el.selectable({
-          filter: '.builder-element:not(.builder-scaffold)',
-          tolerance: 'touch',
-          cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag, .context-menu",
-          stop: function(e) {
-            if (e.shiftKey === true) {
-              return that.blankLayout();
-            }
-          },
-          selecting: function(e, ui) {
-            return $(ui.selecting).trigger("select");
-          },
-          unselecting: function(e, ui) {
-            var $item;
-            if (e.shiftKey === true) {
-              return;
-            }
-            $item = $(ui.unselecting);
-            return $item.trigger("deselect");
-          }
-        });
-        return this.$el.addClass("builder-scaffold");
-      };
-
-      return _Class;
-
-    })(window.views.layout);
   });
 
 }).call(this);

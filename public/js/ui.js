@@ -23,9 +23,11 @@
       $(document.body).addClass("active-modal").append(modal);
       return modal;
     };
-    window.launchDraggableModal = function(content, tagname, appendTo) {
+    window.launchDraggableModal = function(content, tagname, appendTo, title) {
       var modal;
+      title = $("<h2/>").text(title).addClass("drag-handle");
       modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
+      title.prependTo(modal);
       modal.draggable({
         revert: 'invalid',
         start: function(e, ui) {
@@ -44,7 +46,8 @@
         },
         snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)',
         cancel: '.close-arrow',
-        containment: '.container'
+        containment: '.container',
+        handle: '.drag-handle'
       });
       modal.appendTo(appendTo || document.body);
       modal.append($("<div/>").addClass("close-arrow pointer").text("q"));

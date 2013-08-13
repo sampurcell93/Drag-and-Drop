@@ -117,6 +117,8 @@ $(document).ready ->
                     # Destroy the layout/group
                     model.destroy()
                 }
+            do @bindDrop
+            @
         bindDrop: ->
             that = this
             @$el.droppable {
@@ -157,6 +159,44 @@ $(document).ready ->
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
         higher level event from firing. ###
 
+    class window.views['BuilderWrapper'] extends window.views.layout
+        controls: null
+        contextMenu: null
+        initialize: ->
+            super
+            self = @
+            _.bindAll(@, "afterRender")
+            if (@model.get("child_els").length is 0)
+                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el) 
+            @model.on "render": ->
+                self.render(true)
+        template: $("#builder-wrap").html()
+        appendChild: ->
+            super
+            if (@model.get("child_els").length is 0)
+                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el)     
+            else @$el.children(".placeholder").remove()
+        bindDrag: ->
+        afterRender: ->
+            that = @
+            @$el.selectable {
+                filter: '.builder-element:not(.builder-scaffold)'
+                tolerance: 'touch'
+                cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag, .context-menu"
+                stop: (e)->
+                    if (e.shiftKey is true)
+                        that.blankLayout()
+                selecting: (e,ui) ->
+                    $(ui.selecting). trigger "select"
+                unselecting: (e,ui) ->
+                    if (e.shiftKey is true) then return 
+                    $item = $(ui.unselecting)
+                    $item.trigger "deselect"
+            }
+            @$el.addClass("builder-scaffold")
+
+
+
     class views["table"] extends views["layout"]
         tagName: 'table class="builder-element column six"'
         template: $("#table-layout").html()
@@ -189,20 +229,22 @@ $(document).ready ->
             dummy
 
 
-    class window.views["dynamicLayout"] extends window.views["layout"]
+    class window.views["DynamicLayout"] extends window.views["layout"]
         configTemplate: $("#dynamic-layout-setup").html()
         template: $("#dynamic-layout").html()
         initialize: ->
-            _.bindAll @, "afterRender", "beforeRender"
+            _.bindAll @, "afterRender"
             super
         afterRender: ->
-        beforeRender: ->
-            self = @
-            if $(".modal").length is 0
-                modal = window.launchModal(_.template(@configTemplate, @model.toJSON()))
-            else 
-                modal = $(".modal").first()
-            modal.delegate ".submit", "click", ->
+            @$el.addClass("blank-layout")
+
+        # beforeRender: ->
+        #     self = @
+        #     if $(".modal").length is 0
+        #         modal = window.launchModal(_.template(@configTemplate, @model.toJSON()))
+        #     else 
+        #         modal = $(".modal").first()
+        #     modal.delegate ".submit", "click", ->
 
 
     class window.views["dynamicContainer"] extends window.views["layout"]
@@ -292,11 +334,3 @@ $(document).ready ->
             _.bindAll(@, "afterRender")
         afterRender: ->
             @$el.addClass("list-layout")
-
-    class window.views['BlankLayout'] extends window.views["layout"]
-        template: $("#blank-layout").html()
-        initialize: ->
-            _.bindAll @, "afterRender"
-            super
-        afterRender: ->
-            @$el.addClass("blank-layout")

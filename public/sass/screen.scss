@@ -682,7 +682,7 @@ section.builder-container {
 		margin: 0;
 		cursor: auto;
 		background: #fff;
-		outline: 1px solid $strongblue;
+		outline: 1px solid $medblue !important;
 		min-height: 100px;
 
 		&:hover { background: white; }
@@ -1288,12 +1288,12 @@ ul li.selected-choice {
 	cursor: move;
 	border-top: 1px solid $lightdusk;
 
-	&:before {
+	h2.drag-handle {
 		position: absolute;
 		content: attr(data-modal-name);
 		top: 0;
 		left: 0;
-		height: 23px;
+		height: 30px;
 		width: 100%;
 		color: #f9f9f9;
 		text-align: center;

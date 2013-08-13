@@ -19,8 +19,10 @@ $(document).ready ->
         $(document.body).addClass("active-modal").append(modal)
         modal
 
-    window.launchDraggableModal = (content, tagname, appendTo) ->
+    window.launchDraggableModal = (content, tagname, appendTo, title) ->
+        title = $("<h2/>").text(title).addClass("drag-handle")
         modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
+        title.prependTo modal
         modal.draggable
             revert: 'invalid'
             start: (e, ui) ->
@@ -38,6 +40,7 @@ $(document).ready ->
             snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)'
             cancel: '.close-arrow'
             containment: '.container'
+            handle: '.drag-handle'
         modal.appendTo(appendTo || document.body)
         modal.append($("<div/>").addClass("close-arrow pointer").text("q"))
         modal

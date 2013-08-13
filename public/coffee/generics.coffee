@@ -185,39 +185,3 @@ $(document).ready ->
         tagName: 'td class="builder-element"'
         initialize: (options) ->
             super 
-
-    class window.views['BuilderWrapper'] extends window.views.layout
-        controls: null
-        contextMenu: null
-        initialize: ->
-            super
-            self = @
-            _.bindAll(@, "afterRender")
-            if (@model.get("child_els").length is 0)
-                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el) 
-            @model.on "render": ->
-                self.render(true)
-        template: $("#builder-wrap").html()
-        appendChild: ->
-            super
-            if (@model.get("child_els").length is 0)
-                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el)     
-            else @$el.children(".placeholder").remove()
-        bindDrag: ->
-        afterRender: ->
-            that = @
-            @$el.selectable {
-                filter: '.builder-element:not(.builder-scaffold)'
-                tolerance: 'touch'
-                cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag, .context-menu"
-                stop: (e)->
-                    if (e.shiftKey is true)
-                        that.blankLayout()
-                selecting: (e,ui) ->
-                    $(ui.selecting). trigger "select"
-                unselecting: (e,ui) ->
-                    if (e.shiftKey is true) then return 
-                    $item = $(ui.unselecting)
-                    $item.trigger "deselect"
-            }
-            @$el.addClass("builder-scaffold")

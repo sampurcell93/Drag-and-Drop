@@ -76,7 +76,8 @@
               weight: null
             },
             opacity: null
-          }
+          },
+          title: "Default Title"
         };
       };
 
@@ -104,6 +105,7 @@
 
       Element.prototype.blend = function(putIn, at) {
         var children;
+        cc("blending");
         if (putIn == null) {
           return false;
         }
@@ -137,6 +139,7 @@
       model: models.Element,
       url: '/section/',
       blend: function(putIn, at) {
+        cc("blending");
         if (putIn == null) {
           return false;
         }
@@ -308,9 +311,8 @@
       draggableElement.prototype.modelListeners = {};
 
       draggableElement.prototype.initialize = function() {
-        _.bindAll(this, "render", "bindDrop", "bindDrag", "appendChild", "bindListeners");
+        _.bindAll(this, "render", "bindDrag", "appendChild", "bindListeners");
         this.on("bindListeners", this.bindListeners);
-        this.bindDrop();
         this.bindDrag();
         return this.bindListeners();
       };
@@ -489,8 +491,6 @@
         });
       };
 
-      draggableElement.prototype.bindDrop = function() {};
-
       draggableElement.prototype.removeFromFlow = function(e) {
         var destroy, that;
         that = this;
@@ -526,8 +526,8 @@
         }
         layoutIndex = collection.indexOf(selected[0]);
         collection.add(layout = new models.Element({
-          view: 'BlankLayout',
-          type: 'Blank Layout'
+          view: 'DynamicLayout',
+          type: 'Dynamic Layout'
         }), {
           at: layoutIndex,
           no_history: true

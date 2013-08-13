@@ -4,9 +4,8 @@ $ ->
     class toolbelt.Actives extends Backbone.View
         el: ".quick-props"
         initialize: ->
-            @listenTo @model, "change", @quickAttrs
-            @listenTo @model.get "child_els", "change", @quickAttrs
-
+            # @listenTo @model, "change", @quickAttrs
+            # @listenTo @model.get "child_els", "change", @quickAttrs
         render: ->
             @quickAttrs()
         getProps: (attrs) ->
@@ -20,6 +19,7 @@ $ ->
                     }
             properties
         disregardAttrs: ["inFlow", "view", "styles", "property"]
+        editables: ["title"]
         quickAttrs: (e) ->
                 if @$el.hasClass("builder-scaffold") then return false
                 properties = "<ul>"
@@ -47,3 +47,10 @@ $ ->
                 items += "<li>" + self.getProps(model.attributes) + "</li>"
             items += "</ul></div>"
             items
+        events: 
+            "keyup [data-attr] span": (e) ->
+                $t   = $ e.currentTarget
+                attr = $t.closest("[data-attr]").data("attr")
+                val  = $t.html()
+                @model.set attr, val, {no_history: true}
+                e.stopPropagation()

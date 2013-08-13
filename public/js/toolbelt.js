@@ -16,10 +16,7 @@
 
       Actives.prototype.el = ".quick-props";
 
-      Actives.prototype.initialize = function() {
-        this.listenTo(this.model, "change", this.quickAttrs);
-        return this.listenTo(this.model.get("child_els", "change", this.quickAttrs));
-      };
+      Actives.prototype.initialize = function() {};
 
       Actives.prototype.render = function() {
         return this.quickAttrs();
@@ -41,6 +38,8 @@
       };
 
       Actives.prototype.disregardAttrs = ["inFlow", "view", "styles", "property"];
+
+      Actives.prototype.editables = ["title"];
 
       Actives.prototype.quickAttrs = function(e) {
         var attrs, properties;
@@ -87,6 +86,19 @@
         });
         items += "</ul></div>";
         return items;
+      };
+
+      Actives.prototype.events = {
+        "keyup [data-attr] span": function(e) {
+          var $t, attr, val;
+          $t = $(e.currentTarget);
+          attr = $t.closest("[data-attr]").data("attr");
+          val = $t.html();
+          this.model.set(attr, val, {
+            no_history: true
+          });
+          return e.stopPropagation();
+        }
       };
 
       return Actives;

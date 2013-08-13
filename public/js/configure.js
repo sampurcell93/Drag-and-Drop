@@ -140,12 +140,12 @@
           collection: section
         });
         $o_el = this.$el.find(".accessories");
-        hist_modal = window.launchDraggableModal(this.histList.render().el, null, $o_el);
-        hist_modal.attr("data-modal-name", "History - Recent 15");
-        props_modal = window.launchDraggableModal("<ul></ul>", null, $o_el);
-        props_modal.addClass("quick-props").attr("data-modal-name", "Editable Attributes");
-        css_modal = window.launchDraggableModal("<ul></ul>", null, $o_el);
-        css_modal.addClass("quick-css").attr("data-modal-name", "Skin Format");
+        hist_modal = window.launchDraggableModal(this.histList.render().el, null, $o_el, "History - Recent 15");
+        hist_modal.attr("data-modal-name");
+        props_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Editable Attributes");
+        props_modal.addClass("quick-props").attr("data-modal-name");
+        css_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Skin Format");
+        css_modal.addClass("quick-css").attr("data-modal-name");
         $o_el.droppable({
           accept: '.moved',
           greedy: true,

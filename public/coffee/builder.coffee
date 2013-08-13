@@ -53,6 +53,7 @@ $(document).ready ->
                     }
                     opacity: null
                 }
+                title: "Default Title"
             }
         url: ->
             url = "/section/"
@@ -70,6 +71,7 @@ $(document).ready ->
             response.child_els = @modelify(response.child_els)
             response
         blend: (putIn, at) ->
+            cc "blending"
             if !putIn? then return false
             # If put in is a collection
             if $.isArray(putIn) is true and putIn.length > 1
@@ -94,6 +96,7 @@ $(document).ready ->
         model: models.Element
         url: '/section/'
         blend: (putIn, at) ->
+            cc "blending"
             if !putIn? then return false
             if $.isArray(putIn) is true and putIn.length > 1
                  _.each putIn, (model) ->
@@ -193,11 +196,9 @@ $(document).ready ->
         className: 'builder-element'
         modelListeners: {}
         initialize: ->
-            _.bindAll(this, "render", "bindDrop", "bindDrag","appendChild","bindListeners")
+            _.bindAll(this, "render", "bindDrag","appendChild","bindListeners")
             @on "bindListeners", @bindListeners
             # Bind the drag event to the el
-            do @bindDrop
-            # Bind the drop event to the el
             do @bindDrag
             # Bind all model listeners
             do @bindListeners
@@ -330,7 +331,6 @@ $(document).ready ->
                     else window.currentDraggingModel = that.model
                 stop: (e, ui) ->
                     $(ui.helper).removeClass("dragging")
-        bindDrop: ->
         removeFromFlow: (e) ->        #  When they click the "X" in the config - remove the el from the builder
             that = @
             destroy = ->
@@ -358,7 +358,7 @@ $(document).ready ->
             selected = collection.gather()
             if selected.length is 0 or selected.length is 1 then return
             layoutIndex = collection.indexOf(selected[0])
-            collection.add(layout = new models.Element({view: 'BlankLayout', type: 'Blank Layout'}), {at: layoutIndex, no_history: true})
+            collection.add(layout = new models.Element({view: 'DynamicLayout', type: 'Dynamic Layout'}), {at: layoutIndex, no_history: true})
             _.each selected , (model) ->
                 if model.collection?
                     model.collection.remove model, {no_history: true}
