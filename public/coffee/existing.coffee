@@ -33,7 +33,7 @@ $(document).ready ->
                 helper: "clone",
                 cursor: "move"
                 start: ->
-                    window.copiedModel = self.model.get("currentSection")
+                    window.copiedModel = self.model.get("currentSection").models
                 stop: (e, ui) ->
                     $(ui.helper).removeClass("dragging")
                     # If the drop was a success, remove the original and preserve the clone

@@ -1,0 +1,542 @@
+.sort-element {
+    font-family: 'icons';
+    position: absolute;
+    height: 100%;
+    width: 30px;
+    text-align: center;
+    display: block;
+    color: #f9f9f9;
+    font-size: .8em;
+
+    &:before {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+    }
+}
+
+.right-arrow {
+    line-height: 500px;
+    font-size: 3rem;
+    color: $strongblue;
+    @include opacity(.3);
+}
+
+ul.outside-draggables {
+    display: block;
+    float: left;
+    margin: 10px 0 0 10px;
+    border-top: 1px solid #fff;
+    @include border-radius(3px 3px 0 0);
+    background: $dusky;
+    color: #fff;
+    
+    li {
+        cursor: pointer;
+        text-shadow: none;
+        display: inline-block;
+        line-height: 30px;
+        padding: 5px 15px;
+        height: 100%;
+        margin: 0 3px;
+        position: relative;
+        min-width: 100px;
+        text-align: center;
+
+        &:hover {
+            text-decoration: underline;
+
+            ul { display: block; }
+        }
+
+        &.dragging {
+            border: 1px dotted $strongblue;
+            @include opacity(1);
+            @include border-radius(2px);
+            @include box-shadow(0px 0px 3px #aaa);
+            height: 40px;
+            background: #fff;
+            color: #313131;
+        }
+
+        &.no-close ul { display: block; }
+
+        ul {
+            position:absolute;
+            width: 150%;
+            top: 100%;
+            left: -3px;
+            z-index: 9999;
+            border: 1px solid #aaa;
+            cursor: move;
+            border-top: none;
+            display: none;
+
+            li {
+                width: 100%;
+                background: #fff;
+                color: $dusky;
+                position: relative;
+                left: -3px;
+                min-width: 0%;
+            }
+
+            li:hover {
+                color: #f9f9f9;
+                background: $dusky;
+            }
+        }
+
+    }
+}
+
+
+
+.over {
+    // @include transform(scale(.98));
+    @include border-radius(3px);
+    outline: 1px dotted $strongblue !important;
+    background: $fadedblue !important;
+}
+
+.dragging { 
+    opacity: .7;
+    z-index: 1111;
+}
+
+.moving-sort .sort-element {
+    background: $lightblue;
+}
+
+section.builder-container {
+    float: left;
+    width: 93%;
+    position: relative;
+    margin: 0px 10px 10px;
+    padding: 0;
+    @include border-radius(0 0 3px 3px);
+    @include box-shadow(0px 2px 4px #ccc);
+    border: 1px solid #ccc;
+
+    &.no-grid {
+
+         .builder-element {
+            outline-color: transparent !important;
+            margin-top: 2px;
+            margin-bottom: 2px;
+
+            textarea, .title-setter{
+                border: none;
+                resize: none;
+            }
+
+            textarea {
+                background: #e3e3e3;
+                padding: 10px;
+            }
+
+            .add-list-item { display: none; }
+        }
+
+        .droppable-placeholder {
+            display: none
+        }
+    }
+}
+
+
+// Represents a draggable item. Using custom clearfix to avoid overflow hidden problem
+.builder-element {
+    position: relative;
+    padding: 2px 3px;
+    margin: 0px 1%;
+    @include transition(width .2s ease-in-out, height .2s ease-in-out);
+    @include border-radius(3px);
+    // @include clearfix();
+    outline: 1px dashed $medblue;
+    background: #fff;
+    vertical-align: top;
+    *zoom: 1;
+    cursor: move;
+    text-overflow: ellipsis;
+    display: table;
+
+    ul, ol, dl {
+        list-style-position: inside !important;
+
+        li {
+            list-style-position: inside !important;
+        }
+    }
+
+    &.builder-scaffold {
+        width: 100%;
+        outline: none;
+        display: block;
+        margin: 0;
+        cursor: auto;
+        background: #fff;
+        outline: 1px solid $medblue !important;
+        min-height: 100px;
+
+        &:hover { background: white; }
+    }
+
+    &:hover { 
+        outline-color: $strongblue;
+        @include box-shadow(0px 0px 4px $medblue);
+        
+        > .config-menu-wrap  {
+            display: block;
+        }
+    }
+
+    &.builder-child { 
+        outline: 1px dashed $medblue;
+        // width: auto;
+    }
+
+    input { 
+        margin: 10px 0;
+        width: 65%;
+    }
+
+    &.selected-element {
+        outline: 1px dashed #FF6100 !important;
+        @include box-shadow(0px 0px 3px #ccc);
+        // background: #FFCA8E;
+    }
+
+    &:before,
+    &:after {
+        content: " "; /* 1 */
+        display: table; /* 2 */
+    }
+    &:after {
+        clear: both;
+    }
+
+    textarea { color: #363636; }
+}
+
+.droppable-placeholder {
+    position: relative;
+    left: 0;
+    margin: 2px auto;
+    @include transition(all .2s ease-in-out);
+    height: 14px;
+    border: 2px dashed $pegaorange;
+    @include opacity(0);
+
+    &.show {
+        @include opacity(1);
+    }
+
+    &:hover {
+        @include opacity(1);
+        border: 1px solid $lightorange;
+    }
+
+    // &:after, &:before {
+    //  content: "";
+    //  position: absolute;
+    //  top: -4px;
+    //  display: black;
+    //  width: 0;
+    //  height: 0;
+    //  border: 4px solid transparent;
+    // }
+    // &:before {
+    //  right: 100%;
+    //  border-right-color: orange;
+    // }
+    // &:after {
+    //  left: 100%;
+    //  border-left-color: orange;  
+    // }
+}
+
+.ui-selectable-helper { 
+    position: absolute;
+    z-index: 100;
+    border:1px dotted $strongblue; 
+    background: rgba(125,185,232,.4);
+}
+
+.config-menu-wrap {
+    @include transition(all .1s ease-in-out);
+    position: absolute;
+    top: -25px;
+    right: -1px;
+    display: none;
+    cursor: pointer;
+    text-align: center;
+    background: $strongblue;
+    border: 1px solid #f9f9f9;
+    border-bottom: none;
+    max-height: 25px;
+    @include border-radius(3px 3px 0 0);
+
+    li {
+        cursor: pointer;
+        @include transition(all .1s ease-in-out);
+        float: left;
+        text-shadow: none;
+        padding: 0 6px;
+        line-height: 25px;
+        color: white;
+        position: relative;
+
+        li { color: #333; }
+    }
+}
+
+.set-options {
+    z-index: 111;
+    .dropdown {
+        position: absolute;
+        top: 100%;
+        right: 1px;
+        display: none;
+        font-family: $opensans;
+        width: 170px;           
+        border: 1px solid #ddd;
+        @include border-radius(3px);
+        @include box-shadow(0px 2px 3px #ccc);
+        background: #fff;
+    }
+
+    .dropdown li {
+        display: block;
+        height: 33px;
+        cursor: pointer;
+        text-align: center;
+        display: block;
+        width: 100%;
+        line-height: 33px;
+
+        &:hover { 
+            background: $strongblue;
+            color: #fff;
+            text-shadow: none;
+        }
+    }
+}
+
+button {
+    @include border-radius(2px);
+}
+
+.view-section {
+    cursor: pointer;
+}
+
+.generic-list {
+    width: 80%;
+    li {
+        border: 1px dotted $strongblue;
+        padding: 6px 4px;
+        border-bottom-color: transparent;
+
+        &:last-of-type {
+            border-bottom-color: $strongblue;
+        }
+    }
+}
+
+ul.generic-list {
+    list-style: circle;
+}
+ol.generic-list {
+    list-style: decimal;
+}
+
+.layout-wrapper {
+    outline: 1px solid #7BF5F5 !important;
+    padding: 10px 0 10px;
+    display: block;
+
+    &:hover {
+        background: #FBF9DE;
+        @include box-shadow(none);
+    }
+
+    &.column.one > .droppable-placeholder {
+        width: 100%;
+        display: block !important;
+        height: 10px;
+    }
+
+    &.column {
+        
+        > ul.children > .builder-element { 
+            display: inline-block !important; 
+            margin: 2px 0 1px 0;
+        }
+        > ul.children > .droppable-placeholder { 
+            width: 1% !important; 
+            background: orange;
+            display: inline-block !important; 
+            margin: 0;
+            min-height: 41px;
+        }
+    
+        // Necessary to compensate for unbalanced placeholders which skew the page view.
+        &.two > ul.children > .builder-element:nth-of-type(4n+6) ,
+        &.three > ul.children > .builder-element:nth-of-type(6n+8), 
+        &.four > ul.children > .builder-element:nth-of-type(8n+10),
+        &.five > ul.children > .builder-element:nth-of-type(10n+12),
+        &.six > ul.children > .builder-element:nth-of-type(12n+14)
+        {
+            margin-left: 1% !important;
+        }
+        &.two > ul.children > .builder-element { 
+            width: 48.5%; 
+        }
+
+        &.three > ul.children > .builder-element { 
+            width: 32%; 
+        }
+    
+        &.four > ul.children > .builder-element { 
+            width: 23.75%; 
+        }
+
+        &.five > ul.children > .builder-element { 
+            width: 18.8%; 
+        }
+
+        &.six > ul.children > .builder-element { 
+            width: 15.5%; 
+        }
+    }
+
+}
+
+
+.context-menu {
+    position: absolute;
+    background: #f9f9f9;
+    @include opacity(1);
+    @include border-radius(3px);
+    @include box-shadow(0px 2px 3px #ccc);
+    border: 1px solid #ddd;
+    top: auto;
+    left: auto;
+    width: 150px;
+    height: auto !important;
+    max-height: none;
+    @include transition(all .1s ease-in-out);
+    z-index: 9999;
+    display: block;
+    cursor: pointer;
+
+    li {
+        text-align: center;
+        padding: 10px;
+        
+        &:first-of-type {
+            @include border-radius(3px 3px 0 0);
+        }
+        &:last-of-type {
+            @include border-radius(0 0 3px 3px);
+        }
+    
+        &:hover {
+            background: $strongblue;
+            color: #f9f9f9;
+            text-shadow: none;
+        }
+    }
+}
+
+
+.organize-elements {
+    padding: 0px 0 10px;
+    width: 100%;
+    min-width: 130px;
+    background: $dusky;
+    border-left: 1px solid #333;
+    border-bottom: 1px solid #333;
+    z-index: 998;
+
+    .ui-sortable-placeholder {
+        border: 1px solid #333;
+        visibility: visible !important;
+        background: $strongblue !important;
+        @include box-shadow(0px 0px 30px $strongblue, inset 0px 0px 30px rgba(255,255,255,.6));
+    }
+
+    > li {
+        border-top: 1px solid $lightdusk;
+        border-bottom: 1px solid #222;
+    }
+
+    li {
+        position: relative;
+        min-height: 30px;
+        line-height: 30px;
+        display: block;
+        cursor: move;
+        width: 100%;
+        padding-left: 30px;
+        text-shadow: 0px -1px 0px #222;
+        color: #f9f9f9;
+        overflow: hidden;
+        white-space: nowrap;
+        text-align: left !important;
+        text-overflow: ellipsis !important;
+
+        .destroy-element, .activate-element { display: none;}
+
+        .sort-element {
+            left: 4px;
+            top: 0px;
+            cursor: pointer;
+            cursor: hand;
+            width: 12px;
+
+            &:before {
+                left: 3px;
+            }
+        }
+
+        .child-list { 
+            margin-left: -18px;
+
+            li:first-child::after {
+                content: "";
+                display: block;
+                top: 0;
+                width: 100%;
+                height: 6px;
+                // needs latest Compass, add '@import "compass"' to your scss
+@include filter-gradient(#590000, #000000, vertical); // IE6-9
+@include background-image(linear-gradient(top,  rgba(0,0,0,0.5) 0%,rgba(0,0,0,0) 40%));
+
+                position: absolute;
+                left: 0;
+            }
+        }
+
+        &.out-of-flow {
+            background: #000;
+
+            > .destroy-element, > .activate-element { display: block; background: #000; }
+             .sort-element {background: #313131; }
+        }
+
+        .activate-element, .destroy-element {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            font-family: 'icons';
+            color: #7FBA50;
+            cursor: pointer;
+        }
+        .destroy-element {
+            right: 33px;
+            color: #888;
+        }
+    }
+}

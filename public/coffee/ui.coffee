@@ -8,6 +8,20 @@ $(document).ready ->
         history_length: localStorage.settings.history_length || 15
     }
 
+    window.globals =
+         setPlaceholders: (draggable, collection) ->
+            draggable
+            .before(before = new views.droppablePlaceholder({collection: collection}).render())
+            .after(after = new views.droppablePlaceholder({collection: collection}).render())
+            if before.prev().css("display") == "inline-block"
+                before.css("height", before.prev().height() + "px")
+
+    String.prototype.parseBool = ->
+        if this.toLowerCase() == "false" 
+            return false 
+        else if this.toLowerCase() == "true"
+            return true
+        false
     
     # Uses point slope form to compute the slope
     getSlope = (y1,y,x1,x) ->
@@ -38,9 +52,6 @@ $(document).ready ->
                 # Retrieve elements that the element is actually snapped to
                 snappedTo = $.map snapped, (element) ->
                     if element.snapping then element.item else null;
-                # if snappedTo.length
-                    # ui.helper.removeClass("moved")
-
 
             snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)'
             cancel: '.close-arrow'
@@ -82,11 +93,11 @@ $(document).ready ->
     $(@).delegate "[data-modal] input", "click", (e) ->
         $t = $(this)
         modal = $t.parent().data("modal")
-        $(".control-section").eq(currIndex).find("." + modal).slideToggle()
+        $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle()
         e.stopPropagation()
 
     $(@).delegate "[data-modal]", "click", (e) ->
         $t = $(this)
         modal = $t.data("modal")
-        $(".control-section").eq(currIndex).find("." + modal).slideToggle()
+        $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle()
         $t.find("input").prop("checked", !$t.find("input").prop("checked"))

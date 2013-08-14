@@ -130,7 +130,6 @@
         if (ops.indexOf(operation) === -1) {
           return;
         }
-        console.log("Making History, op %s", operation);
         if (operation === "change") {
           options = collection;
         }

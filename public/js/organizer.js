@@ -52,7 +52,7 @@
       render: function(e) {
         var $el, index, outOfFlow, that;
         $el = this.$el;
-        $el.children().not(".organizer-header, .placeholder").remove();
+        $el.children().not(".list-header, .placeholder").remove();
         if (this.collection.length === 0) {
           $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(this.$el);
         }

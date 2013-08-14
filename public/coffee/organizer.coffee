@@ -43,7 +43,7 @@ $(document).ready ->
             })
         render: (e) ->
             $el = @$el
-            $el.children().not(".organizer-header, .placeholder").remove()
+            $el.children().not(".list-header, .placeholder").remove()
             if @collection.length is 0
                 $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(@$el)
             that = this

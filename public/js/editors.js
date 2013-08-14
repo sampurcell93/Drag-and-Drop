@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(function() {
-    var editors, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+    var editors, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
     editors = window.views.editors = {};
     editors["BaseEditor"] = (function(_super) {
       __extends(_Class, _super);
@@ -199,6 +199,7 @@
 
       _Class.prototype.initialize = function() {
         var self;
+        _Class.__super__.initialize.apply(this, arguments);
         self = this;
         return _.extend(this.events, {
           "change .label-position": function(e) {
@@ -221,12 +222,41 @@
       return _Class;
 
     })(editors["BaseEditor"]);
-    return editors["accordion"] = (function(_super) {
+    editors["Property"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
         _ref5 = _Class.__super__.constructor.apply(this, arguments);
         return _ref5;
+      }
+
+      _Class.prototype.templates = [$("#property-editor").html()];
+
+      _Class.prototype.initialize = function() {
+        var self;
+        _Class.__super__.initialize.apply(this, arguments);
+        self = this;
+        return _.extend(this.events, {
+          "change .editable": function(e) {
+            var bool;
+            bool = $(e.currentTarget).val().parseBool();
+            self.enqueue("editable", function() {
+              return self.model.set("editable", bool);
+            });
+            return e.stopPropagation();
+          }
+        });
+      };
+
+      return _Class;
+
+    })(editors["BaseEditor"]);
+    return editors["accordion"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
       }
 
       _Class.prototype.templates = [$("#accordion-layout").html()];

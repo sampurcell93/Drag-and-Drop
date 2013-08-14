@@ -122,6 +122,7 @@ $ ->
     class editors['Radio'] extends editors["BaseEditor"]
         templates: [$("#radio-editor").html()]
         initialize: ->
+            super
             self = @
             _.extend @events, {
                 "change .label-position": (e) ->
@@ -134,6 +135,20 @@ $ ->
                     self.enqueue("label_text", ->
                         self.model.set("label_text", label)
                     )
+            }
+
+    class editors["Property"] extends editors["BaseEditor"]
+        templates: [$("#property-editor").html()]
+        initialize: ->
+            super
+            self = @
+            _.extend @events, {
+                "change .editable": (e) ->
+                    bool = $(e.currentTarget).val().parseBool()
+                    self.enqueue("editable", ->
+                        self.model.set("editable", bool)
+                    )
+                    e.stopPropagation()
             }
 
     class editors["accordion"] extends editors["BaseLayoutEditor"]

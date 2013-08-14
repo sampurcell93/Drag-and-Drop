@@ -6,19 +6,6 @@ $(document).ready ->
 
     window.copiedModel = null
 
-    window.globals =
-         setPlaceholders: (draggable, collection) ->
-            draggable
-            .before(before = new views.droppablePlaceholder({collection: collection}).render())
-            .after(after = new views.droppablePlaceholder({collection: collection}).render())
-            if before.prev().css("display") == "inline-block"
-                before.css("height", before.prev().height() + "px")
-            # extra = new window.views.droppablePlaceholder({collection: collection}).render()
-            # if (draggable.index() is 0 and !draggable.hasClass("builder-child"))
-            #     draggable.before(extra)
-            # else if (draggable.hasClass("builder-child") and draggable.prev(".builder-child").length is 0)
-            #     draggable.before(extra)
-
 
     class window.models.Element extends Backbone.Model
         initialize: ->
@@ -56,6 +43,7 @@ $(document).ready ->
                     opacity: null
                 }
                 title: "Default Title"
+                editable: true
             }
         url: ->
             url = "/section/"
@@ -227,7 +215,7 @@ $(document).ready ->
                     parent = self.collection.model 
                     if typeof parent is "function" or !parent? then parent = self.collection
                     parent.blend(curr, insertAt)
-                    $(e.target).css("opacity", 0)
+                    $(e.target).removeClass("show")
                     delete window.currentDraggingModel
                     window.currentDraggingModel = null
                     ui.helper.fadeOut(300)
@@ -504,6 +492,8 @@ $(document).ready ->
                 @$el.addClass("active-sorting")
             "end-sorting": ->
                 @$el.removeClass("active-sorting")
+            "mouseleave": ->
+                @$(".set-options > ul").hide()
 
     # The builder is less of a listview and more of a simple controller whose render only appends a single droppable wrapper
     # whose model is not included in the collection. This reduces redundancy.

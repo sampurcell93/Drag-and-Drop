@@ -10,6 +10,7 @@ $strongblue : #2092CC;
 $dusky: #3E4951;
 $lightdusk: #5b747f;
 
+$lightorange: #FCC0A9;
 $pegaorange: #F6733D;
 
 .center { text-align: center; }
@@ -93,3 +94,16 @@ $pegaorange: #F6733D;
 .w5-6 { width: 82% !important; }
 .w1-3 { width: 32% !important; }
 .w2-3 { width: 64% !important; }
+
+@font-face {
+  font-family: 'icons';
+  src: url("../icomoon/fonts/icomoon.eot") format("eot"), 
+  url("../icomoon/fonts/icomoon.woff") format("woff"),
+  url("../icomoon/fonts/icomoon.ttf") format("truetype");
+}
+
+* {
+    @include box-sizing(border-box);
+    margin: 0;
+    padding: 0;
+}

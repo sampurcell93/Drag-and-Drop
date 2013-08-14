@@ -68,3 +68,12 @@ script#change-styles(type='text/template')
             option(value="w75") Three Fourths
             option(value="w5-6") Five Sixths
             option(value="w10") Full Size
+
+script#property-editor(type='text/template')
+    label
+        | Read Only
+        <input type='radio' class='editable' value='false' name='permissions' <%= typeof editable !== "undefined" && editable == false ? "checked" : "" %> />
+    label   
+        | Editable 
+        <input type='radio' class='editable' value='true' name='permissions' <%= typeof editable !== "undefined" && editable == true ? "checked" : "" %> />
+    .clear

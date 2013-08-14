@@ -165,6 +165,9 @@ $(document).ready ->
             css_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Skin Format")
             css_modal.addClass("quick-css")
 
+            existing_modal = window.launchDraggableModal($("<ul/>").addClass("hidden"), null, $o_el, "Recent Sections")
+            existing_modal.addClass("existing-sections-layouts")
+
             $o_el.droppable
                 accept: '.moved'
                 greedy: true

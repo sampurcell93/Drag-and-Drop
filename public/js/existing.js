@@ -36,7 +36,7 @@
           helper: "clone",
           cursor: "move",
           start: function() {
-            return window.copiedModel = self.model.get("currentSection");
+            return window.copiedModel = self.model.get("currentSection").models;
           },
           stop: function(e, ui) {
             $(ui.helper).removeClass("dragging");
