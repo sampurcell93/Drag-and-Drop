@@ -44,7 +44,7 @@ $pegaorange: #F6733D;
 .show {@include opacity(1);}
 .noclick { pointer-events: none;}
 .inline { display: inline-block; }
-.block { display: block !important; }
+.block { display: block; }
 .hidden { display: none; }
 .visible { display: block; }
 .clear { clear: both;}

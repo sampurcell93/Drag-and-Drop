@@ -1,8 +1,8 @@
 
 script(type='text/template')#element-sortable-item
-    .sort-element t
-    div.activate-element m
-    div.destroy-element g
+    .sort-element.icon-resize-vertical
+    div.activate-element.icon-checkmark
+    div.destroy-element.icon-remove
     <span class='element-title'>
     <%= (typeof title !== "undefined" && title !== "") ?  title.clean(true) : "Default Title" %>
     </span>
@@ -15,13 +15,13 @@ script(type='text/template')#draggable-element
 script(type='text/template')#drag-controls
     <% var layout = typeof layout !== "undefined" && layout == true ? true : false %>
     ul.config-menu-wrap.no-drag 
-        li.icon.view-attrs b
-        li.icon.set-options e
+        li.icon-tags.view-attrs
+        li.icon-cog.set-options
             ul.dropdown
                 li.config-panel Configure <%= layout == true ? "Group" : "Element" %>
                 li.export Export As Section
                 <%= layout == true ? "<li class='ungroup-fields'>Ungroup fields</li>" : "" %>
-        li.icon.remove-from-flow g
+        li.icon-multiply.remove-from-flow
 script(type='text/template')#property-link
     span(contentEditable='false').property-link <%= property_name  %> 
         i.icon.remove-property-link g

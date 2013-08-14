@@ -31,6 +31,8 @@ $ ->
             @
         events:
             "click": (e) -> 
+                # Get user's current pos on page
+                # scrollheight = window.pageYOffset
                 all_snaps = @model.collection
                 model_index = all_snaps.indexOf(@model)
                 controller  = @controller
@@ -88,6 +90,7 @@ $ ->
         bindListeners: (collection) ->
             @stopListening()
             coll = collection || @collection
+            console.log coll
             # @Collection refers to the actual section            
             @listenTo coll, {
                 # Whenever any event is fired, save the current state of the collection

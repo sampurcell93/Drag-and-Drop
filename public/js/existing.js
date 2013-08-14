@@ -13,10 +13,10 @@
       render: function() {
         var $el;
         $el = this.$el;
-        console.log(this.collection.models, this.$el, this.controller.index);
-        console.log;
-        return _.each(this.collection.models, function(section) {
-          section.set("inFlow", false);
+        return _.each(this.collection.models, function(section, i) {
+          if (i === 0) {
+            this.$(".placeholder").remove();
+          }
           return $el.append(new views.SingleSectionWireFrame({
             model: section
           }).render().el);
@@ -28,20 +28,15 @@
       template: $("#single-section").html(),
       initialize: function() {
         var self;
+        this.makeModel();
         self = this;
         return this.$el.draggable({
           cancel: '.view-section',
           revert: "invalid",
+          helper: "clone",
           cursor: "move",
-          start: function(e, ui) {
-            var builder;
-            builder = allSections.at(sectionIndex).get("builder");
-            $(ui.helper).addClass("dragging");
-            if (builder != null) {
-              builder.currentModel = self.model;
-              builder.fromSideBar = false;
-              return console.log;
-            }
+          start: function() {
+            return window.copiedModel = self.model.get("currentSection");
           },
           stop: function(e, ui) {
             $(ui.helper).removeClass("dragging");
@@ -51,52 +46,58 @@
           }
         });
       },
+      makeModel: function() {
+        var copy, properties, section;
+        section = this.model.get("currentSection");
+        properties = this.model.get("properties");
+        this.model.set("properties", new collections.Properties(properties));
+        copy = new collections.Elements();
+        _.each(section, function(model) {
+          var el;
+          el = new models.Element(model);
+          return copy.add(el.deepCopy());
+        });
+        this.model = new models.SectionController({
+          currentSection: copy,
+          properties: this.model.get("properties"),
+          section_title: this.model.get("section_title"),
+          title: this.model.get("title")
+        });
+        return copy;
+      },
       render: function() {
-        var $el;
+        var $ch, $el;
         $el = this.$el;
         $el.html(_.template(this.template, this.model.toJSON()));
-        _.each(this.model.get("child_els").models, function(child, i) {
-          if (i < 4) {
-            return $el.append(new views.SectionThumbnail({
-              model: child
-            }).render().el);
-          }
+        $ch = $el.children(".thumb");
+        _.each(this.model.get("currentSection").models, function(child, i) {
+          return $ch.append(new views.ElementThumbnail(child).render().el);
         });
         return this;
       },
       events: {
-        "click .view-section": function() {
-          var coll;
-          coll = new collections.Elements();
-          _.each(this.model.get("currentSection"), function(obj) {
-            var model;
-            model = new models.Element(obj);
-            model.set("child_els", model.modelify(model.get("child_els")));
-            return coll.add(model);
-          });
-          this.model.set("currentSection", coll);
-          this.model.set("properties", new collections.Properties(this.model.get("properties")));
-          console.log(this.model.get("currentSection"));
+        "click .icon-magnifier": function() {
           return allSections.add(this.model);
         }
       }
     });
-    return window.views.SectionThumbnail = Backbone.View.extend({
+    return window.views.ElementThumbnail = Backbone.View.extend({
       tagName: 'div',
+      className: 'thumb-object',
+      initialize: function(opts) {
+        return this.model = opts;
+      },
       render: function() {
         var $el, styles;
-        $el = this.$el.addClass("thumb-object");
-        styles = this.model.get("styles");
+        $el = this.$el;
+        styles = this.model.styles;
         if (styles != null) {
           this.$el.css(styles);
         }
-        _.each(this.model.get("child_els").models, function(child, i) {
-          console.log(child);
-          if (i < 4) {
-            return $el.append(new views.SectionThumbnail({
-              model: child
-            }).render().el);
-          }
+        _.each(this.model.child_els, function(child, i) {
+          return $el.append(new views.ElementThumbnail({
+            model: child
+          }).render().el);
         });
         return this;
       }

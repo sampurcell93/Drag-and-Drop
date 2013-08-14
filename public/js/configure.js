@@ -35,12 +35,17 @@
       initialize: function() {
         var self;
         self = this;
-        return this.listenTo(this.model, "change:title", function(model) {
-          return self.$el.find(".section-title").text(model.get("title"));
+        return this.listenTo(this.model, {
+          "change:title": function(model) {
+            return self.$el.find(".section-title").text(model.get("title"));
+          },
+          "destroy": function() {
+            return self.remove();
+          }
         });
       },
-      render: function(i) {
-        this.$el.addClass("control-section").attr("id", "section-" + i).html(_.template(this.template, this.model.toJSON()));
+      render: function() {
+        this.$el.addClass("control-section").html(_.template(this.template, this.model.toJSON()));
         $(".container").droppable({
           accept: '.builder-element, .draggable-modal',
           drop: function(e, ui) {
@@ -110,6 +115,7 @@
       },
       setProps: function() {
         var $o_el, css_modal, hist_modal, opts, props_modal, section, that;
+        console.log("starting setprops, currIndex is %d", currIndex);
         that = this;
         if (typeof opts === "undefined" || opts === null) {
           opts = {};
@@ -141,11 +147,11 @@
         });
         $o_el = this.$el.find(".accessories");
         hist_modal = window.launchDraggableModal(this.histList.render().el, null, $o_el, "History - Recent 15");
-        hist_modal.attr("data-modal-name");
+        hist_modal.addClass("history");
         props_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Editable Attributes");
-        props_modal.addClass("quick-props").attr("data-modal-name");
+        props_modal.addClass("quick-props");
         css_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Skin Format");
-        css_modal.addClass("quick-css").attr("data-modal-name");
+        css_modal.addClass("quick-css");
         $o_el.droppable({
           accept: '.moved',
           greedy: true,
@@ -192,6 +198,7 @@
       },
       renderComponents: function(components) {
         var component, _i, _len, _results;
+        console.log("rendering components, currIndex is %d", currIndex);
         _results = [];
         for (_i = 0, _len = components.length; _i < _len; _i++) {
           component = components[_i];
@@ -212,7 +219,7 @@
         title = this.model.get("title");
         if (title === "" || typeof title === "undefined" || title === "Default Section Title") {
           alert("You need to enter a title");
-          return;
+          return false;
         }
         copy = new models.SectionController();
         copy.set({
@@ -220,7 +227,7 @@
           section_title: title,
           properties: this.model.get("properties")
         });
-        return copy.save(null, {
+        copy.save(null, {
           success: function() {
             $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
             $(document.body).addClass("active-modal");
@@ -230,6 +237,7 @@
             });
           }
         });
+        return true;
       }
     });
     window.views.AllSectionControllers = Backbone.View.extend({
@@ -238,8 +246,8 @@
         var self;
         self = this;
         this.render();
-        return this.listenTo(this.collection, "add", function(e) {
-          return self.append(e);
+        return this.listenTo(this.collection, "add", function(model) {
+          return self.append(model);
         });
       },
       render: function() {
@@ -254,10 +262,11 @@
       },
       append: function(model) {
         var view;
+        window.currIndex = this.collection.length - 1;
         view = new views.SectionControllerView({
           model: model
         });
-        this.$el.append($(view.render(this.collection.models.length - 1).el));
+        this.$el.append($(view.render().el));
         view.setProps().renderComponents(["builder", "organizer"]);
         return this;
       }
@@ -277,7 +286,6 @@
         }));
         this.$el.droppable({
           tolerance: 'pointer',
-          revert: 'invalid',
           accept: '.builder-element',
           over: function(e, ui) {
             var $t, checkHover;
@@ -287,7 +295,7 @@
               clone = $(ui.item).clone();
               if ($t.hasClass("over")) {
                 $t.trigger("click");
-                toSection = $(".control-section").eq(currIndex).find(".generate-section");
+                toSection = $(".control-section").eq(window.currIndex).find(".generate-section");
                 if (!toSection.hasClass("viewing-layout")) {
                   return toSection.trigger("click");
                 }
@@ -303,21 +311,22 @@
         return this;
       },
       events: {
-        "mouseover": function(e) {
-          var self;
-          this.hovering = true;
-          self = this;
-          return window.setTimeout(function() {
-            if (self.hovering === true) {
-              $(self.el).find(".remove").fadeIn("fast");
-              e.stopPropagation();
-              return e.stopImmediatePropagation();
+        "click .remove": function(e) {
+          var collection, index;
+          index = this.$el.index() - 1;
+          collection = this.model.collection;
+          if (index === window.currIndex) {
+            if (index + 1 < collection.length) {
+              this.$el.next().trigger("click");
+            } else if (index - 1 >= 0) {
+              this.$el.prev().trigger("click");
+            } else {
+              window.currIndex = 0;
             }
-          }, 400);
-        },
-        "mouseleave": function() {
-          this.hovering = false;
-          return this.$el.find(".remove").fadeOut("fast");
+          }
+          if (this.model.get("controller").saveSection()) {
+            return this.model.destroy();
+          }
         },
         "click": function(e) {
           var $t, index;
@@ -326,7 +335,7 @@
           index = $t.addClass("current-tab").data("id");
           $t.siblings().removeClass("current-tab");
           $(".control-section").hide();
-          return $("#section-" + index).delay(200).show();
+          return $(".control-section").eq(window.currIndex).delay(200).show();
         }
       }
     });
@@ -345,13 +354,12 @@
         $el.children().not(".add-section").remove();
         len = allSections.models.length;
         return _.each(allSections.models, function(section, i) {
-          var currIndex, tab;
+          var tab;
           tab = new views.SectionTabItem({
             model: section
           }).render(i).el;
           $el.append(tab);
           if (i === len - 1) {
-            currIndex = 1;
             return $(tab).hide().animate({
               "width": "show"
             }, 300).addClass("current-tab").trigger("click");
@@ -521,7 +529,6 @@
       },
       chooseProp: function(e) {
         var $t, currentSection, model, selected;
-        console.log("TesT");
         if (e != null) {
           $t = $(e.currentTarget);
           $t.closest(".property").toggleClass("selected");
@@ -542,7 +549,7 @@
           }
           return currentSection.add(this.elementModel);
         } else {
-          allSections.at(this.options.index || currIndex).get("properties").remove(this.model);
+          allSections.at(window.currIndex).get("properties").remove(this.model);
           return currentSection.remove(this.elementModel);
         }
       },
@@ -581,7 +588,7 @@
         ctrlDown = false;
       }
       if (keyCode === 90 && ctrlDown === true) {
-        snaps = allSections.at(currIndex).toJSON().controller.histList;
+        snaps = allSections.at(window.currIndex).toJSON().controller.histList;
         return snaps.selectLast();
       }
     });

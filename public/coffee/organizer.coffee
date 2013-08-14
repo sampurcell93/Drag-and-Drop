@@ -3,7 +3,8 @@ $(document).ready ->
     window.views.ElementOrganizer = Backbone.View.extend({
         initialize: ->
             @controller = @options.controller
-            @wrapper = $(".control-section").eq(currIndex)
+            @wrapper = $(".control-section").eq(@controller.index)
+            console.log currIndex
             @$el = @wrapper.find(".organize-elements")
             @collection = @options.collection
             ### Render the list, then apply the drag and drop, and sortable functions. ###
@@ -31,7 +32,6 @@ $(document).ready ->
             @on "bindListeners", @bindListeners, @
             @
         bindListeners: ->
-            console.log "binding lists organizer"
             @stopListening()
             that = @
             @listenTo(@collection, {
@@ -120,15 +120,13 @@ $(document).ready ->
                         clone.collection = null;
                         children = clone.get("child_els").clone()
                         children.reset()
-                        clone.set("child_els", children)
+                        clone.set("child_els", children, {no_history: true})
                         window.currentDraggingModel = clone
                     else window.currentDraggingModel = self.model
             that = @
             # If the model is not in the page, set it aside
-            if @model.get("inFlow") is false
-                $el.addClass("out-of-flow")
-                $("<div />").addClass("activate-element").text("m").prependTo($el)
-                $("<div />").addClass("destroy-element").text("g").prependTo($el)
+            if @model.get("inFlow") is false    
+                @$el.addClass("out-of-flow")
             else 
                 $el.removeClass("out-of-flow") 
             _.each @model.get("child_els").models, (el) ->
@@ -182,8 +180,10 @@ $(document).ready ->
                 @model.trigger("dropped")
             "click .activate-element": (e) ->
                 @model.set "inFlow", true, {e: e}
-            "click .destroy-element": ->
+                e.stopPropagation()
+            "click .destroy-element": (e) ->
                 @model.destroy()
+                e.stopPropagation()
             "mouseover": (e) ->
                 @model.trigger("sorting")
                 e.stopPropagation()

@@ -18,9 +18,6 @@
         type: 'Dynamic Layout',
         view: 'DynamicLayout'
       }, {
-        type: 'Dynamic Container',
-        view: 'dynamicContainer'
-      }, {
         type: 'Tabbed Layout',
         view: 'tabs'
       }, {
@@ -49,13 +46,12 @@
       model: models.Layout
     });
     window.views.LayoutList = Backbone.View.extend({
-      el: ".layout-types ul",
       template: $("#picker-interface").html(),
       initialize: function() {
         this.controller = this.options.controller;
         this.collection = new collections.Layouts(allLayouts);
         this.wrapper = $(".control-section").eq(this.controller.index);
-        this.$el = this.wrapper.find(this.el);
+        this.$el = this.wrapper.find(".layout-types ul");
         this.el = this.$el.get();
         return this.render();
       },
@@ -94,12 +90,11 @@
         });
         _.extend(this.events, {
           "click .ungroup-fields": function() {
-            var child, children, i, model, parent, position, to_remove, _i, _len, _ref2;
+            var child, children, i, model, parent, position, _i, _len, _ref2;
             model = this.model;
             position = model.collection.indexOf(model);
             children = model.get("child_els");
             parent = model.collection;
-            to_remove = [];
             _ref2 = children.models;
             for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
               child = _ref2[i];
@@ -266,7 +261,9 @@
         return _ref3;
       }
 
-      _Class.prototype.tagName = 'table class="builder-element column six"';
+      _Class.prototype.tagName = 'table';
+
+      _Class.prototype.className = 'builder-element column six';
 
       _Class.prototype.template = $("#table-layout").html();
 

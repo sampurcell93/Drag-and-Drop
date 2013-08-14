@@ -89,18 +89,20 @@
         return url;
       };
 
-      Element.prototype.modelify = function() {
-        var clone, self, temp;
-        self = this;
-        temp = new collections.Elements();
-        if (this.get("child_els") == null) {
-          return false;
-        }
-        return clone = this.get("child_els").clone();
+      Element.prototype.modelify = function(basicObj) {
+        var el;
+        el = new models.Element(basicObj);
+        return el.deepCopy();
       };
 
       Element.prototype.parse = function(response) {
-        response.child_els = this.modelify(response.child_els);
+        var section, self;
+        console.log(response);
+        self = this;
+        section = [];
+        _.each(response.currentSection, function(element) {
+          return section.push(self.modelify(element));
+        });
         return response;
       };
 
@@ -137,7 +139,11 @@
         var children, clone, model, self;
         model = this;
         clone = model.clone();
-        children = clone.get("child_els").clone();
+        if (clone.get("child_els").models != null) {
+          children = clone.get("child_els").clone();
+        } else {
+          children = new collections.Elements(clone.get("child_els")).clone();
+        }
         self = this;
         _.each(children.models, function(child) {
           return child = child.deepCopy();
@@ -213,13 +219,7 @@
         var copy;
         copy = new collections.Elements();
         _.each(this.models, function(element) {
-          var children, deep_copy_model;
-          deep_copy_model = element.clone();
-          children = deep_copy_model.get("child_els");
-          deep_copy_model.set("child_els", children.clone(), {
-            no_history: true
-          });
-          return copy.add(new models.Element(deep_copy_model.toJSON()), {
+          return copy.add(element.deepCopy(), {
             no_history: true
           });
         });
@@ -258,15 +258,39 @@
       };
 
       droppablePlaceholder.prototype.events = {
-        "click": function() {
-          return cc("yolo");
+        "click .paste-element": function(e) {
+          var clone, dropZone, insertAt, models;
+          clone = window.copiedModel;
+          dropZone = this.$el;
+          if ((dropZone.closest(".builder-element").length)) {
+            insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev());
+          } else {
+            insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev());
+          }
+          insertAt += 1;
+          if ((this.collection != null) && (clone != null)) {
+            this.collection.add(clone, {
+              at: insertAt,
+              opname: 'Paste'
+            });
+            if ($.isArray(clone)) {
+              models = [];
+              _.each(clone, function(model) {
+                return models.push(model.deepCopy());
+              });
+              window.copiedModel = models;
+            } else {
+              window.copiedModel = clone.deepCopy();
+            }
+          }
+          return e.stopPropagation();
         },
         "remove": function() {
           return this.remove();
         },
         "contextmenu": function(e) {
           var $el, pageX, pageY;
-          this.$("ul").remove();
+          $(".context-menu").remove();
           e.preventDefault();
           $el = this.$el;
           pageX = e.pageX - $el.offset().left;
@@ -352,6 +376,7 @@
       draggableElement.prototype.modelListeners = {};
 
       draggableElement.prototype.initialize = function() {
+        cc("making a new draggable");
         _.bindAll(this, "render", "bindDrag", "appendChild", "bindListeners");
         this.on("bindListeners", this.bindListeners);
         this.bindDrag();
@@ -365,7 +390,6 @@
         this.listenTo(this.model.get("child_els"), {
           'add': function(m, c, o) {
             if (!(typeof self.itemName === "undefined")) {
-              console.log(self.itemName);
               m.set("view", self.itemName);
             }
             return self.appendChild(m, o);
@@ -439,15 +463,12 @@
         this.applyClasses();
         this.checkPlaceholder();
         this.$(".view-attrs").first().trigger("click");
-        (this.afterRender || function() {
-          return $el.hide().fadeIn(325);
-        })();
+        (this.afterRender || function() {})();
         return this;
       };
 
       draggableElement.prototype.appendChild = function(child, opts) {
         var $el, builderChildren, draggable, i, view;
-        console.log("appending child!");
         $el = this.$el.children(".children");
         if ($el.length === 0) {
           $el = $el.find(".children").first();
@@ -465,7 +486,6 @@
           if ((opts != null) && (opts.at == null)) {
             $el.append(draggable);
           } else {
-            console.log(opts.at);
             builderChildren = $el.children(".builder-element");
             if (builderChildren.eq(opts.at).length) {
               builderChildren.eq(opts.at).before(draggable);
@@ -474,7 +494,10 @@
             }
           }
           globals.setPlaceholders($(draggable), this.model.get("child_els"));
-          return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
+          if (allSections.at(currIndex).get("builder") != null) {
+            console.log("currindex is %d and we're removing extra placeholder", currIndex);
+            return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
+          }
         }
       };
 
@@ -553,7 +576,6 @@
       draggableElement.prototype.applyClasses = function() {
         var $el;
         $el = this.$el;
-        console.log(this.model.get("classes"));
         return _.each(this.model.get("classes"), function(style) {
           return $el.addClass(style);
         });
@@ -561,6 +583,7 @@
 
       draggableElement.prototype.blankLayout = function(e) {
         var collection, layout, layoutIndex, selected;
+        cc(currIndex);
         collection = allSections.at(currIndex).get("currentSection");
         selected = collection.gather();
         if (selected.length === 0 || selected.length === 1) {
@@ -669,9 +692,12 @@
           return e.stopPropagation();
         },
         "click .view-attrs": function() {
-          return new views.toolbelt.Actives({
+          var props;
+          props = new views.toolbelt.Actives({
             model: this.model
-          }).render();
+          }).render().el;
+          $(".quick-props").find("ul").remove();
+          return $(".quick-props").append(props);
         },
         "click .remove-from-flow": function(e) {
           e.stopPropagation();

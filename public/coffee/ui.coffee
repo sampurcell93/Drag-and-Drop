@@ -42,7 +42,7 @@ $(document).ready ->
             containment: '.container'
             handle: '.drag-handle'
         modal.appendTo(appendTo || document.body)
-        modal.append($("<div/>").addClass("close-arrow pointer").text("q"))
+        modal.append($("<div/>").addClass("close-arrow icon-uniF48A pointer"))
         modal
 
     $.fn.launchModal = (content) ->
@@ -73,3 +73,15 @@ $(document).ready ->
     $(@).delegate ".close-arrow", "click", ->
         $(this).toggleClass("flipped")
         .siblings(":not(.drag-handle)").toggle()
+
+    $(@).delegate "[data-modal] input", "click", (e) ->
+        $t = $(this)
+        modal = $t.parent().data("modal")
+        $(".control-section").eq(currIndex).find("." + modal).slideToggle()
+        e.stopPropagation()
+
+    $(@).delegate "[data-modal]", "click", (e) ->
+        $t = $(this)
+        modal = $t.data("modal")
+        $(".control-section").eq(currIndex).find("." + modal).slideToggle()
+        $t.find("input").prop("checked", !$t.find("input").prop("checked"))

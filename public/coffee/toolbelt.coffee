@@ -2,12 +2,13 @@ $ ->
     toolbelt = window.views.toolbelt = {}
 
     class toolbelt.Actives extends Backbone.View
-        el: ".quick-props"
+        tagName: 'ul'
         initialize: ->
             # @listenTo @model, "change", @quickAttrs
             # @listenTo @model.get "child_els", "change", @quickAttrs
         render: ->
             @quickAttrs()
+            @
         getProps: (attrs) ->
             property_item = "<li data-attr='<%=prop%>'><%=prop.clean() %>: <%= value %></li>";
             properties = ""
@@ -22,11 +23,10 @@ $ ->
         editables: ["title"]
         quickAttrs: (e) ->
                 if @$el.hasClass("builder-scaffold") then return false
-                properties = "<ul>"
                 attrs = @model.attributes
-                properties += @getProps(attrs)
-                properties += "</ul>"   
-                $(".quick-props").find("ul").html(properties)
+                properties = @getProps(attrs)
+                console.log properties
+                @$el.html(properties)
         formatAttributes: (data) ->
             if (typeof data == "string")
                 return "<span contentEditable>" + data + "</span>"
@@ -53,4 +53,5 @@ $ ->
                 attr = $t.closest("[data-attr]").data("attr")
                 val  = $t.html()
                 @model.set attr, val, {no_history: true}
+                console.log @model
                 e.stopPropagation()

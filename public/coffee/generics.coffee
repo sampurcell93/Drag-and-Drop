@@ -61,7 +61,7 @@ $(document).ready ->
             @controller = @options.controller
             @collection = new collections.GenericElements(generics)
             @wrapper = $(".control-section").eq(@controller.index)
-            @$el = @wrapper.find(@el)
+            @$el = @wrapper.find(".generic-elements ul")
             @el = @$el.get()
             do @render
         render: ->
@@ -126,6 +126,8 @@ $(document).ready ->
 
     class views["Property"] extends views.genericElement
         template: $("#property-template").html()
+        className: 'builder-element block'
+
 
     class window.views['Button'] extends window.views.genericElement
         template: $("#button-template").html()
@@ -145,23 +147,16 @@ $(document).ready ->
 
     class window.views['CustomText'] extends window.views.genericElement
         template: $("#custom-text").html()
-        initialize: (options) ->
-            super 
+        className: 'builder-element w5'
+
     class window.views['Radio'] extends window.views.genericElement
         template: $("#generic-radio").html()
         initialize: (options) ->
             super 
-            self = @
-            _.bindAll(@, "afterRender")
             @model.on {
                 "change:label_position" : @render
                 "change:label_text" : @render
             }
-        afterRender: ->
-            console.log "just rendered radio"
-            label_position = @model.get("label_position")
-            if  label_position == "top" || label_position == "bottom"
-                console.log @$el.find("span.label-text").css("display", "block")
 
 
     class window.views['Link'] extends window.views.genericElement

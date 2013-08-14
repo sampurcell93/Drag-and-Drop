@@ -39,10 +39,10 @@ $(document).ready ->
             type: 'Dynamic Layout'
             view: 'DynamicLayout'
         },
-        {
-            type: 'Dynamic Container'
-            view: 'dynamicContainer'
-        },
+        # {
+        #     type: 'Dynamic Container'
+        #     view: 'dynamicContainer'
+        # },
         {
             type: 'Tabbed Layout'
             view: 'tabs'
@@ -68,13 +68,12 @@ $(document).ready ->
     } 
 
     window.views.LayoutList = Backbone.View.extend {
-        el: ".layout-types ul"
         template: $("#picker-interface").html()
         initialize: ->
             @controller = @options.controller
             @collection = new collections.Layouts(allLayouts)
             @wrapper = $(".control-section").eq(@controller.index)
-            @$el = @wrapper.find(@el)
+            @$el = @wrapper.find(".layout-types ul")
             @el = @$el.get()
             do @render
         render: ->
@@ -105,7 +104,6 @@ $(document).ready ->
                     position = model.collection.indexOf(model)
                     children = model.get("child_els")
                     parent   = model.collection
-                    to_remove= [] 
                     for child, i in children.models
                         child['layout-item']= false
                         # Unlink each model from the collection
@@ -201,10 +199,9 @@ $(document).ready ->
             }
             @$el.addClass("builder-scaffold")
 
-
-
     class views["table"] extends views["layout"]
-        tagName: 'table class="builder-element column six"'
+        tagName: 'table'
+        className: 'builder-element column six'
         template: $("#table-layout").html()
         initialize: ->
             super

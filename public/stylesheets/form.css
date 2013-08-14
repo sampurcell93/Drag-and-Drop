@@ -164,7 +164,7 @@
 
 /* line 47, ../sass/build.scss */
 .block {
-  display: block !important;
+  display: block;
 }
 
 /* line 48, ../sass/build.scss */
@@ -423,26 +423,25 @@ input[type="radio"], textarea[type="radio"] {
 /* line 21, ../sass/form.scss */
 textarea {
   width: 75%;
-  max-width: 85%;
   margin: 5px 0;
   overflow: auto;
-  max-height: 500px;
   min-height: 100px;
   display: block;
+  resize: both !important;
 }
-/* line 30, ../sass/form.scss */
+/* line 29, ../sass/form.scss */
 textarea.generic-text {
   display: block;
   width: 100% !important;
   height: 100% !important;
 }
 
-/* line 37, ../sass/form.scss */
+/* line 36, ../sass/form.scss */
 .add-section-title {
   margin: 10px 0 0px 20px;
 }
 
-/* line 41, ../sass/form.scss */
+/* line 40, ../sass/form.scss */
 button, .button {
   border-style: solid;
   border-width: 1px;
@@ -465,68 +464,68 @@ button, .button {
   color: white;
 }
 
-/* line 61, ../sass/form.scss */
+/* line 60, ../sass/form.scss */
 button:hover, button:focus, .button:hover, .button:focus {
   background-color: #2284a1;
 }
 
-/* line 63, ../sass/form.scss */
+/* line 62, ../sass/form.scss */
 button:hover, button:focus, .button:hover, .button:focus {
   color: white;
 }
 
-/* line 65, ../sass/form.scss */
+/* line 64, ../sass/form.scss */
 button.secondary, .button.secondary {
   background-color: #e9e9e9;
   border-color: #d0d0d0;
   color: #333333;
 }
 
-/* line 69, ../sass/form.scss */
+/* line 68, ../sass/form.scss */
 button.secondary:hover, button.secondary:focus, .button.secondary:hover, .button.secondary:focus {
   background-color: #d0d0d0;
 }
 
-/* line 71, ../sass/form.scss */
+/* line 70, ../sass/form.scss */
 button.secondary:hover, button.secondary:focus, .button.secondary:hover, .button.secondary:focus {
   color: #333333;
 }
 
-/* line 73, ../sass/form.scss */
+/* line 72, ../sass/form.scss */
 button.success, .button.success {
   background-color: #5da423;
   border-color: #457a1a;
   color: white;
 }
 
-/* line 77, ../sass/form.scss */
+/* line 76, ../sass/form.scss */
 button.success:hover, button.success:focus, .button.success:hover, .button.success:focus {
   background-color: #457a1a;
 }
 
-/* line 79, ../sass/form.scss */
+/* line 78, ../sass/form.scss */
 button.success:hover, button.success:focus, .button.success:hover, .button.success:focus {
   color: white;
 }
 
-/* line 81, ../sass/form.scss */
+/* line 80, ../sass/form.scss */
 button.alert, .button.alert {
   background-color: #c60f13;
   border-color: #970b0e;
   color: white;
 }
 
-/* line 85, ../sass/form.scss */
+/* line 84, ../sass/form.scss */
 button.alert:hover, button.alert:focus, .button.alert:hover, .button.alert:focus {
   background-color: #970b0e;
 }
 
-/* line 87, ../sass/form.scss */
+/* line 86, ../sass/form.scss */
 button.alert:hover, button.alert:focus, .button.alert:hover, .button.alert:focus {
   color: white;
 }
 
-/* line 89, ../sass/form.scss */
+/* line 88, ../sass/form.scss */
 button.large, .button.large {
   padding-top: 1em;
   padding-right: 2em;
@@ -535,7 +534,7 @@ button.large, .button.large {
   font-size: 1.25em;
 }
 
-/* line 95, ../sass/form.scss */
+/* line 94, ../sass/form.scss */
 button.small, .button.small {
   padding-top: 0.5625em;
   padding-right: 1.125em;
@@ -544,7 +543,7 @@ button.small, .button.small {
   font-size: 0.8125em;
 }
 
-/* line 101, ../sass/form.scss */
+/* line 100, ../sass/form.scss */
 button.tiny, .button.tiny {
   padding-top: 0.4375em;
   padding-right: 0.875em;
@@ -553,26 +552,26 @@ button.tiny, .button.tiny {
   font-size: 0.6875em;
 }
 
-/* line 107, ../sass/form.scss */
+/* line 106, ../sass/form.scss */
 button.expand, .button.expand {
   padding-right: 0px;
   padding-left: 0px;
   width: 100%;
 }
 
-/* line 111, ../sass/form.scss */
+/* line 110, ../sass/form.scss */
 button.left-align, .button.left-align {
   text-align: left;
   text-indent: 0.75em;
 }
 
-/* line 114, ../sass/form.scss */
+/* line 113, ../sass/form.scss */
 button.right-align, .button.right-align {
   text-align: right;
   padding-right: 0.75em;
 }
 
-/* line 117, ../sass/form.scss */
+/* line 116, ../sass/form.scss */
 button.disabled, button[disabled], .button.disabled, .button[disabled] {
   background-color: #2ba6cb;
   border-color: #2284a1;
@@ -583,22 +582,22 @@ button.disabled, button[disabled], .button.disabled, .button[disabled] {
   box-shadow: none;
 }
 
-/* line 125, ../sass/form.scss */
+/* line 124, ../sass/form.scss */
 button.disabled:hover, button.disabled:focus, button[disabled]:hover, button[disabled]:focus, .button.disabled:hover, .button.disabled:focus, .button[disabled]:hover, .button[disabled]:focus {
   background-color: #2284a1;
 }
 
-/* line 127, ../sass/form.scss */
+/* line 126, ../sass/form.scss */
 button.disabled:hover, button.disabled:focus, button[disabled]:hover, button[disabled]:focus, .button.disabled:hover, .button.disabled:focus, .button[disabled]:hover, .button[disabled]:focus {
   color: white;
 }
 
-/* line 129, ../sass/form.scss */
+/* line 128, ../sass/form.scss */
 button.disabled:hover, button.disabled:focus, button[disabled]:hover, button[disabled]:focus, .button.disabled:hover, .button.disabled:focus, .button[disabled]:hover, .button[disabled]:focus {
   background-color: #2ba6cb;
 }
 
-/* line 131, ../sass/form.scss */
+/* line 130, ../sass/form.scss */
 button.disabled.secondary, button[disabled].secondary, .button.disabled.secondary, .button[disabled].secondary {
   background-color: #e9e9e9;
   border-color: #d0d0d0;
@@ -609,22 +608,22 @@ button.disabled.secondary, button[disabled].secondary, .button.disabled.secondar
   box-shadow: none;
 }
 
-/* line 139, ../sass/form.scss */
+/* line 138, ../sass/form.scss */
 button.disabled.secondary:hover, button.disabled.secondary:focus, button[disabled].secondary:hover, button[disabled].secondary:focus, .button.disabled.secondary:hover, .button.disabled.secondary:focus, .button[disabled].secondary:hover, .button[disabled].secondary:focus {
   background-color: #d0d0d0;
 }
 
-/* line 141, ../sass/form.scss */
+/* line 140, ../sass/form.scss */
 button.disabled.secondary:hover, button.disabled.secondary:focus, button[disabled].secondary:hover, button[disabled].secondary:focus, .button.disabled.secondary:hover, .button.disabled.secondary:focus, .button[disabled].secondary:hover, .button[disabled].secondary:focus {
   color: #333333;
 }
 
-/* line 143, ../sass/form.scss */
+/* line 142, ../sass/form.scss */
 button.disabled.secondary:hover, button.disabled.secondary:focus, button[disabled].secondary:hover, button[disabled].secondary:focus, .button.disabled.secondary:hover, .button.disabled.secondary:focus, .button[disabled].secondary:hover, .button[disabled].secondary:focus {
   background-color: #e9e9e9;
 }
 
-/* line 145, ../sass/form.scss */
+/* line 144, ../sass/form.scss */
 button.disabled.success, button[disabled].success, .button.disabled.success, .button[disabled].success {
   background-color: #5da423;
   border-color: #457a1a;
@@ -635,22 +634,22 @@ button.disabled.success, button[disabled].success, .button.disabled.success, .bu
   box-shadow: none;
 }
 
-/* line 153, ../sass/form.scss */
+/* line 152, ../sass/form.scss */
 button.disabled.success:hover, button.disabled.success:focus, button[disabled].success:hover, button[disabled].success:focus, .button.disabled.success:hover, .button.disabled.success:focus, .button[disabled].success:hover, .button[disabled].success:focus {
   background-color: #457a1a;
 }
 
-/* line 155, ../sass/form.scss */
+/* line 154, ../sass/form.scss */
 button.disabled.success:hover, button.disabled.success:focus, button[disabled].success:hover, button[disabled].success:focus, .button.disabled.success:hover, .button.disabled.success:focus, .button[disabled].success:hover, .button[disabled].success:focus {
   color: white;
 }
 
-/* line 157, ../sass/form.scss */
+/* line 156, ../sass/form.scss */
 button.disabled.success:hover, button.disabled.success:focus, button[disabled].success:hover, button[disabled].success:focus, .button.disabled.success:hover, .button.disabled.success:focus, .button[disabled].success:hover, .button[disabled].success:focus {
   background-color: #5da423;
 }
 
-/* line 159, ../sass/form.scss */
+/* line 158, ../sass/form.scss */
 button.disabled.alert, button[disabled].alert, .button.disabled.alert, .button[disabled].alert {
   background-color: #c60f13;
   border-color: #970b0e;
@@ -661,43 +660,43 @@ button.disabled.alert, button[disabled].alert, .button.disabled.alert, .button[d
   box-shadow: none;
 }
 
-/* line 167, ../sass/form.scss */
+/* line 166, ../sass/form.scss */
 button.disabled.alert:hover, button.disabled.alert:focus, button[disabled].alert:hover, button[disabled].alert:focus, .button.disabled.alert:hover, .button.disabled.alert:focus, .button[disabled].alert:hover, .button[disabled].alert:focus {
   background-color: #970b0e;
 }
 
-/* line 169, ../sass/form.scss */
+/* line 168, ../sass/form.scss */
 button.disabled.alert:hover, button.disabled.alert:focus, button[disabled].alert:hover, button[disabled].alert:focus, .button.disabled.alert:hover, .button.disabled.alert:focus, .button[disabled].alert:hover, .button[disabled].alert:focus {
   color: white;
 }
 
-/* line 171, ../sass/form.scss */
+/* line 170, ../sass/form.scss */
 button.disabled.alert:hover, button.disabled.alert:focus, button[disabled].alert:hover, button[disabled].alert:focus, .button.disabled.alert:hover, .button.disabled.alert:focus, .button[disabled].alert:hover, .button[disabled].alert:focus {
   background-color: #c60f13;
 }
 
-/* line 174, ../sass/form.scss */
+/* line 173, ../sass/form.scss */
 button, .button {
   padding-top: 0.8125em;
   padding-bottom: 0.75em;
   -webkit-appearance: none;
 }
 
-/* line 178, ../sass/form.scss */
+/* line 177, ../sass/form.scss */
 button.tiny, .button.tiny {
   padding-top: 0.5em;
   padding-bottom: 0.4375em;
   -webkit-appearance: none;
 }
 
-/* line 182, ../sass/form.scss */
+/* line 181, ../sass/form.scss */
 button.small, .button.small {
   padding-top: 0.625em;
   padding-bottom: 0.5625em;
   -webkit-appearance: none;
 }
 
-/* line 186, ../sass/form.scss */
+/* line 185, ../sass/form.scss */
 button.large, .button.large {
   padding-top: 1.03125em;
   padding-bottom: 1.03125em;
@@ -705,7 +704,7 @@ button.large, .button.large {
 }
 
 @media only screen {
-  /* line 192, ../sass/form.scss */
+  /* line 191, ../sass/form.scss */
   button, .button {
     -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
@@ -714,36 +713,36 @@ button.large, .button.large {
     transition: background-color 300ms ease-out; */
   }
 
-  /* line 198, ../sass/form.scss */
+  /* line 197, ../sass/form.scss */
   button:active, .button:active {
     -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) inset;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) inset;
   }
 
-  /* line 201, ../sass/form.scss */
+  /* line 200, ../sass/form.scss */
   button.radius, .button.radius {
     -webkit-border-radius: 3px;
     border-radius: 3px;
   }
 
-  /* line 204, ../sass/form.scss */
+  /* line 203, ../sass/form.scss */
   button.round, .button.round {
     -webkit-border-radius: 1000px;
     border-radius: 1000px;
   }
 }
 @media only screen and (min-width: 768px) {
-  /* line 208, ../sass/form.scss */
+  /* line 207, ../sass/form.scss */
   button, .button {
     display: inline-block;
   }
 }
-/* line 211, ../sass/form.scss */
+/* line 210, ../sass/form.scss */
 button {
   position: relative;
   background: #2092cc;
 }
-/* line 215, ../sass/form.scss */
+/* line 214, ../sass/form.scss */
 button[data-icon]::after {
   content: attr(data-icon);
   left: 10px;
@@ -751,11 +750,11 @@ button[data-icon]::after {
   color: #f9f9f9;
   position: absolute;
 }
-/* line 222, ../sass/form.scss */
+/* line 221, ../sass/form.scss */
 button[data-icon] {
   padding-left: 40px;
 }
-/* line 225, ../sass/form.scss */
+/* line 224, ../sass/form.scss */
 button.orange {
   background-color: #f9aa48;
   *zoom: 1;
@@ -768,12 +767,12 @@ button.orange {
   border-color: #777;
   padding-bottom: 12px;
 }
-/* line 234, ../sass/form.scss */
+/* line 233, ../sass/form.scss */
 button.orange:hover {
   background: #EF8707;
 }
 
-/* line 240, ../sass/form.scss */
+/* line 239, ../sass/form.scss */
 label {
   font-weight: bold;
 }

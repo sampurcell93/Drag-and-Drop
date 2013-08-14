@@ -62,15 +62,17 @@ $(document).ready ->
             url += if @id? then @id else ""
             url
         # Recursively makes models out of the standard javascript objects returned by ajax
-        modelify: ->
-            self = @
-            temp = new collections.Elements()
-            if !@get("child_els")? then return false
-            clone = @get("child_els").clone()
+        modelify: (basicObj) ->
+            el = new models.Element(basicObj)
+            el.deepCopy()
         # JSON returns as a single model whose submodels are standard json objects, not backbone models.
         # MODELIFY each standard json object, and its children, recursively.
         parse: (response) ->
-            response.child_els = @modelify(response.child_els)
+            console.log response
+            self = @
+            section = []
+            _.each response.currentSection, (element) ->
+                section.push self.modelify(element)
             response
         blend: (putIn, at) ->
             cc "blending"
@@ -96,7 +98,10 @@ $(document).ready ->
         deepCopy: ->
             model = @
             clone = model.clone()
-            children = clone.get("child_els").clone()
+            if clone.get("child_els").models? 
+                children = clone.get("child_els").clone()
+            else 
+                children = new collections.Elements(clone.get("child_els")).clone()
             self = @
             _.each children.models, (child) ->
                 child = child.deepCopy()
@@ -146,10 +151,11 @@ $(document).ready ->
         clone: ->
             copy = new collections.Elements()
             _.each @models, (element) ->
-                deep_copy_model = element.clone()
-                children = deep_copy_model.get("child_els")
-                deep_copy_model.set("child_els", children.clone(), {no_history: true})
-                copy.add new models.Element(deep_copy_model.toJSON()), {no_history: true}
+                # deep_copy_model = element.clone()
+                # children = deep_copy_model.get("child_els")
+                # deep_copy_model.set("child_els", children.clone(), {no_history: true})
+                # copy.add new models.Element(deep_copy_model.toJSON()), {no_history: true}
+                copy.add element.deepCopy(), {no_history: true }
             copy
         compare: (collection) ->
             self = @
@@ -169,12 +175,32 @@ $(document).ready ->
         initialize: ->
             console.log @events
         events:
-            "click": ->
-                cc "yolo"
+            "click .paste-element": (e) ->
+                clone = window.copiedModel
+                dropZone = @$el
+                # Get index of the placeholder
+                if (dropZone.closest(".builder-element").length)
+                    insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev())
+                else   
+                    insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev())
+                insertAt += 1
+                # Make sure colection exists
+                if @collection? and clone?
+                    # Throw in copied model
+                    @collection.add clone, {at: insertAt, opname: 'Paste'}
+                    # Recopy model
+                    if $.isArray(clone)
+                        models = []
+                        _.each clone, (model) ->
+                            models.push model.deepCopy()
+                        window.copiedModel = models
+                    else
+                        window.copiedModel = clone.deepCopy()
+                e.stopPropagation()
             "remove": ->
                 do @remove
             "contextmenu": (e) ->
-                @$("ul").remove()
+                $(".context-menu").remove()
                 e.preventDefault()
                 $el = @$el
                 pageX = e.pageX - $el.offset().left
@@ -228,6 +254,7 @@ $(document).ready ->
         className: 'builder-element'
         modelListeners: {}
         initialize: ->
+            cc "making a new draggable"
             _.bindAll(this, "render", "bindDrag","appendChild","bindListeners")
             @on "bindListeners", @bindListeners
             # Bind the drag event to the el
@@ -241,7 +268,6 @@ $(document).ready ->
             @listenTo @model.get("child_els"),
             {   'add': (m,c,o) ->
                     unless (typeof self.itemName == "undefined")
-                        console.log self.itemName
                         m.set("view", self.itemName)
                     self.appendChild(m,o)
             }
@@ -298,11 +324,10 @@ $(document).ready ->
             @checkPlaceholder()
             @$(".view-attrs").first().trigger("click")
             (@afterRender || -> 
-                $el.hide().fadeIn(325)
+                # $el.hide().fadeIn(325)
             )()
             @
         appendChild: ( child , opts ) ->
-            console.log "appending child!"
             # We choose a view to render based on the model's specification, 
             # or default to a standard draggable.
             $el = @$el.children(".children")
@@ -316,13 +341,14 @@ $(document).ready ->
                 if (opts? and !opts.at?)
                     $el.append(draggable)
                 else 
-                    console.log opts.at
                     builderChildren = $el.children(".builder-element")
                     if builderChildren.eq(opts.at).length 
                         builderChildren.eq(opts.at).before(draggable)
                     else $el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
-                allSections.at(currIndex).get("builder").removeExtraPlaceholders()
+                if allSections.at(currIndex).get("builder")?
+                    console.log "currindex is %d and we're removing extra placeholder", currIndex
+                    allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrag: ->
             that = this
             # Set the element to be draggable.
@@ -380,13 +406,14 @@ $(document).ready ->
 
         applyClasses: ->
             $el = @$el
-            console.log @model.get "classes"
+            # console.log @model.get "classes"
             # "class" is a reserved keyword. style instead
             _.each @model.get("classes"), (style) ->
                 $el.addClass(style)
 
         # Grabs all selected elements and groupes them into a barebones layout
         blankLayout: (e) ->
+            cc currIndex
             collection = allSections.at(currIndex).get("currentSection")
             selected = collection.gather()
             if selected.length is 0 or selected.length is 1 then return
@@ -462,7 +489,9 @@ $(document).ready ->
                 e.preventDefault()
                 e.stopPropagation()          
             "click .view-attrs": ->
-                new views.toolbelt.Actives({model: @model}).render()
+                props = new views.toolbelt.Actives({model: @model}).render().el
+                $(".quick-props").find("ul").remove()
+                $(".quick-props").append props
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 # e.stopImmediatePropagation()

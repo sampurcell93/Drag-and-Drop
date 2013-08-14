@@ -20,12 +20,11 @@ input, textarea {
 
 textarea {
 	width: 75%;
-	max-width: 85%;
 	margin:5px 0;
 	overflow: auto;
-  max-height: 500px;
   min-height: 100px;
   display: block;
+  resize: both !important;
   
 	&.generic-text {
 		display: block;

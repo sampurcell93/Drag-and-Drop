@@ -94,6 +94,7 @@
         var coll, self;
         this.stopListening();
         coll = collection || this.collection;
+        console.log(coll);
         this.listenTo(coll, {
           "all": this.makeHistory
         });

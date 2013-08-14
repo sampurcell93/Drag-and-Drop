@@ -14,12 +14,13 @@
         return _ref;
       }
 
-      Actives.prototype.el = ".quick-props";
+      Actives.prototype.tagName = 'ul';
 
       Actives.prototype.initialize = function() {};
 
       Actives.prototype.render = function() {
-        return this.quickAttrs();
+        this.quickAttrs();
+        return this;
       };
 
       Actives.prototype.getProps = function(attrs) {
@@ -46,11 +47,10 @@
         if (this.$el.hasClass("builder-scaffold")) {
           return false;
         }
-        properties = "<ul>";
         attrs = this.model.attributes;
-        properties += this.getProps(attrs);
-        properties += "</ul>";
-        return $(".quick-props").find("ul").html(properties);
+        properties = this.getProps(attrs);
+        console.log(properties);
+        return this.$el.html(properties);
       };
 
       Actives.prototype.formatAttributes = function(data) {
@@ -97,6 +97,7 @@
           this.model.set(attr, val, {
             no_history: true
           });
+          console.log(this.model);
           return e.stopPropagation();
         }
       };

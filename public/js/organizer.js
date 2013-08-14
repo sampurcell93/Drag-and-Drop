@@ -5,7 +5,8 @@
       initialize: function() {
         var that;
         this.controller = this.options.controller;
-        this.wrapper = $(".control-section").eq(currIndex);
+        this.wrapper = $(".control-section").eq(this.controller.index);
+        console.log(currIndex);
         this.$el = this.wrapper.find(".organize-elements");
         this.collection = this.options.collection;
         /* Render the list, then apply the drag and drop, and sortable functions.*/
@@ -34,7 +35,6 @@
       },
       bindListeners: function() {
         var that;
-        console.log("binding lists organizer");
         this.stopListening();
         that = this;
         return this.listenTo(this.collection, {
@@ -144,7 +144,9 @@
               clone.collection = null;
               children = clone.get("child_els").clone();
               children.reset();
-              clone.set("child_els", children);
+              clone.set("child_els", children, {
+                no_history: true
+              });
               return window.currentDraggingModel = clone;
             } else {
               return window.currentDraggingModel = self.model;
@@ -153,9 +155,7 @@
         });
         that = this;
         if (this.model.get("inFlow") === false) {
-          $el.addClass("out-of-flow");
-          $("<div />").addClass("activate-element").text("m").prependTo($el);
-          $("<div />").addClass("destroy-element").text("g").prependTo($el);
+          this.$el.addClass("out-of-flow");
         } else {
           $el.removeClass("out-of-flow");
         }
@@ -226,12 +226,14 @@
           return this.model.trigger("dropped");
         },
         "click .activate-element": function(e) {
-          return this.model.set("inFlow", true, {
+          this.model.set("inFlow", true, {
             e: e
           });
+          return e.stopPropagation();
         },
-        "click .destroy-element": function() {
-          return this.model.destroy();
+        "click .destroy-element": function(e) {
+          this.model.destroy();
+          return e.stopPropagation();
         },
         "mouseover": function(e) {
           this.model.trigger("sorting");

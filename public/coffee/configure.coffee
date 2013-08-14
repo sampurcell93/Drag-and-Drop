@@ -58,10 +58,14 @@ $(document).ready ->
         template: $("#controller-wrap").html()
         initialize:->
             self = @
-            @listenTo @model, "change:title", (model)->
-                self.$el.find(".section-title").text(model.get("title"))
-        render: (i) ->
-            @$el.addClass("control-section").attr("id","section-" + i).html _.template @template, @model.toJSON()
+            @listenTo @model, {   
+                "change:title": (model)->
+                    self.$el.find(".section-title").text(model.get("title"))
+                "destroy": ->
+                    self.remove()
+            }
+        render: ->
+            @$el.addClass("control-section").html _.template @template, @model.toJSON()
             $(".container").droppable
                 accept: '.builder-element, .draggable-modal'
                 drop: (e, ui) ->
@@ -104,7 +108,8 @@ $(document).ready ->
             'click .history': (e)->
                 @$el.find(".history-modal").slideToggle("fast")
         setProps: ->
-            that = this
+            console.log "starting setprops, currIndex is %d", currIndex
+            that = @
             if !opts? 
                 opts = {}
             @model.index = allSections.length - 1 
@@ -136,15 +141,16 @@ $(document).ready ->
                 controller: @model
                 collection: section
             }
+
             $o_el = @$el.find(".accessories")
             hist_modal = window.launchDraggableModal(@histList.render().el, null, $o_el, "History - Recent 15")
-            hist_modal.attr("data-modal-name")
+            hist_modal.addClass("history")
 
             props_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Editable Attributes")
-            props_modal.addClass("quick-props").attr("data-modal-name")
+            props_modal.addClass("quick-props")
 
             css_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Skin Format")
-            css_modal.addClass("quick-css").attr("data-modal-name")
+            css_modal.addClass("quick-css")
 
             $o_el.droppable
                 accept: '.moved'
@@ -159,13 +165,12 @@ $(document).ready ->
             @classes.fetch({
                 success: (coll) ->
                     that.dataview = new views.DataView({collection: coll, controller: that.model})
-                    that.selectedData = new views.SelectedDataList({collection:that.model.get("properties"), controller: that.model})
+                    that.selectedData = new views.SelectedDataList({collection: that.model.get("properties"), controller: that.model})
                 failure: ->
                     alert("could not get data from URL " + that.url)    
             })
 
             @genericList = new views.GenericList {controller: @model}
-
             @layouts = new views.LayoutList({ controller: @model })
             @model.set({
                 builder: @builder
@@ -173,9 +178,10 @@ $(document).ready ->
                 snaps: @snaps
                 controller: @
             })
-            this
+            @
 
         renderComponents: (components) ->
+            console.log "rendering components, currIndex is %d", currIndex
             for component in components
                 this[component].render()
         generateSection: (e) ->
@@ -187,7 +193,7 @@ $(document).ready ->
             title = @model.get "title"
             if title == "" or typeof title is "undefined" or title == "Default Section Title"
                 alert "You need to enter a title"
-                return
+                return false
             # _.each @model.get("currentSection").models, (model) ->
             #     model.unset "inFlow", {silent: true}
             copy = new models.SectionController()
@@ -204,6 +210,7 @@ $(document).ready ->
                         $(@).remove()
                         $(document.body).removeClass("active-modal")
             })
+            true
     }
 
     window.views.AllSectionControllers = Backbone.View.extend {
@@ -211,8 +218,8 @@ $(document).ready ->
         initialize: ->
             self = @
             @render()
-            @listenTo @collection, "add", (e) ->
-                self.append(e)
+            @listenTo @collection, "add", (model) ->
+                self.append(model)
         render: ->
             $el = @$el
             $el.empty()
@@ -221,10 +228,11 @@ $(document).ready ->
                 self.append(controller)
             this
         append: (model) ->
+            window.currIndex = @collection.length - 1
             view = new views.SectionControllerView({model: model})
-            @$el.append($(view.render(@collection.models.length - 1).el))
+            @$el.append($(view.render().el))
             view.setProps().renderComponents(["builder","organizer"])
-            this
+            @
     }
 
     window.views.SectionTabItem = Backbone.View.extend {
@@ -238,7 +246,6 @@ $(document).ready ->
             @$el.html _.template @template, {title: @model.get "title"}
             @$el.droppable {
               tolerance: 'pointer'
-              revert: 'invalid'
               accept: '.builder-element'
               over: (e, ui) ->
                 # Give the droppable some feedback
@@ -247,7 +254,7 @@ $(document).ready ->
                     clone = $(ui.item).clone()
                     if $t.hasClass("over")
                         $t.trigger("click")
-                        toSection = $(".control-section").eq(currIndex).find(".generate-section")
+                        toSection = $(".control-section").eq(window.currIndex).find(".generate-section")
                         if !toSection.hasClass("viewing-layout")
                             toSection.trigger("click")
                 window.setTimeout(checkHover,500)
@@ -258,25 +265,25 @@ $(document).ready ->
             }
             this
         events: 
-            "mouseover": (e) ->
-                @hovering = true
-                self = @
-                window.setTimeout( ->
-                    if self.hovering is true
-                        $(self.el).find(".remove").fadeIn("fast")
-                        e.stopPropagation()
-                        e.stopImmediatePropagation()
-                , 400)
-            "mouseleave": ->
-                @hovering = false
-                @$el.find(".remove").fadeOut("fast")
+            "click .remove": (e) ->
+                index = @$el.index() - 1
+                collection = @model.collection
+                # If you're closing the tab you're on
+                if index == window.currIndex
+                    if index + 1 < collection.length
+                        @$el.next().trigger("click")
+                    else if index - 1 >= 0
+                        @$el.prev().trigger("click")
+                    else window.currIndex = 0
+                if @model.get("controller").saveSection()
+                    @model.destroy()
             "click": (e) ->
                 window.currIndex = @$el.index() - 1
                 $t = $(e.currentTarget)
                 index = $t.addClass("current-tab").data("id")
                 $t.siblings().removeClass("current-tab")
                 $(".control-section").hide()
-                $("#section-" + index).delay(200).show()
+                $(".control-section").eq(window.currIndex).delay(200).show()
     }
 
     window.views.SectionTabs = Backbone.View.extend {
@@ -293,7 +300,6 @@ $(document).ready ->
                 tab =  new views.SectionTabItem({ model: section }).render(i).el
                 $el.append tab
                 if i == len - 1
-                    currIndex = 1
                     $(tab).hide().animate({"width":"show"}, 300).addClass("current-tab").trigger("click")
         events: 
             "click .add-section": (e) ->
@@ -425,7 +431,6 @@ $(document).ready ->
             # @chooseProp()
             this
         chooseProp: (e) ->
-            console.log "TesT"
             if e?
                 $t = $(e.currentTarget)
                 $t.closest(".property").toggleClass "selected"
@@ -445,7 +450,7 @@ $(document).ready ->
                     @elementModel = new models.Element(model)
                 currentSection.add @elementModel
             else 
-                allSections.at(@options.index || currIndex).get("properties").remove @model
+                allSections.at(window.currIndex).get("properties").remove @model
                 currentSection.remove @elementModel
         events:
             "click .choose-prop": "chooseProp"
@@ -476,5 +481,5 @@ $(document).ready ->
         if keyCode == ctrlKey
             ctrlDown = false
         if keyCode == 90 and ctrlDown is true
-            snaps = allSections.at(currIndex).toJSON().controller.histList
+            snaps = allSections.at(window.currIndex).toJSON().controller.histList
             snaps.selectLast()

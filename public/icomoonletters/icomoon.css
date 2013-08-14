@@ -38,95 +38,95 @@ you can use the generic selector below, but it's slower:
 	-webkit-font-smoothing: antialiased;
 }
 .icon-cogs:before {
-	content: "\e000";
+	content: "\61";
 }
 .icon-cog:before {
-	content: "\e001";
+	content: "\62";
 }
 .icon-magnifier:before {
-	content: "\e002";
+	content: "\64";
 }
 .icon-tags:before {
-	content: "\e003";
+	content: "\65";
 }
 .icon-list:before {
-	content: "\e004";
+	content: "\66";
 }
 .icon-checkmark:before {
-	content: "\e005";
+	content: "\67";
 }
 .icon-braces:before {
-	content: "\e006";
+	content: "\68";
 }
 .icon-uniF47C:before {
-	content: "\e007";
+	content: "\69";
 }
 .icon-reload:before {
-	content: "\e008";
+	content: "\6a";
 }
 .icon-selectionadd:before {
-	content: "\e009";
+	content: "\6c";
 }
 .icon-selectionrmove:before {
-	content: "\e00a";
+	content: "\6d";
 }
 .icon-uniF48A:before {
-	content: "\e00b";
+	content: "\6e";
 }
 .icon-uniF48B:before {
-	content: "\e00c";
+	content: "\6f";
 }
 .icon-refresh:before {
-	content: "\e00d";
+	content: "\70";
 }
 .icon-resize-vertical:before {
-	content: "\e00e";
+	content: "\71";
 }
 .icon-caret-up:before {
-	content: "\e00f";
+	content: "\72";
 }
 .icon-caret-down:before {
-	content: "\e010";
+	content: "\73";
 }
 .icon-sign-blank:before {
-	content: "\e011";
+	content: "\74";
 }
 .icon-remove:before {
-	content: "\e012";
+	content: "\75";
 }
 .icon-remove-2:before {
-	content: "\e013";
+	content: "\76";
 }
 .icon-paragraph-left:before {
-	content: "\e014";
+	content: "\77";
 }
 .icon-stats:before {
-	content: "\e015";
+	content: "\78";
 }
 .icon-link:before {
-	content: "\e016";
+	content: "\79";
 }
 .icon-image:before {
-	content: "\e017";
+	content: "\7a";
 }
 .icon-cabinet:before {
-	content: "\e018";
+	content: "\31";
 }
 .icon-paragraph-center:before {
-	content: "\e019";
+	content: "\32";
 }
 .icon-download:before {
-	content: "\e01a";
+	content: "\33";
 }
 .icon-wrench:before {
-	content: "\e01b";
+	content: "\34";
 }
 .icon-move:before {
-	content: "\e01c";
+	content: "\35";
 }
 .icon-multiply:before {
-	content: "\e01d";
+	content: "\36";
 }
 .icon-github:before {
-	content: "\e01e";
+	content: "\37";
 }

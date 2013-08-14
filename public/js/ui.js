@@ -50,7 +50,7 @@
         handle: '.drag-handle'
       });
       modal.appendTo(appendTo || document.body);
-      modal.append($("<div/>").addClass("close-arrow pointer").text("q"));
+      modal.append($("<div/>").addClass("close-arrow icon-uniF48A pointer"));
       return modal;
     };
     $.fn.launchModal = function(content) {
@@ -78,8 +78,22 @@
       $t.text(switchtext);
       return $t.data("switch-text", currtext);
     });
-    return $(this).delegate(".close-arrow", "click", function() {
+    $(this).delegate(".close-arrow", "click", function() {
       return $(this).toggleClass("flipped").siblings(":not(.drag-handle)").toggle();
+    });
+    $(this).delegate("[data-modal] input", "click", function(e) {
+      var $t, modal;
+      $t = $(this);
+      modal = $t.parent().data("modal");
+      $(".control-section").eq(currIndex).find("." + modal).slideToggle();
+      return e.stopPropagation();
+    });
+    return $(this).delegate("[data-modal]", "click", function(e) {
+      var $t, modal;
+      $t = $(this);
+      modal = $t.data("modal");
+      $(".control-section").eq(currIndex).find("." + modal).slideToggle();
+      return $t.find("input").prop("checked", !$t.find("input").prop("checked"));
     });
   });
 

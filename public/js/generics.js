@@ -40,7 +40,7 @@
         this.controller = this.options.controller;
         this.collection = new collections.GenericElements(generics);
         this.wrapper = $(".control-section").eq(this.controller.index);
-        this.$el = this.wrapper.find(this.el);
+        this.$el = this.wrapper.find(".generic-elements ul");
         this.el = this.$el.get();
         return this.render();
       },
@@ -124,6 +124,8 @@
 
       _Class.prototype.template = $("#property-template").html();
 
+      _Class.prototype.className = 'builder-element block';
+
       return _Class;
 
     })(views.genericElement);
@@ -176,9 +178,7 @@
 
       _Class.prototype.template = $("#custom-text").html();
 
-      _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
+      _Class.prototype.className = 'builder-element w5';
 
       return _Class;
 
@@ -194,23 +194,11 @@
       _Class.prototype.template = $("#generic-radio").html();
 
       _Class.prototype.initialize = function(options) {
-        var self;
         _Class.__super__.initialize.apply(this, arguments);
-        self = this;
-        _.bindAll(this, "afterRender");
         return this.model.on({
           "change:label_position": this.render,
           "change:label_text": this.render
         });
-      };
-
-      _Class.prototype.afterRender = function() {
-        var label_position;
-        console.log("just rendered radio");
-        label_position = this.model.get("label_position");
-        if (label_position === "top" || label_position === "bottom") {
-          return console.log(this.$el.find("span.label-text").css("display", "block"));
-        }
       };
 
       return _Class;
