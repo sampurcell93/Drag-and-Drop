@@ -150,7 +150,6 @@
           }
           globals.setPlaceholders($(draggable), this.model.get("child_els"));
           if (allSections.at(currIndex).get("builder") != null) {
-            console.log("currindex is %d and we're removing extra placeholder", currIndex);
             return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
           }
         }

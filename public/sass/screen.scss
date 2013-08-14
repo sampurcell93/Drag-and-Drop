@@ -1351,7 +1351,7 @@ ul li.selected-choice {
 	> ul, .history-modal {
 		width: 100%;
 		margin: 0;
-		background: rgba(62,73,81,.94) !important;
+		background: rgba(62,73,81,.94);
 
 		li {
 			text-align: left;
@@ -1376,7 +1376,7 @@ ul li.selected-choice {
 
 			
 				>li:hover {
-					background: $dusky !important;
+					background: $dusky;
 				}
 
 				li:empty {
@@ -1437,3 +1437,6 @@ ul li.selected-choice {
 	}
 }
 
+.ui-slider-handle {
+	background: $dusky !important;
+}

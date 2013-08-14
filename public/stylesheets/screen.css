@@ -2043,7 +2043,7 @@ ul li.selected-choice {
 .draggable-modal > ul, .draggable-modal .history-modal {
   width: 100%;
   margin: 0;
-  background: rgba(62, 73, 81, 0.94) !important;
+  background: rgba(62, 73, 81, 0.94);
 }
 /* line 1356, ../sass/screen.scss */
 .draggable-modal > ul li, .draggable-modal .history-modal li {
@@ -2073,7 +2073,7 @@ ul li.selected-choice {
 }
 /* line 1378, ../sass/screen.scss */
 .draggable-modal > ul li ul > li:hover, .draggable-modal .history-modal li ul > li:hover {
-  background: #3e4951 !important;
+  background: #3e4951;
 }
 /* line 1382, ../sass/screen.scss */
 .draggable-modal > ul li ul li:empty, .draggable-modal .history-modal li ul li:empty {
@@ -2125,4 +2125,9 @@ ul li.selected-choice {
   outline: none;
   border-left: 1px solid #5b747f;
   border-right: 1px solid #5b747f;
+}
+
+/* line 1440, ../sass/screen.scss */
+.ui-slider-handle {
+  background: #3e4951 !important;
 }

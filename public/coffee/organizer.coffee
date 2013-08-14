@@ -4,7 +4,6 @@ $(document).ready ->
         initialize: ->
             @controller = @options.controller
             @wrapper = $(".control-section").eq(@controller.index)
-            console.log currIndex
             @$el = @wrapper.find(".organize-elements")
             @collection = @options.collection
             ### Render the list, then apply the drag and drop, and sortable functions. ###

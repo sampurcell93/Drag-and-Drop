@@ -143,7 +143,6 @@ $(document).ready ->
                     else $el.append(draggable)
                 globals.setPlaceholders($(draggable), @model.get("child_els"))
                 if allSections.at(currIndex).get("builder")?
-                    console.log "currindex is %d and we're removing extra placeholder", currIndex
                     allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrop: ->
             that = this

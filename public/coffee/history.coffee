@@ -117,11 +117,11 @@ $ ->
             if last < @snapshots.length and last >= 0
                 @snapshots.at(last).trigger("select")
         makeHistory: (operation, subject, collection, options) ->
-            cc "Making History."
             # By using "all" instead of delegating to the desired events,
             # we can keep parameters the same.
             ops = ["change", "add", "remove"]
             if ops.indexOf(operation) == -1 then return
+            console.log "Making History, op %s", operation
             if operation == "change"
                 options = collection
             if !options? then options = {}
@@ -136,6 +136,8 @@ $ ->
                         clone = @controller.model.get("currentSection").clone()
                     catch e
                         return false;
+                if @snapshots.length and clone.compare(@snapshots.last())
+                    cc "SAME"
                 snap = new models.Snap({snapshot: clone})
                 snap.set({
                     "opname": op

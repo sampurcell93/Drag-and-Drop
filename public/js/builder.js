@@ -97,7 +97,6 @@
 
       Element.prototype.parse = function(response) {
         var section, self;
-        console.log(response);
         self = this;
         section = [];
         _.each(response.currentSection, function(element) {
@@ -108,7 +107,6 @@
 
       Element.prototype.blend = function(putIn, at) {
         var children;
-        cc("blending");
         if (putIn == null) {
           return false;
         }
@@ -226,17 +224,7 @@
         return copy;
       },
       compare: function(collection) {
-        var comparison, self;
-        self = this;
-        comparison = true;
-        _.each(collection.models, function(model, i) {
-          if (JSON.stringify(model.attributes) !== JSON.stringify(self.at(i).attributes)) {
-            console.log(JSON.stringify(model.attributes), JSON.stringify(self.at(i).attributes));
-            cc("faseeeeee");
-            return comparison = false;
-          }
-        });
-        return comparison;
+        return _.isEqual(this.models, collection.models);
       }
     });
     window.views.droppablePlaceholder = (function(_super) {
@@ -252,10 +240,6 @@
       droppablePlaceholder.prototype.tagName = 'div';
 
       droppablePlaceholder.prototype.className = 'droppable-placeholder';
-
-      droppablePlaceholder.prototype.initialize = function() {
-        return console.log(this.events);
-      };
 
       droppablePlaceholder.prototype.events = {
         "click .paste-element": function(e) {
@@ -376,7 +360,6 @@
       draggableElement.prototype.modelListeners = {};
 
       draggableElement.prototype.initialize = function() {
-        cc("making a new draggable");
         _.bindAll(this, "render", "bindDrag", "bindListeners");
         this.on("bindListeners", this.bindListeners);
         this.bindDrag();

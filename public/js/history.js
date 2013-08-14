@@ -126,11 +126,11 @@
       },
       makeHistory: function(operation, subject, collection, options) {
         var clone, e, op, ops, snap;
-        cc("Making History.");
         ops = ["change", "add", "remove"];
         if (ops.indexOf(operation) === -1) {
           return;
         }
+        console.log("Making History, op %s", operation);
         if (operation === "change") {
           options = collection;
         }
@@ -150,6 +150,9 @@
               e = _error;
               return false;
             }
+          }
+          if (this.snapshots.length && clone.compare(this.snapshots.last())) {
+            cc("SAME");
           }
           snap = new models.Snap({
             snapshot: clone

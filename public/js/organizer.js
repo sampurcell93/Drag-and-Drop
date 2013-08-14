@@ -6,7 +6,6 @@
         var that;
         this.controller = this.options.controller;
         this.wrapper = $(".control-section").eq(this.controller.index);
-        console.log(currIndex);
         this.$el = this.wrapper.find(".organize-elements");
         this.collection = this.options.collection;
         /* Render the list, then apply the drag and drop, and sortable functions.*/

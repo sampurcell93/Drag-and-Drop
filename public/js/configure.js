@@ -131,7 +131,6 @@
       },
       setProps: function() {
         var $o_el, css_modal, hist_modal, opts, props_modal, section, that;
-        console.log("starting setprops, currIndex is %d", currIndex);
         that = this;
         if (typeof opts === "undefined" || opts === null) {
           opts = {};
@@ -342,13 +341,14 @@
           collection = this.model.collection;
           if (index === window.currIndex) {
             if (index + 1 < collection.length) {
-              return this.$el.next().trigger("click");
+              this.$el.next().trigger("click");
             } else if (index - 1 >= 0) {
-              return this.$el.prev().trigger("click");
+              this.$el.prev().trigger("click");
             } else {
-              return window.currIndex = 0;
+              window.currIndex = 0;
             }
           }
+          return e.stopPropagation();
         },
         "click": function(e) {
           var $t, index;

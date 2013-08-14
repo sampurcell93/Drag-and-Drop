@@ -68,14 +68,12 @@ $(document).ready ->
         # JSON returns as a single model whose submodels are standard json objects, not backbone models.
         # MODELIFY each standard json object, and its children, recursively.
         parse: (response) ->
-            console.log response
             self = @
             section = []
             _.each response.currentSection, (element) ->
                 section.push self.modelify(element)
             response
         blend: (putIn, at) ->
-            cc "blending"
             if !putIn? then return false
             # If put in is a collection
             if $.isArray(putIn) is true and putIn.length > 1
@@ -158,22 +156,13 @@ $(document).ready ->
                 copy.add element.deepCopy(), {no_history: true }
             copy
         compare: (collection) ->
-            self = @
-            comparison = true
-            _.each collection.models, (model, i) ->
-                if JSON.stringify(model.attributes) != JSON.stringify(self.at(i).attributes)
-                    console.log  JSON.stringify(model.attributes), JSON.stringify(self.at(i).attributes)
-                    cc "faseeeeee"
-                    comparison = false
-            comparison
+            _.isEqual(@models, collection.models)
     }
 
     class window.views.droppablePlaceholder extends Backbone.View
         contextMenu: $("#placeholder-context").html()
         tagName: 'div'
         className: 'droppable-placeholder'
-        initialize: ->
-            console.log @events
         events:
             "click .paste-element": (e) ->
                 clone = window.copiedModel
@@ -254,7 +243,6 @@ $(document).ready ->
         className: 'builder-element'
         modelListeners: {}
         initialize: ->
-            cc "making a new draggable"
             _.bindAll(this, "render", "bindDrag","bindListeners")
             @on "bindListeners", @bindListeners
             # Bind the drag event to the el

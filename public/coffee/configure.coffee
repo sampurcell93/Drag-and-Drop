@@ -122,7 +122,6 @@ $(document).ready ->
 
                 })
         setProps: ->
-            console.log "starting setprops, currIndex is %d", currIndex
             that = @
             if !opts? 
                 opts = {}
@@ -298,6 +297,7 @@ $(document).ready ->
                     else if index - 1 >= 0
                         @$el.prev().trigger("click")
                     else window.currIndex = 0
+                e.stopPropagation()
             "click": (e) ->
                 window.currIndex = @$el.index() - 1
                 $t = $(e.currentTarget)

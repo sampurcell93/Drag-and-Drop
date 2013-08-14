@@ -71,8 +71,7 @@
             toAdd = new models.Element(baseModel);
             child_els.model = toAdd;
             toAdd.set("child_els", child_els);
-            window.currentDraggingModel = toAdd;
-            return console.log(toAdd === self.model);
+            return window.currentDraggingModel = toAdd;
           },
           stop: function(e, ui) {
             $(ui.item).removeClass("dragging").remove();

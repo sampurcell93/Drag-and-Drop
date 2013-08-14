@@ -91,7 +91,6 @@ $(document).ready ->
                     toAdd.set("child_els", child_els)
                     # Give the builder an acceptable element.
                     window.currentDraggingModel = toAdd
-                    console.log toAdd is self.model
                 stop: (e, ui) ->
                     $(ui.item).removeClass("dragging").remove()
                     # If the drop was a success, remove the original and preserve the clone
