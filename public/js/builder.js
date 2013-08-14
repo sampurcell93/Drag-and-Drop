@@ -11,19 +11,6 @@
 
     var _ref, _ref1, _ref2;
     window.copiedModel = null;
-    window.globals = {
-      setPlaceholders: function(draggable, collection) {
-        var after, before;
-        draggable.before(before = new views.droppablePlaceholder({
-          collection: collection
-        }).render()).after(after = new views.droppablePlaceholder({
-          collection: collection
-        }).render());
-        if (before.prev().css("display") === "inline-block") {
-          return before.css("height", before.prev().height() + "px");
-        }
-      }
-    };
     window.models.Element = (function(_super) {
       __extends(Element, _super);
 
@@ -78,7 +65,8 @@
             },
             opacity: null
           },
-          title: "Default Title"
+          title: "Default Title",
+          editable: true
         };
       };
 
@@ -324,7 +312,7 @@
               parent = self.collection;
             }
             parent.blend(curr, insertAt);
-            $(e.target).css("opacity", 0);
+            $(e.target).removeClass("show");
             delete window.currentDraggingModel;
             window.currentDraggingModel = null;
             return ui.helper.fadeOut(300);
@@ -715,6 +703,9 @@
         },
         "end-sorting": function() {
           return this.$el.removeClass("active-sorting");
+        },
+        "mouseleave": function() {
+          return this.$(".set-options > ul").hide();
         }
       };
 

@@ -12,6 +12,27 @@
     window.settings = {
       history_length: localStorage.settings.history_length || 15
     };
+    window.globals = {
+      setPlaceholders: function(draggable, collection) {
+        var after, before;
+        draggable.before(before = new views.droppablePlaceholder({
+          collection: collection
+        }).render()).after(after = new views.droppablePlaceholder({
+          collection: collection
+        }).render());
+        if (before.prev().css("display") === "inline-block") {
+          return before.css("height", before.prev().height() + "px");
+        }
+      }
+    };
+    String.prototype.parseBool = function() {
+      if (this.toLowerCase() === "false") {
+        return false;
+      } else if (this.toLowerCase() === "true") {
+        return true;
+      }
+      return false;
+    };
     getSlope = function(y1, y, x1, x) {
       return (y - y1) / (x - x1);
     };
@@ -91,14 +112,14 @@
       var $t, modal;
       $t = $(this);
       modal = $t.parent().data("modal");
-      $(".control-section").eq(currIndex).find("." + modal).slideToggle();
+      $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle();
       return e.stopPropagation();
     });
     return $(this).delegate("[data-modal]", "click", function(e) {
       var $t, modal;
       $t = $(this);
       modal = $t.data("modal");
-      $(".control-section").eq(currIndex).find("." + modal).slideToggle();
+      $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle();
       return $t.find("input").prop("checked", !$t.find("input").prop("checked"));
     });
   });

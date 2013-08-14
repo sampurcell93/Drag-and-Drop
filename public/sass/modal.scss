@@ -1,0 +1,168 @@
+body {
+    &:after {
+        content: "";
+        position: fixed;
+        display: none;
+        left: 0;
+        top: 0px;
+        width: 100%; 
+        height: 100%;
+        background: rgba(0,0,0,.5);
+        z-index: 9911;
+    }
+
+    &.active-modal::after {
+        display: block;
+    }
+}
+
+.modal {
+    display: block;
+    width: 900px;
+    position: fixed;
+    left: 50%;
+    z-index: 9912;
+    margin-left: -400px;
+    top: 100px;
+    background: #fff;
+    background: rgba(255,255,255,.89);
+    padding: 20px;
+    @include box-shadow(0px 0px 7px #222);
+    
+    .close-modal {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        cursor: pointer;
+    }
+
+}
+
+
+.draggable-modal {
+    position: absolute !important;
+    color: #f9f9f9;
+    text-shadow: none;
+    z-index: 999;
+    width: 220px;
+    max-height: 400px;
+    padding-top: 29px;
+    cursor: move;
+    border-top: 1px solid $lightdusk;
+
+    h2.drag-handle {
+        position: absolute;
+        content: attr(data-modal-name);
+        top: 0;
+        left: 0;
+        height: 30px;
+        width: 100%;
+        color: #f9f9f9;
+        text-align: center;
+        padding: 6px 0 0 ;
+        font-size: 1.1em;
+        background: #313131;
+        border-bottom: 1px solid #000;
+    }
+
+    .close-arrow {
+        position: absolute;
+        top: 5px;
+        right:5px;
+        font-family: 'icons';
+    }
+
+    .history-modal {
+        max-height: 400px;
+        overflow: auto;
+    }
+
+    > ul, .history-modal {
+        width: 100%;
+        margin: 0;
+        background: rgba(62,73,81,.94);
+
+        li {
+            text-align: left;
+            text-indent: 10px;
+            cursor: pointer;
+            list-style: none;
+            // border-top: 1px solid #9CB1BA;
+            // border-bottom: 1px solid #222;
+            padding: 3px 5px 3px 10px;
+
+            &:last-child { border-bottom: none;}
+            &:first-child { 
+                border-top: none; 
+                padding-top: 4px;
+            }
+
+            &.selected-history { background: $lightdusk;}
+
+            ul {
+                padding-top: 10px;
+                width: 100%;
+
+            
+                >li:hover {
+                    background: $dusky;
+                }
+
+                li:empty {
+                    background: #333;
+                    border: none;
+
+                }
+
+            }
+        }
+    }
+}
+
+
+.hidden-modal {
+    ul, div {
+        display: none;
+    }
+}
+
+.choose-columns {
+
+    border-top: 1px solid #ccc;
+    padding-top: 30px;
+
+    li{
+        width: 16%;
+        text-shadow: none;
+        display: inline-block;
+        height: 80px;
+        line-height: 80px;
+        text-align: center;
+        color: #313131;
+        background:  url("../images/columnsprite.png") no-repeat center;
+        cursor: pointer;
+
+        &:nth-child(1) { background: #c5d4e8; }
+        &:nth-child(2) { background-position: 0 0px; }
+        &:nth-child(3) { background-position: 0 -79px; }
+        &:nth-child(4) { background-position: 0 -159px; }
+        &:nth-child(5) { background-position: 0 -240px; }
+        &:nth-child(6) { background-position: 0 -320px; }
+    }
+}
+
+.choose-layout {
+    width: 95%;
+    margin: 0 auto;
+
+    li {
+        display: inline-block;
+        height: 85px;
+        width: 85px;
+        text-align: center;
+
+        &[data-layout="tabs"] {
+            background: url("../images/tabicon.jpg") no-repeat center 15px;
+        }
+    }
+}

@@ -125,6 +125,15 @@
 
       _Class.prototype.className = 'builder-element block';
 
+      _Class.prototype.initialize = function() {
+        var self;
+        _Class.__super__.initialize.apply(this, arguments);
+        self = this;
+        return this.model.on("change:editable", function() {
+          return self.render();
+        });
+      };
+
       return _Class;
 
     })(views.genericElement);

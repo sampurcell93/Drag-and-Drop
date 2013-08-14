@@ -126,6 +126,11 @@ $(document).ready ->
     class views["Property"] extends views.genericElement
         template: $("#property-template").html()
         className: 'builder-element block'
+        initialize: ->
+            super
+            self = @
+            @model.on "change:editable", ->
+                self.render()
 
 
     class window.views['Button'] extends window.views.genericElement

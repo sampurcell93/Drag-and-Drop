@@ -20,6 +20,8 @@ include builder.jade
                             input(type='checkbox', checked='true') 
                         li(data-modal='quick-css') Skin Format 
                             input(type='checkbox', checked='true') 
+                        li(data-modal='existing-sections-layouts') Recent Sections 
+                            input(type='checkbox', checked='true')
                 li.icon-cogs.settings Settings
 
             .section-builder-wrap
@@ -37,13 +39,14 @@ include builder.jade
                 div.fl.w4.m30
                     ul.property-editor
                 ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr
+                    li.list-header.p10 Sections
                     li.p10.placeholder There are no sections.
                 .clear  
             .section-builder-wrap.hidden
                 //-  Generic elements to drag into the builder
                 div.dark-sidebar.sidebar-controls.accessories
                     ul.organize-elements
-                        li.organizer-header Section Content
+                        li.list-header Section Content
                 ul.outside-draggables
                     li.generic-elements
                         | Basic

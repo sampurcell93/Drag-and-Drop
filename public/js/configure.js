@@ -130,7 +130,7 @@
         }
       },
       setProps: function() {
-        var $o_el, css_modal, hist_modal, opts, props_modal, section, that;
+        var $o_el, css_modal, existing_modal, hist_modal, opts, props_modal, section, that;
         that = this;
         if (typeof opts === "undefined" || opts === null) {
           opts = {};
@@ -167,6 +167,8 @@
         props_modal.addClass("quick-props");
         css_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Skin Format");
         css_modal.addClass("quick-css");
+        existing_modal = window.launchDraggableModal($("<ul/>").addClass("hidden"), null, $o_el, "Recent Sections");
+        existing_modal.addClass("existing-sections-layouts");
         $o_el.droppable({
           accept: '.moved',
           greedy: true,

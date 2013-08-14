@@ -121,7 +121,6 @@ $ ->
             # we can keep parameters the same.
             ops = ["change", "add", "remove"]
             if ops.indexOf(operation) == -1 then return
-            console.log "Making History, op %s", operation
             if operation == "change"
                 options = collection
             if !options? then options = {}

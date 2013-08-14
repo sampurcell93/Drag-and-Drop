@@ -38,7 +38,12 @@ script(type='text/template')#dropdown
 script(type='text/template')#builder-wrap
     ul.children
 script(type='text/template')#property-template
-        h3 <% if (typeof property !== "undefined") { print(property.name.clean()) }%>
+        h3 <%= property.name.clean() %>
         label
-        <% if (typeof property !== "undefined") { %> <input placeholder='<%= className + "." + property.name.clean() %>' /> <%}%>
+        <% if (editable == true) { %> 
+        <input placeholder='<%= className + "." + property.name.clean() %>' />
+        <%} else { %>
+        h3.title
+            <%= className + "." + property.name.clean() %>
+        <% } %>
  
