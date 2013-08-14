@@ -2,7 +2,6 @@
 (function() {
   $(function() {
     var history;
-    window.history_length = 15;
     history = window.views.history = {};
     window.models.Snap = Backbone.Model.extend();
     window.collections.Snapshots = Backbone.Collection.extend({
@@ -94,7 +93,6 @@
         var coll, self;
         this.stopListening();
         coll = collection || this.collection;
-        console.log(coll);
         this.listenTo(coll, {
           "all": this.makeHistory
         });
@@ -161,7 +159,7 @@
             "title": subject.get("title" || null),
             "type": subject.get("type" || null)
           });
-          if (this.snapshots.length >= window.history_length) {
+          if (this.snapshots.length >= window.settings.history_length && (this.snapshots.at(0) != null)) {
             this.snapshots.at(0).destroy({
               no_history: true
             });

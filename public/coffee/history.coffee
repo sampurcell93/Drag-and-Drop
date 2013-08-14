@@ -1,7 +1,4 @@
 $ ->
-
-    window.history_length = 15
-
     history = window.views.history = {}
 
     window.models.Snap = Backbone.Model.extend()
@@ -90,7 +87,6 @@ $ ->
         bindListeners: (collection) ->
             @stopListening()
             coll = collection || @collection
-            console.log coll
             # @Collection refers to the actual section            
             @listenTo coll, {
                 # Whenever any event is fired, save the current state of the collection
@@ -147,7 +143,7 @@ $ ->
                     "type": subject.get "type" || null
                 })
                 # For memory management purposes, destroy the oldest change.
-                if @snapshots.length >= window.history_length
+                if @snapshots.length >= window.settings.history_length and @snapshots.at(0)?
                     @snapshots.at(0).destroy({no_history: true})
                 if op == "add"
                     @bindIndividualListener subject

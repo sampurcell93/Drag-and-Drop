@@ -79,7 +79,7 @@
         this.model.set("layout", true);
         layout.__super__.initialize.apply(this, arguments);
         self = this;
-        _.bindAll(this, "afterRender", "bindDrop");
+        _.bindAll(this, "afterRender", "bindDrop", "appendChild");
         this.$el.addClass("layout-wrapper");
         this.listenTo(this.model.get("child_els"), "add", function(m, c, o) {
           if ((c != null) && c.length) {
@@ -120,6 +120,40 @@
         });
         this.bindDrop();
         return this;
+      };
+
+      layout.prototype.appendChild = function(child, opts) {
+        var $el, builderChildren, draggable, i, view;
+        $el = this.$el.children(".children");
+        if ($el.length === 0) {
+          $el = $el.find(".children").first();
+        }
+        if (child['layout-element'] === true) {
+          $el.addClass("selected-element");
+        }
+        view = child.get("view") || "draggableElement";
+        if (child.get("inFlow") === true) {
+          i = currIndex;
+          draggable = $(new views[view]({
+            model: child,
+            index: i
+          }).render().el).addClass("builder-child");
+          if ((opts != null) && (opts.at == null)) {
+            $el.append(draggable);
+          } else {
+            builderChildren = $el.children(".builder-element");
+            if (builderChildren.eq(opts.at).length) {
+              builderChildren.eq(opts.at).before(draggable);
+            } else {
+              $el.append(draggable);
+            }
+          }
+          globals.setPlaceholders($(draggable), this.model.get("child_els"));
+          if (allSections.at(currIndex).get("builder") != null) {
+            console.log("currindex is %d and we're removing extra placeholder", currIndex);
+            return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
+          }
+        }
       };
 
       layout.prototype.bindDrop = function() {

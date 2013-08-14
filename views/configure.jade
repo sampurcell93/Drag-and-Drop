@@ -21,3 +21,9 @@ script(type='text/template')#property-item-editor
     <%= className + "." + name.clean() %>
 script(type='text/template')#generic-element
     <%= type %>
+script(type='text/template')#settings-template
+    label.m10 History Length:
+    div.m10.hist-length(data-setting='history_length')
+    p.nice-dialog 
+        strong Be careful: 
+        | Changing the length of your builder's history can cause performance issues, especially when multiple tabs are open.

@@ -377,7 +377,7 @@
 
       draggableElement.prototype.initialize = function() {
         cc("making a new draggable");
-        _.bindAll(this, "render", "bindDrag", "appendChild", "bindListeners");
+        _.bindAll(this, "render", "bindDrag", "bindListeners");
         this.on("bindListeners", this.bindListeners);
         this.bindDrag();
         return this.bindListeners();
@@ -467,40 +467,6 @@
         return this;
       };
 
-      draggableElement.prototype.appendChild = function(child, opts) {
-        var $el, builderChildren, draggable, i, view;
-        $el = this.$el.children(".children");
-        if ($el.length === 0) {
-          $el = $el.find(".children").first();
-        }
-        if (child['layout-element'] === true) {
-          $el.addClass("selected-element");
-        }
-        view = child.get("view") || "draggableElement";
-        if (child.get("inFlow") === true) {
-          i = currIndex;
-          draggable = $(new views[view]({
-            model: child,
-            index: i
-          }).render().el).addClass("builder-child");
-          if ((opts != null) && (opts.at == null)) {
-            $el.append(draggable);
-          } else {
-            builderChildren = $el.children(".builder-element");
-            if (builderChildren.eq(opts.at).length) {
-              builderChildren.eq(opts.at).before(draggable);
-            } else {
-              $el.append(draggable);
-            }
-          }
-          globals.setPlaceholders($(draggable), this.model.get("child_els"));
-          if (allSections.at(currIndex).get("builder") != null) {
-            console.log("currindex is %d and we're removing extra placeholder", currIndex);
-            return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
-          }
-        }
-      };
-
       draggableElement.prototype.bindDrag = function() {
         var that;
         that = this;
@@ -584,7 +550,7 @@
       draggableElement.prototype.blankLayout = function(e) {
         var collection, layout, layoutIndex, selected;
         cc(currIndex);
-        collection = allSections.at(currIndex).get("currentSection");
+        collection = allSections.at(window.currIndex).get("currentSection");
         selected = collection.gather();
         if (selected.length === 0 || selected.length === 1) {
           return;
@@ -609,6 +575,33 @@
           e.stopPropagation();
         }
         return this;
+      };
+
+      draggableElement.prototype.exportAsSection = function() {
+        var copy, title, wrapper;
+        title = this.model.get("title");
+        if (title === "" || typeof title === "undefined" || title === "Default Section Title") {
+          alert("You need to enter a title");
+          return false;
+        }
+        copy = new models.SectionController();
+        wrapper = new collections.Elements();
+        wrapper.add(this.model);
+        copy.set({
+          currentSection: wrapper,
+          section_title: title
+        });
+        copy.save(null, {
+          success: function() {
+            $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
+            $(document.body).addClass("active-modal");
+            return $(".modal").delay(2000).fadeOut("fast", function() {
+              $(this).remove();
+              return $(document.body).removeClass("active-modal");
+            });
+          }
+        });
+        return true;
       };
 
       draggableElement.prototype.bindContextMenu = function(e) {
@@ -655,6 +648,7 @@
           return window.copiedModel = copy;
         },
         "click .group-elements": "blankLayout",
+        "click .export": "exportAsSection",
         "click .destroy-element": function() {
           return this.model.destroy();
         },

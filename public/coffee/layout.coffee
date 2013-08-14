@@ -90,7 +90,7 @@ $(document).ready ->
             @model.set("layout", true)
             super
             self = @
-            _.bindAll @, "afterRender", "bindDrop"
+            _.bindAll @, "afterRender", "bindDrop", "appendChild"
             @$el.addClass("layout-wrapper")
             @listenTo @model.get("child_els"), "add", (m,c,o)->
                 if c? and c.length
@@ -123,6 +123,28 @@ $(document).ready ->
                 }
             do @bindDrop
             @
+        appendChild: ( child , opts ) ->
+            # We choose a view to render based on the model's specification, 
+            # or default to a standard draggable.
+            $el = @$el.children(".children")
+            # For table layouts, sometimes things are wrapped in a tbody
+            if $el.length == 0 then $el = $el.find(".children").first()
+            if child['layout-element'] is true then $el.addClass("selected-element")
+            view = child.get("view") || "draggableElement"
+            if child.get("inFlow") is true
+                i = currIndex
+                draggable = $(new views[view]({model: child, index: i}).render().el).addClass("builder-child")
+                if (opts? and !opts.at?)
+                    $el.append(draggable)
+                else 
+                    builderChildren = $el.children(".builder-element")
+                    if builderChildren.eq(opts.at).length 
+                        builderChildren.eq(opts.at).before(draggable)
+                    else $el.append(draggable)
+                globals.setPlaceholders($(draggable), @model.get("child_els"))
+                if allSections.at(currIndex).get("builder")?
+                    console.log "currindex is %d and we're removing extra placeholder", currIndex
+                    allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrop: ->
             that = this
             @$el.droppable {

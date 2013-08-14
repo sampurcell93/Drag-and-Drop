@@ -25,7 +25,6 @@ $ ->
                 if @$el.hasClass("builder-scaffold") then return false
                 attrs = @model.attributes
                 properties = @getProps(attrs)
-                console.log properties
                 @$el.html(properties)
         formatAttributes: (data) ->
             if (typeof data == "string")
@@ -41,7 +40,7 @@ $ ->
         formatObject: (obj) ->
             if !obj? then return ""
             self = @
-            items = "<div class='close-arrow pointer'>p</div><ul class='hidden'>"
+            items = "<div class='close-arrow icon-uniF48A'></div><ul class='hidden'>"
             if obj.length is 0 then return "None"
             _.each obj, (model) ->
                 items += "<li>" + self.getProps(model.attributes) + "</li>"

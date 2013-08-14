@@ -49,7 +49,6 @@
         }
         attrs = this.model.attributes;
         properties = this.getProps(attrs);
-        console.log(properties);
         return this.$el.html(properties);
       };
 
@@ -77,7 +76,7 @@
           return "";
         }
         self = this;
-        items = "<div class='close-arrow pointer'>p</div><ul class='hidden'>";
+        items = "<div class='close-arrow icon-uniF48A'></div><ul class='hidden'>";
         if (obj.length === 0) {
           return "None";
         }

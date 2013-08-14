@@ -107,6 +107,20 @@ $(document).ready ->
                     $t.val($t.data("previous-val") || "")
             'click .history': (e)->
                 @$el.find(".history-modal").slideToggle("fast")
+            "click .settings": ->
+                temp = $("#settings-template").html()
+                modal = window.launchModal(_.template temp, window.settings)
+                modal.find(".hist-length").slider({
+                    value: window.settings.history_length
+                    step: 1
+                    min: 0
+                    max: 100
+                    change: (e, ui) ->
+                        window.settings.history_length = ui.value
+                        localStorage.settings.history_length = ui.value
+                        $(".history-length-label").text(ui.value)
+
+                })
         setProps: ->
             console.log "starting setprops, currIndex is %d", currIndex
             that = @
@@ -143,7 +157,7 @@ $(document).ready ->
             }
 
             $o_el = @$el.find(".accessories")
-            hist_modal = window.launchDraggableModal(@histList.render().el, null, $o_el, "History - Recent 15")
+            hist_modal = window.launchDraggableModal(@histList.render().el, null, $o_el, "History - Recent <span class='history-length-label'>15</span>")
             hist_modal.addClass("history")
 
             props_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Editable Attributes")
@@ -181,9 +195,9 @@ $(document).ready ->
             @
 
         renderComponents: (components) ->
-            console.log "rendering components, currIndex is %d", currIndex
             for component in components
                 this[component].render()
+            @model.saved = true
         generateSection: (e) ->
             if e?
                 $t = $(e.currentTarget)
@@ -202,6 +216,7 @@ $(document).ready ->
                 section_title: title
                 properties: @model.get("properties")
             })
+            @model.saved = true
             copy.save(null, {
                 success: ->
                     $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
@@ -266,6 +281,14 @@ $(document).ready ->
             this
         events: 
             "click .remove": (e) ->
+                if @model.saved is true
+                    @model.destroy()
+                else 
+                    sure = confirm("Are you sure you want to close this builder? You haven't saved it.")
+                    if sure is true
+                        @model.destroy()
+                    else return
+
                 index = @$el.index() - 1
                 collection = @model.collection
                 # If you're closing the tab you're on
@@ -275,15 +298,13 @@ $(document).ready ->
                     else if index - 1 >= 0
                         @$el.prev().trigger("click")
                     else window.currIndex = 0
-                if @model.get("controller").saveSection()
-                    @model.destroy()
             "click": (e) ->
                 window.currIndex = @$el.index() - 1
                 $t = $(e.currentTarget)
                 index = $t.addClass("current-tab").data("id")
                 $t.siblings().removeClass("current-tab")
                 $(".control-section").hide()
-                $(".control-section").eq(window.currIndex).delay(200).show()
+                $(".control-section").eq(window.currIndex).show()
     }
 
     window.views.SectionTabs = Backbone.View.extend {
@@ -303,11 +324,7 @@ $(document).ready ->
                     $(tab).hide().animate({"width":"show"}, 300).addClass("current-tab").trigger("click")
         events: 
             "click .add-section": (e) ->
-                sectionIndex += 1
                 allSections.add new models.SectionController()
-                e.stopImmediatePropagation()
-                $(".control-section").hide()
-                $("#section-" + sectionIndex).show()
 
     }
 
@@ -320,7 +337,13 @@ $(document).ready ->
         defaults: ->
             "currentSection":  new collections.Elements()
             "properties":  new collections.Properties()
-
+        initialize: ->
+            @saved = true
+            self = @
+            @get("currentSection").on "all", ->
+                self.saved = false
+            @on "all", ->
+                self.saved = false
     }
 
     # A View of all Classes

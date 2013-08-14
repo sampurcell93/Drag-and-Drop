@@ -111,6 +111,22 @@
         },
         'click .history': function(e) {
           return this.$el.find(".history-modal").slideToggle("fast");
+        },
+        "click .settings": function() {
+          var modal, temp;
+          temp = $("#settings-template").html();
+          modal = window.launchModal(_.template(temp, window.settings));
+          return modal.find(".hist-length").slider({
+            value: window.settings.history_length,
+            step: 1,
+            min: 0,
+            max: 100,
+            change: function(e, ui) {
+              window.settings.history_length = ui.value;
+              localStorage.settings.history_length = ui.value;
+              return $(".history-length-label").text(ui.value);
+            }
+          });
         }
       },
       setProps: function() {
@@ -146,7 +162,7 @@
           collection: section
         });
         $o_el = this.$el.find(".accessories");
-        hist_modal = window.launchDraggableModal(this.histList.render().el, null, $o_el, "History - Recent 15");
+        hist_modal = window.launchDraggableModal(this.histList.render().el, null, $o_el, "History - Recent <span class='history-length-label'>15</span>");
         hist_modal.addClass("history");
         props_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Editable Attributes");
         props_modal.addClass("quick-props");
@@ -197,14 +213,12 @@
         return this;
       },
       renderComponents: function(components) {
-        var component, _i, _len, _results;
-        console.log("rendering components, currIndex is %d", currIndex);
-        _results = [];
+        var component, _i, _len;
         for (_i = 0, _len = components.length; _i < _len; _i++) {
           component = components[_i];
-          _results.push(this[component].render());
+          this[component].render();
         }
-        return _results;
+        return this.model.saved = true;
       },
       generateSection: function(e) {
         var $t;
@@ -227,6 +241,7 @@
           section_title: title,
           properties: this.model.get("properties")
         });
+        this.model.saved = true;
         copy.save(null, {
           success: function() {
             $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
@@ -312,20 +327,27 @@
       },
       events: {
         "click .remove": function(e) {
-          var collection, index;
+          var collection, index, sure;
+          if (this.model.saved === true) {
+            this.model.destroy();
+          } else {
+            sure = confirm("Are you sure you want to close this builder? You haven't saved it.");
+            if (sure === true) {
+              this.model.destroy();
+            } else {
+              return;
+            }
+          }
           index = this.$el.index() - 1;
           collection = this.model.collection;
           if (index === window.currIndex) {
             if (index + 1 < collection.length) {
-              this.$el.next().trigger("click");
+              return this.$el.next().trigger("click");
             } else if (index - 1 >= 0) {
-              this.$el.prev().trigger("click");
+              return this.$el.prev().trigger("click");
             } else {
-              window.currIndex = 0;
+              return window.currIndex = 0;
             }
-          }
-          if (this.model.get("controller").saveSection()) {
-            return this.model.destroy();
           }
         },
         "click": function(e) {
@@ -335,7 +357,7 @@
           index = $t.addClass("current-tab").data("id");
           $t.siblings().removeClass("current-tab");
           $(".control-section").hide();
-          return $(".control-section").eq(window.currIndex).delay(200).show();
+          return $(".control-section").eq(window.currIndex).show();
         }
       }
     });
@@ -368,11 +390,7 @@
       },
       events: {
         "click .add-section": function(e) {
-          sectionIndex += 1;
-          allSections.add(new models.SectionController());
-          e.stopImmediatePropagation();
-          $(".control-section").hide();
-          return $("#section-" + sectionIndex).show();
+          return allSections.add(new models.SectionController());
         }
       }
     });
@@ -383,6 +401,17 @@
           "currentSection": new collections.Elements(),
           "properties": new collections.Properties()
         };
+      },
+      initialize: function() {
+        var self;
+        this.saved = true;
+        self = this;
+        this.get("currentSection").on("all", function() {
+          return self.saved = false;
+        });
+        return this.on("all", function() {
+          return self.saved = false;
+        });
       }
     });
     window.views.DataView = Backbone.View.extend({

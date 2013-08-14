@@ -3,6 +3,11 @@ $(document).ready ->
     window.views = {}
     window.collections = {} 
     window.propertyLink = $("#property-link").html()
+    if !localStorage.settings? then localStorage.settings = {}
+    window.settings = {
+        history_length: localStorage.settings.history_length || 15
+    }
+
     
     # Uses point slope form to compute the slope
     getSlope = (y1,y,x1,x) ->
@@ -15,12 +20,12 @@ $(document).ready ->
             _.each content, (item) ->
                 modal.append(item)
         else modal.html(content)
-        modal.prepend("<div class='close-modal icon'>g</div>")
+        modal.prepend("<i class='close-modal icon-multiply'></i>")
         $(document.body).addClass("active-modal").append(modal)
         modal
 
     window.launchDraggableModal = (content, tagname, appendTo, title) ->
-        title = $("<h2/>").text(title).addClass("drag-handle")
+        title = $("<h2/>").html(title).addClass("drag-handle")
         modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
         title.prependTo modal
         modal.draggable

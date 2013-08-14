@@ -255,7 +255,7 @@ $(document).ready ->
         modelListeners: {}
         initialize: ->
             cc "making a new draggable"
-            _.bindAll(this, "render", "bindDrag","appendChild","bindListeners")
+            _.bindAll(this, "render", "bindDrag","bindListeners")
             @on "bindListeners", @bindListeners
             # Bind the drag event to the el
             do @bindDrag
@@ -327,28 +327,6 @@ $(document).ready ->
                 # $el.hide().fadeIn(325)
             )()
             @
-        appendChild: ( child , opts ) ->
-            # We choose a view to render based on the model's specification, 
-            # or default to a standard draggable.
-            $el = @$el.children(".children")
-            # For table layouts, sometimes things are wrapped in a tbody
-            if $el.length == 0 then $el = $el.find(".children").first()
-            if child['layout-element'] is true then $el.addClass("selected-element")
-            view = child.get("view") || "draggableElement"
-            if child.get("inFlow") is true
-                i = currIndex
-                draggable = $(new views[view]({model: child, index: i}).render().el).addClass("builder-child")
-                if (opts? and !opts.at?)
-                    $el.append(draggable)
-                else 
-                    builderChildren = $el.children(".builder-element")
-                    if builderChildren.eq(opts.at).length 
-                        builderChildren.eq(opts.at).before(draggable)
-                    else $el.append(draggable)
-                globals.setPlaceholders($(draggable), @model.get("child_els"))
-                if allSections.at(currIndex).get("builder")?
-                    console.log "currindex is %d and we're removing extra placeholder", currIndex
-                    allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrag: ->
             that = this
             # Set the element to be draggable.
@@ -401,12 +379,8 @@ $(document).ready ->
             e.stopPropagation()
             e.stopImmediatePropagation()  
         checkPlaceholder: ->
-            # parent = @$el.prev()
-            # console.log @$el, parent, parent.hasClass("layout-wrapper")
-
         applyClasses: ->
             $el = @$el
-            # console.log @model.get "classes"
             # "class" is a reserved keyword. style instead
             _.each @model.get("classes"), (style) ->
                 $el.addClass(style)
@@ -414,7 +388,7 @@ $(document).ready ->
         # Grabs all selected elements and groupes them into a barebones layout
         blankLayout: (e) ->
             cc currIndex
-            collection = allSections.at(currIndex).get("currentSection")
+            collection = allSections.at(window.currIndex).get("currentSection")
             selected = collection.gather()
             if selected.length is 0 or selected.length is 1 then return
             layoutIndex = collection.indexOf(selected[0])
@@ -425,6 +399,29 @@ $(document).ready ->
                 layout.get("child_els").add model
             if e? then e.stopPropagation()
             @
+        exportAsSection: ->
+            title = @model.get "title"
+            if title == "" or typeof title is "undefined" or title == "Default Section Title"
+                alert "You need to enter a title"
+                return false
+            # _.each @model.get("currentSection").models, (model) ->
+            #     model.unset "inFlow", {silent: true}
+            copy = new models.SectionController()
+            wrapper = new collections.Elements()
+            wrapper.add @model
+            copy.set({
+                currentSection: wrapper
+                section_title: title
+            })
+            copy.save(null, {
+                success: ->
+                    $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
+                    $(document.body).addClass("active-modal")
+                    $(".modal").delay(2000).fadeOut "fast", ->
+                        $(@).remove()
+                        $(document.body).removeClass("active-modal")
+            })
+            true
         bindContextMenu:  (e) ->
             if !@contextMenu? then return true
             else if e.shiftKey is true
@@ -459,6 +456,7 @@ $(document).ready ->
                 copy = @model.deepCopy()
                 window.copiedModel = copy
             "click .group-elements": "blankLayout"
+            "click .export": "exportAsSection"
             "click .destroy-element": ->
                 @model.destroy()
             "click .context-menu": (e) ->
