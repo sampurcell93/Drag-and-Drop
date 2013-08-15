@@ -39,7 +39,7 @@ $(document).ready ->
         modal
 
     window.launchDraggableModal = (content, tagname, appendTo, title) ->
-        title = $("<h2/>").html(title).addClass("drag-handle")
+        title = $("<h2/>").html("<i class='icon icon-move'></i>" + title).addClass("drag-handle")
         modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
         title.prependTo modal
         modal.draggable
@@ -58,7 +58,7 @@ $(document).ready ->
             containment: '.container'
             handle: '.drag-handle'
         modal.appendTo(appendTo || document.body)
-        modal.append($("<div/>").addClass("close-arrow icon-uniF48A pointer"))
+        modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer flipped"))
         modal
 
     $.fn.launchModal = (content) ->
@@ -101,3 +101,5 @@ $(document).ready ->
         modal = $t.data("modal")
         $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle()
         $t.find("input").prop("checked", !$t.find("input").prop("checked"))
+
+    $(@).delegate ".draggable-modal h2", "click", ->

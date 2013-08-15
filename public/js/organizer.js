@@ -88,7 +88,7 @@
         if (pos >= this.collection.length) {
           return this.$el.append(itemView);
         } else if (pos === 1) {
-          return this.$el.children(".organizer-header").after(itemView);
+          return this.$el.children(".list-header").after(itemView);
         } else {
           return this.$el.children().eq(pos).before(itemView);
         }

@@ -65,11 +65,19 @@ body {
         border-bottom: 1px solid #000;
     }
 
+    .icon-move {
+        position: absolute;
+        left: 10px;
+    }
+
     .close-arrow {
         position: absolute;
         top: 5px;
         right:5px;
-        font-family: 'icons';
+    }
+
+    .icon {
+        color: $dawn;
     }
 
     .history-modal {

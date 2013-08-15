@@ -71,7 +71,7 @@ $(document).ready ->
             if pos >= @collection.length
                 this.$el.append(itemView)
             else if pos is 1
-                this.$el.children(".organizer-header").after(itemView)
+                this.$el.children(".list-header").after(itemView)
             else 
                 this.$el.children().eq(pos).before(itemView)
 

@@ -105,8 +105,6 @@ $(document).ready ->
                 $t = $(e.currentTarget)
                 if ($t.val() == "")
                     $t.val($t.data("previous-val") || "")
-            'click .history': (e)->
-                @$el.find(".history-modal").slideToggle("fast")
             "click .settings": ->
                 temp = $("#settings-template").html()
                 modal = window.launchModal(_.template temp, window.settings)

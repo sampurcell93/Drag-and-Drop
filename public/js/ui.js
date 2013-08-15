@@ -52,7 +52,7 @@
     };
     window.launchDraggableModal = function(content, tagname, appendTo, title) {
       var modal;
-      title = $("<h2/>").html(title).addClass("drag-handle");
+      title = $("<h2/>").html("<i class='icon icon-move'></i>" + title).addClass("drag-handle");
       modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
       title.prependTo(modal);
       modal.draggable({
@@ -77,7 +77,7 @@
         handle: '.drag-handle'
       });
       modal.appendTo(appendTo || document.body);
-      modal.append($("<div/>").addClass("close-arrow icon-uniF48A pointer"));
+      modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer flipped"));
       return modal;
     };
     $.fn.launchModal = function(content) {
@@ -115,13 +115,14 @@
       $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle();
       return e.stopPropagation();
     });
-    return $(this).delegate("[data-modal]", "click", function(e) {
+    $(this).delegate("[data-modal]", "click", function(e) {
       var $t, modal;
       $t = $(this);
       modal = $t.data("modal");
       $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle();
       return $t.find("input").prop("checked", !$t.find("input").prop("checked"));
     });
+    return $(this).delegate(".draggable-modal h2", "click", function() {});
   });
 
 }).call(this);

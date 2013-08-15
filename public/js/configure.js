@@ -109,9 +109,6 @@
             return $t.val($t.data("previous-val") || "");
           }
         },
-        'click .history': function(e) {
-          return this.$el.find(".history-modal").slideToggle("fast");
-        },
         "click .settings": function() {
           var modal, temp;
           temp = $("#settings-template").html();
