@@ -169,10 +169,6 @@
 
       _Class.prototype.template = $("#custom-header").html();
 
-      _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
-
       return _Class;
 
     })(window.views.genericElement);
@@ -222,10 +218,6 @@
 
       _Class.prototype.template = $("#custom-link").html();
 
-      _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
-
       return _Class;
 
     })(window.views.genericElement);
@@ -266,10 +258,6 @@
 
       _Class.prototype.template = $("#dropdown").html();
 
-      _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
-
       return _Class;
 
     })(window.views.genericElement);
@@ -282,10 +270,6 @@
       }
 
       _Class.prototype.tagName = 'td class="builder-element"';
-
-      _Class.prototype.initialize = function(options) {
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
 
       return _Class;
 

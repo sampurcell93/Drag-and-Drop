@@ -500,7 +500,7 @@
         "click .hide-properties": function(e) {
           var $t;
           $t = $(e.currentTarget);
-          $t.children(".icon").toggleClass("flipped");
+          $t.find("span").toggleClass("flipped");
           return $t.siblings("li").fadeToggle("fast");
         }
       }

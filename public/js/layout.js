@@ -136,7 +136,8 @@
           i = currIndex;
           draggable = $(new views[view]({
             model: child,
-            index: i
+            index: i,
+            parent: this.$el
           }).render().el).addClass("builder-child");
           if ((opts != null) && (opts.at == null)) {
             $el.append(draggable);

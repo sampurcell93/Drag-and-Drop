@@ -233,12 +233,25 @@ $(document).ready ->
         className: 'builder-element'
         modelListeners: {}
         initialize: ->
-            _.bindAll(this, "render", "bindDrag","bindListeners")
+            _.bindAll(this, "render", "bindDrag","bindListeners", "bindResize")
             @on "bindListeners", @bindListeners
             # Bind the drag event to the el
-            do @bindDrag
+            # do @bindDrag
             # Bind all model listeners
             do @bindListeners
+            # Bind resizable
+        bindResize: ->
+            parent = @options.parent
+            parent_width = parent.width()
+            grid_block = (parent_width) / 6
+            @$el.resizable
+                handles: "e, w"
+                containment: 'parent'
+                grid: grid_block
+                resize: (e, ui) ->
+                    parent_width = parent.width()
+                    grid_block = (parent_width) / 6
+                    $(@).resizable("option", "grid", grid_block)
         bindListeners: ->
             self = @
             # Unbind previous listeners
@@ -304,6 +317,7 @@ $(document).ready ->
             (@afterRender || -> 
                 # $el.hide().fadeIn(325)
             )()
+            do @bindResize
             @
         bindDrag: ->
             that = this
@@ -514,7 +528,7 @@ $(document).ready ->
         append: (element, opts) ->
             view = element.get("view")
             element.set("child_els", @collection)
-            @$el.append draggable = $(new views[view]({model: element}).render().el)
+            @$el.append draggable = $(new views[view]({model: element, parent: @$el}).render().el)
             @removeExtraPlaceholders()
             draggable
         removeExtraPlaceholders: ->

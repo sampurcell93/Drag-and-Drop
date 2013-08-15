@@ -405,7 +405,7 @@ $(document).ready ->
                     that.model.destroy()
             "click .hide-properties": (e) ->
                 $t = $(e.currentTarget)
-                $t.children(".icon").toggleClass("flipped")
+                $t.find("span").toggleClass("flipped")
                 $t.siblings("li").fadeToggle("fast")
     })
 

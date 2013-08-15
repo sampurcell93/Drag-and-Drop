@@ -150,7 +150,7 @@ section.builder-container {
     position: relative;
     padding: 2px 3px;
     margin: 0px 1%;
-    @include transition(width .2s ease-in-out, height .2s ease-in-out);
+    // @include transition(width .2s ease-in-out, height .2s ease-in-out);
     @include border-radius(3px);
     // @include clearfix();
     outline: 1px dashed $medblue;
@@ -159,8 +159,7 @@ section.builder-container {
     *zoom: 1;
     cursor: move;
     text-overflow: ellipsis;
-    display: table;
-    max-width: 100% !important;
+    max-width: 98% ;
 
     ul, ol, dl {
         list-style-position: inside !important;

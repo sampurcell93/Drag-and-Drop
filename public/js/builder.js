@@ -356,10 +356,26 @@
       draggableElement.prototype.modelListeners = {};
 
       draggableElement.prototype.initialize = function() {
-        _.bindAll(this, "render", "bindDrag", "bindListeners");
+        _.bindAll(this, "render", "bindDrag", "bindListeners", "bindResize");
         this.on("bindListeners", this.bindListeners);
-        this.bindDrag();
         return this.bindListeners();
+      };
+
+      draggableElement.prototype.bindResize = function() {
+        var grid_block, parent, parent_width;
+        parent = this.options.parent;
+        parent_width = parent.width();
+        grid_block = parent_width / 6;
+        return this.$el.resizable({
+          handles: "e, w",
+          containment: 'parent',
+          grid: grid_block,
+          resize: function(e, ui) {
+            parent_width = parent.width();
+            grid_block = parent_width / 6;
+            return $(this).resizable("option", "grid", grid_block);
+          }
+        });
       };
 
       draggableElement.prototype.bindListeners = function() {
@@ -443,6 +459,7 @@
         this.checkPlaceholder();
         this.$(".view-attrs").first().trigger("click");
         (this.afterRender || function() {})();
+        this.bindResize();
         return this;
       };
 
@@ -746,7 +763,8 @@
         view = element.get("view");
         element.set("child_els", this.collection);
         this.$el.append(draggable = $(new views[view]({
-          model: element
+          model: element,
+          parent: this.$el
         }).render().el));
         this.removeExtraPlaceholders();
         return draggable;

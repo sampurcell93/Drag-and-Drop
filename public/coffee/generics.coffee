@@ -146,8 +146,7 @@ $(document).ready ->
 
     class window.views['CustomHeader'] extends window.views.genericElement
         template: $("#custom-header").html()
-        initialize: (options) ->
-            super
+
 
     class window.views['CustomText'] extends window.views.genericElement
         template: $("#custom-text").html()
@@ -164,8 +163,6 @@ $(document).ready ->
 
     class window.views['Link'] extends window.views.genericElement
         template: $("#custom-link").html()
-        initialize: (options) ->
-            super 
 
     class window.views['DateTime'] extends window.views.genericElement
         template: $("#date-time").html()
@@ -179,9 +176,6 @@ $(document).ready ->
 
     class window.views['Dropdown'] extends window.views.genericElement
         template: $("#dropdown").html()
-        initialize: (options) ->
-            super 
+
     class window.views['TableCell'] extends window.views.genericElement
         tagName: 'td class="builder-element"'
-        initialize: (options) ->
-            super 

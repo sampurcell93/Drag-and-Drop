@@ -133,7 +133,7 @@ $(document).ready ->
             view = child.get("view") || "draggableElement"
             if child.get("inFlow") is true
                 i = currIndex
-                draggable = $(new views[view]({model: child, index: i}).render().el).addClass("builder-child")
+                draggable = $(new views[view]({model: child, index: i, parent: @$el}).render().el).addClass("builder-child")
                 if (opts? and !opts.at?)
                     $el.append(draggable)
                 else 
@@ -197,8 +197,6 @@ $(document).ready ->
                 $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el) 
             @model.on "render": ->
                 self.render(true)
-
-
         appendChild: ->
             super
             if (@model.get("child_els").length is 0)
