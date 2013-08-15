@@ -16,6 +16,13 @@
 
       Actives.prototype.tagName = 'ul';
 
+      Actives.prototype.initialize = function() {
+        return this.listenTo(this.model, {
+          "change": this.render,
+          "remove": this.remove
+        });
+      };
+
       Actives.prototype.render = function() {
         this.quickAttrs();
         return this;

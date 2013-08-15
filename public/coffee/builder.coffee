@@ -207,10 +207,7 @@ $(document).ready ->
                     $(".over").removeClass("over")
                     if $(document.body).hasClass("active-modal") then return false
                     dropZone = $(e.target)
-                    if (dropZone.closest(".builder-element").length)
-                        insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev())
-                    else   
-                        insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev())
+                    insertAt = dropZone.siblings(".builder-element").index(dropZone.prev())
                     # if (ui.draggable.index() > dropZone.index() or ui.draggable.hasClass("generic-item"))
                     insertAt += 1
                     curr = window.currentDraggingModel
@@ -236,7 +233,7 @@ $(document).ready ->
             _.bindAll(this, "render", "bindDrag","bindListeners", "bindResize")
             @on "bindListeners", @bindListeners
             # Bind the drag event to the el
-            # do @bindDrag
+            do @bindDrag
             # Bind all model listeners
             do @bindListeners
             # Bind resizable
@@ -245,13 +242,20 @@ $(document).ready ->
             parent_width = parent.width()
             grid_block = (parent_width) / 6
             @$el.resizable
-                handles: "e, w"
+                handles: "e"
                 containment: 'parent'
                 grid: grid_block
+                autoHide: true
                 resize: (e, ui) ->
+                    # Get the width fo the parent in divide it into sixths
                     parent_width = parent.width()
+                    # We need to set this each time so that if the window is resized, the grid changes
                     grid_block = (parent_width) / 6
                     $(@).resizable("option", "grid", grid_block)
+                    # Stop a bug where draggable interferes with resizable
+                    ui.helper.css({"position": "relative", "top":"", "left":""})
+                start: (e, ui) ->
+                    ui.helper.css({"position": "relative", "top":"", "left":""})
         bindListeners: ->
             self = @
             # Unbind previous listeners
@@ -323,7 +327,7 @@ $(document).ready ->
             that = this
             # Set the element to be draggable.
             @$el.draggable
-                cancel: ".no-drag, .context-menu"
+                cancel: ".no-drag, .context-menu, .ui-resizable-handle"
                 revert: true
                 scrollSensitivity: 100
                 helper: ->
@@ -477,9 +481,13 @@ $(document).ready ->
                 # So as to stop the parent list from closing
                 e.preventDefault()
                 e.stopPropagation()          
-            "click .view-attrs": ->
+            "click .view-attrs": (e) ->
                 props = new views.toolbelt.Actives({model: @model}).render().el
                 $(".quick-props").find("ul").html props
+                if e? and e.isTrigger is true then return 
+                button = $(".quick-props").find(".close-arrow")
+                if !button.hasClass("flipped")
+                    button.trigger "click"
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 # e.stopImmediatePropagation()

@@ -52,9 +52,10 @@
         });
       },
       render: function(e) {
-        var $el, that;
+        var $el, index, that;
         $el = this.$el;
         that = this;
+        index = window.currIndex;
         _.each(this.collection.models, function(el) {
           return that.append(el, {
             index: index,

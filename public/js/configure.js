@@ -171,6 +171,7 @@
         css_modal = window.launchDraggableModal($("<ul/>"), null, toolbelt, "Skin Format");
         css_modal.addClass("quick-css");
         existing_modal = window.launchDraggableModal($("<ul/>").addClass("existing-sections-layouts"), null, toolbelt, "Recent Sections");
+        existing_modal.addClass("existing-modal");
         $o_el.droppable({
           accept: '.moved',
           greedy: true,

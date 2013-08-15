@@ -58,7 +58,7 @@ $(document).ready ->
             containment: '.container'
             handle: '.drag-handle'
         modal.prependTo(appendTo || document.body)
-        modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer flipped"))
+        modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer"))
         modal
 
     $.fn.launchModal = (content) ->
@@ -93,13 +93,13 @@ $(document).ready ->
     $(@).delegate "[data-modal] input", "click", (e) ->
         $t = $(this)
         modal = $t.parent().data("modal")
-        $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle()
+        $(".control-section").eq(currIndex).find(".draggable-modal." + modal).toggle("slide", { direction: "left" }, 200)
         e.stopPropagation()
 
     $(@).delegate "[data-modal]", "click", (e) ->
         $t = $(this)
         modal = $t.data("modal")
-        $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle()
+        $(".control-section").eq(currIndex).find(".draggable-modal." + modal).toggle("slide", { direction: "left" }, 200)
         $t.find("input").prop("checked", !$t.find("input").prop("checked"))
 
     $(@).delegate ".draggable-modal h2", "click", ->

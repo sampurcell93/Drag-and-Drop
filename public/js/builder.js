@@ -308,11 +308,7 @@
               return false;
             }
             dropZone = $(e.target);
-            if ((dropZone.closest(".builder-element").length)) {
-              insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev());
-            } else {
-              insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev());
-            }
+            insertAt = dropZone.siblings(".builder-element").index(dropZone.prev());
             insertAt += 1;
             curr = window.currentDraggingModel;
             parent = self.collection.model;
@@ -358,6 +354,7 @@
       draggableElement.prototype.initialize = function() {
         _.bindAll(this, "render", "bindDrag", "bindListeners", "bindResize");
         this.on("bindListeners", this.bindListeners);
+        this.bindDrag();
         return this.bindListeners();
       };
 
@@ -367,13 +364,26 @@
         parent_width = parent.width();
         grid_block = parent_width / 6;
         return this.$el.resizable({
-          handles: "e, w",
+          handles: "e",
           containment: 'parent',
           grid: grid_block,
+          autoHide: true,
           resize: function(e, ui) {
             parent_width = parent.width();
             grid_block = parent_width / 6;
-            return $(this).resizable("option", "grid", grid_block);
+            $(this).resizable("option", "grid", grid_block);
+            return ui.helper.css({
+              "position": "relative",
+              "top": "",
+              "left": ""
+            });
+          },
+          start: function(e, ui) {
+            return ui.helper.css({
+              "position": "relative",
+              "top": "",
+              "left": ""
+            });
           }
         });
       };
@@ -467,7 +477,7 @@
         var that;
         that = this;
         return this.$el.draggable({
-          cancel: ".no-drag, .context-menu",
+          cancel: ".no-drag, .context-menu, .ui-resizable-handle",
           revert: true,
           scrollSensitivity: 100,
           helper: function() {
@@ -683,12 +693,19 @@
           e.preventDefault();
           return e.stopPropagation();
         },
-        "click .view-attrs": function() {
-          var props;
+        "click .view-attrs": function(e) {
+          var button, props;
           props = new views.toolbelt.Actives({
             model: this.model
           }).render().el;
-          return $(".quick-props").find("ul").html(props);
+          $(".quick-props").find("ul").html(props);
+          if ((e != null) && e.isTrigger === true) {
+            return;
+          }
+          button = $(".quick-props").find(".close-arrow");
+          if (!button.hasClass("flipped")) {
+            return button.trigger("click");
+          }
         },
         "click .remove-from-flow": function(e) {
           e.stopPropagation();

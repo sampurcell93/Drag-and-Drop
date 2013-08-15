@@ -45,6 +45,7 @@ $(document).ready ->
             $el = @$el
             # $el.children().not(".list-header, .placeholder").remove()
             that = @
+            index = window.currIndex
             _.each @collection.models, (el) ->
                 that.append el, {index: index, outOfFlow: false}
             @

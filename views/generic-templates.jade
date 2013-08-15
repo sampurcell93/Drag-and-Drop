@@ -36,11 +36,12 @@ script(type='text/template')#date-time
         span.label-text.date-picker Pick a Date/Time
 script(type='text/template')#dropdown
 script(type='text/template')#builder-wrap
+    p.placeholder.center You have not added anything to the section yet.
     ul.children
 script(type='text/template')#property-template
         h3 <%= property.name.clean() %>
         label
-        <% if (editable == true) { %> 
+        <% if (editable == "true) { %> 
         <input placeholder='<%= className + "." + property.name.clean() %>' />
         <%} else { %>
         h3.title

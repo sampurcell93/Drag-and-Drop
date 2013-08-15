@@ -193,10 +193,10 @@ $(document).ready ->
             super
             self = @
             _.bindAll(@, "afterRender")
-            if (@model.get("child_els").length is 0)
-                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el) 
             @model.on "render": ->
                 self.render(true)
+        # We don't want this to be resizable
+        bindResize: ->
         appendChild: ->
             super
             if (@model.get("child_els").length is 0)

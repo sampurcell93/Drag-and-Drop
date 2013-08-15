@@ -77,7 +77,7 @@
         handle: '.drag-handle'
       });
       modal.prependTo(appendTo || document.body);
-      modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer flipped"));
+      modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer"));
       return modal;
     };
     $.fn.launchModal = function(content) {
@@ -112,14 +112,18 @@
       var $t, modal;
       $t = $(this);
       modal = $t.parent().data("modal");
-      $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle();
+      $(".control-section").eq(currIndex).find(".draggable-modal." + modal).toggle("slide", {
+        direction: "left"
+      }, 200);
       return e.stopPropagation();
     });
     $(this).delegate("[data-modal]", "click", function(e) {
       var $t, modal;
       $t = $(this);
       modal = $t.data("modal");
-      $(".control-section").eq(currIndex).find(".draggable-modal." + modal).slideToggle();
+      $(".control-section").eq(currIndex).find(".draggable-modal." + modal).toggle("slide", {
+        direction: "left"
+      }, 200);
       return $t.find("input").prop("checked", !$t.find("input").prop("checked"));
     });
     return $(this).delegate(".draggable-modal h2", "click", function() {});

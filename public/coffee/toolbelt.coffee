@@ -3,6 +3,11 @@ $ ->
 
     class toolbelt.Actives extends Backbone.View
         tagName: 'ul'
+        initialize: ->
+            @listenTo @model, {
+                "change": @render
+                "remove": @remove
+            }
         render: ->
             @quickAttrs()
             @
