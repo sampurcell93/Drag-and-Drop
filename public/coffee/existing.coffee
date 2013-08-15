@@ -12,9 +12,10 @@ $(document).ready ->
             @render()
         render: ->
             $el = @$el
+            self = @
             _.each @collection.models, (section, i) ->
                 if i == 0
-                    @$(".placeholder").remove()
+                    self.$(".placeholder").remove()
                 $el.append new views.SingleSectionWireFrame({model: section}).render().el
     }
 

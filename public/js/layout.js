@@ -230,6 +230,8 @@
 
       _Class.prototype.className = 'builder-scaffold';
 
+      _Class.prototype.template = $("#builder-wrap").html();
+
       _Class.prototype.initialize = function() {
         var self;
         _Class.__super__.initialize.apply(this, arguments);
@@ -244,8 +246,6 @@
           }
         });
       };
-
-      _Class.prototype.template = $("#builder-wrap").html();
 
       _Class.prototype.appendChild = function() {
         _Class.__super__.appendChild.apply(this, arguments);

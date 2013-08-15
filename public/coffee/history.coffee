@@ -173,8 +173,8 @@ $ ->
             @
         append: (snapshot) ->
             $el = @$el
-            $el.find(".placeholder").hide()
-            $el.find(".selected-history").removeClass("selected-history")
+            @$(".placeholder").hide()
+            @$(".selected-history").removeClass("selected-history")
             SnapItem = new history.Snapshot({model: snapshot, controller: @controller, current: @})
             $el.append SnapItem.render().el
             $el.children().last().addClass("selected-history")

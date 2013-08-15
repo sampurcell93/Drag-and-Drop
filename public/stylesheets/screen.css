@@ -1045,9 +1045,17 @@ ol.generic-list {
   font-size: .9em;
   position: relative;
   left: 15px;
-  top: 6px;
+  top: 1px;
+  text-align: center;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+  background: #000;
+  padding: 5px 3px 5px 5px;
 }
-/* line 483, ../sass/builder.scss */
+/* line 487, ../sass/builder.scss */
 .organize-elements li {
   position: relative;
   min-height: 30px;
@@ -1063,11 +1071,11 @@ ol.generic-list {
   text-align: left !important;
   text-overflow: ellipsis !important;
 }
-/* line 498, ../sass/builder.scss */
+/* line 502, ../sass/builder.scss */
 .organize-elements li .destroy-element, .organize-elements li .activate-element {
   display: none;
 }
-/* line 500, ../sass/builder.scss */
+/* line 504, ../sass/builder.scss */
 .organize-elements li .sort-element {
   left: 4px;
   top: 0px;
@@ -1075,15 +1083,15 @@ ol.generic-list {
   cursor: hand;
   width: 12px;
 }
-/* line 507, ../sass/builder.scss */
+/* line 511, ../sass/builder.scss */
 .organize-elements li .sort-element:before {
   left: 3px;
 }
-/* line 512, ../sass/builder.scss */
+/* line 516, ../sass/builder.scss */
 .organize-elements li .child-list {
   margin-left: -18px;
 }
-/* line 515, ../sass/builder.scss */
+/* line 519, ../sass/builder.scss */
 .organize-elements li .child-list li:first-child::after {
   content: "";
   display: block;
@@ -1100,20 +1108,20 @@ ol.generic-list {
   position: absolute;
   left: 0;
 }
-/* line 530, ../sass/builder.scss */
+/* line 534, ../sass/builder.scss */
 .organize-elements li.out-of-flow {
   background: #000;
 }
-/* line 533, ../sass/builder.scss */
+/* line 537, ../sass/builder.scss */
 .organize-elements li.out-of-flow > .destroy-element, .organize-elements li.out-of-flow > .activate-element {
   display: block;
   background: #000;
 }
-/* line 534, ../sass/builder.scss */
+/* line 538, ../sass/builder.scss */
 .organize-elements li.out-of-flow .sort-element {
   background: #313131;
 }
-/* line 537, ../sass/builder.scss */
+/* line 541, ../sass/builder.scss */
 .organize-elements li .activate-element, .organize-elements li .destroy-element {
   position: absolute;
   right: 10px;
@@ -1122,7 +1130,7 @@ ol.generic-list {
   color: #7FBA50;
   cursor: pointer;
 }
-/* line 545, ../sass/builder.scss */
+/* line 549, ../sass/builder.scss */
 .organize-elements li .destroy-element {
   right: 33px;
   color: #888;
@@ -2728,8 +2736,10 @@ ul li.selected-choice {
 .sidebar-controls.hidden-sidebar .hide-sidebar {
   left: 4px;
   top: -2px;
+  background: transparent;
+  padding: 0;
 }
-/* line 375, ../sass/screen.scss */
+/* line 377, ../sass/screen.scss */
 .sidebar-controls .list-header {
   text-align: center !important;
   font-size: 1.3em;
@@ -2737,7 +2747,7 @@ ul li.selected-choice {
   background: #313131;
   border-bottom: 1px solid #000;
 }
-/* line 383, ../sass/screen.scss */
+/* line 385, ../sass/screen.scss */
 .sidebar-controls .placeholder {
   border: 1px solid #5b747f !important;
   margin: 7px auto;
@@ -2750,20 +2760,20 @@ ul li.selected-choice {
   -o-border-radius: 3px;
   border-radius: 3px;
 }
-/* line 392, ../sass/screen.scss */
+/* line 394, ../sass/screen.scss */
 .sidebar-controls.main-controls {
   left: 0;
 }
-/* line 395, ../sass/screen.scss */
+/* line 397, ../sass/screen.scss */
 .sidebar-controls.main-controls li {
   height: 80px;
   padding-top: 45px;
 }
-/* line 399, ../sass/screen.scss */
+/* line 401, ../sass/screen.scss */
 .sidebar-controls.main-controls li li {
   height: auto;
 }
-/* line 404, ../sass/screen.scss */
+/* line 406, ../sass/screen.scss */
 .sidebar-controls.existing-sections-layouts {
   border-left: 1px solid #222;
   right: 0;
@@ -2771,15 +2781,15 @@ ul li.selected-choice {
   width: 15%;
   list-style: none !important;
 }
-/* line 411, ../sass/screen.scss */
+/* line 413, ../sass/screen.scss */
 .sidebar-controls.existing-sections-layouts li {
   padding: 8px 8px 0 8px;
 }
-/* line 413, ../sass/screen.scss */
+/* line 415, ../sass/screen.scss */
 .sidebar-controls.existing-sections-layouts li:hover {
   text-decoration: underline;
 }
-/* line 419, ../sass/screen.scss */
+/* line 421, ../sass/screen.scss */
 .sidebar-controls.existing-sections-layouts li h3 {
   -webkit-box-shadow: 0px -2px 5px #222222;
   -moz-box-shadow: 0px -2px 5px #222222;
@@ -2790,18 +2800,18 @@ ul li.selected-choice {
   left: -2%;
   position: relative;
 }
-/* line 428, ../sass/screen.scss */
+/* line 430, ../sass/screen.scss */
 .sidebar-controls.existing-sections-layouts .thumb-object {
   border: 1px solid #5b747f;
   margin: 1px 0;
   padding: 4px;
 }
-/* line 434, ../sass/screen.scss */
+/* line 436, ../sass/screen.scss */
 .sidebar-controls.accessories {
   right: 0;
   width: 18%;
 }
-/* line 439, ../sass/screen.scss */
+/* line 441, ../sass/screen.scss */
 .sidebar-controls li {
   text-align: center;
   vertical-align: bottom;
@@ -2810,7 +2820,7 @@ ul li.selected-choice {
   cursor: pointer;
   position: relative;
 }
-/* line 447, ../sass/screen.scss */
+/* line 449, ../sass/screen.scss */
 .sidebar-controls li:before {
   position: absolute;
   font-size: 1.3em;
@@ -2819,28 +2829,28 @@ ul li.selected-choice {
   width: 100%;
   text-align: center;
 }
-/* line 455, ../sass/screen.scss */
+/* line 457, ../sass/screen.scss */
 .sidebar-controls li:last-of-type {
   border-bottom: none;
 }
-/* line 458, ../sass/screen.scss */
+/* line 460, ../sass/screen.scss */
 .sidebar-controls li:hover {
   background: #333;
   border-top-color: #3e4951;
 }
-/* line 462, ../sass/screen.scss */
+/* line 464, ../sass/screen.scss */
 .sidebar-controls li:hover li:empty {
   background: #000;
 }
-/* line 465, ../sass/screen.scss */
+/* line 467, ../sass/screen.scss */
 .sidebar-controls li:hover::before {
   text-shadow: 0px -1px 3px #fff;
 }
-/* line 469, ../sass/screen.scss */
+/* line 471, ../sass/screen.scss */
 .sidebar-controls li:hover .hidden-menu {
   display: block;
 }
-/* line 471, ../sass/screen.scss */
+/* line 473, ../sass/screen.scss */
 .sidebar-controls li .hidden-menu {
   display: none;
   max-height: 400px;
@@ -2853,13 +2863,13 @@ ul li.selected-choice {
   border-left: 1px solid #777;
   overflow-y: scroll;
 }
-/* line 483, ../sass/screen.scss */
+/* line 485, ../sass/screen.scss */
 .sidebar-controls li .hidden-menu.with-checkboxes input {
   position: absolute;
   top: 13px;
   left: 10px;
 }
-/* line 490, ../sass/screen.scss */
+/* line 492, ../sass/screen.scss */
 .sidebar-controls li .hidden-menu li {
   position: relative;
   min-height: 30px;
@@ -2867,63 +2877,63 @@ ul li.selected-choice {
   line-height: 40px;
 }
 
-/* line 500, ../sass/screen.scss */
+/* line 502, ../sass/screen.scss */
 .ahead-of-flow {
   background: #222;
   color: #fff;
   border-top: none;
 }
-/* line 505, ../sass/screen.scss */
+/* line 507, ../sass/screen.scss */
 .ahead-of-flow:hover {
   background: #222 !important;
 }
 
-/* line 508, ../sass/screen.scss */
+/* line 510, ../sass/screen.scss */
 .accessories {
   overflow-y: auto;
   overflow-x: visible;
 }
-/* line 513, ../sass/screen.scss */
+/* line 515, ../sass/screen.scss */
 .accessories.hidden-sidebar :not(".hide-sidebar") {
   display: none;
 }
-/* line 517, ../sass/screen.scss */
+/* line 519, ../sass/screen.scss */
 .accessories .draggable-modal {
   position: relative !important;
   width: 100%;
   margin: 3px auto 10px;
 }
-/* line 522, ../sass/screen.scss */
+/* line 524, ../sass/screen.scss */
 .accessories .draggable-modal > ul {
   max-height: 400px;
   overflow: auto;
 }
 
-/* line 530, ../sass/screen.scss */
+/* line 532, ../sass/screen.scss */
 [data-attr] span[contentEditable], [data-attr] span[contenteditable] {
   padding: 2px 10px;
   background: #222;
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
 }
-/* line 536, ../sass/screen.scss */
+/* line 538, ../sass/screen.scss */
 [data-attr] span[contentEditable]:focus, [data-attr] span[contenteditable]:focus {
   outline: none;
   border-left: 1px solid #5b747f;
   border-right: 1px solid #5b747f;
 }
 
-/* line 544, ../sass/screen.scss */
+/* line 546, ../sass/screen.scss */
 .ui-slider-handle {
   background: #3e4951 !important;
 }
 
-/* line 548, ../sass/screen.scss */
+/* line 550, ../sass/screen.scss */
 .disabled {
   background: #ddd;
   color: #777;
 }
-/* line 552, ../sass/screen.scss */
+/* line 554, ../sass/screen.scss */
 .disabled:hover {
   background: #ddd !important;
   color: #777 !important;

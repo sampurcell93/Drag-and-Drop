@@ -188,6 +188,7 @@ $(document).ready ->
         controls: null
         contextMenu: $("#placeholder-context").html()
         className: 'builder-scaffold'
+        template: $("#builder-wrap").html()
         initialize: ->
             super
             self = @
@@ -196,7 +197,8 @@ $(document).ready ->
                 $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el) 
             @model.on "render": ->
                 self.render(true)
-        template: $("#builder-wrap").html()
+
+
         appendChild: ->
             super
             if (@model.get("child_els").length is 0)

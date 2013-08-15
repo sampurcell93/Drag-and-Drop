@@ -143,7 +143,6 @@ $(document).ready ->
                 snapshots: @snaps
                 collection: section
             })
-
             # The controller now has a reference to the builder
             @builder = new views.SectionBuilder({
                 controller: @model

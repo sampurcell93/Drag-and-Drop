@@ -11,11 +11,12 @@
         return this.render();
       },
       render: function() {
-        var $el;
+        var $el, self;
         $el = this.$el;
+        self = this;
         return _.each(this.collection.models, function(section, i) {
           if (i === 0) {
-            this.$(".placeholder").remove();
+            self.$(".placeholder").remove();
           }
           return $el.append(new views.SingleSectionWireFrame({
             model: section

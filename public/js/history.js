@@ -200,8 +200,8 @@
       append: function(snapshot) {
         var $el, SnapItem;
         $el = this.$el;
-        $el.find(".placeholder").hide();
-        $el.find(".selected-history").removeClass("selected-history");
+        this.$(".placeholder").hide();
+        this.$(".selected-history").removeClass("selected-history");
         SnapItem = new history.Snapshot({
           model: snapshot,
           controller: this.controller,

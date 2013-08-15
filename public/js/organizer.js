@@ -46,21 +46,15 @@
           },
           "remove": function() {
             if (that.collection.length === 0) {
-              return $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(that.$el);
+              return $("<li/>").addClass("placeholder").text("No content here.").appendTo(that.$el);
             }
           }
         });
       },
       render: function(e) {
-        var $el, index, outOfFlow, that;
+        var $el, that;
         $el = this.$el;
-        $el.children().not(".list-header, .placeholder").remove();
-        if (this.collection.length === 0) {
-          $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(this.$el);
-        }
         that = this;
-        outOfFlow = [];
-        index = that.options.index || sectionIndex;
         _.each(this.collection.models, function(el) {
           return that.append(el, {
             index: index,

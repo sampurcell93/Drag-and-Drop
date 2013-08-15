@@ -39,19 +39,15 @@ $(document).ready ->
                         that.append(model, options)
                 "remove": ->
                     if that.collection.length is 0
-                        $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(that.$el)
+                        $("<li/>").addClass("placeholder").text("No content here.").appendTo(that.$el)
             })
         render: (e) ->
             $el = @$el
-            $el.children().not(".list-header, .placeholder").remove()
-            if @collection.length is 0
-                $("<li/>").addClass("placeholder").text("No Content Here.").appendTo(@$el)
-            that = this
-            outOfFlow = []
-            index = that.options.index || sectionIndex
+            # $el.children().not(".list-header, .placeholder").remove()
+            that = @
             _.each @collection.models, (el) ->
-                that.append(el, {index: index, outOfFlow: false})
-            this
+                that.append el, {index: index, outOfFlow: false}
+            @
         # Method to avoid having ot rerender an entire list on add
         append: ( element, options ) -> 
             # Because the only mechanism of sorting is the sortable ui itself,
