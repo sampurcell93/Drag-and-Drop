@@ -186,7 +186,8 @@ $(document).ready ->
 
     class window.views['BuilderWrapper'] extends window.views.layout
         controls: null
-        contextMenu: null
+        contextMenu: $("#placeholder-context").html()
+        className: 'builder-scaffold'
         initialize: ->
             super
             self = @
@@ -218,7 +219,6 @@ $(document).ready ->
                     $item = $(ui.unselecting)
                     $item.trigger "deselect"
             }
-            @$el.addClass("builder-scaffold")
 
     class views["table"] extends views["layout"]
         tagName: 'table'
@@ -328,7 +328,7 @@ $(document).ready ->
         itemName: 'tabItem'
         tagName: 'div class="builder-element tab-layout column six"'
         initialize: ->
-            @model.set("type", "Tab Layout")
+            @model.set("type", "Tab Layout", {silent: true})
             _.bindAll @, "afterRender"
             self = @
             @listenTo @model.get("child_els"), {
@@ -337,7 +337,6 @@ $(document).ready ->
                         self.$el.children(".placeholder-text").show()
             }
             @model.get("child_els").on "add", ->
-                cc "addd ON"
                 self.$el.children(".placeholder-text").hide()
             super
         afterRender: ->

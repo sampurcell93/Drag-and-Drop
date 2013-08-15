@@ -119,6 +119,10 @@ $(document).ready ->
                         $(".history-length-label").text(ui.value)
 
                 })
+            "click .hide-sidebar": (e) ->
+                @$(".accessories").toggleClass("hidden-sidebar")
+                @$el.find(".section-builder-wrap").last().toggleClass("no-sidebar")
+                $(e.currentTarget).toggleClass("flipped")
         setProps: ->
             that = @
             if !opts? 
@@ -154,17 +158,18 @@ $(document).ready ->
             }
 
             $o_el = @$el.find(".accessories")
-            hist_modal = window.launchDraggableModal(@histList.render().el, null, $o_el, "History - Recent <span class='history-length-label'>15</span>")
+            toolbelt = @$(".toolbelt")
+
+            hist_modal = window.launchDraggableModal(@histList.render().el, null, toolbelt, "History - Recent <span class='history-length-label'>15</span>")
             hist_modal.addClass("history")
 
-            props_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Editable Attributes")
+            props_modal = window.launchDraggableModal($("<ul/>"), null, toolbelt, "Editable Attributes")
             props_modal.addClass("quick-props")
 
-            css_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Skin Format")
+            css_modal = window.launchDraggableModal($("<ul/>"), null, toolbelt, "Skin Format")
             css_modal.addClass("quick-css")
 
-            existing_modal = window.launchDraggableModal($("<ul/>").addClass("hidden"), null, $o_el, "Recent Sections")
-            existing_modal.addClass("existing-sections-layouts")
+            existing_modal = window.launchDraggableModal($("<ul/>").addClass("existing-sections-layouts"), null, toolbelt, "Recent Sections")
 
             $o_el.droppable
                 accept: '.moved'

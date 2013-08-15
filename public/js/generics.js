@@ -241,11 +241,16 @@
 
       _Class.prototype.initialize = function(options) {
         _.bindAll(this, "afterRender");
+        if (typeof this.model.get("display") === "undefined") {
+          this.model.set("display", "full", {
+            silent: true
+          });
+        }
         return _Class.__super__.initialize.apply(this, arguments);
       };
 
       _Class.prototype.afterRender = function() {
-        return this.$el.find(".date-picker").datepicker();
+        return this.$(".date-picker").first().datepicker();
       };
 
       return _Class;

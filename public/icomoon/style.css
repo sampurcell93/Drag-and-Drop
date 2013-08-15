@@ -27,7 +27,7 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="icon-"] {
 */
-.icon-cogs, .icon-cog, .icon-magnifier, .icon-tags, .icon-list, .icon-checkmark, .icon-braces, .icon-uniF47C, .icon-reload, .icon-selectionadd, .icon-selectionrmove, .icon-uniF48A, .icon-uniF48B, .icon-refresh, .icon-resize-vertical, .icon-caret-up, .icon-caret-down, .icon-sign-blank, .icon-remove, .icon-remove-2, .icon-paragraph-left, .icon-stats, .icon-link, .icon-image, .icon-cabinet, .icon-paragraph-center, .icon-download, .icon-wrench, .icon-move, .icon-multiply, .icon-github {
+.icon-cogs, .icon-cog, .icon-magnifier, .icon-tags, .icon-list, .icon-checkmark, .icon-braces, .icon-uniF47C, .icon-reload, .icon-selectionadd, .icon-selectionrmove, .icon-uniF48A, .icon-uniF48B, .icon-refresh, .icon-resize-vertical, .icon-caret-up, .icon-caret-down, .icon-sign-blank, .icon-remove, .icon-remove-2, .icon-paragraph-left, .icon-stats, .icon-link, .icon-image, .icon-cabinet, .icon-paragraph-center, .icon-download, .icon-wrench, .icon-move, .icon-multiply, .icon-github, .icon-uniF489, .icon-uniF488 {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -129,4 +129,10 @@ you can use the generic selector below, but it's slower:
 }
 .icon-github:before {
 	content: "\e01e";
+}
+.icon-uniF489:before {
+	content: "\f489";
+}
+.icon-uniF488:before {
+	content: "\f488";
 }

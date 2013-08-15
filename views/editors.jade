@@ -72,8 +72,18 @@ script#change-styles(type='text/template')
 script#property-editor(type='text/template')
     label
         | Read Only
-        <input type='radio' class='editable' value='false' name='permissions' <%= typeof editable !== "undefined" && editable == false ? "checked" : "" %> />
+        <input type='radio' data-attr='editable' value='false' name='permissions' <%= typeof editable !== "undefined" && editable == false ? "checked" : "" %> />
     label   
         | Editable 
-        <input type='radio' class='editable' value='true' name='permissions' <%= typeof editable !== "undefined" && editable == true ? "checked" : "" %> />
+        <input type='radio' data-attr='editable' value='true' name='permissions' <%= typeof editable !== "undefined" && editable == true ? "checked" : "" %> />
     .clear
+script#icon-or-full(type='text/template')
+    p.nice-dialog Choose to display as a clickable icon, or fully.
+    label
+        | As Icon
+        <input type='radio' data-attr='display' value='icon' name='icon' <%= typeof display !== "undefined" && display == 'icon' ? "checked" : "" %> />
+    label   
+        | Full 
+        <input type='radio' data-attr='display' value='full' name='icon' <%= typeof display !== "undefined" && display == 'full' ? "checked" : "" %> />
+    .clear
+

@@ -40,7 +40,6 @@ body {
 
 
 .draggable-modal {
-    position: absolute !important;
     color: #f9f9f9;
     text-shadow: none;
     z-index: 999;
@@ -61,7 +60,7 @@ body {
         text-align: center;
         padding: 6px 0 0 ;
         font-size: 1.1em;
-        background: #313131;
+        background: $dusky;
         border-bottom: 1px solid #000;
     }
 
@@ -86,8 +85,10 @@ body {
     }
 
     > ul, .history-modal {
-        width: 100%;
-        margin: 0;
+        width: 97%;
+        margin: 1px auto 0;
+        border: 1px solid $lightdusk;
+        @include border-radius(3px);
         background: rgba(62,73,81,.94);
 
         li {
@@ -171,6 +172,35 @@ body {
 
         &[data-layout="tabs"] {
             background: url("../images/tabicon.jpg") no-repeat center 15px;
+        }
+    }
+}
+
+.toolbelt {
+    position: absolute;
+    top: 0;
+    left: 80px;
+    right: 18%;
+    height: 32px;
+    overflow: visible;
+    
+    .draggable-modal {
+        display: inline-block;
+        vertical-align: top;
+        width: 25%;
+        
+        h2 {
+            border-right: 1px solid $lightdusk;
+            border-left: 1px solid #222;
+        }
+
+        &:first-of-type h2 { border-left: none; }
+        &:last-of-type h2 { border-right: none; }
+
+        li {
+            white-space: nowrap;
+            overflow-x: hidden;
+            text-overflow: ellipsis;
         }
     }
 }

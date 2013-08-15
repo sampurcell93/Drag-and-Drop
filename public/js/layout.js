@@ -226,7 +226,9 @@
 
       _Class.prototype.controls = null;
 
-      _Class.prototype.contextMenu = null;
+      _Class.prototype.contextMenu = $("#placeholder-context").html();
+
+      _Class.prototype.className = 'builder-scaffold';
 
       _Class.prototype.initialize = function() {
         var self;
@@ -259,7 +261,7 @@
       _Class.prototype.afterRender = function() {
         var that;
         that = this;
-        this.$el.selectable({
+        return this.$el.selectable({
           filter: '.builder-element:not(.builder-scaffold)',
           tolerance: 'touch',
           cancel: ".config-menu-wrap, input, .title-setter, textarea, .no-drag, .context-menu",
@@ -280,7 +282,6 @@
             return $item.trigger("deselect");
           }
         });
-        return this.$el.addClass("builder-scaffold");
       };
 
       return _Class;
@@ -476,7 +477,9 @@
 
       _Class.prototype.initialize = function() {
         var self;
-        this.model.set("type", "Tab Layout");
+        this.model.set("type", "Tab Layout", {
+          silent: true
+        });
         _.bindAll(this, "afterRender");
         self = this;
         this.listenTo(this.model.get("child_els"), {
@@ -487,7 +490,6 @@
           }
         });
         this.model.get("child_els").on("add", function() {
-          cc("addd ON");
           return self.$el.children(".placeholder-text").hide();
         });
         return _Class.__super__.initialize.apply(this, arguments);

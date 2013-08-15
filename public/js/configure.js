@@ -124,10 +124,15 @@
               return $(".history-length-label").text(ui.value);
             }
           });
+        },
+        "click .hide-sidebar": function(e) {
+          this.$(".accessories").toggleClass("hidden-sidebar");
+          this.$el.find(".section-builder-wrap").last().toggleClass("no-sidebar");
+          return $(e.currentTarget).toggleClass("flipped");
         }
       },
       setProps: function() {
-        var $o_el, css_modal, existing_modal, hist_modal, opts, props_modal, section, that;
+        var $o_el, css_modal, existing_modal, hist_modal, opts, props_modal, section, that, toolbelt;
         that = this;
         if (typeof opts === "undefined" || opts === null) {
           opts = {};
@@ -158,14 +163,14 @@
           collection: section
         });
         $o_el = this.$el.find(".accessories");
-        hist_modal = window.launchDraggableModal(this.histList.render().el, null, $o_el, "History - Recent <span class='history-length-label'>15</span>");
+        toolbelt = this.$(".toolbelt");
+        hist_modal = window.launchDraggableModal(this.histList.render().el, null, toolbelt, "History - Recent <span class='history-length-label'>15</span>");
         hist_modal.addClass("history");
-        props_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Editable Attributes");
+        props_modal = window.launchDraggableModal($("<ul/>"), null, toolbelt, "Editable Attributes");
         props_modal.addClass("quick-props");
-        css_modal = window.launchDraggableModal($("<ul/>"), null, $o_el, "Skin Format");
+        css_modal = window.launchDraggableModal($("<ul/>"), null, toolbelt, "Skin Format");
         css_modal.addClass("quick-css");
-        existing_modal = window.launchDraggableModal($("<ul/>").addClass("hidden"), null, $o_el, "Recent Sections");
-        existing_modal.addClass("existing-sections-layouts");
+        existing_modal = window.launchDraggableModal($("<ul/>").addClass("existing-sections-layouts"), null, toolbelt, "Recent Sections");
         $o_el.droppable({
           accept: '.moved',
           greedy: true,

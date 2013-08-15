@@ -127,7 +127,7 @@ section.builder-container {
 
             textarea, .title-setter{
                 border: none;
-                resize: none;
+                resize: vertical;
             }
 
             textarea {
@@ -160,6 +160,7 @@ section.builder-container {
     cursor: move;
     text-overflow: ellipsis;
     display: table;
+    max-width: 100% !important;
 
     ul, ol, dl {
         list-style-position: inside !important;
@@ -472,6 +473,13 @@ ol.generic-list {
         border-bottom: 1px solid #222;
     }
 
+    .hide-sidebar { 
+        font-size: .9em;
+        position: relative;
+        left: 15px;
+        top: 6px;
+    }
+
     li {
         position: relative;
         min-height: 30px;
@@ -540,3 +548,4 @@ ol.generic-list {
         }
     }
 }
+

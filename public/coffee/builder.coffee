@@ -78,7 +78,7 @@ $(document).ready ->
             # and put the collection back in
             children = @get "child_els"
             # We don't need to validate "at" because backbone will simply append if "at" is undefined
-            children.add(putIn, {at: at})
+            children.add(putIn, {at: at, opname: "switch"})
             @set "child_els", children
             true
         deepCopy: ->
@@ -111,6 +111,7 @@ $(document).ready ->
          # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
         reorder: (newIndex, originalIndex, collection, options) ->
+            if options? and options.opname? then op = options.opname
             if newIndex is originalIndex then return this
             # Get the original index of the moved item, and save the item
             collection = collection || @
@@ -118,7 +119,7 @@ $(document).ready ->
             # Remove it from the collection
             collection.remove(temp, {organizer: {itemRender: false, render: false},  no_history: true})
             # Reinsert it at its new index
-            collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}})
+            collection.add(temp, {at: newIndex, organizer: {itemRender: false, render: false}, opname: op})
             this
         # Returns an array of all models that match the property, recursively. Defaults to layout item search
         gather: (prop) ->
@@ -177,6 +178,7 @@ $(document).ready ->
             "remove": ->
                 do @remove
             "contextmenu": (e) ->
+                if window.copiedModel == null then return true
                 $(".context-menu").remove()
                 e.preventDefault()
                 $el = @$el
@@ -347,11 +349,10 @@ $(document).ready ->
         removeFromFlow: (e) ->        #  When they click the "X" in the config - remove the el from the builder
             that = @
             destroy = ->
-                that.model.set("inFlow", false)
+                that.model.set("inFlow", false, {opname: "Flow Out"})
             if e.type == "flowRemoveViaDrag"
                 @$el.toggle("clip",  300, destroy)
             else do destroy
-
             e.stopPropagation()
             e.stopImmediatePropagation()  
         checkPlaceholder: ->
@@ -424,7 +425,7 @@ $(document).ready ->
         events: 
             # for debugging
             "dblclick": (e) ->
-                console.log @model
+                console.log @model.toJSON()
                 e.stopPropagation()
             # for right click functionality users expect
             "contextmenu": "bindContextMenu"
@@ -464,8 +465,7 @@ $(document).ready ->
                 e.stopPropagation()          
             "click .view-attrs": ->
                 props = new views.toolbelt.Actives({model: @model}).render().el
-                $(".quick-props").find("ul").remove()
-                $(".quick-props").append props
+                $(".quick-props").find("ul").html props
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 # e.stopImmediatePropagation()

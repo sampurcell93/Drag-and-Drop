@@ -22,7 +22,7 @@ $(document).ready ->
                     that.collection.at(that.oldIndex).trigger("sorting")
                 stop: (e, ui) ->
                     # that.collection.at(that.origIndex)
-                    that.collection.reorder $(ui.item).index() - 1, that.oldIndex
+                    that.collection.reorder $(ui.item).index() - 1, that.oldIndex, null, {opname: "Switch"}
                     # ui.item.removeClass("moving-sort")
                     ui.item.removeClass("moving-sort")
                 # stop: (e, ui) ->
@@ -141,12 +141,13 @@ $(document).ready ->
                 stop: (e, ui) ->
                     that.model.get("child_els").reorder $(ui.item).index(), that.origIndex
             }   
-            this
+            @
         append: ( child, opts )->
             $el = @$el
             if opts? and opts.at?
                 @appendAt(child, opts)
                 return this
+            if !opts? then opts = {}
             childList = $el.children(".child-list")
             elementItem = new views.SortableElementItem({model: child, index: @options.index}).render().el
             if child.get("inFlow") is false  
@@ -166,19 +167,19 @@ $(document).ready ->
                 $el = @$el.children(".child-list")
                 itemView = new views.SortableElementItem(opts).render().el
                 if @model.get("child_els")? and pos >= @model.get("child_els").length - 1
-                    $el.append(itemView)
+                    $el.append itemView
                 else if pos is 0
-                    $el.prepend(itemView)
+                    $el.prepend itemView
                 else 
-                    $el.children().eq(pos-1).after(itemView)
-                    $el.children().eq(pos).before(itemView)
+                    $el.children().eq(pos-1).after itemView
+                    $el.children().eq(pos).before itemView
         events:
             "mousedown .sort-element": (e) ->
                 @model.trigger("dragging")
             "mouseup .sort-element": (e) ->
                 @model.trigger("dropped")
             "click .activate-element": (e) ->
-                @model.set "inFlow", true, {e: e}
+                @model.set "inFlow", true, {e: e, opname: 'Flow In'}
                 e.stopPropagation()
             "click .destroy-element": (e) ->
                 @model.destroy()

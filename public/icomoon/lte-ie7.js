@@ -36,7 +36,9 @@ window.onload = function() {
 			'icon-wrench' : '&#xe01b;',
 			'icon-move' : '&#xe01c;',
 			'icon-multiply' : '&#xe01d;',
-			'icon-github' : '&#xe01e;'
+			'icon-github' : '&#xe01e;',
+			'icon-uniF489' : '&#xf489;',
+			'icon-uniF488' : '&#xf488;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;

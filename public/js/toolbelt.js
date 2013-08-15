@@ -16,8 +16,6 @@
 
       Actives.prototype.tagName = 'ul';
 
-      Actives.prototype.initialize = function() {};
-
       Actives.prototype.render = function() {
         this.quickAttrs();
         return this;
@@ -28,7 +26,7 @@
         property_item = "<li data-attr='<%=prop%>'><%=prop.clean() %>: <%= value %></li>";
         properties = "";
         for (prop in attrs) {
-          if (this.disregardAttrs.indexOf(prop) === -1) {
+          if (this.regard.indexOf(prop) !== -1) {
             properties += _.template(property_item, {
               prop: prop,
               value: this.formatAttributes(attrs[prop])
@@ -38,7 +36,7 @@
         return properties;
       };
 
-      Actives.prototype.disregardAttrs = ["inFlow", "view", "styles", "property", "layout"];
+      Actives.prototype.regard = ["child_els", "title", "type"];
 
       Actives.prototype.editables = ["title"];
 
@@ -96,7 +94,6 @@
           this.model.set(attr, val, {
             no_history: true
           });
-          console.log(this.model);
           return e.stopPropagation();
         }
       };

@@ -2,7 +2,6 @@
 
 input, textarea {
 	display: block;
-	vertical-align: middle;
 	border: 1px solid #bbb;
 	padding: 8px 10px 8px 20px;
 	font-size: 1em;
@@ -19,18 +18,9 @@ input, textarea {
 }
 
 textarea {
-	width: 75%;
 	margin:5px 0;
-	overflow: auto;
-  min-height: 100px;
   display: block;
-  resize: both !important;
-  
-	&.generic-text {
-		display: block;
-		width: 100% !important;
-		height: 100% !important;
-	}
+  min-width: 100%;
 }
 
 .add-section-title {

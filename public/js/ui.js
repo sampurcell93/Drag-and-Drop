@@ -31,7 +31,7 @@
       } else if (this.toLowerCase() === "true") {
         return true;
       }
-      return false;
+      return null;
     };
     getSlope = function(y1, y, x1, x) {
       return (y - y1) / (x - x1);
@@ -53,7 +53,7 @@
     window.launchDraggableModal = function(content, tagname, appendTo, title) {
       var modal;
       title = $("<h2/>").html("<i class='icon icon-move'></i>" + title).addClass("drag-handle");
-      modal = $("<" + (tagname || "div") + "/>").html(content).addClass("draggable-modal");
+      modal = $("<" + (tagname || "div") + "/>").html($(content).addClass("hidden")).addClass("draggable-modal");
       title.prependTo(modal);
       modal.draggable({
         revert: 'invalid',
@@ -76,7 +76,7 @@
         containment: '.container',
         handle: '.drag-handle'
       });
-      modal.appendTo(appendTo || document.body);
+      modal.prependTo(appendTo || document.body);
       modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer flipped"));
       return modal;
     };

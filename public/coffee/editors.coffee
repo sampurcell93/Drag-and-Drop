@@ -31,6 +31,19 @@ $ ->
         enqueue: (name, func) ->
              @change_queue[name] = func
         events:
+            "change [data-attr]": (e) ->
+                $t   = $ e.currentTarget
+                attr   = $t.data "attr"
+                val    = $t.val()
+                self   = @
+                parsed = val.parseBool()
+
+                if parsed == null then parsed = val
+                @enqueue(attr, ->
+                    self.model.set(attr, parsed)
+                )
+                e.stopPropagation()
+
             "change .set-width": (e) ->
                 width = $(e.currentTarget).val()
                 self = @
@@ -137,19 +150,11 @@ $ ->
                     )
             }
 
+    class editors["DateTime"] extends editors["BaseEditor"]
+        templates: [$("#icon-or-full").html()]
+
     class editors["Property"] extends editors["BaseEditor"]
         templates: [$("#property-editor").html()]
-        initialize: ->
-            super
-            self = @
-            _.extend @events, {
-                "change .editable": (e) ->
-                    bool = $(e.currentTarget).val().parseBool()
-                    self.enqueue("editable", ->
-                        self.model.set("editable", bool)
-                    )
-                    e.stopPropagation()
-            }
 
     class editors["accordion"] extends editors["BaseLayoutEditor"]
         templates: [$("#accordion-layout").html()]

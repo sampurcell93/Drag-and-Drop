@@ -3,9 +3,6 @@ $ ->
 
     class toolbelt.Actives extends Backbone.View
         tagName: 'ul'
-        initialize: ->
-            # @listenTo @model, "change", @quickAttrs
-            # @listenTo @model.get "child_els", "change", @quickAttrs
         render: ->
             @quickAttrs()
             @
@@ -13,13 +10,13 @@ $ ->
             property_item = "<li data-attr='<%=prop%>'><%=prop.clean() %>: <%= value %></li>";
             properties = ""
             for prop of attrs
-                unless @disregardAttrs.indexOf(prop) != -1
+                unless @regard.indexOf(prop) == -1
                     properties +=  _.template property_item, {
                         prop: prop
                         value: @formatAttributes(attrs[prop])
                     }
             properties
-        disregardAttrs: ["inFlow", "view", "styles", "property", "layout"]
+        regard: ["child_els", "title", "type"]
         editables: ["title"]
         quickAttrs: (e) ->
                 if @$el.hasClass("builder-scaffold") then return false
@@ -52,5 +49,4 @@ $ ->
                 attr = $t.closest("[data-attr]").data("attr")
                 val  = $t.html()
                 @model.set attr, val, {no_history: true}
-                console.log @model
                 e.stopPropagation()

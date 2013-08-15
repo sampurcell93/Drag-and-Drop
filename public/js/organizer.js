@@ -24,7 +24,9 @@
             return that.collection.at(that.oldIndex).trigger("sorting");
           },
           stop: function(e, ui) {
-            that.collection.reorder($(ui.item).index() - 1, that.oldIndex);
+            that.collection.reorder($(ui.item).index() - 1, that.oldIndex, null, {
+              opname: "Switch"
+            });
             return ui.item.removeClass("moving-sort");
           }
         });
@@ -182,6 +184,9 @@
           this.appendAt(child, opts);
           return this;
         }
+        if (opts == null) {
+          opts = {};
+        }
         childList = $el.children(".child-list");
         elementItem = new views.SortableElementItem({
           model: child,
@@ -226,7 +231,8 @@
         },
         "click .activate-element": function(e) {
           this.model.set("inFlow", true, {
-            e: e
+            e: e,
+            opname: 'Flow In'
           });
           return e.stopPropagation();
         },

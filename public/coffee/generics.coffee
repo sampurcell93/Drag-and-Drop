@@ -162,7 +162,6 @@ $(document).ready ->
                 "change:label_text" : @render
             }
 
-
     class window.views['Link'] extends window.views.genericElement
         template: $("#custom-link").html()
         initialize: (options) ->
@@ -172,9 +171,11 @@ $(document).ready ->
         template: $("#date-time").html()
         initialize: (options) ->
             _.bindAll(@, "afterRender")
+            if typeof @model.get("display") == "undefined"
+                @model.set("display", "full", {silent: true})
             super 
         afterRender: ->
-            @$el.find(".date-picker").datepicker()
+            @$(".date-picker").first().datepicker()
 
     class window.views['Dropdown'] extends window.views.genericElement
         template: $("#dropdown").html()

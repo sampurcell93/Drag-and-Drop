@@ -331,6 +331,14 @@ ul li.selected-choice {
 .section-builder-wrap { 
 	padding: 40px 240px 12px 90px;
 	height: 100%;
+
+	&.no-sidebar {
+		padding-right: 0px;
+
+		.toolbelt {
+			right: 30px;
+		}
+	}
 }
 
 .dark-sidebar {
@@ -345,6 +353,24 @@ ul li.selected-choice {
 	height: 100%;
 	color: #f9f9f9;
 	text-shadow: none;
+	
+
+    &.hidden-sidebar {
+        right: 30px;
+        top: 0px;
+        width: 30px !important; 
+		height:31px;
+		overflow: hidden;
+
+		span.section-content { 
+			display: none;
+		}
+
+		.hide-sidebar {
+			left: 4px;
+        	top: -2px;
+		}
+    }
 
 	.list-header {
 		text-align: center !important;
@@ -407,7 +433,7 @@ ul li.selected-choice {
 	}
 	&.accessories {
 		right: 0;
-		width: 18% !important;
+		width: 18%;
 	}
 
 	li {
@@ -480,8 +506,13 @@ ul li.selected-choice {
 }
 
 .accessories {
-	
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: visible;
+    // @include transition(left .4s ease-in-out);
+
+    &.hidden-sidebar :not(".hide-sidebar") {
+    	display: none;
+    }
 
 	.draggable-modal {
 		position: relative !important;
@@ -512,4 +543,14 @@ ul li.selected-choice {
 
 .ui-slider-handle {
 	background: $dusky !important;
+}
+
+.disabled {
+	background: #ddd;
+	color: #777;
+
+	&:hover {
+		background: #ddd !important;
+		color: #777 !important;		
+	}
 }

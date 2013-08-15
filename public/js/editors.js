@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(function() {
-    var editors, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+    var editors, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     editors = window.views.editors = {};
     editors["BaseEditor"] = (function(_super) {
       __extends(_Class, _super);
@@ -47,6 +47,21 @@
       };
 
       _Class.prototype.events = {
+        "change [data-attr]": function(e) {
+          var $t, attr, parsed, self, val;
+          $t = $(e.currentTarget);
+          attr = $t.data("attr");
+          val = $t.val();
+          self = this;
+          parsed = val.parseBool();
+          if (parsed === null) {
+            parsed = val;
+          }
+          this.enqueue(attr, function() {
+            return self.model.set(attr, parsed);
+          });
+          return e.stopPropagation();
+        },
         "change .set-width": function(e) {
           var self, width;
           width = $(e.currentTarget).val();
@@ -222,7 +237,7 @@
       return _Class;
 
     })(editors["BaseEditor"]);
-    editors["Property"] = (function(_super) {
+    editors["DateTime"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -230,23 +245,20 @@
         return _ref5;
       }
 
-      _Class.prototype.templates = [$("#property-editor").html()];
+      _Class.prototype.templates = [$("#icon-or-full").html()];
 
-      _Class.prototype.initialize = function() {
-        var self;
-        _Class.__super__.initialize.apply(this, arguments);
-        self = this;
-        return _.extend(this.events, {
-          "change .editable": function(e) {
-            var bool;
-            bool = $(e.currentTarget).val().parseBool();
-            self.enqueue("editable", function() {
-              return self.model.set("editable", bool);
-            });
-            return e.stopPropagation();
-          }
-        });
-      };
+      return _Class;
+
+    })(editors["BaseEditor"]);
+    editors["Property"] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref6 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref6;
+      }
+
+      _Class.prototype.templates = [$("#property-editor").html()];
 
       return _Class;
 
@@ -255,8 +267,8 @@
       __extends(_Class, _super);
 
       function _Class() {
-        _ref6 = _Class.__super__.constructor.apply(this, arguments);
-        return _ref6;
+        _ref7 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref7;
       }
 
       _Class.prototype.templates = [$("#accordion-layout").html()];

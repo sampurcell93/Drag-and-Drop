@@ -115,7 +115,8 @@
         }
         children = this.get("child_els");
         children.add(putIn, {
-          at: at
+          at: at,
+          opname: "switch"
         });
         this.set("child_els", children);
         return true;
@@ -166,7 +167,10 @@
         return true;
       },
       reorder: function(newIndex, originalIndex, collection, options) {
-        var temp;
+        var op, temp;
+        if ((options != null) && (options.opname != null)) {
+          op = options.opname;
+        }
         if (newIndex === originalIndex) {
           return this;
         }
@@ -184,7 +188,8 @@
           organizer: {
             itemRender: false,
             render: false
-          }
+          },
+          opname: op
         });
         return this;
       },
@@ -262,6 +267,9 @@
         },
         "contextmenu": function(e) {
           var $el, pageX, pageY;
+          if (window.copiedModel === null) {
+            return true;
+          }
           $(".context-menu").remove();
           e.preventDefault();
           $el = this.$el;
@@ -497,7 +505,9 @@
         var destroy, that;
         that = this;
         destroy = function() {
-          return that.model.set("inFlow", false);
+          return that.model.set("inFlow", false, {
+            opname: "Flow Out"
+          });
         };
         if (e.type === "flowRemoveViaDrag") {
           this.$el.toggle("clip", 300, destroy);
@@ -609,7 +619,7 @@
 
       draggableElement.prototype.events = {
         "dblclick": function(e) {
-          console.log(this.model);
+          console.log(this.model.toJSON());
           return e.stopPropagation();
         },
         "contextmenu": "bindContextMenu",
@@ -661,8 +671,7 @@
           props = new views.toolbelt.Actives({
             model: this.model
           }).render().el;
-          $(".quick-props").find("ul").remove();
-          return $(".quick-props").append(props);
+          return $(".quick-props").find("ul").html(props);
         },
         "click .remove-from-flow": function(e) {
           e.stopPropagation();
