@@ -467,7 +467,7 @@ $(document).ready ->
             currentSection = allSections.at(@options.index).get("currentSection")
             @model.selected = if selected then false else true
             if @model.selected is true
-                allSections.at(@options.index).get("properties").add @model
+                allSections.at(window.currIndex).get("properties").add @model
                 model = @model.toJSON()
                 model.title = model.className + "." + model.name
                 # model.property = {}

@@ -571,7 +571,7 @@
         currentSection = allSections.at(this.options.index).get("currentSection");
         this.model.selected = selected ? false : true;
         if (this.model.selected === true) {
-          allSections.at(this.options.index).get("properties").add(this.model);
+          allSections.at(window.currIndex).get("properties").add(this.model);
           model = this.model.toJSON();
           model.title = model.className + "." + model.name;
           model.view = "Property";

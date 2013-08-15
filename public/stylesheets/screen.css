@@ -1140,12 +1140,13 @@ ol.generic-list {
   position: absolute !important;
   top: 50% !important;
   margin-top: -15px;
+  z-index: 99;
 }
-/* line 562, ../sass/builder.scss */
+/* line 563, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-w {
   left: -4px;
 }
-/* line 565, ../sass/builder.scss */
+/* line 566, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-e {
   right: -4px;
 }
