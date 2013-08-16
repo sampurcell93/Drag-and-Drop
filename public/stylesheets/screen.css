@@ -2167,7 +2167,7 @@ body.active-modal::after {
 }
 /* line 82, ../sass/modal.scss */
 .draggable-modal .history-modal {
-  max-height: 400px;
+  max-height: 100px;
   overflow: auto;
 }
 /* line 87, ../sass/modal.scss */

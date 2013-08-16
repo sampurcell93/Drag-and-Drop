@@ -160,6 +160,8 @@ $ ->
                 @snapshots.add snap
                 @append snap
                 @last_snap = @snapshots.length - 2
+                # Scroll to bottom of history panel if overflow
+                @$el.scrollTop(@$el.height());
             @
         deleteForwardChanges: ->
             # Get all snapshots ahead of the current state

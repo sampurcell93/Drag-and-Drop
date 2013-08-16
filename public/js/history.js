@@ -181,6 +181,7 @@
           this.snapshots.add(snap);
           this.append(snap);
           this.last_snap = this.snapshots.length - 2;
+          this.$el.scrollTop(this.$el.height());
         }
         return this;
       },
