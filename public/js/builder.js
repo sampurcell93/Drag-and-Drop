@@ -464,7 +464,6 @@
         this.checkPlaceholder();
         this.$(".view-attrs").first().trigger("click");
         (this.afterRender || function() {})();
-        this.bindResize();
         return this;
       };
 

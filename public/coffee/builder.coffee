@@ -316,7 +316,7 @@ $(document).ready ->
             (@afterRender || -> 
                 # $el.hide().fadeIn(325)
             )()
-            do @bindResize
+            # do @bindResize
             @
         bindDrag: ->
             that = this

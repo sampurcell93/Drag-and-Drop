@@ -603,7 +603,10 @@
           var $t, val;
           $t = $(e.currentTarget);
           val = $t.text();
-          return this.model.set("name", val);
+          this.model.set("name", val);
+          if (this.elementModel != null) {
+            return this.elementModel.set("infLow", false).trigger("render");
+          }
         }
       }
     });

@@ -539,6 +539,8 @@ $(document).ready ->
                 val = $t.text()
                 # Set the model name
                 @model.set("name", val)
+                if @elementModel?
+                    @elementModel.set("infLow", false).trigger("render")
 
     })
     allSections.add new models.SectionController()
