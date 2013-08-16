@@ -59,20 +59,21 @@ body {
         color: #f9f9f9;
         text-align: center;
         padding: 6px 0 0 ;
-        font-size: 1.1em;
+        font-size: .9em;
         background: $dusky;
         border-bottom: 1px solid #000;
     }
 
     .icon-move {
         position: absolute;
-        left: 10px;
+        left: 4px;
     }
 
     .close-arrow {
         position: absolute;
-        top: 5px;
+        top: 6px;
         right:5px;
+        font-size: .9em;
     }
 
     .icon {

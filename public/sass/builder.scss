@@ -176,7 +176,6 @@ section.builder-container {
         display: block;
         margin: 0;
         cursor: auto;
-        background: #fff;
         outline: 1px solid $medblue !important;
         min-height: 100px;
 
@@ -199,7 +198,6 @@ section.builder-container {
 
     input { 
         margin: 10px 0;
-        width: 65%;
     }
 
     &.selected-element {
@@ -356,6 +354,7 @@ ol.generic-list {
     outline: 1px solid #7BF5F5 !important;
     padding: 10px 0 10px;
     display: block;
+    background: #fff;
 
     &:hover {
         background: #FBF9DE;
@@ -531,8 +530,9 @@ ol.generic-list {
         &.out-of-flow {
             background: #777;
             color: #373737;
+            text-shadow: none ; 
 
-            > .destroy-element, > .activate-element { display: block; background: #373737; text-shadow: none !important; }
+            > .destroy-element, > .activate-element { display: block; background: #373737; }
 
             &:hover { background: #777; }
         }
@@ -547,7 +547,7 @@ ol.generic-list {
         }
         .destroy-element {
             right: 33px;
-            color: #888;
+            color: $pegaorange;
         }
     }
 }

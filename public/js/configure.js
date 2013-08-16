@@ -573,6 +573,7 @@
       },
       chooseProp: function(e) {
         var $t, currentSection, model, selected;
+        cc("choose");
         if (e != null) {
           $t = $(e.currentTarget);
           $t.closest(".property").toggleClass("selected");
@@ -605,7 +606,18 @@
           val = $t.text();
           this.model.set("name", val);
           if (this.elementModel != null) {
-            return this.elementModel.set("infLow", false).trigger("render");
+            return this.elementModel.set("title", val).trigger("render");
+          }
+        },
+        keydown: function(e) {
+          var key;
+          key = e.keyCode || e.which;
+          if (key === 13) {
+            this.$el.siblings(".add-property").trigger("click");
+            this.$el.next().trigger("click");
+            console.log(this.$el.next());
+            e.preventDefault();
+            return false;
           }
         }
       }

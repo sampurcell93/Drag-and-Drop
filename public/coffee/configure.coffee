@@ -510,6 +510,7 @@ $(document).ready ->
             # @chooseProp()
             this
         chooseProp: (e) ->
+            cc "choose"
             if e?
                 $t = $(e.currentTarget)
                 $t.closest(".property").toggleClass "selected"
@@ -540,7 +541,15 @@ $(document).ready ->
                 # Set the model name
                 @model.set("name", val)
                 if @elementModel?
-                    @elementModel.set("infLow", false).trigger("render")
+                    @elementModel.set("title", val).trigger("render")
+            keydown: (e)->
+                key = e.keyCode || e.which
+                if key == 13
+                    @$el.siblings(".add-property").trigger "click"
+                    @$el.next().trigger "click"
+                    console.log @$el.next()
+                    e.preventDefault()
+                    return false
 
     })
     allSections.add new models.SectionController()

@@ -88,6 +88,18 @@
         $el = this.$el.addClass("generic-item");
         $el.html(_.template(this.template, this.model.toJSON()));
         return this;
+      },
+      events: {
+        "click": function() {
+          var child_els, toAdd;
+          child_els = new collections.Elements();
+          toAdd = new models.Element(this.model.toJSON());
+          child_els.model = toAdd;
+          toAdd.set("child_els", child_els);
+          return allSections.at(currIndex).get("currentSection").add(toAdd, {
+            at: 0
+          });
+        }
       }
     });
     window.views.genericElement = (function(_super) {

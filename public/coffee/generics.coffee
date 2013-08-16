@@ -103,6 +103,13 @@ $(document).ready ->
             $el = @$el.addClass("generic-item")
             $el.html _.template @template, @model.toJSON()
             this
+        events: 
+            "click": ->
+                child_els = new collections.Elements()
+                toAdd = new models.Element(@model.toJSON())
+                child_els.model = toAdd
+                toAdd.set("child_els", child_els)
+                allSections.at(currIndex).get("currentSection").add toAdd, {at: 0}
     }
 
     class window.views.genericElement extends window.views.draggableElement
