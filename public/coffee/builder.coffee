@@ -157,11 +157,7 @@ $(document).ready ->
                 clone = window.copiedModel
                 dropZone = @$el
                 # Get index of the placeholder
-                if (dropZone.closest(".builder-element").length)
-                    insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev())
-                else   
-                    insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev())
-                insertAt += 1
+                insertAt = dropZone.siblings(".builder-element").index(dropZone.prev()) + 1
                 # Make sure colection exists
                 if @collection? and clone?
                     # Throw in copied model
@@ -207,9 +203,7 @@ $(document).ready ->
                     $(".over").removeClass("over")
                     if $(document.body).hasClass("active-modal") then return false
                     dropZone = $(e.target)
-                    insertAt = dropZone.siblings(".builder-element").index(dropZone.prev())
-                    # if (ui.draggable.index() > dropZone.index() or ui.draggable.hasClass("generic-item"))
-                    insertAt += 1
+                    insertAt = dropZone.siblings(".builder-element").index(dropZone.prev()) + 1
                     curr = window.currentDraggingModel
                     parent = self.collection.model 
                     if typeof parent is "function" or !parent? then parent = self.collection
@@ -294,6 +288,7 @@ $(document).ready ->
                     self.render(false)
                 "render": ->
                     self.render(true)
+                "showConfigModal": @showConfigModal
             })
             # Allow class descendants to bind listeners
             @listenTo @model, @modelListeners
@@ -439,6 +434,12 @@ $(document).ready ->
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
             else if !menu.length then return false
             menu.remove()
+        showConfigModal: (e) ->
+            defaultEditor = if @model.get("layout") == true then "BaseLayoutEditor" else "BaseEditor"
+            editor = views.editors[@edit_view || @model.get("view") || defaultEditor]
+            if editor? then editor = new editor({model: @model, link_el: @el}).render()
+            else editor = new views.editors[defaultEditor]({model: @model, link_el: @el}).render()
+            $(editor.el).launchModal()
         # Default events for any draggable - basically configuration settings.
         events: 
             # for debugging
@@ -493,12 +494,7 @@ $(document).ready ->
                 # e.stopImmediatePropagation()
                 @removeFromFlow(e)
             "flowRemoveViaDrag": "removeFromFlow" 
-            "click .config-panel": (e) ->            
-                defaultEditor = if @model.get("layout") == true then "BaseLayoutEditor" else "BaseEditor"
-                editor = views.editors[@edit_view || @model.get("view") || defaultEditor]
-                if editor? then editor = new editor({model: @model, link_el: @el}).render()
-                else editor = new views.editors[defaultEditor]({model: @model, link_el: @el}).render()
-                $(editor.el).launchModal()
+            "click .config-panel": "showConfigModal"
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
                 @model["layout-item"] = true

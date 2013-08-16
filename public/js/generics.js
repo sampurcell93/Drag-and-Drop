@@ -99,14 +99,19 @@
       }
 
       genericElement.prototype.initialize = function(options) {
+        var self;
         genericElement.__super__.initialize.apply(this, arguments);
-        return $.extend(this.events, {
+        $.extend(this.events, {
           "keyup .title-setter": function(e) {
             this.model.set('title', $(e.currentTarget).val(), {
               no_history: true
             });
             return e.stopPropagation();
           }
+        });
+        self = this;
+        return this.model.on("change:title", function(model) {
+          return self.$el.find(".label-text").first().text(self.model.get("title"));
         });
       };
 
@@ -146,15 +151,6 @@
       }
 
       _Class.prototype.template = $("#button-template").html();
-
-      _Class.prototype.initialize = function(options) {
-        var self;
-        _Class.__super__.initialize.apply(this, arguments);
-        self = this;
-        return this.model.on("change:title", function(model) {
-          return self.$el.children(".title-setter").text(model.get("title"));
-        });
-      };
 
       return _Class;
 

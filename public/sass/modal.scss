@@ -80,7 +80,7 @@ body {
     }
 
     .history-modal {
-        max-height: 100px;
+        max-height: 400px;
         overflow: auto;
     }
 
@@ -127,7 +127,6 @@ body {
         }
     }
 }
-
 
 .hidden-modal {
     ul, div {
@@ -204,4 +203,14 @@ body {
             text-overflow: ellipsis;
         }
     }
+}
+
+.view-full-config {
+    padding: 4px;
+    margin-top: 5px;
+    text-align: center;
+    background: #333;
+    cursor: pointer;
+
+    &:hover { text-decoration: underline; }
 }

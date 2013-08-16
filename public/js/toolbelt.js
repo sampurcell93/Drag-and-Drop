@@ -17,8 +17,12 @@
       Actives.prototype.tagName = 'ul';
 
       Actives.prototype.initialize = function() {
+        var self;
+        self = this;
         return this.listenTo(this.model, {
-          "change": this.render,
+          "change": function(model, opts) {
+            return console.log(model);
+          },
           "remove": this.remove
         });
       };
@@ -40,6 +44,7 @@
             });
           }
         }
+        properties += "<div class='view-full-config'>View Full Configuration Modal</div>";
         return properties;
       };
 
@@ -102,6 +107,9 @@
             no_history: true
           });
           return e.stopPropagation();
+        },
+        "click .view-full-config": function() {
+          return this.model.trigger("showConfigModal");
         }
       };
 

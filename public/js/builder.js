@@ -239,12 +239,7 @@
           var clone, dropZone, insertAt, models;
           clone = window.copiedModel;
           dropZone = this.$el;
-          if ((dropZone.closest(".builder-element").length)) {
-            insertAt = dropZone.closest(".builder-element").children(".children").children(".builder-element").index(dropZone.prev());
-          } else {
-            insertAt = dropZone.closest("section").children(".children").children(".builder-element").index(dropZone.prev());
-          }
-          insertAt += 1;
+          insertAt = dropZone.siblings(".builder-element").index(dropZone.prev()) + 1;
           if ((this.collection != null) && (clone != null)) {
             this.collection.add(clone, {
               at: insertAt,
@@ -308,8 +303,7 @@
               return false;
             }
             dropZone = $(e.target);
-            insertAt = dropZone.siblings(".builder-element").index(dropZone.prev());
-            insertAt += 1;
+            insertAt = dropZone.siblings(".builder-element").index(dropZone.prev()) + 1;
             curr = window.currentDraggingModel;
             parent = self.collection.model;
             if (typeof parent === "function" || (parent == null)) {
@@ -432,7 +426,8 @@
           },
           "render": function() {
             return self.render(true);
-          }
+          },
+          "showConfigModal": this.showConfigModal
         });
         return this.listenTo(this.model, this.modelListeners);
       };
@@ -644,6 +639,24 @@
         return menu.remove();
       };
 
+      draggableElement.prototype.showConfigModal = function(e) {
+        var defaultEditor, editor;
+        defaultEditor = this.model.get("layout") === true ? "BaseLayoutEditor" : "BaseEditor";
+        editor = views.editors[this.edit_view || this.model.get("view") || defaultEditor];
+        if (editor != null) {
+          editor = new editor({
+            model: this.model,
+            link_el: this.el
+          }).render();
+        } else {
+          editor = new views.editors[defaultEditor]({
+            model: this.model,
+            link_el: this.el
+          }).render();
+        }
+        return $(editor.el).launchModal();
+      };
+
       draggableElement.prototype.events = {
         "dblclick": function(e) {
           console.log(this.model.toJSON());
@@ -712,23 +725,7 @@
           return this.removeFromFlow(e);
         },
         "flowRemoveViaDrag": "removeFromFlow",
-        "click .config-panel": function(e) {
-          var defaultEditor, editor;
-          defaultEditor = this.model.get("layout") === true ? "BaseLayoutEditor" : "BaseEditor";
-          editor = views.editors[this.edit_view || this.model.get("view") || defaultEditor];
-          if (editor != null) {
-            editor = new editor({
-              model: this.model,
-              link_el: this.el
-            }).render();
-          } else {
-            editor = new views.editors[defaultEditor]({
-              model: this.model,
-              link_el: this.el
-            }).render();
-          }
-          return $(editor.el).launchModal();
-        },
+        "click .config-panel": "showConfigModal",
         "select": function(e) {
           this.model["layout-item"] = true;
           this.$el.addClass("selected-element");

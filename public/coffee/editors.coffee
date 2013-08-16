@@ -146,7 +146,7 @@ $ ->
                 "keyup .label-text": (e) ->
                     label = $(e.currentTarget).val()
                     self.enqueue("label_text", ->
-                        self.model.set("label_text", label)
+                        self.model.set("title", label)
                     )
             }
 

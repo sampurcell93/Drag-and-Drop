@@ -135,7 +135,7 @@
       },
       makeHistory: function(operation, subject, collection, options) {
         var clone, e, op, ops, snap;
-        ops = ["change", "add", "remove"];
+        ops = ["change", "add", "remove", "destroy"];
         if (ops.indexOf(operation) === -1) {
           return;
         }

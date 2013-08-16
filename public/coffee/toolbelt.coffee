@@ -1,11 +1,14 @@
 $ ->
+    # This was written in like three minutes - forgive the lack of templating. TODO: fix
     toolbelt = window.views.toolbelt = {}
 
     class toolbelt.Actives extends Backbone.View
         tagName: 'ul'
         initialize: ->
+            self = @
             @listenTo @model, {
-                "change": @render
+                "change": (model, opts) ->
+                    console.log model
                 "remove": @remove
             }
         render: ->
@@ -20,6 +23,7 @@ $ ->
                         prop: prop
                         value: @formatAttributes(attrs[prop])
                     }
+            properties += "<div class='view-full-config'>View Full Configuration Modal</div>"
             properties
         regard: ["child_els", "title", "type"]
         editables: ["title"]
@@ -55,3 +59,5 @@ $ ->
                 val  = $t.html()
                 @model.set attr, val, {no_history: true}
                 e.stopPropagation()
+            "click .view-full-config": ->
+                @model.trigger("showConfigModal")

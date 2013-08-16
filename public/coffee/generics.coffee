@@ -115,6 +115,9 @@ $(document).ready ->
                     @model.set('title', $(e.currentTarget).val(), {no_history: true})
                     e.stopPropagation()
             })
+            self = @
+            @model.on "change:title", (model) ->
+                self.$el.find(".label-text").first().text(self.model.get("title"))
 
     # For clarity's sake, we will store the variety of generic templates and their
     # event binders with hash notation. View specifications can be stored on server.
@@ -135,13 +138,6 @@ $(document).ready ->
 
     class window.views['Button'] extends window.views.genericElement
         template: $("#button-template").html()
-        initialize: (options) ->
-            super
-            self = @
-            # Using .on() is bad because in certain cases, listeners are not unbound.
-            # .listenTo() not working for now
-            @model.on "change:title", (model) ->
-                self.$el.children(".title-setter").text(model.get("title"))
 
 
     class window.views['CustomHeader'] extends window.views.genericElement

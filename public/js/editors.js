@@ -228,7 +228,7 @@
             var label;
             label = $(e.currentTarget).val();
             return self.enqueue("label_text", function() {
-              return self.model.set("label_text", label);
+              return self.model.set("title", label);
             });
           }
         });
