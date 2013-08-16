@@ -529,9 +529,12 @@ ol.generic-list {
         }
 
         &.out-of-flow {
-            background: #000;
+            background: #777;
+            color: #373737;
 
-            > .destroy-element, > .activate-element { display: block; background: #000; }
+            > .destroy-element, > .activate-element { display: block; background: #373737; text-shadow: none !important; }
+
+            &:hover { background: #777; }
         }
 
         .activate-element, .destroy-element {

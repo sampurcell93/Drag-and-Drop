@@ -23,11 +23,13 @@ include builder.jade
                     li(data-modal='existing-modal') Recent Sections 
                         input(type='checkbox', checked='true')
             li.icon-cogs.settings Settings
-            li.help Help
+            //- li.help Help
 
         .section-builder-wrap
-            h2.section-title.clickme
+            h2.section-title.clickme.fl
                 | <%= typeof section_title !== "undefined" ? section_title : "Default Section Title" %>
+                span.fr (Click to change section title) 
+            .clear
             p.nice-dialog
                 | Configure your data here. Start by choosing system properties to include in your section. They will be easily accessible while you build.
 

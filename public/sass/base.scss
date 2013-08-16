@@ -21,6 +21,8 @@ $pegaorange: #F6733D;
 .fr { float: right; }
 .fl { float: left; }
 .m0 { margin: 0;}
+.clickme { color: $strongblue; cursor: pointer;}
+.clickme:hover { color: $medstrongblue; text-decoration: underline; }
 .m10 { margin: 10px !important;}
 .m20 { margin: 20px !important; }
 .m30 { margin: 30px !important; }
