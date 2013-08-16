@@ -46,7 +46,7 @@ $(document).ready ->
             $el.children().not(".list-header, .placeholder").remove()
             that = @
             index = window.currIndex
-            if @collection.length is 0
+            if @collection.length is 0 and @$(".placeholder").length is 0
                 $("<li/>").addClass("placeholder").text("No content here.").appendTo(@$el)
             _.each @collection.models, (el) ->
                 that.append el, {index: index, outOfFlow: false}

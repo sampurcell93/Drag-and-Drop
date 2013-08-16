@@ -5,6 +5,60 @@ $(document).ready ->
     # when titles overlap.
     window.sectionIndex = window.currIndex = 0
 
+    sampleClasses = [
+        {
+        "name" : "User",
+        "properties" : 
+            [
+                {
+                        "name" : "First Name"
+                },
+                {
+                        "name" : "Last Name"
+                },
+                {
+                        "name" : "Street Address"
+                },
+                {
+                        "name" : "City"
+                },
+                {
+                        "name" : "Zip"
+                }
+            ]
+        }
+    ]
+    # {
+    #     "name" : "Customer",
+    #     "properties" : [
+    #             {
+    #                     "name" : "password"
+    #             },
+    #             {
+    #                     "name" : "username"
+    #             },
+    #             {
+    #                     "name" : "region"
+    #             },
+    #             {
+    #                     "name" : "company"
+    #             },
+    #             {
+    #                     "name" : "address"
+    #             },
+    #             {
+    #                     "name" : "city"
+    #             },
+    #             {
+    #                     "name" : "state"
+    #             },
+    #             {
+    #                     "name" : "zip"
+    #             }
+    #         ]
+    # }]
+
+
     ###################
     ##### MODELS ######ƒ
     ###################
@@ -180,14 +234,10 @@ $(document).ready ->
                     ui.draggable.css({"position": "relative"}).removeClass("moved")
 
             # All classes
-            @classes =  new collections.ClassList({controller: @model})
-            @classes.fetch({
-                success: (coll) ->
-                    that.dataview = new views.DataView({collection: coll, controller: that.model})
-                    that.selectedData = new views.SelectedDataList({collection: that.model.get("properties"), controller: that.model})
-                failure: ->
-                    alert("could not get data from URL " + that.url)    
-            })
+            @classes =  new collections.ClassList(sampleClasses)
+            @classes.controller = @model
+            @dataview = new views.DataView({collection: @classes, controller: @model})
+            @selectedData = new views.SelectedDataList({collection: @model.get("properties"), controller: @model})
 
             @genericList = new views.GenericList {controller: @model}
             @layouts = new views.LayoutList({ controller: @model })
@@ -489,6 +539,7 @@ $(document).ready ->
                 val = $t.text()
                 # Set the model name
                 @model.set("name", val)
+
     })
     allSections.add new models.SectionController()
     window.sectionTabs = new views.SectionTabs({collection: allSections})

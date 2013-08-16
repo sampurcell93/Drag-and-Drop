@@ -355,3 +355,5 @@ $(document).ready ->
             _.bindAll(@, "afterRender")
         afterRender: ->
             @$el.addClass("list-layout")
+
+    class views["RepeatingLayout"] extends views['layout']

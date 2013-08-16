@@ -57,7 +57,7 @@
         $el.children().not(".list-header, .placeholder").remove();
         that = this;
         index = window.currIndex;
-        if (this.collection.length === 0) {
+        if (this.collection.length === 0 && this.$(".placeholder").length === 0) {
           $("<li/>").addClass("placeholder").text("No content here.").appendTo(this.$el);
         }
         _.each(this.collection.models, function(el) {
