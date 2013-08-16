@@ -1123,7 +1123,6 @@ ol.generic-list {
 /* line 535, ../sass/builder.scss */
 .organize-elements li.out-of-flow > .destroy-element, .organize-elements li.out-of-flow > .activate-element {
   display: block;
-  background: #373737;
 }
 /* line 537, ../sass/builder.scss */
 .organize-elements li.out-of-flow:hover {

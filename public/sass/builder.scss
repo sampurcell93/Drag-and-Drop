@@ -532,7 +532,7 @@ ol.generic-list {
             color: #373737;
             text-shadow: none ; 
 
-            > .destroy-element, > .activate-element { display: block; background: #373737; }
+            > .destroy-element, > .activate-element { display: block; }
 
             &:hover { background: #777; }
         }
