@@ -7,7 +7,16 @@
     window.collections.Snapshots = Backbone.Collection.extend({
       model: window.models.Snap,
       initialize: function() {
-        return this.detached_head = false;
+        var snap;
+        this.detached_head = false;
+        snap = new models.Snap({
+          snapshot: new collections.Elements()
+        });
+        snap.set({
+          "opname": "Open",
+          "type": "New Section"
+        });
+        return this.add(snap);
       }
     });
     history.Snapshot = Backbone.View.extend({

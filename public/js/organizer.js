@@ -54,8 +54,12 @@
       render: function(e) {
         var $el, index, that;
         $el = this.$el;
+        $el.children().not(".list-header, .placeholder").remove();
         that = this;
         index = window.currIndex;
+        if (this.collection.length === 0) {
+          $("<li/>").addClass("placeholder").text("No content here.").appendTo(this.$el);
+        }
         _.each(this.collection.models, function(el) {
           return that.append(el, {
             index: index,

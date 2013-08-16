@@ -7,6 +7,12 @@ $ ->
         model: window.models.Snap 
         initialize: ->
             @detached_head = false
+            snap = new models.Snap({snapshot: new collections.Elements()})
+            snap.set({
+                "opname": "Open"
+                "type": "New Section"
+            })
+            @add snap
 
     history.Snapshot = Backbone.View.extend
         tagName: 'li'

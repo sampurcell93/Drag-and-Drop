@@ -7,73 +7,74 @@ include builder.jade
 .container
     //- The template for rendering a single instance of the builder - allows multiple builder tabs to be open at once.
     script(type='text/template')#controller-wrap
-           
-            ul.sidebar-controls.main-controls
-                li.icon-uniF47C(data-switch-text='Configure').generate-section Build
-                li.icon-download.save-section Save
-                li.icon-selectionadd(data-switch-text='With Grid').configure-interface Without Grid
-                li.icon-wrench.view-tools Tools
-                    ul.hidden-menu.with-checkboxes
-                        li(data-modal='history') History 
-                            input(type='checkbox', checked='true') 
-                        li(data-modal='quick-props') Editables 
-                            input(type='checkbox', checked='true') 
-                        li(data-modal='quick-css') Skin Format 
-                            input(type='checkbox', checked='true') 
-                        li(data-modal='existing-modal') Recent Sections 
-                            input(type='checkbox', checked='true')
-                li.icon-cogs.settings Settings
+        <% String.prototype.clean = function(trim) { var cutoff = 10000000; var appendMe = ""; if (typeof trim !== "undefined" && trim == true) { if (this.length > 27){ appendMe = "...."; cutoff = 27} }return this.charAt(0).toUpperCase() + this.slice(1).replace("_"," ")} %>       
+        ul.sidebar-controls.main-controls
+            li.icon-uniF47C(data-switch-text='Configure').generate-section Build
+            li.icon-download.save-section Save
+            li.icon-selectionadd(data-switch-text='With Grid').configure-interface Without Grid
+            li.icon-wrench.view-tools Tools
+                ul.hidden-menu.with-checkboxes
+                    li(data-modal='history') History 
+                        input(type='checkbox', checked='true') 
+                    li(data-modal='quick-props') Editables 
+                        input(type='checkbox', checked='true') 
+                    li(data-modal='quick-css') Skin Format 
+                        input(type='checkbox', checked='true') 
+                    li(data-modal='existing-modal') Recent Sections 
+                        input(type='checkbox', checked='true')
+            li.icon-cogs.settings Settings
+            li.help Help
 
-            .section-builder-wrap
-                h2.section-title.clickme
-                    | <%= typeof section_title !== "undefined" ? section_title : "Default Section Title" %>
-                p.nice-dialog
-                    | Configure your data here. Start by choosing system properties to include in your section. They will be easily accessible while you build.
+        .section-builder-wrap
+            h2.section-title.clickme
+                | <%= typeof section_title !== "undefined" ? section_title : "Default Section Title" %>
+            p.nice-dialog
+                | Configure your data here. Start by choosing system properties to include in your section. They will be easily accessible while you build.
 
-                div.fl.w45.m10
-                    h2.m10.center Add Content to this Section
-                    input#search-data-types(placeholder='Search Data Types').w9.mauto
-                    ul.select-properties.class-list.m10
-                //- div.fl.w05.icon.center.right-arrow
-                //-     span s
-                div.fl.w4.m30
-                    ul.property-editor
-                ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr
-                    li.list-header.p10 Sections
-                    li.p10.placeholder There are no sections.
-                .clear  
-            .section-builder-wrap.hidden
-                div.toolbelt
-                //-  Generic elements to drag into the builder
-                div.dark-sidebar.sidebar-controls.accessories
-                    ul.organize-elements
-                        li.list-header 
-                            span.section-content Section Content
-                            i.icon-uniF488.fl.hide-sidebar
-                        li.placeholder No content here.
-                ul.outside-draggables
-                    li.generic-elements
-                        | Basic
-                        ul
-                    li.layout-types
-                        | Layouts
-                        ul
-                    //- li.advanced 
-                    //-     | Advanced
-                    //-     ul
-                
+            div.fl.w45.m10
+                h2.m10.center Add Content to this Section
+                input#search-data-types(placeholder='Search Data Types').w9.mauto
+                ul.select-properties.class-list.m10
+            //- div.fl.w05.icon.center.right-arrow
+            //-     span s
+            div.fl.w4.m30
+                ul.property-editor
+            ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr
+                li.list-header.p10 Sections
+                li.p10.placeholder There are no sections.
+            .clear  
+        .section-builder-wrap.hidden
+            div.toolbelt
+            //-  Generic elements to drag into the builder
+            div.dark-sidebar.sidebar-controls.accessories
+                ul.organize-elements
+                    li.list-header 
+                        span.section-content Section Content
+                        i.icon-uniF488.fl.hide-sidebar
+                    li.placeholder No content here.
+            ul.outside-draggables
+                li.generic-elements
+                    | Basic
+                    ul
+                li.layout-types
+                    | Layouts
+                    ul
+                //- li.advanced 
+                //-     | Advanced
+                //-     ul
+            
 
-                
-                //- The container for the builder itself.
-                section.builder-container
-                //- The UI architecture panel, which shows the overall structure of the section.
-                .clear
+            
+            //- The container for the builder itself.
+            section.builder-container
+            //- The UI architecture panel, which shows the overall structure of the section.
+            .clear
 
-                //- button.fr.view-layouts(data-icon='d') View Layouts
+            //- button.fr.view-layouts(data-icon='d') View Layouts
 
 //- header
-           //-      <h1 class='section-title w4 inline'><%= typeof title !== "undefined" ? title : "Default Section Title"%></h1>
-           //-      button.fr.view-sections(data-icon='i') View Sections
-           //-      button.fr.configure-interface.icon e
-           //-      button.fr.orange.save-section(data-icon='m') Save Section
-           //-      ul#existing-sections.hidden
+       //-      <h1 class='section-title w4 inline'><%= typeof title !== "undefined" ? title : "Default Section Title"%></h1>
+       //-      button.fr.view-sections(data-icon='i') View Sections
+       //-      button.fr.configure-interface.icon e
+       //-      button.fr.orange.save-section(data-icon='m') Save Section
+       //-      ul#existing-sections.hidden

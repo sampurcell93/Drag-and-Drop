@@ -1019,10 +1019,9 @@ ol.generic-list {
   min-width: 130px;
   background: #3e4951;
   border-left: 1px solid #333;
-  border-bottom: 1px solid #333;
   z-index: 998;
 }
-/* line 464, ../sass/builder.scss */
+/* line 463, ../sass/builder.scss */
 .organize-elements .ui-sortable-placeholder {
   border: 1px solid #333;
   visibility: visible !important;
@@ -1031,12 +1030,12 @@ ol.generic-list {
   -moz-box-shadow: 0px 0px 30px #2092cc, inset 0px 0px 30px rgba(255, 255, 255, 0.6);
   box-shadow: 0px 0px 30px #2092cc, inset 0px 0px 30px rgba(255, 255, 255, 0.6);
 }
-/* line 471, ../sass/builder.scss */
+/* line 470, ../sass/builder.scss */
 .organize-elements > li {
   border-top: 1px solid #5b747f;
   border-bottom: 1px solid #222;
 }
-/* line 476, ../sass/builder.scss */
+/* line 475, ../sass/builder.scss */
 .organize-elements .hide-sidebar {
   font-size: .9em;
   position: relative;
@@ -1051,7 +1050,7 @@ ol.generic-list {
   background: #000;
   padding: 5px 3px 5px 5px;
 }
-/* line 487, ../sass/builder.scss */
+/* line 486, ../sass/builder.scss */
 .organize-elements li {
   position: relative;
   min-height: 30px;
@@ -1067,11 +1066,11 @@ ol.generic-list {
   text-align: left !important;
   text-overflow: ellipsis !important;
 }
-/* line 502, ../sass/builder.scss */
+/* line 501, ../sass/builder.scss */
 .organize-elements li .destroy-element, .organize-elements li .activate-element {
   display: none;
 }
-/* line 504, ../sass/builder.scss */
+/* line 503, ../sass/builder.scss */
 .organize-elements li .sort-element {
   left: 4px;
   top: 0px;
@@ -1079,15 +1078,15 @@ ol.generic-list {
   cursor: hand;
   width: 12px;
 }
-/* line 511, ../sass/builder.scss */
+/* line 510, ../sass/builder.scss */
 .organize-elements li .sort-element:before {
   left: 3px;
 }
-/* line 516, ../sass/builder.scss */
+/* line 515, ../sass/builder.scss */
 .organize-elements li .child-list {
   margin-left: -18px;
 }
-/* line 519, ../sass/builder.scss */
+/* line 518, ../sass/builder.scss */
 .organize-elements li .child-list li:first-child::after {
   content: "";
   display: block;
@@ -1104,20 +1103,20 @@ ol.generic-list {
   position: absolute;
   left: 0;
 }
-/* line 532, ../sass/builder.scss */
+/* line 531, ../sass/builder.scss */
 .organize-elements li.out-of-flow {
   background: #000;
 }
-/* line 535, ../sass/builder.scss */
+/* line 534, ../sass/builder.scss */
 .organize-elements li.out-of-flow > .destroy-element, .organize-elements li.out-of-flow > .activate-element {
   display: block;
   background: #000;
 }
-/* line 536, ../sass/builder.scss */
+/* line 535, ../sass/builder.scss */
 .organize-elements li.out-of-flow .sort-element {
   background: #313131;
 }
-/* line 539, ../sass/builder.scss */
+/* line 538, ../sass/builder.scss */
 .organize-elements li .activate-element, .organize-elements li .destroy-element {
   position: absolute;
   right: 10px;
@@ -1126,13 +1125,13 @@ ol.generic-list {
   color: #7FBA50;
   cursor: pointer;
 }
-/* line 547, ../sass/builder.scss */
+/* line 546, ../sass/builder.scss */
 .organize-elements li .destroy-element {
   right: 33px;
   color: #888;
 }
 
-/* line 554, ../sass/builder.scss */
+/* line 553, ../sass/builder.scss */
 .ui-resizable-handle {
   border: 1px dotted #222;
   width: 3px !important;
@@ -1142,18 +1141,18 @@ ol.generic-list {
   margin-top: -15px;
   z-index: 99;
 }
-/* line 563, ../sass/builder.scss */
+/* line 562, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-w {
   left: -4px;
 }
-/* line 566, ../sass/builder.scss */
+/* line 565, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-e {
   right: -4px;
 }
 
 /* line 2, ../sass/layouts.scss */
 .layout-wrapper {
-  outline: 1px solid #7BF5F5 !important;
+  outline: 1px solid #7BF5F5;
   padding: 10px 0 10px;
   display: block;
 }

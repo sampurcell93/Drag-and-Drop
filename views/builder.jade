@@ -34,7 +34,7 @@ script(type='text/template')#context-menu-default
     li.destroy-element Delete Element
 script(type='text/template')#snapshot
     |<%= opname.clean() + (opname.slice(-1) == "e"?"d":"ed") %>
-    |<%= type + " - " + (typeof title !== "undefined" ? title : "") %>
+    |<%= type + (typeof title !== "undefined" ? " - " + title : "") %>
 
 script(type='text/template')#placeholder-context
     <% if (window.copiedModel != null) { %>
