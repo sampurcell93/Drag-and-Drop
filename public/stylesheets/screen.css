@@ -2291,27 +2291,31 @@ body.active-modal::after {
   right: 18%;
   height: 32px;
   overflow: visible;
+  -webkit-transition: right 0.3s ease-in-out;
+  -moz-transition: right 0.3s ease-in-out;
+  -o-transition: right 0.3s ease-in-out;
+  transition: right 0.3s ease-in-out;
 }
-/* line 187, ../sass/modal.scss */
+/* line 188, ../sass/modal.scss */
 .toolbelt .draggable-modal {
   display: inline-block;
   vertical-align: top;
   width: 25%;
 }
-/* line 192, ../sass/modal.scss */
+/* line 193, ../sass/modal.scss */
 .toolbelt .draggable-modal h2 {
   border-right: 1px solid #5b747f;
   border-left: 1px solid #222;
 }
-/* line 197, ../sass/modal.scss */
+/* line 198, ../sass/modal.scss */
 .toolbelt .draggable-modal:first-of-type h2 {
   border-left: none;
 }
-/* line 198, ../sass/modal.scss */
+/* line 199, ../sass/modal.scss */
 .toolbelt .draggable-modal:last-of-type h2 {
   border-right: none;
 }
-/* line 200, ../sass/modal.scss */
+/* line 201, ../sass/modal.scss */
 .toolbelt .draggable-modal li {
   white-space: nowrap;
   overflow-x: hidden;
@@ -2451,7 +2455,7 @@ p.nice-dialog {
 /* line 121, ../sass/screen.scss */
 .container {
   display: block;
-  width: calc(100% - 363px);
+  width: calc(100% - 340px);
   max-width: 80%;
   margin-left: 356px;
   min-height: 90%;
@@ -2708,24 +2712,28 @@ ul li.selected-choice {
 
 /* line 331, ../sass/screen.scss */
 .section-builder-wrap {
-  padding: 40px 240px 12px 90px;
+  padding: 40px 19% 12px 90px;
   height: 100%;
+  -webkit-transition: padding 0.3s ease-in-out;
+  -moz-transition: padding 0.3s ease-in-out;
+  -o-transition: padding 0.3s ease-in-out;
+  transition: padding 0.3s ease-in-out;
 }
-/* line 335, ../sass/screen.scss */
+/* line 336, ../sass/screen.scss */
 .section-builder-wrap.no-sidebar {
   padding-right: 0px;
 }
-/* line 338, ../sass/screen.scss */
+/* line 339, ../sass/screen.scss */
 .section-builder-wrap.no-sidebar .toolbelt {
   right: 30px;
 }
 
-/* line 344, ../sass/screen.scss */
+/* line 345, ../sass/screen.scss */
 .dark-sidebar {
   background: #3e4951;
 }
 
-/* line 348, ../sass/screen.scss */
+/* line 349, ../sass/screen.scss */
 .sidebar-controls {
   position: absolute;
   top: 0;
@@ -2734,10 +2742,13 @@ ul li.selected-choice {
   height: 100%;
   color: #f9f9f9;
   text-shadow: none;
+  -webkit-transition: width 0.3s ease-in-out;
+  -moz-transition: width 0.3s ease-in-out;
+  -o-transition: width 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out;
 }
-/* line 358, ../sass/screen.scss */
+/* line 359, ../sass/screen.scss */
 .sidebar-controls.hidden-sidebar {
-  right: 30px;
   top: 0px;
   width: 30px !important;
   height: 31px;
@@ -2908,47 +2919,47 @@ ul li.selected-choice {
   overflow-y: auto;
   overflow-x: visible;
 }
-/* line 515, ../sass/screen.scss */
+/* line 514, ../sass/screen.scss */
 .accessories.hidden-sidebar :not(".hide-sidebar") {
   display: none;
 }
-/* line 519, ../sass/screen.scss */
+/* line 518, ../sass/screen.scss */
 .accessories .draggable-modal {
   position: relative !important;
   width: 100%;
   margin: 3px auto 10px;
 }
-/* line 524, ../sass/screen.scss */
+/* line 523, ../sass/screen.scss */
 .accessories .draggable-modal > ul {
   max-height: 400px;
   overflow: auto;
 }
 
-/* line 532, ../sass/screen.scss */
+/* line 531, ../sass/screen.scss */
 [data-attr] span[contentEditable], [data-attr] span[contenteditable] {
   padding: 2px 10px;
   background: #222;
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
 }
-/* line 538, ../sass/screen.scss */
+/* line 537, ../sass/screen.scss */
 [data-attr] span[contentEditable]:focus, [data-attr] span[contenteditable]:focus {
   outline: none;
   border-left: 1px solid #5b747f;
   border-right: 1px solid #5b747f;
 }
 
-/* line 546, ../sass/screen.scss */
+/* line 545, ../sass/screen.scss */
 .ui-slider-handle {
   background: #3e4951 !important;
 }
 
-/* line 550, ../sass/screen.scss */
+/* line 549, ../sass/screen.scss */
 .disabled {
   background: #ddd;
   color: #777;
 }
-/* line 554, ../sass/screen.scss */
+/* line 553, ../sass/screen.scss */
 .disabled:hover {
   background: #ddd !important;
   color: #777 !important;

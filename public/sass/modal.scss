@@ -183,6 +183,7 @@ body {
     right: 18%;
     height: 32px;
     overflow: visible;
+    @include transition(right .3s ease-in-out);
     
     .draggable-modal {
         display: inline-block;

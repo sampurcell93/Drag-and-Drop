@@ -199,9 +199,7 @@ $(document).ready ->
         bindResize: ->
         appendChild: ->
             super
-            if (@model.get("child_els").length is 0)
-                $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(@$el)     
-            else @$el.children(".placeholder").remove()
+            @$el.children(".placeholder").remove()
         bindDrag: ->
         afterRender: ->
             that = @

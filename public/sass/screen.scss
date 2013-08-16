@@ -120,7 +120,7 @@ p {
 
 .container {
 	display: block;
-	width:  calc(100% - 363px);
+	width:  calc(100% - 340px);
 	max-width: 80%;
 	margin-left: 356px;
 	min-height: 90%;
@@ -329,8 +329,9 @@ ul li.selected-choice {
 }
 
 .section-builder-wrap { 
-	padding: 40px 240px 12px 90px;
+	padding: 40px 19% 12px 90px;
 	height: 100%;
+	@include transition(padding .3s ease-in-out);
 
 	&.no-sidebar {
 		padding-right: 0px;
@@ -353,10 +354,9 @@ ul li.selected-choice {
 	height: 100%;
 	color: #f9f9f9;
 	text-shadow: none;
-	
+	@include transition(width .3s ease-in-out);
 
     &.hidden-sidebar {
-        right: 30px;
         top: 0px;
         width: 30px !important; 
 		height:31px;
@@ -510,7 +510,6 @@ ul li.selected-choice {
 .accessories {
 	overflow-y: auto;
 	overflow-x: visible;
-    // @include transition(left .4s ease-in-out);
 
     &.hidden-sidebar :not(".hide-sidebar") {
     	display: none;

@@ -249,11 +249,7 @@
 
       _Class.prototype.appendChild = function() {
         _Class.__super__.appendChild.apply(this, arguments);
-        if (this.model.get("child_els").length === 0) {
-          return $("<p/>").text("Drop UI Elements, layouts, and other sections here to start building!").addClass("placeholder p10 center mauto").appendTo(this.$el);
-        } else {
-          return this.$el.children(".placeholder").remove();
-        }
+        return this.$el.children(".placeholder").remove();
       };
 
       _Class.prototype.bindDrag = function() {};
