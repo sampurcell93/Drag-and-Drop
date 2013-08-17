@@ -555,22 +555,3 @@ $(document).ready ->
     allSections.add new models.SectionController()
     window.sectionTabs = new views.SectionTabs({collection: allSections})
     window.sectionList = new views.AllSectionControllers({collection: allSections})
-
-    ctrlDown = false
-    ctrlKey  = 17
-    vKey     = 86
-    cKey     = 67
-
-    # When a user presses the ctrl key, enter "command mode"
-    $(@).keydown (e) ->
-        keyCode = e.keyCode || e.which
-        if keyCode == ctrlKey then ctrlDown = true
-
-    # When they go up, 
-    $(@).keyup (e) ->
-        keyCode = e.keyCode || e.which
-        if keyCode == ctrlKey
-            ctrlDown = false
-        if keyCode == 90 and ctrlDown is true
-            snaps = allSections.at(window.currIndex).toJSON().controller.histList
-            snaps.selectLast()

@@ -414,7 +414,7 @@ $(document).ready ->
             true
         bindContextMenu:  (e) ->
             if !@contextMenu? then return true
-            else if e.shiftKey is true
+            else if e.shiftKey is true 
                 @unbindContextMenu(e)
                 return true
             @unbindContextMenu(e)
@@ -447,6 +447,19 @@ $(document).ready ->
                 console.log @model.toJSON()
                 e.stopPropagation()
             # for right click functionality users expect
+            "click": (e) ->
+                @unbindContextMenu(e)
+                @$el.find(".dropdown").hide()
+                console.log e
+                if e.shiftKey is true or e.ctrlKey is true
+                    layout = @model["layout-item"]
+                    if (layout is false or typeof layout is "undefined")
+                        @$el.trigger("select")
+                    else 
+                        @$el.trigger("deselect")
+                e.preventDefault()
+                e.stopPropagation()
+                false
             "contextmenu": "bindContextMenu"
             "click .context-menu > li.copy-element": ->
                 copy = @model.deepCopy()
@@ -459,17 +472,6 @@ $(document).ready ->
                 # Stop the context menu from closing
                 $(e.currentTarget).remove()
                 e.stopPropagation()
-            "click": (e) ->
-                @unbindContextMenu(e)
-                @$el.find(".dropdown").hide()
-                if e.shiftKey is true
-                    layout = @model["layout-item"]
-                    if (layout is false or typeof layout is "undefined")
-                        @$el.trigger("select")
-                    else 
-                        @$el.trigger("deselect")
-                e.stopPropagation()
-                e.stopImmediatePropagation()
             "click .set-options": (e) ->
                 @unbindContextMenu(e)
                 $t = $(e.currentTarget)

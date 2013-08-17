@@ -103,3 +103,34 @@ $(document).ready ->
         $t.find("input").prop("checked", !$t.find("input").prop("checked"))
 
     $(@).delegate ".draggable-modal h2", "click", ->
+
+    ctrlDown = false
+    ctrlKey  = 17
+
+    # When a user presses the ctrl key, enter "command mode"
+    $(@).keydown (e) ->
+        keyCode = e.keyCode || e.which
+        if keyCode == ctrlKey then ctrlDown = true
+
+    # When they go up, 
+    $(@).keyup (e) ->
+        keyCode = e.keyCode || e.which
+        if keyCode == ctrlKey
+            ctrlDown = false
+        if keyCode == 90 and ctrlDown is true
+            snaps = allSections.at(window.currIndex).toJSON().controller.histList
+            snaps.selectLast()
+
+$(window).scroll ->
+    scrollpos = $(@).scrollTop()
+    toolbelt = $(".section-builder-wrap").offset().top
+    if scrollpos >= toolbelt
+        $(".toolbelt").addClass("sticky")
+    else 
+        $(".toolbelt").removeClass("sticky")
+window.onbeforeunload = ->
+    saved = true
+    _.each allSections.models, (section) ->
+        saved = section.saved
+    if saved == false then return "You have unsaved changes. Are you sure you want to reload/navigate away?"
+    else return null

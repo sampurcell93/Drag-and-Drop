@@ -661,6 +661,23 @@
           console.log(this.model.toJSON());
           return e.stopPropagation();
         },
+        "click": function(e) {
+          var layout;
+          this.unbindContextMenu(e);
+          this.$el.find(".dropdown").hide();
+          console.log(e);
+          if (e.shiftKey === true || e.ctrlKey === true) {
+            layout = this.model["layout-item"];
+            if (layout === false || typeof layout === "undefined") {
+              this.$el.trigger("select");
+            } else {
+              this.$el.trigger("deselect");
+            }
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        },
         "contextmenu": "bindContextMenu",
         "click .context-menu > li.copy-element": function() {
           var copy;
@@ -675,21 +692,6 @@
         "click .context-menu": function(e) {
           $(e.currentTarget).remove();
           return e.stopPropagation();
-        },
-        "click": function(e) {
-          var layout;
-          this.unbindContextMenu(e);
-          this.$el.find(".dropdown").hide();
-          if (e.shiftKey === true) {
-            layout = this.model["layout-item"];
-            if (layout === false || typeof layout === "undefined") {
-              this.$el.trigger("select");
-            } else {
-              this.$el.trigger("deselect");
-            }
-          }
-          e.stopPropagation();
-          return e.stopImmediatePropagation();
         },
         "click .set-options": function(e) {
           var $t, dropdown;
