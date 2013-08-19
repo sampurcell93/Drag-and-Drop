@@ -1,10 +1,11 @@
 @import "base";
 
-input, textarea {
+input[type='text'], textarea {
 	display: block;
 	border: 1px solid #bbb;
 	padding: 8px 10px 8px 20px;
 	font-size: 1em;
+  width: 95%;
 
 	&.big-input {
 		font-size: 1.3em;
@@ -34,7 +35,8 @@ button, .button {
   font-family: inherit;
   font-weight: bold;
   line-height: 1;
-  margin: 0 0 1.25em;
+//  margin: 0 0 1.25em;
+  margin: 0;
   position: relative;
   text-decoration: none;
   text-align: center;

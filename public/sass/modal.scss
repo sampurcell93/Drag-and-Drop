@@ -86,11 +86,11 @@ body {
     }
 
     > ul, .history-modal {
-        width: 97%;
+        width: 100%;
         margin: 1px auto 0;
         border: 1px solid $lightdusk;
-        @include border-radius(3px);
-        background: rgba(62,73,81,.94);
+        background: rgba(62,73,81,.88);
+        @include border-radius(0 0  2px 2px );
 
         li {
             text-align: left;

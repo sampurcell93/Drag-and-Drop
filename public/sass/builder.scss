@@ -23,9 +23,8 @@
 }
 
 ul.outside-draggables {
-    display:none;
+    display: block;
     float: left;
-    margin: 10px 0 0 0px;
     border-top: 1px solid #fff;
     @include border-radius(3px 3px 0 0);
     background: $dusky;
@@ -476,7 +475,7 @@ ol.generic-list {
     .hide-sidebar { 
         font-size: .9em;
         position: relative;
-        left: 15px;
+        left: 5px;
         top: 1px;
         text-align: center;
         @include border-radius(50%);
@@ -530,26 +529,25 @@ ol.generic-list {
         }
 
         &.out-of-flow {
-            background: #777;
-            color: #373737;
+            background: #474747;
             text-shadow: none ; 
+            border-top: 1px solid #696969;
 
-            > .destroy-element, > .activate-element { display: block; }
+            > .sort-element { display: none; }
+            > .destroy-element { display: block; }
 
-            &:hover { background: #777; }
+            &:hover { background: #474747; border-top: 1px solid #555; }
         }
 
-        .activate-element, .destroy-element {
-            position: absolute;
-            right: 10px;
-            top: 8px;
-            font-family: 'icons';
-            color: #7FBA50;
-            cursor: pointer;
-        }
         .destroy-element {
-            right: 33px;
-            color: $pegaorange;
+            position: absolute;
+            left: 4px;
+            color: #eee;
+            top: 6px;
+            font-family: 'icons';
+            cursor: pointer;
+            @include border-radius(2px);
+            padding: 2px;
         }
     }
 }
