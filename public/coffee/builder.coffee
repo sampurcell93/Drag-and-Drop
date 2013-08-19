@@ -275,9 +275,10 @@ $(document).ready ->
                          next(".droppable-placeholder").slideDown("fast").
                          prev(".droppable-placeholder").slideDown("fast")
                     else 
-                        self.$el.slideUp("fast").
-                        next(".droppable-placeholder").slideUp("fast").
-                        prev(".droppable-placeholder").slideUp("fast")
+                        self.$el.slideUp("fast")
+                        allSections.at(window.currIndex).get("builder").removeExtraPlaceholders()
+                        # next(".droppable-placeholder").slideUp("fast")
+                        # self.$el.prev(".droppable-placeholder").slideUp("fast")
                 "remove": ->
                     self.$el.next(".droppable-placeholder").remove()
                     self.remove()

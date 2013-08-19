@@ -448,6 +448,7 @@ $(document).ready ->
             "click .add-property": (e) ->
                 newProp = new models.Property({className: @model.get("name")})
                 @$el.append prop = new views.PropertyItem({model: newProp, index: @options.index, editable: true}).render().el
+                @$el.children().last().find("input[type=text]").focus()
                 # allSections.at(@options.index).get("properties").add newProp
             "click .close": (e) ->
                 that = @

@@ -493,11 +493,12 @@
           newProp = new models.Property({
             className: this.model.get("name")
           });
-          return this.$el.append(prop = new views.PropertyItem({
+          this.$el.append(prop = new views.PropertyItem({
             model: newProp,
             index: this.options.index,
             editable: true
           }).render().el);
+          return this.$el.children().last().find("input[type=text]").focus();
         },
         "click .close": function(e) {
           var that;

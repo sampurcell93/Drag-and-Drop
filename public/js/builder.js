@@ -409,7 +409,8 @@
             if (model.get("inFlow") === true) {
               return self.$el.slideDown("fast").next(".droppable-placeholder").slideDown("fast").prev(".droppable-placeholder").slideDown("fast");
             } else {
-              return self.$el.slideUp("fast").next(".droppable-placeholder").slideUp("fast").prev(".droppable-placeholder").slideUp("fast");
+              self.$el.slideUp("fast");
+              return allSections.at(window.currIndex).get("builder").removeExtraPlaceholders();
             }
           },
           "remove": function() {

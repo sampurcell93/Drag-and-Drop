@@ -160,7 +160,6 @@ section.builder-container {
     cursor: move;
     text-overflow: ellipsis;
     display: table;
-    max-width: 100% ;
 
     ul, ol, dl {
         list-style-position: inside !important;
@@ -350,70 +349,6 @@ ul.generic-list {
 }
 ol.generic-list {
     list-style: decimal;
-}
-
-.layout-wrapper {
-    outline: 1px solid #7BF5F5 !important;
-    padding: 4px 0 4px;
-    margin: 2px;
-    display: block;
-    background: #fff;
-
-    &:hover {
-        background: #FBF9DE;
-        @include box-shadow(none);
-    }
-
-    &.column.one > .droppable-placeholder {
-        width: 100%;
-        display: block;
-        height: 10px;
-    }
-
-    // &.column {
-        
-    //     > ul.children > .builder-element { 
-    //         display: inline-block; 
-    //         margin: 2px 0 1px 0;
-    //     }
-    //     > ul.children > .droppable-placeholder { 
-    //         width: 1%; 
-    //         background: orange;
-    //         display: inline-block; 
-    //         margin: 0;
-    //         min-height: 41px;
-    //     }
-    
-    //     // Necessary to compensate for unbalanced placeholders which skew the page view.
-    //     &.two > ul.children > .builder-element:nth-of-type(4n+6) ,
-    //     &.three > ul.children > .builder-element:nth-of-type(6n+8), 
-    //     &.four > ul.children > .builder-element:nth-of-type(8n+10),
-    //     &.five > ul.children > .builder-element:nth-of-type(10n+12),
-    //     &.six > ul.children > .builder-element:nth-of-type(12n+14)
-    //     {
-    //         margin-left: 1% !important;
-    //     }
-    //     &.two > ul.children > .builder-element { 
-    //         width: 48.5%; 
-    //     }
-
-    //     &.three > ul.children > .builder-element { 
-    //         width: 32%; 
-    //     }
-    
-    //     &.four > ul.children > .builder-element { 
-    //         width: 23.75%; 
-    //     }
-
-    //     &.five > ul.children > .builder-element { 
-    //         width: 18.8%; 
-    //     }
-
-    //     &.six > ul.children > .builder-element { 
-    //         width: 15.5%; 
-    //     }
-    // }
-
 }
 
 
