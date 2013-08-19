@@ -467,8 +467,12 @@ $(document).ready ->
             @controller = @options.controller
             @wrapper = $(".control-section").eq(@controller.index)
             @$el = @wrapper.find(".property-editor")
+            self = @
             @listenTo @collection,  {
                 "add": @append
+                "remove": ->
+                    if self.collection.length is 0
+                        self.$(".placeholder").show()
             }
             _.bindAll(this,'render')
             @render()
@@ -478,6 +482,7 @@ $(document).ready ->
             _.each  @collection.models, (prop) ->
                 self.append(prop)
         append: (prop) ->
+            @$(".placeholder").hide()
             @$el.append new views.PropertyItemEditor({model: prop}).render().el
     })
 
@@ -510,7 +515,6 @@ $(document).ready ->
             # @chooseProp()
             this
         chooseProp: (e) ->
-
             if e?
                 $t = $(e.currentTarget)
                 $t.closest(".property").toggleClass "selected"

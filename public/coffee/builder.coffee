@@ -439,11 +439,18 @@ $(document).ready ->
             if editor? then editor = new editor({model: @model, link_el: @el}).render()
             else editor = new views.editors[defaultEditor]({model: @model, link_el: @el}).render()
             $(editor.el).launchModal()
+        selectEl: ->
+            layout = @model["layout-item"]
+            if (layout is false or typeof layout is "undefined")
+                @$el.trigger("select")
+            else 
+                @$el.trigger("deselect")
         # Default events for any draggable - basically configuration settings.
         events: 
             # for debugging
             "dblclick": (e) ->
                 console.log @model.toJSON()
+                @selectEl()
                 e.stopPropagation()
             # for right click functionality users expect
             "click": (e) ->
@@ -451,11 +458,7 @@ $(document).ready ->
                 @$el.find(".dropdown").hide()
                 console.log e
                 if e.shiftKey is true or e.ctrlKey is true
-                    layout = @model["layout-item"]
-                    if (layout is false or typeof layout is "undefined")
-                        @$el.trigger("select")
-                    else 
-                        @$el.trigger("deselect")
+                    @selectEl()
                 e.preventDefault()
                 e.stopPropagation()
                 false

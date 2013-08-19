@@ -519,11 +519,18 @@
     window.views.SelectedDataList = Backbone.View.extend({
       template: $("#configure-property").html(),
       initialize: function() {
+        var self;
         this.controller = this.options.controller;
         this.wrapper = $(".control-section").eq(this.controller.index);
         this.$el = this.wrapper.find(".property-editor");
+        self = this;
         this.listenTo(this.collection, {
-          "add": this.append
+          "add": this.append,
+          "remove": function() {
+            if (self.collection.length === 0) {
+              return self.$(".placeholder").show();
+            }
+          }
         });
         _.bindAll(this, 'render');
         return this.render();
@@ -537,6 +544,7 @@
         });
       },
       append: function(prop) {
+        this.$(".placeholder").hide();
         return this.$el.append(new views.PropertyItemEditor({
           model: prop
         }).render().el);

@@ -654,23 +654,28 @@
         return $(editor.el).launchModal();
       };
 
+      draggableElement.prototype.selectEl = function() {
+        var layout;
+        layout = this.model["layout-item"];
+        if (layout === false || typeof layout === "undefined") {
+          return this.$el.trigger("select");
+        } else {
+          return this.$el.trigger("deselect");
+        }
+      };
+
       draggableElement.prototype.events = {
         "dblclick": function(e) {
           console.log(this.model.toJSON());
+          this.selectEl();
           return e.stopPropagation();
         },
         "click": function(e) {
-          var layout;
           this.unbindContextMenu(e);
           this.$el.find(".dropdown").hide();
           console.log(e);
           if (e.shiftKey === true || e.ctrlKey === true) {
-            layout = this.model["layout-item"];
-            if (layout === false || typeof layout === "undefined") {
-              this.$el.trigger("select");
-            } else {
-              this.$el.trigger("deselect");
-            }
+            this.selectEl();
           }
           e.preventDefault();
           e.stopPropagation();

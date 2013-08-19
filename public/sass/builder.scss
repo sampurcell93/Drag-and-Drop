@@ -528,17 +528,6 @@ ol.generic-list {
             }
         }
 
-        &.out-of-flow {
-            background: #474747;
-            text-shadow: none ; 
-            border-top: 1px solid #696969;
-
-            > .sort-element { display: none; }
-            > .destroy-element { display: block; }
-
-            &:hover { background: #474747; border-top: 1px solid #555; }
-        }
-
         .destroy-element {
             position: absolute;
             left: 4px;
@@ -549,6 +538,23 @@ ol.generic-list {
             @include border-radius(2px);
             padding: 2px;
         }
+
+        &:hover { 
+            background: $dusky !important;
+        }
+
+
+        &.out-of-flow {
+            background: #474747;
+            text-shadow: none ; 
+            border-top: 1px solid #696969;
+
+            > .sort-element { display: none; }
+            > .destroy-element { display: block; }
+
+            &:hover { background: #474747 !important; border-top: 1px solid #555; }
+        }
+
     }
 }
 

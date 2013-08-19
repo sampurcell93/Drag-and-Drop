@@ -1118,25 +1118,6 @@ ol.generic-list {
   left: 0;
 }
 /* line 531, ../sass/builder.scss */
-.organize-elements li.out-of-flow {
-  background: #474747;
-  text-shadow: none;
-  border-top: 1px solid #696969;
-}
-/* line 536, ../sass/builder.scss */
-.organize-elements li.out-of-flow > .sort-element {
-  display: none;
-}
-/* line 537, ../sass/builder.scss */
-.organize-elements li.out-of-flow > .destroy-element {
-  display: block;
-}
-/* line 539, ../sass/builder.scss */
-.organize-elements li.out-of-flow:hover {
-  background: #474747;
-  border-top: 1px solid #555;
-}
-/* line 542, ../sass/builder.scss */
 .organize-elements li .destroy-element {
   position: absolute;
   left: 4px;
@@ -1151,8 +1132,31 @@ ol.generic-list {
   border-radius: 2px;
   padding: 2px;
 }
-
+/* line 542, ../sass/builder.scss */
+.organize-elements li:hover {
+  background: #3e4951 !important;
+}
+/* line 547, ../sass/builder.scss */
+.organize-elements li.out-of-flow {
+  background: #474747;
+  text-shadow: none;
+  border-top: 1px solid #696969;
+}
+/* line 552, ../sass/builder.scss */
+.organize-elements li.out-of-flow > .sort-element {
+  display: none;
+}
+/* line 553, ../sass/builder.scss */
+.organize-elements li.out-of-flow > .destroy-element {
+  display: block;
+}
 /* line 555, ../sass/builder.scss */
+.organize-elements li.out-of-flow:hover {
+  background: #474747 !important;
+  border-top: 1px solid #555;
+}
+
+/* line 561, ../sass/builder.scss */
 .ui-resizable-handle {
   border: 1px dotted #222;
   width: 3px !important;
@@ -1162,11 +1166,11 @@ ol.generic-list {
   margin-top: -15px;
   z-index: 99;
 }
-/* line 564, ../sass/builder.scss */
+/* line 570, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-w {
   left: -4px;
 }
-/* line 567, ../sass/builder.scss */
+/* line 573, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-e {
   right: -4px;
 }
