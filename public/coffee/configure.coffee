@@ -167,7 +167,7 @@ $(document).ready ->
                     step: 1
                     min: 0
                     max: 100
-                    change: (e, ui) ->
+                    slide: (e, ui) ->
                         window.settings.history_length = ui.value
                         localStorage.settings.history_length = ui.value
                         $(".history-length-label").text(ui.value)

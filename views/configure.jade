@@ -22,7 +22,19 @@ script(type='text/template')#generic-element
     <%= type %>
 script(type='text/template')#settings-template
     label.m10 History Length:
+    span.history-length-label <%= window.settings.history_length || 15 %> 
+    |&nbsp;items
     div.m10.hist-length(data-setting='history_length')
-    p.nice-dialog 
+    p.nice-dialog.m10
         strong Be careful: 
         | Changing the length of your builder's history can cause performance issues, especially when multiple tabs are open.
+    label.m10 Visible Tools:
+    ul.m10
+        li(data-modal='history') History 
+            input(type='checkbox', checked='true') 
+        li(data-modal='quick-props') Editables 
+            input(type='checkbox', checked='true') 
+        li(data-modal='quick-css') Skin Format 
+            input(type='checkbox', checked='true') 
+        li(data-modal='existing-modal') Recent Sections 
+            input(type='checkbox', checked='true')

@@ -35,6 +35,16 @@ body {
         right: 4px;
         cursor: pointer;
     }
+    
+    ul {
+        border: 1px solid #ccc; 
+        padding: 8px; 
+        li {
+            padding: 4px 10px 4px 0;
+            display: inline-block;
+            border-right: 1px solid #ccc;
+        }
+    }
 
 }
 

@@ -136,7 +136,7 @@
             step: 1,
             min: 0,
             max: 100,
-            change: function(e, ui) {
+            slide: function(e, ui) {
               window.settings.history_length = ui.value;
               localStorage.settings.history_length = ui.value;
               return $(".history-length-label").text(ui.value);

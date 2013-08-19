@@ -486,13 +486,6 @@ ul li.selected-choice {
 			border-left: 1px solid #777;
 			overflow-y: scroll;
 
-			&.with-checkboxes input  {
-				position: absolute;
-				top: 13px;
-				left: 10px;
-
-			}
-
 			li {
 				position: relative;
 				min-height: 30px;
