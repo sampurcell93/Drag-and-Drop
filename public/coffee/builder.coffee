@@ -433,7 +433,6 @@ $(document).ready ->
         unbindContextMenu: (e) ->
             menu = $(".context-menu") 
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
-            else if !menu.length then return false
             menu.remove()
         showConfigModal: (e) ->
             defaultEditor = if @model.get("layout") == true then "BaseLayoutEditor" else "BaseEditor"

@@ -6,17 +6,16 @@ script(type='text/template')#data-type
     .clear
 script(type='text/template')#property-item
     <% if (typeof editable !== "undefined" && editable == true) { %>
-    <div contentEditable>
+    input(type='text', placeholder='Enter property name')
     <% } else {%>
-    <div>
-    <% } %>
-    //- Sorry for the shitty formatting - jade is bad at indents.
     | <%= name.clean() %>
+    <% } %>
     </div>
     label
         input.fr.choose-prop(type='checkbox')
 //- Template to edit properties
 script(type='text/template')#property-item-editor
+    <% console.log(name) %>
     <%= className + "." + name.clean() %>
 script(type='text/template')#generic-element
     <%= type %>

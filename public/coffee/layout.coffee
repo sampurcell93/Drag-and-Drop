@@ -84,7 +84,6 @@ $(document).ready ->
     }        
 
     class window.views.layout extends window.views.draggableElement
-      
         # Calls the parent initialize function - mimicry of classical inheritance.
         initialize: -> 
             @model.set("layout", true)
@@ -105,7 +104,7 @@ $(document).ready ->
                     children = model.get("child_els")
                     parent   = model.collection
                     for child, i in children.models
-                        child['layout-item']= false
+                        child['layout-item'] = false
                         # Unlink each model from the collection
                         child.collection = null
                         # Simply adding at position would insert elements in reverse order

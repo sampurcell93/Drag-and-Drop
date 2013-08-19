@@ -635,8 +635,6 @@
         menu = $(".context-menu");
         if ((e != null) && $(e.currentTarget).hasClass("context-menu")) {
           return false;
-        } else if (!menu.length) {
-          return false;
         }
         return menu.remove();
       };

@@ -446,7 +446,7 @@ $(document).ready ->
             this
         events:
             "click .add-property": (e) ->
-                newProp = new models.Property({name: 'Change Me', className: @model.get("name")})
+                newProp = new models.Property({className: @model.get("name")})
                 @$el.append prop = new views.PropertyItem({model: newProp, index: @options.index, editable: true}).render().el
                 # allSections.at(@options.index).get("properties").add newProp
             "click .close": (e) ->
@@ -539,15 +539,15 @@ $(document).ready ->
                 currentSection.remove @elementModel
         events:
             "click .choose-prop": "chooseProp"
-            "keyup": (e) ->
+            "keyup input": (e) ->
                 $t =  $(e.currentTarget)
                 # Get the new name of the property
-                val = $t.text()
+                val = $t.val()
                 # Set the model name
                 @model.set("name", val)
                 if @elementModel?
                     @elementModel.set("title", val).trigger("render")
-            keydown: (e)->
+            'keydown': (e)->
                 key = e.keyCode || e.which
                 if key == 13
                     @$el.siblings(".add-property").trigger "click"

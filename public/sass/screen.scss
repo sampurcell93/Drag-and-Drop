@@ -231,18 +231,13 @@ ul.select-properties {
 		&:last-child {
 			border-bottom: none;
 		}
-		&:focus {
-			outline: 1px solid #fff;
-		}
 
 		&:nth-child(even) {
 			background: $fadedblue;
 		}
-	}
 
-	div {
-		&:focus {
-			outline: 1px solid #fff;
+		input[type='text'] {
+			padding: 2px 10px;
 		}
 	}
 }

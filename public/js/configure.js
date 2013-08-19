@@ -491,7 +491,6 @@
         "click .add-property": function(e) {
           var newProp, prop;
           newProp = new models.Property({
-            name: 'Change Me',
             className: this.model.get("name")
           });
           return this.$el.append(prop = new views.PropertyItem({
@@ -608,16 +607,16 @@
       },
       events: {
         "click .choose-prop": "chooseProp",
-        "keyup": function(e) {
+        "keyup input": function(e) {
           var $t, val;
           $t = $(e.currentTarget);
-          val = $t.text();
+          val = $t.val();
           this.model.set("name", val);
           if (this.elementModel != null) {
             return this.elementModel.set("title", val).trigger("render");
           }
         },
-        keydown: function(e) {
+        'keydown': function(e) {
           var key;
           key = e.keyCode || e.which;
           if (key === 13) {
