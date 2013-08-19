@@ -284,7 +284,7 @@
         return ghostFragment.droppable({
           accept: ".builder-element, .outside-draggables li, .property",
           greedy: true,
-          tolerance: 'intersect',
+          tolerance: 'pointer',
           over: function(e, ui) {
             if ($(document.body).hasClass("active-modal")) {
               return false;

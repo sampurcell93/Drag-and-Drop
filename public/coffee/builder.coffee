@@ -191,7 +191,7 @@ $(document).ready ->
             ghostFragment.droppable
                 accept: ".builder-element, .outside-draggables li, .property"
                 greedy: true
-                tolerance: 'intersect' 
+                tolerance: 'pointer' 
                 over: (e, ui) ->
                     if $(document.body).hasClass("active-modal") then return false
                     $(e.target).addClass("show")
