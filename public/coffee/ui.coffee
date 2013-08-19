@@ -86,6 +86,18 @@ $(document).ready ->
         $t.text(switchtext)
         $t.data("switch-text", currtext)
 
+    $(@).delegate "[data-switch-icon]", "click", ->
+        $t = $ this
+        switchicon = $t.data("switch-icon")
+        curricon = $t.attr("class").split(" ")
+        _.each curricon, (classname) ->
+            if classname.indexOf("icon") > -1
+                curricon = classname
+                false
+        $t.removeClass curricon
+        $t.addClass(switchicon)
+        $t.data("switch-icon", curricon)
+
     $(@).delegate ".close-arrow", "click", ->
         $(this).toggleClass("flipped")
         .siblings(":not(.drag-handle)").toggle()
@@ -133,11 +145,15 @@ $(window).scroll ->
     scrollpos = $(@).scrollTop()
     # toolbelt at top of container
     toolbelt = $wrap.offset().top
+    if $(".control-section").eq(window.currIndex).find(".section-builder-wrap").hasClass("no-sidebar")
+        right = "30px"
+    else
+        right = ($wrap.width()*.18) + "px"
     if scrollpos >= toolbelt
         # if sticky needed, add fixed class and calc repositioning
         $(".toolbelt").addClass("sticky").css({
             "left": 55 + $wrap.offset().left + "px"
-            "right": ($wrap.width()*.18) + "px"
+            "right": right
         })
     else 
         $(".toolbelt").removeClass("sticky").css("left", "55px")

@@ -113,7 +113,6 @@ p {
 			}
 		}
 		&.current-tab {
-			text-decoration: underline;
 			color: #333;
 			background: #f9f9f9;
 			@include box-shadow(inset 0px 0px 1px #fff);

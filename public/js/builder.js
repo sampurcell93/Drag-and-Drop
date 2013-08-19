@@ -605,7 +605,7 @@
       };
 
       draggableElement.prototype.bindContextMenu = function(e) {
-        var $el, pageX, pageY;
+        var $el, item, pageX, pageY;
         if (this.contextMenu == null) {
           return true;
         } else if (e.shiftKey === true) {
@@ -617,7 +617,12 @@
         $el = this.$el;
         pageX = e.pageX - $el.offset().left;
         pageY = e.pageY - $el.offset().top;
-        $("<ul />").html(_.template(this.contextMenu, this.model.toJSON())).addClass("context-menu").css({
+        item = this.model.toJSON();
+        item.selected = false;
+        if (this.model["layout-item"] === true) {
+          item.selected = true;
+        }
+        $("<ul />").html(_.template(this.contextMenu, item)).addClass("context-menu").css({
           "top": pageY + "px",
           "left": pageX + "px"
         }).appendTo(this.$el);
@@ -687,6 +692,9 @@
           copy = this.model.deepCopy();
           return window.copiedModel = copy;
         },
+        "click .context-menu > li.select-this": function() {
+          return this.selectEl();
+        },
         "click .group-elements": "blankLayout",
         "click .export": "exportAsSection",
         "click .destroy-element": function() {
@@ -750,6 +758,14 @@
         },
         "mouseleave": function() {
           return this.$(".set-options > ul").hide();
+        },
+        "mouseover .config-menu-wrap": function(e) {
+          cc("mouse");
+          return e.stopPropagation();
+        },
+        "mouseout .config-menu-wrap": function(e) {
+          cc("out");
+          return e.stopPropagation();
         }
       };
 

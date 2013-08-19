@@ -25,6 +25,7 @@ script(type='text/template')#property-link
     span(contentEditable='false').property-link <%= property_name  %> 
         i.icon.remove-property-link g
 script(type='text/template')#context-menu-default
+
     li.group-elements Group selected
     li.copy-element Copy Element
     <% if (typeof window.copiedModel !== "undefined" && typeof layout !== "undefined" && window.copiedModel != null) {%>

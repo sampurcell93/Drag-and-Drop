@@ -421,8 +421,11 @@ $(document).ready ->
             $el = @$el
             pageX = e.pageX - $el.offset().left
             pageY = e.pageY - $el.offset().top
+            item =  @model.toJSON()
+            item.selected = false
+            if @model["layout-item"] is true then item.selected = true 
             # Remove all other right click menus
-            $("<ul />").html(_.template(@contextMenu, @model.toJSON())).
+            $("<ul />").html(_.template(@contextMenu, item)).
             addClass("context-menu").
             css({"top":pageY + "px", "left": pageX + "px"}).
             appendTo(@$el)
@@ -466,6 +469,8 @@ $(document).ready ->
             "click .context-menu > li.copy-element": ->
                 copy = @model.deepCopy()
                 window.copiedModel = copy
+            "click .context-menu > li.select-this": ->
+                @selectEl()
             "click .group-elements": "blankLayout"
             "click .export": "exportAsSection"
             "click .destroy-element": ->
@@ -516,6 +521,12 @@ $(document).ready ->
                 @$el.removeClass("active-sorting")
             "mouseleave": ->
                 @$(".set-options > ul").hide()
+            "mouseover .config-menu-wrap": (e) ->
+                cc "mouse"
+                e.stopPropagation()
+            "mouseout .config-menu-wrap": (e) ->
+                cc "out"
+                e.stopPropagation()
 
     # The builder is less of a listview and more of a simple controller whose render only appends a single droppable wrapper
     # whose model is not included in the collection. This reduces redundancy.

@@ -105,6 +105,21 @@
       $t.text(switchtext);
       return $t.data("switch-text", currtext);
     });
+    $(this).delegate("[data-switch-icon]", "click", function() {
+      var $t, curricon, switchicon;
+      $t = $(this);
+      switchicon = $t.data("switch-icon");
+      curricon = $t.attr("class").split(" ");
+      _.each(curricon, function(classname) {
+        if (classname.indexOf("icon") > -1) {
+          curricon = classname;
+          return false;
+        }
+      });
+      $t.removeClass(curricon);
+      $t.addClass(switchicon);
+      return $t.data("switch-icon", curricon);
+    });
     $(this).delegate(".close-arrow", "click", function() {
       return $(this).toggleClass("flipped").siblings(":not(.drag-handle)").toggle();
     });
@@ -157,14 +172,19 @@
   });
 
   $(window).scroll(function() {
-    var $wrap, scrollpos, toolbelt;
+    var $wrap, right, scrollpos, toolbelt;
     $wrap = $(".container");
     scrollpos = $(this).scrollTop();
     toolbelt = $wrap.offset().top;
+    if ($(".control-section").eq(window.currIndex).find(".section-builder-wrap").hasClass("no-sidebar")) {
+      right = "30px";
+    } else {
+      right = ($wrap.width() * .18) + "px";
+    }
     if (scrollpos >= toolbelt) {
       return $(".toolbelt").addClass("sticky").css({
         "left": 55 + $wrap.offset().left + "px",
-        "right": ($wrap.width() * .18) + "px"
+        "right": right
       });
     } else {
       return $(".toolbelt").removeClass("sticky").css("left", "55px");

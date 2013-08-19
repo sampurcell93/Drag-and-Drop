@@ -9,9 +9,9 @@ include builder.jade
     script(type='text/template')#controller-wrap
         <% String.prototype.clean = function(trim) { var cutoff = 10000000; var appendMe = ""; if (typeof trim !== "undefined" && trim == true) { if (this.length > 27){ appendMe = "...."; cutoff = 27} }return this.charAt(0).toUpperCase() + this.slice(1).replace("_"," ")} %>       
         ul.sidebar-controls.main-controls
-            li.icon-uniF47C(data-switch-text='Config').generate-section Build
+            li.icon-uniF47C(data-switch-text='Config', data-switch-icon='icon-wrench').generate-section Build
             li.icon-download.save-section Save
-            li.icon-selectionadd(data-switch-text='With Grid').no-grid Without Grid
+            li.icon-selectionrmove(data-switch-text='With Grid', data-switch-icon='icon-selectionadd').no-grid Without Grid
             li.icon-cogs.settings Settings
             //- li.help Help
 
