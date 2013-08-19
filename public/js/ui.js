@@ -76,6 +76,10 @@
         containment: '.container',
         handle: '.drag-handle'
       });
+      modal.delegate(".drag-handle", "click", function() {
+        cc("click");
+        return $(this).siblings(".close-arrow").trigger("click");
+      });
       modal.prependTo(appendTo || document.body);
       modal.append($("<div/>").addClass("close-arrow icon-caret-up icon pointer"));
       return modal;

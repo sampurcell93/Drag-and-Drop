@@ -92,9 +92,9 @@ p {
 		cursor: pointer;
 
 		&:hover {
-			text-decoration: underline;
+			background: #131313;
+		}	
 
-		}
 		.remove {
 			position: absolute;
 			right: 3px;
@@ -117,6 +117,10 @@ p {
 			color: #333;
 			background: #f9f9f9;
 			@include box-shadow(inset 0px 0px 1px #fff);
+
+			&:hover {
+				background:#eee; 
+			}
 
 			.remove { 
 				color: #333;
