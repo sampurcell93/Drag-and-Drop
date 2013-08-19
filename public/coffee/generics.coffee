@@ -30,6 +30,10 @@ $(document).ready ->
         #     listItems: [1,2,3]
         # },
         {
+            type: 'Input Field'
+            view: "Input"
+        }
+        {
             type: 'Date/Time'
             view: 'DateTime'
         },
@@ -133,9 +137,9 @@ $(document).ready ->
     # store in a single class,so we'll split it up here using inheritance.
     # HANG ON - javascript does INHERITANCE????????!
 
-    class views["Property"] extends views.genericElement
-        template: $("#property-template").html()
-        className: 'builder-element block'
+    class views["Input"] extends views.genericElement
+        template: $("#input-template").html()
+        className: 'builder-element w5'
         initialize: ->
             super
             self = @
@@ -153,7 +157,6 @@ $(document).ready ->
 
     class window.views['CustomText'] extends window.views.genericElement
         template: $("#custom-text").html()
-        className: 'builder-element w5'
 
     class window.views['Radio'] extends window.views.genericElement
         template: $("#generic-radio").html()

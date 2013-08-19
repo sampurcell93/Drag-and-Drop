@@ -59,21 +59,10 @@ $(document).ready ->
         render: ->
             $el = @$el
             $el.html _.template @template, @model.toJSON()
-            $ch = $el.children(".thumb")
-            _.each @model.get("currentSection").models, (child, i) ->
-                $ch.append new views.ElementThumbnail(child).render().el
-            this
+            @
         events: 
-            "click .icon-magnifier": ->
+            "click": ->
                 allSections.add @model
-                # coll = new collections.Elements()
-                # _.each @model.get("currentSection"), (obj) ->
-                #     model = new models.Element(obj)
-                #     model.set("child_els", model.modelify model.get("child_els"))
-                #     coll.add model
-                # @model.set("currentSection", coll)
-                # @model.set("properties", new collections.Properties(@model.get("properties")))
-                # allSections.add @model
     }
 
     window.views.ElementThumbnail = Backbone.View.extend {

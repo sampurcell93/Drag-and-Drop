@@ -434,23 +434,23 @@ input[type='text'], textarea {
   border: 1px solid #bbb;
   padding: 8px 10px 8px 20px;
   font-size: 1em;
-  width: 95%;
+  min-width: 95%;
+  max-width: 100%;
 }
-/* line 10, ../sass/form.scss */
+/* line 11, ../sass/form.scss */
 input[type='text'].big-input, textarea.big-input {
   font-size: 1.3em;
 }
-/* line 14, ../sass/form.scss */
+/* line 15, ../sass/form.scss */
 input[type='text'][type="radio"], textarea[type="radio"] {
   display: inline-block;
   width: 25px;
 }
 
-/* line 21, ../sass/form.scss */
+/* line 22, ../sass/form.scss */
 textarea {
   margin: 5px 0;
   display: block;
-  min-width: 100%;
 }
 
 /* line 27, ../sass/form.scss */

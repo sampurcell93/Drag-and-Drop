@@ -1,7 +1,6 @@
 
 script(type='text/template')#element-sortable-item
     .sort-element.icon-move
-    div.activate-element.icon-checkmark
     div.destroy-element.icon-remove
     <span class='element-title'>
     <%= (typeof title !== "undefined" && title !== "") ?  title.clean(true) : "Default Title" %>

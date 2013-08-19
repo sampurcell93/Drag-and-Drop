@@ -257,11 +257,10 @@
           }
           return e.stopPropagation();
         },
-        "remove": function() {
-          return this.remove();
-        },
+        "remove": "remove",
         "contextmenu": function(e) {
           var $el, pageX, pageY;
+          e.stopPropagation();
           if (window.copiedModel === null) {
             return true;
           }
@@ -274,7 +273,6 @@
             "top": pageY + "px",
             "left": pageX + "px"
           }).appendTo(this.$el);
-          e.stopPropagation();
           return false;
         }
       };

@@ -140,8 +140,8 @@ $(document).ready ->
             'click .view-sections': (e)->
                 $(e.currentTarget).toggleClass("active")
                 $("#existing-sections").animate({height: 'toggle'}, 200)
-            'click .configure-interface': ->
-                @model.get("builder").$el.toggleClass("no-grid")
+            'click .no-grid': ->
+                @$el.toggleClass("no-grid")
             'click .section-title': (e) ->
                 self = @
                 modal = window.launchModal(_.template($("#section-change").html(), {title: @model.get("title")}) + "<button class='confirm m10'>Ok</button>")
@@ -261,7 +261,7 @@ $(document).ready ->
         saveSection: ->
             title = @model.get "title"
             if title == "" or typeof title is "undefined" or title == "Default Section Title"
-                alert "You need to enter a title"
+                alert "You need to enter a label for the section before you can save it!"
                 return false
             # _.each @model.get("currentSection").models, (model) ->
             #     model.unset "inFlow", {silent: true}
@@ -523,7 +523,7 @@ $(document).ready ->
                 model = @model.toJSON()
                 model.title = model.className + "." + model.name
                 # model.property = {}
-                model.view = "Property"
+                model.view = "Input"
                 model.property = @model
                 model.property.name = model.name
                 model.type = "Property"

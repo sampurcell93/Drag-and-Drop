@@ -126,7 +126,6 @@
       }, 200);
       return $t.find("input").prop("checked", !$t.find("input").prop("checked"));
     });
-    $(this).delegate(".draggable-modal h2", "click", function() {});
     ctrlDown = false;
     ctrlKey = 17;
     $(this).keydown(function(e) {
@@ -137,15 +136,23 @@
       }
     });
     return $(this).keyup(function(e) {
-      var keyCode, snaps;
+      var current, keyCode, snaps;
       keyCode = e.keyCode || e.which;
+      current = allSections.at(window.currIndex).toJSON().controller;
       if (keyCode === ctrlKey) {
         ctrlDown = false;
       }
-      if (keyCode === 90 && ctrlDown === true) {
-        snaps = allSections.at(window.currIndex).toJSON().controller.histList;
-        return snaps.selectLast();
+      if (ctrlDown === true) {
+        if (keyCode === 90) {
+          snaps = current.histList;
+          snaps.selectLast();
+        } else if (keyCode === 83) {
+          current.saveSection();
+        }
       }
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
     });
   });
 

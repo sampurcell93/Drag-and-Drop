@@ -228,11 +228,13 @@
         "mouseup .sort-element": function(e) {
           return this.model.trigger("dropped");
         },
-        "click .activate-element": function(e) {
-          this.model.set("inFlow", true, {
-            e: e,
-            opname: 'Flow In'
-          });
+        "click": function(e) {
+          if (this.$el.hasClass("out-of-flow")) {
+            this.model.set("inFlow", true, {
+              e: e,
+              opname: 'Flow In'
+            });
+          }
           return e.stopPropagation();
         },
         "click .destroy-element": function(e) {

@@ -16,6 +16,9 @@
         "type": "Custom Header",
         "view": "CustomHeader"
       }, {
+        type: 'Input Field',
+        view: "Input"
+      }, {
         type: 'Date/Time',
         view: 'DateTime'
       }, {
@@ -130,7 +133,7 @@
       return genericElement;
 
     })(window.views.draggableElement);
-    views["Property"] = (function(_super) {
+    views["Input"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -138,9 +141,9 @@
         return _ref1;
       }
 
-      _Class.prototype.template = $("#property-template").html();
+      _Class.prototype.template = $("#input-template").html();
 
-      _Class.prototype.className = 'builder-element block';
+      _Class.prototype.className = 'builder-element w5';
 
       _Class.prototype.initialize = function() {
         var self;
@@ -189,8 +192,6 @@
       }
 
       _Class.prototype.template = $("#custom-text").html();
-
-      _Class.prototype.className = 'builder-element w5';
 
       return _Class;
 

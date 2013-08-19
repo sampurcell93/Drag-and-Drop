@@ -186,8 +186,10 @@ body {
     @include transition(right .3s ease-in-out);
     z-index: 999;
 
-    &.sticky { 
-
+    &.sticky {
+        .draggable-modal { 
+            border-top: none;
+        }
     }
     
     .draggable-modal {

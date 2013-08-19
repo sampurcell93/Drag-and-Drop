@@ -96,8 +96,8 @@
             height: 'toggle'
           }, 200);
         },
-        'click .configure-interface': function() {
-          return this.model.get("builder").$el.toggleClass("no-grid");
+        'click .no-grid': function() {
+          return this.$el.toggleClass("no-grid");
         },
         'click .section-title': function(e) {
           var modal, self;
@@ -246,7 +246,7 @@
         var copy, title;
         title = this.model.get("title");
         if (title === "" || typeof title === "undefined" || title === "Default Section Title") {
-          alert("You need to enter a title");
+          alert("You need to enter a label for the section before you can save it!");
           return false;
         }
         copy = new models.SectionController();
@@ -585,7 +585,7 @@
           allSections.at(window.currIndex).get("properties").add(this.model);
           model = this.model.toJSON();
           model.title = model.className + "." + model.name;
-          model.view = "Property";
+          model.view = "Input";
           model.property = this.model;
           model.property.name = model.name;
           model.type = "Property";

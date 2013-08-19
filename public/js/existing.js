@@ -67,17 +67,13 @@
         return copy;
       },
       render: function() {
-        var $ch, $el;
+        var $el;
         $el = this.$el;
         $el.html(_.template(this.template, this.model.toJSON()));
-        $ch = $el.children(".thumb");
-        _.each(this.model.get("currentSection").models, function(child, i) {
-          return $ch.append(new views.ElementThumbnail(child).render().el);
-        });
         return this;
       },
       events: {
-        "click .icon-magnifier": function() {
+        "click": function() {
           return allSections.add(this.model);
         }
       }

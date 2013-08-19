@@ -177,8 +177,9 @@ $(document).ready ->
                 @model.trigger("dragging")
             "mouseup .sort-element": (e) ->
                 @model.trigger("dropped")
-            "click .activate-element": (e) ->
-                @model.set "inFlow", true, {e: e, opname: 'Flow In'}
+            "click": (e) ->
+                if @$el.hasClass("out-of-flow")
+                    @model.set "inFlow", true, {e: e, opname: 'Flow In'}
                 e.stopPropagation()
             "click .destroy-element": (e) ->
                 @model.destroy()

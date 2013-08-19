@@ -11,7 +11,7 @@ include builder.jade
         ul.sidebar-controls.main-controls
             li.icon-uniF47C(data-switch-text='Config').generate-section Build
             li.icon-download.save-section Save
-            li.icon-selectionadd(data-switch-text='With Grid').configure-interface Without Grid
+            li.icon-selectionadd(data-switch-text='With Grid').no-grid Without Grid
             li.icon-wrench.view-tools Tools
                 ul.hidden-menu.with-checkboxes
                     li(data-modal='history') History 
@@ -32,18 +32,18 @@ include builder.jade
             .clear
             p.nice-dialog
                 | Configure your data in this area. Start by choosing data properties to include in 
-                | your section. They will be accessible while you build it.
+                | your section.
 
             div.fl.w45.m10
                 h2.m10.center Add Content to this Section
-                input#search-data-types(placeholder='Search Data Types').w9.mauto
+                input#search-data-types(type='text', placeholder='Search Data Types').w9.mauto
                 ul.select-properties.class-list.m10
             //- div.fl.w05.icon.center.right-arrow
             //-     span s
             div.fl.w4.m30
                 ul.property-editor
             ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr
-                li.list-header.p10 Sections
+                li.list-header.p10 Recent Sections
                 li.p10.placeholder There are no sections.
             .clear  
         .section-builder-wrap.hidden

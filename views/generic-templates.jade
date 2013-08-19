@@ -1,5 +1,5 @@
 script(type='text/template')#button-template
-    <button class='no-drag label-text'><%= typeof title !== "undefined" ? title: "Default Text"%></button>
+    <button class='label-text'><%= typeof title !== "undefined" ? title: "Default Text"%></button>
 script(type='text/template')#generic-list
     <% if (typeof tagName === "undefined") tagName = "ul"; console.log(listItems) %>
     <<%= tagName %> class='no-drag generic-list'>
@@ -12,11 +12,12 @@ script(type='text/template')#generic-list
     </<%= tagName %>>
     span.add-list-item + Add Item
 script(type='text/template')#custom-text
-    <% var value = typeof customText !== "undefined" ? customText : null %>
-    <textarea class='no-drag title-setter generic-text' placeholder="Enter your text here" ><%= value %></textarea>
+    <textarea class='no-drag title-setter generic-text' placeholder="Enter your text here" >
+    <%= typeof title  !== "undefined" ? title : null %>
+    </textarea>
 script(type='text/template')#custom-header
     <% var value = typeof customHeader !== "undefined" ? customHeader : ""  %>
-    <input placeholder="Enter your header here" value ="<%= value %>" class='no-drag title-setter big-input generic-header' />
+    <input type='text' placeholder="Enter your header here" value ="<%= value %>" class='no-drag title-setter big-input generic-header' />
 script(type='text/template')#custom-link
     <a href="<%= typeof link_href !== 'undefined' ? link_href : '#' %>" title="<%= typeof title !== 'undefined' ? title : 'Link' %>"><%= typeof title !== "undefined" ? title : 'Link' %></a>
 script(type='text/template')#generic-radio
@@ -38,13 +39,8 @@ script(type='text/template')#dropdown
 script(type='text/template')#builder-wrap
     p.placeholder.center Drag in UI elements, layouts, and/or sections to start building.
     ul.children
-script(type='text/template')#property-template
-        h3 <%= property.name.clean() %>
+script(type='text/template')#input-template
         label
-        <% if (editable == true || typeof editable == "undefined") { %> 
-        <input placeholder='<%= className + "." + property.name.clean() %>' />
-        <%} else { %>
-        h3.title
-            <%= className + "." + property.name.clean() %>
-        <% } %>
+            <%= typeof property !== "undefined" ? property.name.clean() : "Label Text" %>
+            <input type='text' placeholder='<%= typeof title !== "undefined" ? title.clean() : "Placeholder" %>' />
  

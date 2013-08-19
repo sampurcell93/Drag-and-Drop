@@ -116,6 +116,7 @@ p {
 			text-decoration: underline;
 			color: #333;
 			background: #f9f9f9;
+			@include box-shadow(inset 0px 0px 1px #fff);
 
 			.remove { 
 				color: #333;
@@ -135,7 +136,7 @@ p {
 	background: #eee;
 	position: relative;
 	margin-top: -17px;
-	@include box-shadow(0px 0px 9px #333);
+	@include box-shadow(0px 0px 4px #555);
 }
 
 ul.select-properties {
@@ -388,6 +389,8 @@ ul li.selected-choice {
         padding: 6px 0;
         background: #313131;
         border-bottom: 1px solid #000;
+
+        &:hover { border-top: 1px solid $lightdusk; }
 	}
 
 	.placeholder {
@@ -418,21 +421,14 @@ ul li.selected-choice {
 		width: 18%;
 		list-style: none !important; 
 
-		li {
-			padding: 8px 8px 0 8px;
+		li:nth-of-type(n+2):not(.placeholder) {
+			padding: 4px;
+			width: 100%;
+			position: relative;
+
 			&:hover {
 				text-decoration: underline;	
 			}
-		}
-
-
-		li h3 {
-			@include box-shadow(0px -2px 5px #222);
-			border-top: 1px solid #ccc;
-			background: $lightdusk;
-			width: 104%;
-			left: -2%;
-			position: relative;
 		}
 
 		.thumb-object {

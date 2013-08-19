@@ -171,9 +171,9 @@ $(document).ready ->
                     else
                         window.copiedModel = clone.deepCopy()
                 e.stopPropagation()
-            "remove": ->
-                do @remove
+            "remove": "remove"
             "contextmenu": (e) ->
+                e.stopPropagation()
                 if window.copiedModel == null then return true
                 $(".context-menu").remove()
                 e.preventDefault()
@@ -184,8 +184,7 @@ $(document).ready ->
                 $("<ul />").html(_.template(@contextMenu, {})).
                 addClass("context-menu").
                 css({"top":pageY + "px", "left": pageX + "px"}).
-                appendTo(@$el)
-                e.stopPropagation()
+                appendTo @$el
                 false
         render: ->
             self = @

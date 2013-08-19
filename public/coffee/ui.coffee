@@ -102,8 +102,6 @@ $(document).ready ->
         $(".control-section").eq(currIndex).find(".draggable-modal." + modal).toggle("slide", { direction: "left" }, 200)
         $t.find("input").prop("checked", !$t.find("input").prop("checked"))
 
-    $(@).delegate ".draggable-modal h2", "click", ->
-
     ctrlDown = false
     ctrlKey  = 17
 
@@ -115,12 +113,20 @@ $(document).ready ->
     # When they go up, 
     $(@).keyup (e) ->
         keyCode = e.keyCode || e.which
+        current = allSections.at(window.currIndex).toJSON().controller
         if keyCode == ctrlKey
             ctrlDown = false
-        if keyCode == 90 and ctrlDown is true
-            snaps = allSections.at(window.currIndex).toJSON().controller.histList
-            snaps.selectLast()
-
+        if ctrlDown is true
+            # ctrl z undo
+            if keyCode == 90
+                snaps = current.histList
+                snaps.selectLast()
+            #ctrl s save
+            else if keyCode  == 83
+                current.saveSection()
+        e.preventDefault()
+        e.stopPropagation()
+        false
 $(window).scroll ->
     $wrap = $(".container")
     # window scroll pos
@@ -130,8 +136,8 @@ $(window).scroll ->
     if scrollpos >= toolbelt
         # if sticky needed, add fixed class and calc repositioning
         $(".toolbelt").addClass("sticky").css({
-            "left": 55 + $wrap.offset().left + "px",
-             "right": ($wrap.width() *.18) + "px"
+            "left": 55 + $wrap.offset().left + "px"
+            "right": ($wrap.width()*.18) + "px"
         })
     else 
         $(".toolbelt").removeClass("sticky").css("left", "55px")
