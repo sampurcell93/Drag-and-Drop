@@ -455,7 +455,7 @@ $(document).ready ->
             # for debugging
             "dblclick": (e) ->
                 console.log @model.toJSON()
-                @selectEl()
+                @showConfigModal()
                 e.stopPropagation()
             # for right click functionality users expect
             "click": (e) ->

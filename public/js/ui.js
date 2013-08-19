@@ -77,7 +77,7 @@
         handle: '.drag-handle'
       });
       modal.prependTo(appendTo || document.body);
-      modal.append($("<div/>").addClass("close-arrow icon-uniF48A icon pointer"));
+      modal.append($("<div/>").addClass("close-arrow icon-caret-up icon pointer"));
       return modal;
     };
     $.fn.launchModal = function(content) {

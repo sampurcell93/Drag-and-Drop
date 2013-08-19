@@ -675,7 +675,7 @@
       draggableElement.prototype.events = {
         "dblclick": function(e) {
           console.log(this.model.toJSON());
-          this.selectEl();
+          this.showConfigModal();
           return e.stopPropagation();
         },
         "click": function(e) {

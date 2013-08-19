@@ -46,7 +46,7 @@ $ ->
         formatObject: (obj) ->
             if !obj? then return ""
             self = @
-            items = "<div class='close-arrow icon-uniF48A'></div><ul class='hidden'>"
+            items = "<ul class='hidden'>"
             if obj.length is 0 then return "None"
             _.each obj, (model) ->
                 items += "<li>" + self.getProps(model.attributes) + "</li>"

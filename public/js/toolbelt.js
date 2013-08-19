@@ -86,7 +86,7 @@
           return "";
         }
         self = this;
-        items = "<div class='close-arrow icon-uniF48A'></div><ul class='hidden'>";
+        items = "<ul class='hidden'>";
         if (obj.length === 0) {
           return "None";
         }
