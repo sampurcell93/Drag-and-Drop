@@ -14,18 +14,24 @@ script(type='text/template')#draggable-element
 script(type='text/template')#drag-controls
     <% var layout = typeof layout !== "undefined" && layout == true ? true : false %>
     ul.config-menu-wrap.no-drag 
-        li.icon-tags.view-attrs
-        li.icon-cogs.set-options
+        li.icon-tags.view-attrs(data-tooltip="Editable Attributes")
+        li.icon-cogs.set-options(data-tooltip="Configuration")
             ul.dropdown
                 li.config-panel Configure <%= layout == true ? "Group" : "Element" %>
                 li.export Export As Section
                 <%= layout == true ? "<li class='ungroup-fields'>Ungroup fields</li>" : "" %>
-        li.icon-multiply.remove-from-flow
+        li.icon-multiply.remove-from-flow(data-tooltip="Remove From Flow")
 script(type='text/template')#property-link
     span(contentEditable='false').property-link <%= property_name  %> 
         i.icon.remove-property-link g
 script(type='text/template')#context-menu-default
-
+    <li class='select-this'>
+    <% if (selected == false) { %>
+    | Select Element
+    <% } else { %>
+    | Unselect Element
+    <% } %>
+    </li>
     li.group-elements Group selected
     li.copy-element Copy Element
     <% if (typeof window.copiedModel !== "undefined" && typeof layout !== "undefined" && window.copiedModel != null) {%>

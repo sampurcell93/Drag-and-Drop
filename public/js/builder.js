@@ -728,9 +728,7 @@
             return;
           }
           button = $(".quick-props").find(".close-arrow");
-          if (!button.hasClass("flipped")) {
-            return button.trigger("click");
-          }
+          return button.trigger("click");
         },
         "click .remove-from-flow": function(e) {
           e.stopPropagation();
@@ -759,12 +757,23 @@
         "mouseleave": function() {
           return this.$(".set-options > ul").hide();
         },
-        "mouseover .config-menu-wrap": function(e) {
-          cc("mouse");
+        "mouseover .config-menu-wrap > li": function(e) {
+          var $t, self;
+          $t = $(e.currentTarget);
+          $t.data("over", true);
+          self = $t;
+          window.setTimeout(function() {
+            if ($t.data("over") === true) {
+              return self.showTooltip();
+            }
+          }, 500);
           return e.stopPropagation();
         },
-        "mouseout .config-menu-wrap": function(e) {
-          cc("out");
+        "mouseleave .config-menu-wrap > li": function(e) {
+          var $t;
+          $t = $(e.currentTarget);
+          $t.data("over", false);
+          $t.hideTooltip();
           return e.stopPropagation();
         }
       };

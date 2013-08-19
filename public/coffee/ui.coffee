@@ -64,6 +64,17 @@ $(document).ready ->
     $.fn.launchModal = (content) ->
         @addClass("modal").prependTo($("body").addClass("active-modal"))
 
+    $.fn.showTooltip = ->
+        # Get text
+        tooltip_text = @data("tooltip")
+        # Remove others
+        $(".tooltip").remove()
+        # Make element
+        el = $("<div/>").addClass("tooltip").text(tooltip_text)
+        # Append it
+        @append el
+    $.fn.hideTooltip = ->
+        $(".tooltip").remove()
 
     window.validNumber = (num) ->
         !isNaN(parseInt(num))

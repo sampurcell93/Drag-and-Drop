@@ -13,6 +13,7 @@
 html { height: 100%; }
 
 body {
+
 	font-family: $opensans;
 	font-size: 15px;
 	text-shadow: 0px 1px 0px #fff;
@@ -553,3 +554,34 @@ ul li.selected-choice {
 }
 
 .section-title span:last-of-type { color: #777; font-size: 1rem; padding-top: 5px; padding-left: 20px;}
+
+[data-tooltip] {
+	position: relative;
+	overflow: visible;
+
+	.tooltip {
+		position: absolute;
+		background: #222;
+		background: rgba(0,0,0,.8);
+		color: #f9f9f9;
+		text-align: center;
+		@include border-radius(3px);
+		bottom: 110%;
+		line-height: 20px;
+		padding: 4px 10px;
+		white-space: nowrap;
+
+		&:before {
+			content: "";
+			display: block;
+			width: 0;
+			height: 0;
+			position: absolute;
+			bottom: -14px;
+			left: 5px;
+			border: 7px solid transparent;
+			border-top-color: #222;
+			border-top-color: rgba(0,0,0,.8);
+		}
+	}
+}

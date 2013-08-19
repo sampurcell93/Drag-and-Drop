@@ -83,6 +83,16 @@
     $.fn.launchModal = function(content) {
       return this.addClass("modal").prependTo($("body").addClass("active-modal"));
     };
+    $.fn.showTooltip = function() {
+      var el, tooltip_text;
+      tooltip_text = this.data("tooltip");
+      $(".tooltip").remove();
+      el = $("<div/>").addClass("tooltip").text(tooltip_text);
+      return this.append(el);
+    };
+    $.fn.hideTooltip = function() {
+      return $(".tooltip").remove();
+    };
     window.validNumber = function(num) {
       return !isNaN(parseInt(num));
     };

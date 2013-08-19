@@ -6,7 +6,6 @@ $(document).ready ->
 
     window.copiedModel = null
 
-
     class window.models.Element extends Backbone.Model
         initialize: ->
             self = @
@@ -496,8 +495,7 @@ $(document).ready ->
                 $(".quick-props").find("ul").html props
                 if e? and e.isTrigger is true then return 
                 button = $(".quick-props").find(".close-arrow")
-                if !button.hasClass("flipped")
-                    button.trigger "click"
+                button.trigger "click"
             "click .remove-from-flow": (e) ->
                 e.stopPropagation()
                 # e.stopImmediatePropagation()
@@ -521,11 +519,19 @@ $(document).ready ->
                 @$el.removeClass("active-sorting")
             "mouseleave": ->
                 @$(".set-options > ul").hide()
-            "mouseover .config-menu-wrap": (e) ->
-                cc "mouse"
+            "mouseover .config-menu-wrap > li": (e) ->
+                $t = $ e.currentTarget
+                $t.data("over", true) 
+                self = $t
+                window.setTimeout(->
+                    if $t.data("over")  == true
+                        self.showTooltip()
+                ,500)
                 e.stopPropagation()
-            "mouseout .config-menu-wrap": (e) ->
-                cc "out"
+            "mouseleave .config-menu-wrap > li": (e) ->
+                $t = $ e.currentTarget
+                $t.data("over", false) 
+                $t.hideTooltip()
                 e.stopPropagation()
 
     # The builder is less of a listview and more of a simple controller whose render only appends a single droppable wrapper
