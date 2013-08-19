@@ -136,14 +136,14 @@ $(document).ready ->
     $(@).keydown (e) ->
         keyCode = e.keyCode || e.which
         if keyCode == ctrlKey then ctrlDown = true
-        else if keyCode == 8
-            selected = allSections.at(window.currIndex).get("currentSection").gather()
-            sure = confirm("Are you sure you want to delete the selected models?")
-            if sure
-                _.each selected, (model) ->
-                    model.destroy()
-            e.preventDefault()
-            false
+        # else if keyCode == 8
+        #     selected = allSections.at(window.currIndex).get("currentSection").gather()
+        #     sure = confirm("Are you sure you want to delete the selected models?")
+        #     if sure
+        #         _.each selected, (model) ->
+        #             model.destroy()
+        #     e.preventDefault()
+        #     false
 
     # When they go up, 
     $(@).keyup (e) ->

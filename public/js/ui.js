@@ -158,20 +158,10 @@
     ctrlDown = false;
     ctrlKey = 17;
     $(this).keydown(function(e) {
-      var keyCode, selected, sure;
+      var keyCode;
       keyCode = e.keyCode || e.which;
       if (keyCode === ctrlKey) {
         return ctrlDown = true;
-      } else if (keyCode === 8) {
-        selected = allSections.at(window.currIndex).get("currentSection").gather();
-        sure = confirm("Are you sure you want to delete the selected models?");
-        if (sure) {
-          _.each(selected, function(model) {
-            return model.destroy();
-          });
-        }
-        e.preventDefault();
-        return false;
       }
     });
     return $(this).keyup(function(e) {
