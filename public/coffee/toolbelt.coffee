@@ -23,7 +23,7 @@ $ ->
                         prop: prop
                         value: @formatAttributes(attrs[prop])
                     }
-            properties += "<div class='view-full-config'>View Full Configuration Modal</div>"
+            properties += "<div class='view-full-config'>View Full Configuration</div>"
             properties
         regard: ["child_els", "title", "type"]
         editables: ["title"]

@@ -44,7 +44,7 @@
             });
           }
         }
-        properties += "<div class='view-full-config'>View Full Configuration Modal</div>";
+        properties += "<div class='view-full-config'>View Full Configuration</div>";
         return properties;
       };
 

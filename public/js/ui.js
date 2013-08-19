@@ -150,13 +150,17 @@
   });
 
   $(window).scroll(function() {
-    var scrollpos, toolbelt;
+    var $wrap, scrollpos, toolbelt;
+    $wrap = $(".container");
     scrollpos = $(this).scrollTop();
-    toolbelt = $(".section-builder-wrap").offset().top;
+    toolbelt = $wrap.offset().top;
     if (scrollpos >= toolbelt) {
-      return $(".toolbelt").addClass("sticky");
+      return $(".toolbelt").addClass("sticky").css({
+        "left": 55 + $wrap.offset().left + "px",
+        "right": ($wrap.width() * .18) + "px"
+      });
     } else {
-      return $(".toolbelt").removeClass("sticky");
+      return $(".toolbelt").removeClass("sticky").css("left", "55px");
     }
   });
 

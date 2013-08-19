@@ -55,7 +55,7 @@
         self = this;
         return this.listenTo(this.model, {
           "change:title": function(model) {
-            return self.$el.find(".section-title").text(model.get("title"));
+            return self.$el.find(".section-title .title-wrap").text(model.get("title"));
           },
           "destroy": function() {
             return self.remove();
@@ -573,13 +573,13 @@
       },
       chooseProp: function(e) {
         var $t, currentSection, model, selected;
-        cc("choose");
         if (e != null) {
           $t = $(e.currentTarget);
           $t.closest(".property").toggleClass("selected");
+          e.stopPropagation();
         }
         selected = this.model.selected;
-        currentSection = allSections.at(this.options.index).get("currentSection");
+        currentSection = allSections.at(window.currIndex).get("currentSection");
         this.model.selected = selected ? false : true;
         if (this.model.selected === true) {
           allSections.at(window.currIndex).get("properties").add(this.model);

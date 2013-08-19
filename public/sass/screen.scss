@@ -62,8 +62,8 @@ p {
 	background: none;
 	display: block;
 	position: relative;
-	width: 80%;
-	left: 306px;
+	width: calc(100% - 356px);
+	left: 356px;
 	margin: 40px 0 0 0;
 
 	.add-section {
@@ -114,14 +114,23 @@ p {
 		}
 		&.current-tab {
 			text-decoration: underline;
+			color: #333;
+			background: #f9f9f9;
+
+			.remove { 
+				color: #333;
+				background: #ccc;
+
+				&:hover { background: #bbb; }
+			}
 		}
 	}
 }
 
 .container {
 	display: block;
-	width:  calc(100% - 310px);
-	margin-left: 306px;
+	width:  calc(100% - 356px);
+	margin-left: 356px;
 	min-height: 90%;
 	background: #eee;
 	position: relative;
@@ -328,12 +337,12 @@ ul li.selected-choice {
 }
 
 .section-builder-wrap { 
-	padding: 40px 19% 12px 90px;
+	padding: 40px 19% 12px 65px;
 	height: 100%;
 	@include transition(padding .3s ease-in-out);
 
 	&.no-sidebar {
-		padding-right: 0px;
+		padding-right: 10px;
 
 		.toolbelt {
 			right: 30px;
@@ -348,7 +357,7 @@ ul li.selected-choice {
 .sidebar-controls {
 	position: absolute;
 	top: 0;
-	width: 80px;
+	width: 55px;
 	background: $dusky;
 	height: 100%;
 	color: #f9f9f9;
@@ -555,4 +564,4 @@ ul li.selected-choice {
 	}
 }
 
-.section-title span { color: #777; font-size: 1rem; padding-top: 5px; padding-left: 20px;}
+.section-title span:last-of-type { color: #777; font-size: 1rem; padding-top: 5px; padding-left: 20px;}

@@ -179,11 +179,16 @@ body {
 .toolbelt {
     position: absolute;
     top: 0;
-    left: 80px;
+    left: 55px;
     right: 18%;
     height: 32px;
     overflow: visible;
     @include transition(right .3s ease-in-out);
+    z-index: 999;
+
+    &.sticky { 
+
+    }
     
     .draggable-modal {
         display: inline-block;

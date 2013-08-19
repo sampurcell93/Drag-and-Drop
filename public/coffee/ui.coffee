@@ -122,12 +122,19 @@ $(document).ready ->
             snaps.selectLast()
 
 $(window).scroll ->
+    $wrap = $(".container")
+    # window scroll pos
     scrollpos = $(@).scrollTop()
-    toolbelt = $(".section-builder-wrap").offset().top
+    # toolbelt at top of container
+    toolbelt = $wrap.offset().top
     if scrollpos >= toolbelt
-        $(".toolbelt").addClass("sticky")
+        # if sticky needed, add fixed class and calc repositioning
+        $(".toolbelt").addClass("sticky").css({
+            "left": 55 + $wrap.offset().left + "px",
+             "right": ($wrap.width() *.18) + "px"
+        })
     else 
-        $(".toolbelt").removeClass("sticky")
+        $(".toolbelt").removeClass("sticky").css("left", "55px")
 window.onbeforeunload = ->
     saved = true
     _.each allSections.models, (section) ->

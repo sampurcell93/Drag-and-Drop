@@ -114,7 +114,7 @@ $(document).ready ->
             self = @
             @listenTo @model, {   
                 "change:title": (model)->
-                    self.$el.find(".section-title").text(model.get("title"))
+                    self.$el.find(".section-title .title-wrap").text(model.get("title"))
                 "destroy": ->
                     self.remove()
             }
@@ -510,12 +510,13 @@ $(document).ready ->
             # @chooseProp()
             this
         chooseProp: (e) ->
-            cc "choose"
+
             if e?
                 $t = $(e.currentTarget)
                 $t.closest(".property").toggleClass "selected"
+                e.stopPropagation()
             selected = @model.selected
-            currentSection = allSections.at(@options.index).get("currentSection")
+            currentSection = allSections.at(window.currIndex).get("currentSection")
             @model.selected = if selected then false else true
             if @model.selected is true
                 allSections.at(window.currIndex).get("properties").add @model

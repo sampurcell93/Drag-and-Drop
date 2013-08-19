@@ -9,7 +9,7 @@ include builder.jade
     script(type='text/template')#controller-wrap
         <% String.prototype.clean = function(trim) { var cutoff = 10000000; var appendMe = ""; if (typeof trim !== "undefined" && trim == true) { if (this.length > 27){ appendMe = "...."; cutoff = 27} }return this.charAt(0).toUpperCase() + this.slice(1).replace("_"," ")} %>       
         ul.sidebar-controls.main-controls
-            li.icon-uniF47C(data-switch-text='Configure').generate-section Build
+            li.icon-uniF47C(data-switch-text='Config').generate-section Build
             li.icon-download.save-section Save
             li.icon-selectionadd(data-switch-text='With Grid').configure-interface Without Grid
             li.icon-wrench.view-tools Tools
@@ -27,7 +27,7 @@ include builder.jade
 
         .section-builder-wrap
             h2.section-title.clickme.fl
-                | <%= typeof section_title !== "undefined" ? section_title : "Default Section Title" %>
+                span.title-wrap <%= typeof section_title !== "undefined" ? section_title : "Default Section Title" %>
                 span.fr (Click to change section title) 
             .clear
             p.nice-dialog
