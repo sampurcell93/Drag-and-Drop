@@ -1048,8 +1048,9 @@ ol.generic-list {
 .organize-elements > li {
   border-top: 1px solid #5b747f;
   border-bottom: 1px solid #222;
+  background: #3e4951;
 }
-/* line 475, ../sass/builder.scss */
+/* line 476, ../sass/builder.scss */
 .organize-elements .hide-sidebar {
   font-size: .9em;
   position: relative;
@@ -1064,7 +1065,7 @@ ol.generic-list {
   background: #000;
   padding: 5px 3px 5px 5px;
 }
-/* line 486, ../sass/builder.scss */
+/* line 487, ../sass/builder.scss */
 .organize-elements li {
   position: relative;
   min-height: 30px;
@@ -1080,11 +1081,11 @@ ol.generic-list {
   text-align: left !important;
   text-overflow: ellipsis !important;
 }
-/* line 501, ../sass/builder.scss */
+/* line 502, ../sass/builder.scss */
 .organize-elements li .destroy-element, .organize-elements li .activate-element {
   display: none;
 }
-/* line 503, ../sass/builder.scss */
+/* line 504, ../sass/builder.scss */
 .organize-elements li .sort-element {
   left: 4px;
   top: 0px;
@@ -1092,15 +1093,15 @@ ol.generic-list {
   cursor: hand;
   width: 12px;
 }
-/* line 510, ../sass/builder.scss */
+/* line 511, ../sass/builder.scss */
 .organize-elements li .sort-element:before {
   left: 3px;
 }
-/* line 515, ../sass/builder.scss */
+/* line 516, ../sass/builder.scss */
 .organize-elements li .child-list {
   margin-left: -18px;
 }
-/* line 518, ../sass/builder.scss */
+/* line 519, ../sass/builder.scss */
 .organize-elements li .child-list li:first-child::after {
   content: "";
   display: block;
@@ -1117,7 +1118,7 @@ ol.generic-list {
   position: absolute;
   left: 0;
 }
-/* line 531, ../sass/builder.scss */
+/* line 532, ../sass/builder.scss */
 .organize-elements li .destroy-element {
   position: absolute;
   left: 4px;
@@ -1132,31 +1133,31 @@ ol.generic-list {
   border-radius: 2px;
   padding: 2px;
 }
-/* line 542, ../sass/builder.scss */
+/* line 543, ../sass/builder.scss */
 .organize-elements li:hover {
   background: #3e4951 !important;
 }
-/* line 547, ../sass/builder.scss */
+/* line 548, ../sass/builder.scss */
 .organize-elements li.out-of-flow {
   background: #474747;
   text-shadow: none;
   border-top: 1px solid #696969;
 }
-/* line 552, ../sass/builder.scss */
+/* line 553, ../sass/builder.scss */
 .organize-elements li.out-of-flow > .sort-element {
   display: none;
 }
-/* line 553, ../sass/builder.scss */
+/* line 554, ../sass/builder.scss */
 .organize-elements li.out-of-flow > .destroy-element {
   display: block;
 }
-/* line 555, ../sass/builder.scss */
+/* line 556, ../sass/builder.scss */
 .organize-elements li.out-of-flow:hover {
   background: #474747 !important;
   border-top: 1px solid #555;
 }
 
-/* line 561, ../sass/builder.scss */
+/* line 562, ../sass/builder.scss */
 .ui-resizable-handle {
   border: 1px dotted #222;
   width: 3px !important;
@@ -1166,11 +1167,11 @@ ol.generic-list {
   margin-top: -15px;
   z-index: 99;
 }
-/* line 570, ../sass/builder.scss */
+/* line 571, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-w {
   left: -4px;
 }
-/* line 573, ../sass/builder.scss */
+/* line 574, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-e {
   right: -4px;
 }
@@ -2978,58 +2979,53 @@ ul li.selected-choice {
   background: #222 !important;
 }
 
-/* line 502, ../sass/screen.scss */
-.accessories {
-  overflow-y: auto;
-  overflow-x: visible;
-}
-/* line 506, ../sass/screen.scss */
+/* line 504, ../sass/screen.scss */
 .accessories.hidden-sidebar :not(".hide-sidebar") {
   display: none;
 }
-/* line 510, ../sass/screen.scss */
+/* line 508, ../sass/screen.scss */
 .accessories .draggable-modal {
   position: relative !important;
   width: 100%;
   margin: 3px auto 10px;
 }
-/* line 515, ../sass/screen.scss */
+/* line 513, ../sass/screen.scss */
 .accessories .draggable-modal > ul {
   max-height: 400px;
   overflow: auto;
 }
 
-/* line 523, ../sass/screen.scss */
+/* line 521, ../sass/screen.scss */
 [data-attr] span[contentEditable], [data-attr] span[contenteditable] {
   padding: 2px 10px;
   background: #222;
   border-left: 1px solid transparent;
   border-right: 1px solid transparent;
 }
-/* line 529, ../sass/screen.scss */
+/* line 527, ../sass/screen.scss */
 [data-attr] span[contentEditable]:focus, [data-attr] span[contenteditable]:focus {
   outline: none;
   border-left: 1px solid #5b747f;
   border-right: 1px solid #5b747f;
 }
 
-/* line 537, ../sass/screen.scss */
+/* line 535, ../sass/screen.scss */
 .ui-slider-handle {
   background: #3e4951 !important;
 }
 
-/* line 541, ../sass/screen.scss */
+/* line 539, ../sass/screen.scss */
 .disabled {
   background: #ddd;
   color: #777;
 }
-/* line 545, ../sass/screen.scss */
+/* line 543, ../sass/screen.scss */
 .disabled:hover {
   background: #ddd !important;
   color: #777 !important;
 }
 
-/* line 551, ../sass/screen.scss */
+/* line 549, ../sass/screen.scss */
 .section-title span:last-of-type {
   color: #777;
   font-size: 1rem;
@@ -3037,12 +3033,12 @@ ul li.selected-choice {
   padding-left: 20px;
 }
 
-/* line 553, ../sass/screen.scss */
+/* line 551, ../sass/screen.scss */
 [data-tooltip] {
   position: relative;
   overflow: visible;
 }
-/* line 557, ../sass/screen.scss */
+/* line 555, ../sass/screen.scss */
 [data-tooltip] .tooltip {
   position: absolute;
   background: #222;
@@ -3058,8 +3054,9 @@ ul li.selected-choice {
   line-height: 20px;
   padding: 4px 10px;
   white-space: nowrap;
+  z-index: 1000;
 }
-/* line 569, ../sass/screen.scss */
+/* line 568, ../sass/screen.scss */
 [data-tooltip] .tooltip:before {
   content: "";
   display: block;

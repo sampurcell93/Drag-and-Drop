@@ -191,22 +191,26 @@ $(document).ready ->
             ghostFragment.droppable
                 accept: ".builder-element, .outside-draggables li, .property"
                 greedy: true
-                tolerance: 'pointer' 
+                tolerance: 'intersect' 
                 over: (e, ui) ->
                     if $(document.body).hasClass("active-modal") then return false
                     $(e.target).addClass("show")
                 out: (e, ui) ->
                     $(e.target).removeClass("show").find("ul").remove()
                 drop: (e,ui) ->
+                    $(e.target).removeClass("show")
                     $(".over").removeClass("over")
                     if $(document.body).hasClass("active-modal") then return false
                     dropZone = $(e.target)
                     insertAt = dropZone.siblings(".builder-element").index(dropZone.prev()) + 1
                     curr = window.currentDraggingModel
+                    if !$.isArray(curr) and curr.get("inFlow") is false
+                        cc "drop inflowing"
+                        curr.set("inFlow", true)
+                        return
                     parent = self.collection.model 
                     if typeof parent is "function" or !parent? then parent = self.collection
                     parent.blend(curr, insertAt)
-                    $(e.target).removeClass("show")
                     delete window.currentDraggingModel
                     window.currentDraggingModel = null
                     ui.helper.fadeOut(300)

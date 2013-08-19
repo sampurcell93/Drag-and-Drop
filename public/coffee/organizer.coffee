@@ -113,7 +113,7 @@ $(document).ready ->
                 revert: 'invalid'
                 helper: 'clone'
                 start: (e,ui) ->
-                    if (self.model.get("type") == "Property")
+                    if (self.model.get("type") == "Property" and self.model.get("inFlow") is true)
                         clone = self.model.clone()
                         clone.collection = null;
                         children = clone.get("child_els").clone()

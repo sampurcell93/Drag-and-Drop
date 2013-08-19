@@ -184,6 +184,10 @@
             } else if (draggingModel === that.model) {
               return false;
             }
+            if (!$.isArray(draggingModel) && draggingModel.get("inFlow") === false) {
+              draggingModel.set("inFlow", true);
+              return;
+            }
             sect_interface = allSections.at(that.index || currIndex);
             section = sect_interface.get("currentSection");
             builder = sect_interface.get("builder");

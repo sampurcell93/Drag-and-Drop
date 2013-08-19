@@ -139,7 +139,7 @@
           helper: 'clone',
           start: function(e, ui) {
             var children, clone;
-            if (self.model.get("type") === "Property") {
+            if (self.model.get("type") === "Property" && self.model.get("inFlow") === true) {
               clone = self.model.clone();
               clone.collection = null;
               children = clone.get("child_els").clone();

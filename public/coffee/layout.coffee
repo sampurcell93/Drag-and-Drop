@@ -160,6 +160,11 @@ $(document).ready ->
                 draggingModel = window.currentDraggingModel
                 if typeof draggingModel is "undefined" or !draggingModel? then return false
                 else if draggingModel is that.model then return false
+
+                if !$.isArray(draggingModel) and draggingModel.get("inFlow") is false
+                    draggingModel.set("inFlow", true)
+                    return
+
                 sect_interface = allSections.at(that.index || currIndex)
                 section = sect_interface.get("currentSection")
                 builder = sect_interface.get("builder")

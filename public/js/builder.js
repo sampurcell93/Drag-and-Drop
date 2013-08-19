@@ -284,7 +284,7 @@
         return ghostFragment.droppable({
           accept: ".builder-element, .outside-draggables li, .property",
           greedy: true,
-          tolerance: 'pointer',
+          tolerance: 'intersect',
           over: function(e, ui) {
             if ($(document.body).hasClass("active-modal")) {
               return false;
@@ -296,6 +296,7 @@
           },
           drop: function(e, ui) {
             var curr, dropZone, insertAt, parent;
+            $(e.target).removeClass("show");
             $(".over").removeClass("over");
             if ($(document.body).hasClass("active-modal")) {
               return false;
@@ -303,12 +304,16 @@
             dropZone = $(e.target);
             insertAt = dropZone.siblings(".builder-element").index(dropZone.prev()) + 1;
             curr = window.currentDraggingModel;
+            if (!$.isArray(curr) && curr.get("inFlow") === false) {
+              cc("drop inflowing");
+              curr.set("inFlow", true);
+              return;
+            }
             parent = self.collection.model;
             if (typeof parent === "function" || (parent == null)) {
               parent = self.collection;
             }
             parent.blend(curr, insertAt);
-            $(e.target).removeClass("show");
             delete window.currentDraggingModel;
             window.currentDraggingModel = null;
             return ui.helper.fadeOut(300);

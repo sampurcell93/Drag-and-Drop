@@ -500,8 +500,6 @@ ul li.selected-choice {
 }
 
 .accessories {
-	overflow-y: auto;
-	overflow-x: visible;
 
     &.hidden-sidebar :not(".hide-sidebar") {
     	display: none;
@@ -565,6 +563,7 @@ ul li.selected-choice {
 		line-height: 20px;
 		padding: 4px 10px;
 		white-space: nowrap;
+		z-index: 1000;
 
 		&:before {
 			content: "";
