@@ -95,6 +95,7 @@
         },
         "click .reject, .confirm": function() {
           $(document.body).removeClass("active-modal");
+          this.change_queue = [];
           return this.remove();
         }
       };
@@ -110,7 +111,7 @@
         return _ref1;
       }
 
-      _Class.prototype.standards = [$("#layout-changer").html(), $("#skins").html(), $("#column-picker").html()];
+      _Class.prototype.standards = [$("#layout-changer").html(), $("#skins").html(), $("#column-picker").html(), $("#preset-layouts").html()];
 
       _Class.prototype.initialize = function() {
         if (this.templates == null) {
@@ -118,13 +119,15 @@
         }
         this.templates = this.templates.concat(this.standards);
         return _.extend(this.events, {
+          "click .select-one li": function(e) {
+            return $(e.currentTarget).addClass("selected-choice").siblings().removeClass("selected-choice");
+          },
           "click [data-columns]": function(e) {
             var $t, cols, coltypes, self;
             coltypes = ["two", "three", "four", "five", "six"];
             $t = $(e.currentTarget);
             cols = $t.data("columns");
             self = this;
-            $t.addClass("selected-choice").siblings().removeClass("selected-choice");
             if (this.model != null) {
               this.enqueue("columns", function() {
                 var classes;
@@ -150,7 +153,6 @@
             $t = $(e.currentTarget);
             layout = $t.data("layout");
             self = this;
-            $t.addClass("selected-choice").siblings().removeClass("selected-choice");
             return this.enqueue("view", function() {
               self.model.set({
                 "layout": true,
@@ -158,6 +160,19 @@
                 type: "Tab Layout"
               });
               return $(self.link_el).addClass("tab-layout");
+            });
+          },
+          "click .preset-layouts li": function(e) {
+            var $t, className, classes, self;
+            $t = $(e.currentTarget);
+            className = $t.data("class");
+            self = this;
+            classes = this.model.get("classes");
+            classes.push(className);
+            return this.enqueue("presetlayout", function() {
+              self.model.set("presetlayout", className);
+              self.model.set("classes", classes);
+              return $(self.link_el).addClass(className);
             });
           }
         });

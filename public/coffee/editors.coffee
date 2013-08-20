@@ -69,6 +69,7 @@ $ ->
             # On confirm or reject, close the modal.
             "click .reject, .confirm": ->
                 $(document.body).removeClass("active-modal")
+                @change_queue = []
                 do @remove
 
     class editors["BaseLayoutEditor"] extends editors["BaseEditor"]
@@ -77,17 +78,20 @@ $ ->
             $("#layout-changer").html()
             $("#skins").html(),
             $("#column-picker").html()
+            $("#preset-layouts").html()
         ]
         initialize: ->
             if !@templates? then @templates = []
             @templates = @templates.concat @standards
             _.extend @events, {
+                "click .select-one li": (e) ->
+                    $(e.currentTarget).addClass("selected-choice").siblings().removeClass("selected-choice")
+
                 "click [data-columns]": (e) ->
                     coltypes = ["two", "three", "four", "five", "six"]
                     $t       = $ e.currentTarget
                     cols     = $t.data("columns")
                     self     = @
-                    $t.addClass("selected-choice").siblings().removeClass("selected-choice")
                     if @model?
                         @enqueue("columns", ->
                             self.model.set "columns", cols
@@ -107,7 +111,6 @@ $ ->
                     $t      = $ e.currentTarget
                     layout  = $t.data("layout")
                     self    = @
-                    $t.addClass("selected-choice").siblings().removeClass("selected-choice")
                     @enqueue("view", ->
                         self.model.set({
                             "layout": true
@@ -116,6 +119,18 @@ $ ->
                         })
                         $(self.link_el).addClass("tab-layout")
                     )
+                "click .preset-layouts li": (e) ->
+                    $t = $ e.currentTarget
+                    className = $t.data("class")
+                    self = @
+                    classes = @model.get "classes"
+                    classes.push className
+                    @enqueue("presetlayout", ->
+                        self.model.set("presetlayout", className)
+                        self.model.set("classes", classes)
+                        $(self.link_el).addClass className
+                    )
+
 
             # On confirm, execute every item in the queue, then render the view again
             # Perhaps queue is misleading.... try hashtable. Repetitive events do not need to

@@ -72,13 +72,13 @@ ul.outside-draggables {
             border: 1px solid #aaa;
             cursor: move;
             display: none;
+            left: -3px;
 
             li {
                 width: 100%;
                 background: #fff;
                 color: $dusky;
                 position: relative;
-                left: -3px;
                 min-width: 0%;
             }
 
@@ -136,7 +136,6 @@ section.builder-container {
 }
 
 .no-grid {
-    section .drag-handle { display: none !important; }
     .builder-element {
         outline-color: transparent !important;
         margin-top: 2px;
@@ -174,7 +173,9 @@ section.builder-container {
     vertical-align: top;
     *zoom: 1;
     text-overflow: ellipsis;
-    display: table;
+    display: inline-block;
+    cursor: move;
+    max-width: 100%;
 
     ul, ol, dl {
         list-style-position: inside !important;
@@ -182,18 +183,6 @@ section.builder-container {
         li {
             list-style-position: inside !important;
         }
-    }
-    
-    .drag-handle {
-        position: absolute;
-        width: 100%;
-        top: -1px;
-        height: 5px;
-        // needs latest Compass, add '@import "compass"' to your scss
-        background-color: $strongblue;
-        cursor: move;
-        left: 0;
-        display: none;
     }
     
     &.builder-scaffold {
@@ -205,8 +194,11 @@ section.builder-container {
         cursor: auto;
         outline: 1px solid $medblue !important;
         min-height: 100px;
+        @include clearfix();
 
         &:hover { background: white; }
+
+
     }
 
     &:hover { 
@@ -216,13 +208,11 @@ section.builder-container {
         > .config-menu-wrap  {
             visibility: visible;
         }
-
-        > .drag-handle { display: block; }
     }
 
     &.builder-child { 
         outline: 1px dashed $medblue;
-        // width: auto;
+        width: auto;
     }
 
     input { 
@@ -470,7 +460,6 @@ ol.generic-list {
             left: 4px;
             top: 0px;
             cursor: pointer;
-            cursor: hand;
             width: 12px;
 
             &:before {

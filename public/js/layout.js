@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var adjs, allLayouts, nouns, randomDict, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var adjs, allLayouts, nouns, randomDict, _ref, _ref1, _ref10, _ref11, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     adjs = ["autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark", "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter", "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue", "billowing", "broken", "cold", "damp", "falling", "frosty", "green", "long", "late", "lingering", "bold", "little", "morning", "muddy", "old", "red", "rough", "still", "small", "sparkling", "throbbing", "shy", "wandering", "withered", "wild", "black", "young", "holy", "solitary", "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine", "polished", "ancient", "purple", "lively", "nameless", "protected", "fierce", "snowy", "floating", "serene", "placid", "afternoon", "calm", "cryptic", "desolate", "falling", "glacial", "limitless", "murmuring", "pacific", "whispering"];
     nouns = ["waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning", "snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter", "forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook", "butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly", "feather", "grass", "haze", "mountain", "night", "pond", "darkness", "snowflake", "silence", "sound", "sky", "shape", "surf", "thunder", "violet", "water", "wildflower", "wave", "water", "resonance", "sun", "wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper", "frog", "smoke", "star", "savannah", "quarry", "mountainside", "riverbank", "canopy", "tree", "monastery", "frost", "shelf", "badlands", "crags", "lowlands", "badlands", "woodlands", "eyrie", "beach", "temple"];
     String.prototype.firstUpperCase = function() {
@@ -86,6 +86,11 @@
             return self.$el.children(".placeholder").hide();
           } else {
             return self.$el.children(".placeholder").show();
+          }
+        });
+        this.listenTo(this.model, {
+          "change:presetlayout": function(model, attr, opts) {
+            return self.formPresetLayout(attr);
           }
         });
         _.extend(this.events, {
@@ -210,6 +215,47 @@
       layout.prototype.afterRender = function() {
         if (this.model.get("child_els").length > 0) {
           return this.$el.children(".placeholder").hide();
+        }
+      };
+
+      layout.prototype.formPresetLayout = function(layout) {
+        var layout_logic;
+        if (layout == null) {
+          return false;
+        }
+        layout_logic = {
+          "right-bar": this.layouts.rightBar
+        };
+        console.log(layout);
+        console.log(layout_logic[layout]);
+        return layout_logic[layout](this);
+      };
+
+      layout.prototype.layouts = {
+        "rightBar": function(self) {
+          var content, contentChildren, elChildren, first, sidebar, sidebarChildren;
+          sidebar = new models.Element({
+            view: 'RightBar',
+            type: "Right Bar"
+          });
+          content = new models.Element({
+            view: 'LeftContent',
+            type: "Left Content"
+          });
+          elChildren = self.model.get("child_els");
+          contentChildren = new collections.Elements();
+          first = elChildren.at(0);
+          sidebarChildren = sidebar.get("child_els");
+          sidebarChildren.add(first);
+          elChildren.remove(first);
+          _.each(elChildren.models, function(model, i) {
+            return contentChildren.add(model);
+          });
+          sidebar.set("child_els", sidebarChildren);
+          elChildren.reset();
+          elChildren.add(sidebar);
+          content.set("child_els", contentChildren);
+          return elChildren.add(content);
         }
       };
 
@@ -535,13 +581,43 @@
       return _Class;
 
     })(views['layout']);
-    return views["RepeatingLayout"] = (function(_super) {
+    views["RepeatingLayout"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
         _ref9 = _Class.__super__.constructor.apply(this, arguments);
         return _ref9;
       }
+
+      return _Class;
+
+    })(views['layout']);
+    views['RightBar'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref10 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref10;
+      }
+
+      _Class.prototype.className = 'builder-element w35 fr';
+
+      _Class.prototype.template = "";
+
+      return _Class;
+
+    })(views['layout']);
+    return views['LeftContent'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref11 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref11;
+      }
+
+      _Class.prototype.className = 'builder-element w6 fl';
+
+      _Class.prototype.template = "";
 
       return _Class;
 

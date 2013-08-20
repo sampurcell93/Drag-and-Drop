@@ -1,7 +1,7 @@
 
 .layout-wrapper {
     outline: 1px solid #7BF5F5;
-    padding: 5px 0  5px;
+    padding: 4px 0 4px;
     display: block;
 
     &:hover {
@@ -11,20 +11,20 @@
 
     &.column.one > .droppable-placeholder {
         width: 100%;
-        display: block;
+        display: block !important;
         height: 10px;
     }
 
     &.column {
         
         > ul.children > .builder-element { 
-            display: inline-block; 
+            display: inline-block !important; 
             margin: 2px 0 1px 0;
         }
         > ul.children > .droppable-placeholder { 
             width: 1% !important; 
             background: orange;
-            display: inline-block; 
+            display: inline-block !important; 
             margin: 0;
             min-height: 41px;
         }
@@ -58,9 +58,7 @@
             width: 15.5%; 
         }
     }
-
 }
-
 
 .tab-layout {
     position: relative;

@@ -38,15 +38,7 @@ window.onload = function() {
 			'icon-multiply' : '&#xe01d;',
 			'icon-github' : '&#xe01e;',
 			'icon-uniF489' : '&#xf489;',
-			'icon-uniF488' : '&#xf488;',
-			'icon-layout' : '&#xe01f;',
-			'icon-layout-2' : '&#xe020;',
-			'icon-layout-3' : '&#xe021;',
-			'icon-layout-4' : '&#xe022;',
-			'icon-layout-5' : '&#xe023;',
-			'icon-layout-6' : '&#xe024;',
-			'icon-layout-7' : '&#xe025;',
-			'icon-layout-8' : '&#xe026;'
+			'icon-uniF488' : '&#xf488;'
 		},
 		els = document.getElementsByTagName('*'),
 		i, attr, html, c, el;

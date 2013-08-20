@@ -20,7 +20,7 @@ script(type='text/template')#drag-controls
                 li.config-panel Configure <%= layout == true ? "Group" : "Element" %>
                 li.export Export As Section
                 <%= layout == true ? "<li class='ungroup-fields'>Ungroup fields</li>" : "" %>
-        li.icon-multiply.remove-from-flow(data-tooltip="Remove From Flow")
+        li.icon-multiply.remove-from-flow(data-tooltip="Hide From Section")
 script(type='text/template')#property-link
     span(contentEditable='false').property-link <%= property_name  %> 
         i.icon.remove-property-link g

@@ -263,6 +263,7 @@ $(document).ready ->
                     unless (typeof self.itemName == "undefined")
                         m.set("view", self.itemName)
                     self.appendChild(m,o)
+                'reset': @render
             }
 
             @modelListeners = _.extend({}, @modelListeners, { 
@@ -309,8 +310,6 @@ $(document).ready ->
             if @controls? then $el.append(_.template @controls, model.toJSON())
             if $el.children(".children").length is 0
                     $el.append($("<ul/>").addClass("children"))
-            if $el.children(".drag-handle").length is 0
-                    $el.prepend($("<div/>").addClass("drag-handle"))
             if children? and do_children is true
                 if children.length > 0 then @$el.children(".placeholder").hide()
                 _.each children.models , (el) ->
@@ -329,9 +328,7 @@ $(document).ready ->
             @$el.draggable
                 cancel: ".no-drag, .context-menu, .ui-resizable-handle"
                 revert: true
-                handle: '.drag-handle'
                 scrollSensitivity: 100
-                cursor: 'move'
                 helper: ->
                     # Get all selecged elements
                     selected = that.$el.closest("section").find(".ui-selected, .selected-element")

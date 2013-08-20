@@ -47,11 +47,6 @@ $(document).ready ->
             start: (e, ui) ->
                 ui.helper.addClass("moved")
             stop: (e, ui) ->
-                # Get all snappable elements on page
-                snapped = $(this).data('uiDraggable').snapElements
-                # Retrieve elements that the element is actually snapped to
-                snappedTo = $.map snapped, (element) ->
-                    if element.snapping then element.item else null;
 
             snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)'
             cancel: '.close-arrow'
@@ -137,13 +132,13 @@ $(document).ready ->
         keyCode = e.keyCode || e.which
         if keyCode == ctrlKey then ctrlDown = true
         # else if keyCode == 8
-        #     selected = allSections.at(window.currIndex).get("currentSection").gather()
-        #     sure = confirm("Are you sure you want to delete the selected models?")
-        #     if sure
-        #         _.each selected, (model) ->
-        #             model.destroy()
-        #     e.preventDefault()
-        #     false
+        #     # selected = allSections.at(window.currIndex).get("currentSection").gather()
+        #     # sure = confirm("Are you sure you want to delete the selected models?")
+        #     # if sure
+        #     #     _.each selected, (model) ->
+        #     #         model.destroy()
+        #     # e.preventDefault()
+        #     # false
 
     # When they go up, 
     $(@).keyup (e) ->

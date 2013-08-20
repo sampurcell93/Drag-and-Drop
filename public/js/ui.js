@@ -60,17 +60,7 @@
         start: function(e, ui) {
           return ui.helper.addClass("moved");
         },
-        stop: function(e, ui) {
-          var snapped, snappedTo;
-          snapped = $(this).data('uiDraggable').snapElements;
-          return snappedTo = $.map(snapped, function(element) {
-            if (element.snapping) {
-              return element.item;
-            } else {
-              return null;
-            }
-          });
-        },
+        stop: function(e, ui) {},
         snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)',
         cancel: '.close-arrow',
         containment: '.container',

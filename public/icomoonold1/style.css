@@ -27,7 +27,7 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="icon-"] {
 */
-.icon-cogs, .icon-cog, .icon-magnifier, .icon-tags, .icon-list, .icon-checkmark, .icon-braces, .icon-uniF47C, .icon-reload, .icon-selectionadd, .icon-selectionrmove, .icon-uniF48A, .icon-uniF48B, .icon-refresh, .icon-resize-vertical, .icon-caret-up, .icon-caret-down, .icon-sign-blank, .icon-remove, .icon-remove-2, .icon-paragraph-left, .icon-stats, .icon-link, .icon-image, .icon-cabinet, .icon-paragraph-center, .icon-download, .icon-wrench, .icon-move, .icon-multiply, .icon-github, .icon-uniF489, .icon-uniF488, .icon-layout, .icon-layout-2, .icon-layout-3, .icon-layout-4, .icon-layout-5, .icon-layout-6, .icon-layout-7, .icon-layout-8 {
+.icon-cogs, .icon-cog, .icon-magnifier, .icon-tags, .icon-list, .icon-checkmark, .icon-braces, .icon-uniF47C, .icon-reload, .icon-selectionadd, .icon-selectionrmove, .icon-uniF48A, .icon-uniF48B, .icon-refresh, .icon-resize-vertical, .icon-caret-up, .icon-caret-down, .icon-sign-blank, .icon-remove, .icon-remove-2, .icon-paragraph-left, .icon-stats, .icon-link, .icon-image, .icon-cabinet, .icon-paragraph-center, .icon-download, .icon-wrench, .icon-move, .icon-multiply, .icon-github, .icon-uniF489, .icon-uniF488 {
 	font-family: 'icomoon';
 	speak: none;
 	font-style: normal;
@@ -135,28 +135,4 @@ you can use the generic selector below, but it's slower:
 }
 .icon-uniF488:before {
 	content: "\f488";
-}
-.icon-layout:before {
-	content: "\e01f";
-}
-.icon-layout-2:before {
-	content: "\e020";
-}
-.icon-layout-3:before {
-	content: "\e021";
-}
-.icon-layout-4:before {
-	content: "\e022";
-}
-.icon-layout-5:before {
-	content: "\e023";
-}
-.icon-layout-6:before {
-	content: "\e024";
-}
-.icon-layout-7:before {
-	content: "\e025";
-}
-.icon-layout-8:before {
-	content: "\e026";
 }

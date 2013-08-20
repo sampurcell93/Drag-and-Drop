@@ -103,6 +103,7 @@ $(document).ready ->
                 "add": (model,collection,opts)->
                     unless (opts.organizer? and opts.organizer.itemRender is false)
                         that.append(model, opts)
+                'reset': @render
             }
         render: ->
             self = @

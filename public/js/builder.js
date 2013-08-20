@@ -394,7 +394,8 @@
               m.set("view", self.itemName);
             }
             return self.appendChild(m, o);
-          }
+          },
+          'reset': this.render
         });
         this.modelListeners = _.extend({}, this.modelListeners, {
           "change:classes": function() {
@@ -455,9 +456,6 @@
         if ($el.children(".children").length === 0) {
           $el.append($("<ul/>").addClass("children"));
         }
-        if ($el.children(".drag-handle").length === 0) {
-          $el.prepend($("<div/>").addClass("drag-handle"));
-        }
         if ((children != null) && do_children === true) {
           if (children.length > 0) {
             this.$el.children(".placeholder").hide();
@@ -479,9 +477,7 @@
         return this.$el.draggable({
           cancel: ".no-drag, .context-menu, .ui-resizable-handle",
           revert: true,
-          handle: '.drag-handle',
           scrollSensitivity: 100,
-          cursor: 'move',
           helper: function() {
             var selected, self, wrap;
             selected = that.$el.closest("section").find(".ui-selected, .selected-element");

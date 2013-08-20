@@ -104,7 +104,7 @@
           self = this;
           modal = window.launchModal(_.template($("#section-change").html(), {
             title: this.model.get("title")
-          }) + "<button class='confirm m10'>Ok</button>");
+          }) + "<button class='confirm m10'>OK</button>");
           modal.delegate(".change-section-title", "keyup", function() {
             var $t, title;
             $t = $(this);
@@ -130,7 +130,7 @@
         "click .settings": function() {
           var modal, temp;
           temp = $("#settings-template").html();
-          modal = window.launchModal(_.template(temp, window.settings));
+          modal = window.launchModal(_.template(temp + "<button class='confirm'>OK</button>", window.settings));
           return modal.find(".hist-length").slider({
             value: window.settings.history_length,
             step: 1,
@@ -258,9 +258,9 @@
         this.model.saved = true;
         copy.save(null, {
           success: function() {
-            $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
+            $("<div />").addClass("modal center").html("Section <em>\"" + title + "\"</em> successfully saved!").appendTo(document.body);
             $(document.body).addClass("active-modal");
-            return $(".modal").delay(2000).fadeOut("fast", function() {
+            return $(".modal").delay(1200).fadeOut("fast", function() {
               $(this).remove();
               return $(document.body).removeClass("active-modal");
             });
@@ -514,7 +514,7 @@
         "click .close": function(e) {
           var that;
           that = this;
-          return $(e.currentTarget).closest("li").fadeOut("fast", function() {
+          return $(e.currentTarget).toggleClass("flipped").closest("li").fadeOut("fast", function() {
             $(this).remove();
             return that.model.destroy();
           });

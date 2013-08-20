@@ -125,7 +125,8 @@
             if (!((opts.organizer != null) && opts.organizer.itemRender === false)) {
               return that.append(model, opts);
             }
-          }
+          },
+          'reset': this.render
         });
       },
       render: function() {

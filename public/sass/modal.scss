@@ -46,6 +46,11 @@ body {
         }
     }
 
+    h2 {
+        border-bottom: 1px solid #ccc;
+        margin: 20px 0 10px;
+    }
+
 }
 
 
@@ -145,10 +150,29 @@ body {
     }
 }
 
-.choose-columns {
+.preset-layouts {
 
-    border-top: 1px solid #ccc;
-    padding-top: 30px;
+    li {
+        display: inline-block;
+        width: 19%;
+        font-size: 4rem;
+        text-align: center; 
+        position: relative;
+        padding-bottom: 20px;
+
+        &:after {
+            content: attr(data-title);
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 60px;
+            text-align: center;
+            font-size: 1rem;
+        }
+    }
+}
+
+.choose-columns {
 
     li{
         width: 16%;

@@ -96,6 +96,10 @@ $(document).ready ->
                     self.$el.children(".placeholder").hide()
                 else 
                     self.$el.children(".placeholder").show()
+            @listenTo @model, {
+                "change:presetlayout": (model,attr,opts)->
+                    self.formPresetLayout(attr)
+            }
             _.extend @events, {
                 "click .ungroup-fields": ->
                     model    = @model
@@ -184,6 +188,33 @@ $(document).ready ->
         afterRender: ->
             if @model.get("child_els").length > 0
                 @$el.children(".placeholder").hide()
+        formPresetLayout: (layout) ->
+            if !layout? then return false
+            layout_logic = {
+                "right-bar": @layouts.rightBar
+            }
+            console.log layout
+            console.log layout_logic[layout]
+            layout_logic[layout](@)
+        layouts: {
+            "rightBar": (self) ->
+                sidebar = new models.Element({view: 'RightBar', type: "Right Bar"})
+                content = new models.Element({view: 'LeftContent', type: "Left Content"})
+                elChildren = self.model.get("child_els")
+                contentChildren = new collections.Elements()
+                first = elChildren.at(0)
+                sidebarChildren = sidebar.get "child_els"
+                sidebarChildren.add first
+                elChildren.remove first
+                _.each elChildren.models, (model, i) ->
+                    contentChildren.add model
+                sidebar.set "child_els", sidebarChildren
+                elChildren.reset()
+                elChildren.add sidebar
+                content.set("child_els", contentChildren)
+                elChildren.add content
+
+        }
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
         higher level event from firing. ###
@@ -361,3 +392,14 @@ $(document).ready ->
             @$el.addClass("list-layout")
 
     class views["RepeatingLayout"] extends views['layout']
+
+
+
+    # Layout component views
+    class views['RightBar'] extends views['layout']
+        className: 'builder-element w35 fr'
+        template: ""
+
+    class views['LeftContent'] extends views['layout']
+        className: 'builder-element w6 fl'
+        template: ""

@@ -144,7 +144,7 @@ $(document).ready ->
                 @$el.toggleClass("no-grid")
             'click .section-title': (e) ->
                 self = @
-                modal = window.launchModal(_.template($("#section-change").html(), {title: @model.get("title")}) + "<button class='confirm m10'>Ok</button>")
+                modal = window.launchModal(_.template($("#section-change").html(), {title: @model.get("title")}) + "<button class='confirm m10'>OK</button>")
                 modal.delegate(".change-section-title", "keyup", ->
                     $t = $ this
                     title =  $t.val()
@@ -161,7 +161,7 @@ $(document).ready ->
                     $t.val($t.data("previous-val") || "")
             "click .settings": ->
                 temp = $("#settings-template").html()
-                modal = window.launchModal(_.template temp, window.settings)
+                modal = window.launchModal(_.template temp + "<button class='confirm'>OK</button>", window.settings)
                 modal.find(".hist-length").slider({
                     value: window.settings.history_length
                     step: 1
@@ -274,9 +274,9 @@ $(document).ready ->
             @model.saved = true
             copy.save(null, {
                 success: ->
-                    $("<div />").addClass("modal center").html("You saved the section").appendTo(document.body);
+                    $("<div />").addClass("modal center").html("Section <em>\"" + title + "\"</em> successfully saved!").appendTo(document.body);
                     $(document.body).addClass("active-modal")
-                    $(".modal").delay(2000).fadeOut "fast", ->
+                    $(".modal").delay(1200).fadeOut "fast", ->
                         $(@).remove()
                         $(document.body).removeClass("active-modal")
             })
@@ -458,7 +458,7 @@ $(document).ready ->
                 # allSections.at(@options.index).get("properties").add newProp
             "click .close": (e) ->
                 that = @
-                $(e.currentTarget).closest("li").fadeOut "fast", ->
+                $(e.currentTarget).toggleClass("flipped").closest("li").fadeOut "fast", ->
                     $(this).remove()
                     that.model.destroy()
             "click .hide-properties": (e) ->

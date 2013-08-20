@@ -33,7 +33,7 @@ script(type='text/template')#radio-editor
 
 script#column-picker(type='text/template')
     h2 Choose a column layout
-    ul.choose-columns
+    ul.choose-columns.select-one
         li(data-columns='') One Column
         li(data-columns='two') Two Columns
         li(data-columns='three') Three Columns
@@ -44,10 +44,20 @@ script#skins(type='text/template')
 
 script#layout-changer(type="text/template")
     h2 Change the layout type
-    ul.choose-layout
+    ul.choose-layout.select-one
         li(data-layout='tabs', data-view-item='tabItem') Tabbed
         li(data-layout='BlankLayout') Blank
         li(data-layout='ListLayout') List Layout
+
+
+script#preset-layouts(type='text/template')
+    h2 Choose a Preset Layout
+    ul.preset-layouts.select-one
+        li.icon-layout(data-class='left-bar', data-title='Left Sidebar')
+        li.icon-layout-2(data-class='right-bar', data-title='Right Sidebar')
+        li.icon-layout-3(data-class='header-left-bar', data-title='Header w/ Left Bar')
+        li.icon-layout-4(data-class='header-right-bar', data-title='Header w/ Right Bar')
+        li.icon-layout-5(data-class='header-split', data-title='Header w/ Split')
 
 script#dynamic-layout-setup(type='text/template')
     h2 Choose a Preset Layout
