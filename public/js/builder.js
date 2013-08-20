@@ -278,10 +278,9 @@
       };
 
       droppablePlaceholder.prototype.render = function() {
-        var ghostFragment, self;
+        var self;
         self = this;
-        ghostFragment = this.$el;
-        return ghostFragment.droppable({
+        return this.$el.droppable({
           accept: ".builder-element, .outside-draggables li, .property",
           greedy: true,
           tolerance: 'pointer',
@@ -682,7 +681,6 @@
         "click": function(e) {
           this.unbindContextMenu(e);
           this.$el.find(".dropdown").hide();
-          console.log(e);
           if (e.shiftKey === true || e.ctrlKey === true) {
             this.selectEl();
           }

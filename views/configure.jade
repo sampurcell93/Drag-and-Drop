@@ -7,6 +7,7 @@ script(type='text/template')#data-type
 script(type='text/template')#property-item
     <% if (typeof editable !== "undefined" && editable == true) { %>
     input(type='text', placeholder='Enter property name')
+    div.icon-multiply
     <% } else {%>
     | <%= name.clean() %>
     <% } %>

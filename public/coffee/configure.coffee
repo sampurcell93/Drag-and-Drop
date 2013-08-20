@@ -309,7 +309,11 @@ $(document).ready ->
         template: $("#tab-item").html(),
         tagName: 'li'
         initialize: ->
-            @listenTo(@model, "change:title", @render)
+            self = @
+            @listenTo(@model, "change:title", (m,c,o)->
+                unless o? and o.no_tab == true
+                    self.render()
+            )
         render: (i) ->
             if (typeof i == "string" or typeof i == "number")
                 @$el.attr("data-id",i)
@@ -335,6 +339,8 @@ $(document).ready ->
             }
             this
         events: 
+            "keyup [contentEditable]": (e) ->
+                @model.set("title",$(e.currentTarget).text(), { no_tab: true })
             "click .remove": (e) ->
                 if @model.saved is true
                     @model.destroy()
@@ -530,8 +536,9 @@ $(document).ready ->
                 # model.property = {}
                 model.view = "Input"
                 model.property = @model
-                model.property.name = model.name
+                model.property.name = model.name || ""
                 model.type = "Property"
+                console.log model.property
                 if !@elementModel?
                     @elementModel = new models.Element(model)
                 currentSection.add @elementModel
@@ -539,6 +546,9 @@ $(document).ready ->
                 allSections.at(window.currIndex).get("properties").remove @model
                 currentSection.remove @elementModel
         events:
+            "click .icon-multiply": ->
+                @model.destroy()
+                @remove()
             "click .choose-prop": "chooseProp"
             "keyup input": (e) ->
                 $t =  $(e.currentTarget)

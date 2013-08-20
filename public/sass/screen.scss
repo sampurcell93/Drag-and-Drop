@@ -221,7 +221,7 @@ ul.select-properties {
 
 			&:hover { color: #fff; }
 
-			.icon { color: #fff; }
+			.icon-multiply{ color: #fff; }
 		}
 
 		&:hover {
@@ -242,6 +242,15 @@ ul.select-properties {
 
 		input[type='text'] {
 			padding: 2px 10px;
+		}
+
+		.icon-multiply {
+			position: absolute;
+			left: 10px;
+			top: 6px;
+			font-size: .75rem;
+			color: #aaa;
+			z-index: 13;
 		}
 	}
 }

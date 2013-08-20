@@ -9,6 +9,9 @@ $(document).ready ->
     class window.models.Element extends Backbone.Model
         initialize: ->
             self = @
+            # if @get("property")
+            #     @listenTo @get("property"), "destroy", ->
+            #         cc "destroy"
             @on {
                 "change:view": (model,view,opts) ->
                     collection = model.collection
@@ -187,8 +190,7 @@ $(document).ready ->
                 false
         render: ->
             self = @
-            ghostFragment = @$el
-            ghostFragment.droppable
+            @$el.droppable
                 accept: ".builder-element, .outside-draggables li, .property"
                 greedy: true
                 tolerance: 'pointer' 
@@ -462,7 +464,6 @@ $(document).ready ->
             "click": (e) ->
                 @unbindContextMenu(e)
                 @$el.find(".dropdown").hide()
-                console.log e
                 if e.shiftKey is true or e.ctrlKey is true
                     @selectEl()
                 e.preventDefault()

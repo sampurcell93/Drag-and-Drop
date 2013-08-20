@@ -4,6 +4,6 @@ body
     ul.tabs
         li.add-section +
     script(type='text/template')#tab-item
-        <%= typeof title !== "undefined" ? title : "Default Title" %>
+        span(contentEditable)<%= typeof title !== "undefined" ? title : "Default Title" %>
         div.remove.icon-multiply
 include builder-instance.jade

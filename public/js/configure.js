@@ -304,7 +304,13 @@
       template: $("#tab-item").html(),
       tagName: 'li',
       initialize: function() {
-        return this.listenTo(this.model, "change:title", this.render);
+        var self;
+        self = this;
+        return this.listenTo(this.model, "change:title", function(m, c, o) {
+          if (!((o != null) && o.no_tab === true)) {
+            return self.render();
+          }
+        });
       },
       render: function(i) {
         if (typeof i === "string" || typeof i === "number") {
@@ -340,6 +346,11 @@
         return this;
       },
       events: {
+        "keyup [contentEditable]": function(e) {
+          return this.model.set("title", $(e.currentTarget).text(), {
+            no_tab: true
+          });
+        },
         "click .remove": function(e) {
           var collection, index, sure;
           if (this.model.saved === true) {
@@ -595,8 +606,9 @@
           model.title = model.className + "." + model.name;
           model.view = "Input";
           model.property = this.model;
-          model.property.name = model.name;
+          model.property.name = model.name || "";
           model.type = "Property";
+          console.log(model.property);
           if (this.elementModel == null) {
             this.elementModel = new models.Element(model);
           }
@@ -607,6 +619,10 @@
         }
       },
       events: {
+        "click .icon-multiply": function() {
+          this.model.destroy();
+          return this.remove();
+        },
         "click .choose-prop": "chooseProp",
         "keyup input": function(e) {
           var $t, val;

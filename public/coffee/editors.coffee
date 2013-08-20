@@ -7,6 +7,8 @@ $ ->
     class editors["BaseEditor"] extends Backbone.View
         change_queue: []
         tagName: "div class='modal'"
+        # TODO: change the format of editor templates to be arrays of objects. In this way
+        #, each object and its templates can represent a single tab in the editor.
         standards: [
             $("#change-styles").html()
         ]
