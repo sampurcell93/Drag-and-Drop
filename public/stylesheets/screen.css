@@ -539,7 +539,7 @@ ul.outside-draggables {
   color: #fff;
 }
 /* line 33, ../sass/builder.scss */
-ul.outside-draggables li {
+ul.outside-draggables > li {
   border-right: 1px solid #83a2af;
   cursor: pointer;
   text-shadow: none;
@@ -553,19 +553,19 @@ ul.outside-draggables li {
   text-align: center;
 }
 /* line 46, ../sass/builder.scss */
-ul.outside-draggables li:last-of-type {
+ul.outside-draggables > li:last-of-type {
   border: none;
 }
 /* line 48, ../sass/builder.scss */
-ul.outside-draggables li:hover {
+ul.outside-draggables > li:hover {
   text-decoration: underline;
 }
 /* line 51, ../sass/builder.scss */
-ul.outside-draggables li:hover ul {
+ul.outside-draggables > li:hover ul {
   display: block;
 }
 /* line 54, ../sass/builder.scss */
-ul.outside-draggables li.dragging {
+ul.outside-draggables > li.dragging {
   border: 1px dotted #2092cc;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
@@ -582,23 +582,22 @@ ul.outside-draggables li.dragging {
   color: #313131;
 }
 /* line 64, ../sass/builder.scss */
-ul.outside-draggables li.no-close ul {
+ul.outside-draggables > li.no-close ul {
   display: block;
 }
 /* line 66, ../sass/builder.scss */
-ul.outside-draggables li ul {
+ul.outside-draggables > li ul {
   position: absolute;
   width: 150%;
   top: 100%;
-  left: -3px;
+  left: 0px;
   z-index: 9999;
   border: 1px solid #aaa;
   cursor: move;
-  border-top: none;
   display: none;
 }
-/* line 77, ../sass/builder.scss */
-ul.outside-draggables li ul li {
+/* line 76, ../sass/builder.scss */
+ul.outside-draggables > li ul li {
   width: 100%;
   background: #fff;
   color: #3e4951;
@@ -606,13 +605,32 @@ ul.outside-draggables li ul li {
   left: -3px;
   min-width: 0%;
 }
-/* line 86, ../sass/builder.scss */
-ul.outside-draggables li ul li:hover {
+/* line 85, ../sass/builder.scss */
+ul.outside-draggables > li ul li:hover {
   color: #f9f9f9;
   background: #3e4951;
 }
 
-/* line 95, ../sass/builder.scss */
+/* line 94, ../sass/builder.scss */
+ul.builder-toggles {
+  float: right;
+  cursor: pointer;
+}
+/* line 97, ../sass/builder.scss */
+ul.builder-toggles li {
+  line-height: 30px;
+  margin-bottom: -10px;
+}
+/* line 101, ../sass/builder.scss */
+ul.builder-toggles li:before {
+  padding: 0 10px;
+}
+/* line 104, ../sass/builder.scss */
+ul.builder-toggles li:hover {
+  text-decoration: underline;
+}
+
+/* line 111, ../sass/builder.scss */
 .over {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -623,18 +641,18 @@ ul.outside-draggables li ul li:hover {
   background: #dee9f2 !important;
 }
 
-/* line 102, ../sass/builder.scss */
+/* line 118, ../sass/builder.scss */
 .dragging {
   opacity: .7;
   z-index: 1111;
 }
 
-/* line 107, ../sass/builder.scss */
+/* line 123, ../sass/builder.scss */
 .moving-sort .sort-element {
   background: #acd1ef;
 }
 
-/* line 111, ../sass/builder.scss */
+/* line 127, ../sass/builder.scss */
 section.builder-container {
   float: left;
   width: 100%;
@@ -647,39 +665,39 @@ section.builder-container {
   border: 1px solid #ccc;
 }
 
-/* line 123, ../sass/builder.scss */
-.no-grid .outside-draggables {
-  display: none;
+/* line 139, ../sass/builder.scss */
+.no-grid section .drag-handle {
+  display: none !important;
 }
-/* line 124, ../sass/builder.scss */
+/* line 140, ../sass/builder.scss */
 .no-grid .builder-element {
   outline-color: transparent !important;
   margin-top: 2px;
   margin-bottom: 2px;
 }
-/* line 129, ../sass/builder.scss */
+/* line 145, ../sass/builder.scss */
 .no-grid .builder-element textarea, .no-grid .builder-element .title-setter {
   border: none;
   resize: vertical;
 }
-/* line 134, ../sass/builder.scss */
+/* line 150, ../sass/builder.scss */
 .no-grid .builder-element textarea {
   background: #f1f1f1;
   padding: 10px;
 }
-/* line 139, ../sass/builder.scss */
+/* line 155, ../sass/builder.scss */
 .no-grid .builder-element .add-list-item {
   display: none;
 }
-/* line 142, ../sass/builder.scss */
+/* line 158, ../sass/builder.scss */
 .no-grid .droppable-placeholder {
   display: none;
 }
 
-/* line 149, ../sass/builder.scss */
+/* line 165, ../sass/builder.scss */
 .builder-element {
   position: relative;
-  padding: 2px 3px;
+  padding: 6px 3px 2px;
   margin: 0px 1%;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -690,75 +708,90 @@ section.builder-container {
   background: #fff;
   vertical-align: top;
   *zoom: 1;
-  cursor: move;
   text-overflow: ellipsis;
   display: table;
 }
-/* line 164, ../sass/builder.scss */
+/* line 179, ../sass/builder.scss */
 .builder-element ul, .builder-element ol, .builder-element dl {
   list-style-position: inside !important;
 }
-/* line 167, ../sass/builder.scss */
+/* line 182, ../sass/builder.scss */
 .builder-element ul li, .builder-element ol li, .builder-element dl li {
   list-style-position: inside !important;
 }
-/* line 172, ../sass/builder.scss */
+/* line 187, ../sass/builder.scss */
+.builder-element .drag-handle {
+  position: absolute;
+  width: 100%;
+  top: -1px;
+  height: 5px;
+  background-color: #2092cc;
+  cursor: move;
+  left: 0;
+  display: none;
+}
+/* line 199, ../sass/builder.scss */
 .builder-element.builder-scaffold {
   width: 100%;
   outline: none;
   display: block;
   margin: 0;
+  padding: 0;
   cursor: auto;
   outline: 1px solid #82b7e0 !important;
   min-height: 100px;
 }
-/* line 181, ../sass/builder.scss */
+/* line 209, ../sass/builder.scss */
 .builder-element.builder-scaffold:hover {
   background: white;
 }
-/* line 184, ../sass/builder.scss */
+/* line 212, ../sass/builder.scss */
 .builder-element:hover {
   outline-color: #2092cc;
   -webkit-box-shadow: 0px 0px 4px #82b7e0;
   -moz-box-shadow: 0px 0px 4px #82b7e0;
   box-shadow: 0px 0px 4px #82b7e0;
 }
-/* line 188, ../sass/builder.scss */
+/* line 216, ../sass/builder.scss */
 .builder-element:hover > .config-menu-wrap {
   visibility: visible;
 }
-/* line 193, ../sass/builder.scss */
+/* line 220, ../sass/builder.scss */
+.builder-element:hover > .drag-handle {
+  display: block;
+}
+/* line 223, ../sass/builder.scss */
 .builder-element.builder-child {
   outline: 1px dashed #82b7e0;
 }
-/* line 198, ../sass/builder.scss */
+/* line 228, ../sass/builder.scss */
 .builder-element input {
   margin: 10px 0;
 }
-/* line 202, ../sass/builder.scss */
+/* line 232, ../sass/builder.scss */
 .builder-element.selected-element {
   outline: 1px dashed #FF6100 !important;
   -webkit-box-shadow: 0px 0px 3px #cccccc;
   -moz-box-shadow: 0px 0px 3px #cccccc;
   box-shadow: 0px 0px 3px #cccccc;
 }
-/* line 209, ../sass/builder.scss */
+/* line 239, ../sass/builder.scss */
 .builder-element:before, .builder-element:after {
   content: " ";
   /* 1 */
   display: table;
   /* 2 */
 }
-/* line 213, ../sass/builder.scss */
+/* line 243, ../sass/builder.scss */
 .builder-element:after {
   clear: both;
 }
-/* line 217, ../sass/builder.scss */
+/* line 247, ../sass/builder.scss */
 .builder-element textarea {
   color: #363636;
 }
 
-/* line 220, ../sass/builder.scss */
+/* line 250, ../sass/builder.scss */
 .droppable-placeholder {
   position: relative;
   left: 0;
@@ -772,19 +805,19 @@ section.builder-container {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
   opacity: 0;
 }
-/* line 229, ../sass/builder.scss */
+/* line 259, ../sass/builder.scss */
 .droppable-placeholder.show {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
 }
-/* line 233, ../sass/builder.scss */
+/* line 263, ../sass/builder.scss */
 .droppable-placeholder:hover {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
   opacity: 1;
   border: 1px solid #fcc0a9;
 }
 
-/* line 257, ../sass/builder.scss */
+/* line 287, ../sass/builder.scss */
 .ui-selectable-helper {
   position: absolute;
   z-index: 100;
@@ -792,7 +825,7 @@ section.builder-container {
   background: rgba(125, 185, 232, 0.4);
 }
 
-/* line 264, ../sass/builder.scss */
+/* line 294, ../sass/builder.scss */
 .config-menu-wrap {
   -webkit-transition: all 0.1s ease-in-out;
   -moz-transition: all 0.1s ease-in-out;
@@ -805,8 +838,6 @@ section.builder-container {
   cursor: pointer;
   text-align: center;
   background: #2092cc;
-  border: 1px solid #f9f9f9;
-  border-bottom: none;
   max-height: 25px;
   -webkit-border-radius: 3px 3px 0 0;
   -moz-border-radius: 3px 3px 0 0;
@@ -814,11 +845,11 @@ section.builder-container {
   -o-border-radius: 3px 3px 0 0;
   border-radius: 3px 3px 0 0;
 }
-/* line 278, ../sass/builder.scss */
+/* line 306, ../sass/builder.scss */
 .config-menu-wrap:hover {
   visibility: visible;
 }
-/* line 280, ../sass/builder.scss */
+/* line 308, ../sass/builder.scss */
 .config-menu-wrap li {
   cursor: pointer;
   -webkit-transition: all 0.1s ease-in-out;
@@ -832,16 +863,16 @@ section.builder-container {
   color: white;
   position: relative;
 }
-/* line 290, ../sass/builder.scss */
+/* line 318, ../sass/builder.scss */
 .config-menu-wrap li li {
   color: #333;
 }
 
-/* line 294, ../sass/builder.scss */
+/* line 322, ../sass/builder.scss */
 .set-options {
   z-index: 111;
 }
-/* line 296, ../sass/builder.scss */
+/* line 324, ../sass/builder.scss */
 .set-options .dropdown {
   position: absolute;
   top: 100%;
@@ -860,7 +891,7 @@ section.builder-container {
   box-shadow: 0px 2px 3px #cccccc;
   background: #fff;
 }
-/* line 309, ../sass/builder.scss */
+/* line 337, ../sass/builder.scss */
 .set-options .dropdown li {
   display: block;
   height: 33px;
@@ -870,14 +901,14 @@ section.builder-container {
   width: 100%;
   line-height: 33px;
 }
-/* line 318, ../sass/builder.scss */
+/* line 346, ../sass/builder.scss */
 .set-options .dropdown li:hover {
   background: #2092cc;
   color: #fff;
   text-shadow: none;
 }
 
-/* line 326, ../sass/builder.scss */
+/* line 354, ../sass/builder.scss */
 button {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -886,37 +917,37 @@ button {
   border-radius: 2px;
 }
 
-/* line 330, ../sass/builder.scss */
+/* line 358, ../sass/builder.scss */
 .view-section {
   cursor: pointer;
 }
 
-/* line 334, ../sass/builder.scss */
+/* line 362, ../sass/builder.scss */
 .generic-list {
   width: 80%;
 }
-/* line 336, ../sass/builder.scss */
+/* line 364, ../sass/builder.scss */
 .generic-list li {
   border: 1px dotted #2092cc;
   padding: 6px 4px;
   border-bottom-color: transparent;
 }
-/* line 341, ../sass/builder.scss */
+/* line 369, ../sass/builder.scss */
 .generic-list li:last-of-type {
   border-bottom-color: #2092cc;
 }
 
-/* line 347, ../sass/builder.scss */
+/* line 375, ../sass/builder.scss */
 ul.generic-list {
   list-style: circle;
 }
 
-/* line 350, ../sass/builder.scss */
+/* line 378, ../sass/builder.scss */
 ol.generic-list {
   list-style: decimal;
 }
 
-/* line 355, ../sass/builder.scss */
+/* line 383, ../sass/builder.scss */
 .context-menu {
   position: absolute;
   background: #f9f9f9;
@@ -944,12 +975,12 @@ ol.generic-list {
   display: block;
   cursor: pointer;
 }
-/* line 372, ../sass/builder.scss */
+/* line 400, ../sass/builder.scss */
 .context-menu li {
   text-align: center;
   padding: 10px;
 }
-/* line 376, ../sass/builder.scss */
+/* line 404, ../sass/builder.scss */
 .context-menu li:first-of-type {
   -webkit-border-radius: 3px 3px 0 0;
   -moz-border-radius: 3px 3px 0 0;
@@ -957,7 +988,7 @@ ol.generic-list {
   -o-border-radius: 3px 3px 0 0;
   border-radius: 3px 3px 0 0;
 }
-/* line 379, ../sass/builder.scss */
+/* line 407, ../sass/builder.scss */
 .context-menu li:last-of-type {
   -webkit-border-radius: 0 0 3px 3px;
   -moz-border-radius: 0 0 3px 3px;
@@ -965,14 +996,14 @@ ol.generic-list {
   -o-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
 }
-/* line 383, ../sass/builder.scss */
+/* line 411, ../sass/builder.scss */
 .context-menu li:hover {
   background: #2092cc;
   color: #f9f9f9;
   text-shadow: none;
 }
 
-/* line 392, ../sass/builder.scss */
+/* line 420, ../sass/builder.scss */
 .organize-elements {
   padding: 0px 0 10px;
   width: 100%;
@@ -981,7 +1012,7 @@ ol.generic-list {
   border-left: 1px solid #333;
   z-index: 998;
 }
-/* line 400, ../sass/builder.scss */
+/* line 428, ../sass/builder.scss */
 .organize-elements .ui-sortable-placeholder {
   border: 1px solid #333;
   visibility: visible !important;
@@ -990,13 +1021,13 @@ ol.generic-list {
   -moz-box-shadow: 0px 0px 30px #2092cc, inset 0px 0px 30px rgba(255, 255, 255, 0.6);
   box-shadow: 0px 0px 30px #2092cc, inset 0px 0px 30px rgba(255, 255, 255, 0.6);
 }
-/* line 407, ../sass/builder.scss */
+/* line 435, ../sass/builder.scss */
 .organize-elements > li {
   border-top: 1px solid #5b747f;
   border-bottom: 1px solid #222;
   background: #3e4951;
 }
-/* line 413, ../sass/builder.scss */
+/* line 441, ../sass/builder.scss */
 .organize-elements .hide-sidebar {
   font-size: .9em;
   position: relative;
@@ -1011,7 +1042,7 @@ ol.generic-list {
   background: #000;
   padding: 5px 3px 5px 5px;
 }
-/* line 424, ../sass/builder.scss */
+/* line 452, ../sass/builder.scss */
 .organize-elements li {
   position: relative;
   min-height: 30px;
@@ -1027,11 +1058,11 @@ ol.generic-list {
   text-align: left !important;
   text-overflow: ellipsis !important;
 }
-/* line 439, ../sass/builder.scss */
+/* line 467, ../sass/builder.scss */
 .organize-elements li .destroy-element, .organize-elements li .activate-element {
   display: none;
 }
-/* line 441, ../sass/builder.scss */
+/* line 469, ../sass/builder.scss */
 .organize-elements li .sort-element {
   left: 4px;
   top: 0px;
@@ -1039,15 +1070,15 @@ ol.generic-list {
   cursor: hand;
   width: 12px;
 }
-/* line 448, ../sass/builder.scss */
+/* line 476, ../sass/builder.scss */
 .organize-elements li .sort-element:before {
   left: 3px;
 }
-/* line 453, ../sass/builder.scss */
+/* line 481, ../sass/builder.scss */
 .organize-elements li .child-list {
   margin-left: -18px;
 }
-/* line 456, ../sass/builder.scss */
+/* line 484, ../sass/builder.scss */
 .organize-elements li .child-list li:first-child::after {
   content: "";
   display: block;
@@ -1064,7 +1095,7 @@ ol.generic-list {
   position: absolute;
   left: 0;
 }
-/* line 469, ../sass/builder.scss */
+/* line 497, ../sass/builder.scss */
 .organize-elements li .destroy-element {
   position: absolute;
   left: 4px;
@@ -1079,31 +1110,31 @@ ol.generic-list {
   border-radius: 2px;
   padding: 2px;
 }
-/* line 480, ../sass/builder.scss */
+/* line 508, ../sass/builder.scss */
 .organize-elements li:hover {
   background: #3e4951 !important;
 }
-/* line 485, ../sass/builder.scss */
+/* line 513, ../sass/builder.scss */
 .organize-elements li.out-of-flow {
   background: #474747;
   text-shadow: none;
   border-top: 1px solid #696969;
 }
-/* line 490, ../sass/builder.scss */
+/* line 518, ../sass/builder.scss */
 .organize-elements li.out-of-flow > .sort-element {
   display: none;
 }
-/* line 491, ../sass/builder.scss */
+/* line 519, ../sass/builder.scss */
 .organize-elements li.out-of-flow > .destroy-element {
   display: block;
 }
-/* line 493, ../sass/builder.scss */
+/* line 521, ../sass/builder.scss */
 .organize-elements li.out-of-flow:hover {
   background: #474747 !important;
   border-top: 1px solid #555;
 }
 
-/* line 499, ../sass/builder.scss */
+/* line 527, ../sass/builder.scss */
 .ui-resizable-handle {
   border: 1px dotted #222;
   width: 3px !important;
@@ -1113,11 +1144,11 @@ ol.generic-list {
   margin-top: -15px;
   z-index: 99;
 }
-/* line 508, ../sass/builder.scss */
+/* line 536, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-w {
   left: -4px;
 }
-/* line 511, ../sass/builder.scss */
+/* line 539, ../sass/builder.scss */
 .ui-resizable-handle.ui-resizable-e {
   right: -4px;
 }
@@ -1125,7 +1156,7 @@ ol.generic-list {
 /* line 2, ../sass/layouts.scss */
 .layout-wrapper {
   outline: 1px solid #7BF5F5;
-  padding: 10px 0 10px;
+  padding: 5px 0  5px;
   display: block;
 }
 /* line 7, ../sass/layouts.scss */

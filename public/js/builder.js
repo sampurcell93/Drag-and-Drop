@@ -408,8 +408,8 @@
             if (model.get("inFlow") === true) {
               return self.$el.slideDown("fast").next(".droppable-placeholder").slideDown("fast").prev(".droppable-placeholder").slideDown("fast");
             } else {
-              self.$el.slideUp("fast");
-              return allSections.at(window.currIndex).get("builder").removeExtraPlaceholders();
+              self.$el.slideUp("fast").next(".droppable-placeholder").hide();
+              return self.$el.prev(".droppable-placeholder").hide();
             }
           },
           "remove": function() {
@@ -453,7 +453,10 @@
           $el.append(_.template(this.controls, model.toJSON()));
         }
         if ($el.children(".children").length === 0) {
-          $el.append("<ul class='children'></ul>");
+          $el.append($("<ul/>").addClass("children"));
+        }
+        if ($el.children(".drag-handle").length === 0) {
+          $el.prepend($("<div/>").addClass("drag-handle"));
         }
         if ((children != null) && do_children === true) {
           if (children.length > 0) {
@@ -476,7 +479,9 @@
         return this.$el.draggable({
           cancel: ".no-drag, .context-menu, .ui-resizable-handle",
           revert: true,
+          handle: '.drag-handle',
           scrollSensitivity: 100,
+          cursor: 'move',
           helper: function() {
             var selected, self, wrap;
             selected = that.$el.closest("section").find(".ui-selected, .selected-element");

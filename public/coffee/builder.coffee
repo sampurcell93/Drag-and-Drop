@@ -277,10 +277,8 @@ $(document).ready ->
                          next(".droppable-placeholder").slideDown("fast").
                          prev(".droppable-placeholder").slideDown("fast")
                     else 
-                        self.$el.slideUp("fast")
-                        allSections.at(window.currIndex).get("builder").removeExtraPlaceholders()
-                        # next(".droppable-placeholder").slideUp("fast")
-                        # self.$el.prev(".droppable-placeholder").slideUp("fast")
+                        self.$el.slideUp("fast").next(".droppable-placeholder").hide()
+                        self.$el.prev(".droppable-placeholder").hide()
                 "remove": ->
                     self.$el.next(".droppable-placeholder").remove()
                     self.remove()
@@ -310,7 +308,9 @@ $(document).ready ->
             $el.html(_.template @template, model.toJSON())
             if @controls? then $el.append(_.template @controls, model.toJSON())
             if $el.children(".children").length is 0
-                    $el.append("<ul class='children'></ul>")
+                    $el.append($("<ul/>").addClass("children"))
+            if $el.children(".drag-handle").length is 0
+                    $el.prepend($("<div/>").addClass("drag-handle"))
             if children? and do_children is true
                 if children.length > 0 then @$el.children(".placeholder").hide()
                 _.each children.models , (el) ->
@@ -329,7 +329,9 @@ $(document).ready ->
             @$el.draggable
                 cancel: ".no-drag, .context-menu, .ui-resizable-handle"
                 revert: true
+                handle: '.drag-handle'
                 scrollSensitivity: 100
+                cursor: 'move'
                 helper: ->
                     # Get all selecged elements
                     selected = that.$el.closest("section").find(".ui-selected, .selected-element")
@@ -563,9 +565,10 @@ $(document).ready ->
             draggable
         removeExtraPlaceholders: ->
             @$el.find(".droppable-placeholder").each ->
-                $t = $(this)
+                $t = $ @
                 flag = 0
                 if $t.next().hasClass("droppable-placeholder")
+
                     $t.next().remove()  
                 if $t.prev().hasClass("droppable-placeholder")
                     $t.prev().remove()

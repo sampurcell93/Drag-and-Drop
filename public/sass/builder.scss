@@ -30,7 +30,7 @@ ul.outside-draggables {
     background: $dusky;
     color: #fff;
     
-    li {
+    > li {
         border-right: 1px solid $dawn;
         cursor: pointer;
         text-shadow: none;
@@ -67,11 +67,10 @@ ul.outside-draggables {
             position:absolute;
             width: 150%;
             top: 100%;
-            left: -3px;
+            left: 0px;
             z-index: 9999;
             border: 1px solid #aaa;
             cursor: move;
-            border-top: none;
             display: none;
 
             li {
@@ -91,6 +90,23 @@ ul.outside-draggables {
 
     }
 }
+
+ul.builder-toggles {
+    float: right; 
+    cursor: pointer;
+    li {
+        line-height: 30px;
+        margin-bottom: -10px;
+
+        &:before {
+            padding: 0 10px;
+        }
+        &:hover {
+            text-decoration: underline; 
+        }
+    }
+}
+
 
 .over {
     // @include transform(scale(.98));
@@ -120,7 +136,7 @@ section.builder-container {
 }
 
 .no-grid {
-    .outside-draggables { display: none; }
+    section .drag-handle { display: none !important; }
     .builder-element {
         outline-color: transparent !important;
         margin-top: 2px;
@@ -148,7 +164,7 @@ section.builder-container {
 // Represents a draggable item. Using custom clearfix to avoid overflow hidden problem
 .builder-element {
     position: relative;
-    padding: 2px 3px;
+    padding: 6px 3px 2px;
     margin: 0px 1%;
     // @include transition(width .2s ease-in-out, height .2s ease-in-out);
     @include border-radius(3px);
@@ -157,7 +173,6 @@ section.builder-container {
     background: #fff;
     vertical-align: top;
     *zoom: 1;
-    cursor: move;
     text-overflow: ellipsis;
     display: table;
 
@@ -168,12 +183,25 @@ section.builder-container {
             list-style-position: inside !important;
         }
     }
-
+    
+    .drag-handle {
+        position: absolute;
+        width: 100%;
+        top: -1px;
+        height: 5px;
+        // needs latest Compass, add '@import "compass"' to your scss
+        background-color: $strongblue;
+        cursor: move;
+        left: 0;
+        display: none;
+    }
+    
     &.builder-scaffold {
         width: 100%;
         outline: none;
         display: block;
         margin: 0;
+        padding: 0;
         cursor: auto;
         outline: 1px solid $medblue !important;
         min-height: 100px;
@@ -188,6 +216,8 @@ section.builder-container {
         > .config-menu-wrap  {
             visibility: visible;
         }
+
+        > .drag-handle { display: block; }
     }
 
     &.builder-child { 
@@ -270,8 +300,6 @@ section.builder-container {
     cursor: pointer;
     text-align: center;
     background: $strongblue;
-    border: 1px solid #f9f9f9;
-    border-bottom: none;
     max-height: 25px;
     @include border-radius(3px 3px 0 0);
 
