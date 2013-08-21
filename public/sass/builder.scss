@@ -165,17 +165,15 @@ section.builder-container {
     position: relative;
     padding: 6px 3px 2px;
     margin: 0px 1%;
-    // @include transition(width .2s ease-in-out, height .2s ease-in-out);
     @include border-radius(3px);
-    // @include clearfix();
     outline: 1px dashed $medblue;
     background: #fff;
-    vertical-align: top;
     *zoom: 1;
     text-overflow: ellipsis;
     display: inline-block;
     cursor: move;
     max-width: 100%;
+    display: block;
 
     ul, ol, dl {
         list-style-position: inside !important;
@@ -414,6 +412,7 @@ ol.generic-list {
     background: $dusky;
     border-left: 1px solid #333;
     z-index: 998;
+    top: 60px;
 
     .ui-sortable-placeholder {
         border: 1px solid #333;

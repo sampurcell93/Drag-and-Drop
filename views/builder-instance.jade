@@ -8,17 +8,17 @@ include builder.jade
     //- The template for rendering a single instance of the builder - allows multiple builder tabs to be open at once.
     script(type='text/template')#controller-wrap
         <% String.prototype.clean = function(trim) { var cutoff = 10000000; var appendMe = ""; if (typeof trim !== "undefined" && trim == true) { if (this.length > 27){ appendMe = "...."; cutoff = 27} }return this.charAt(0).toUpperCase() + this.slice(1).replace("_"," ")} %>       
-        ul.sidebar-controls.main-controls
-            li.icon-uniF47C(data-switch-text='Config', data-switch-icon='icon-wrench').generate-section Build
-            li.icon-download.save-section Save
-            li.icon-cogs.settings Settings
-            //- li.help Help
-
-        .section-builder-wrap
-            h2.section-title.clickme.fl
+        header
+            h2.section-title.fl
                 span.title-wrap <%= typeof section_title !== "undefined" ? section_title : "Default Section Title" %>
                 span.fr (Click to change section title) 
-            .clear
+            ul.main-controls
+                li.icon-uniF47C(data-switch-text='Config', data-switch-icon='icon-wrench').generate-section Build
+                li.icon-download.save-section Save
+                li.icon-cogs.settings Settings
+            //- li.help Help
+
+        .section-builder-wrap.config-panel
             p.nice-dialog
                 | Configure your data in this area. Start by choosing data properties to include in 
                 | your section.

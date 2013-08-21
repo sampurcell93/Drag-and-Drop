@@ -132,6 +132,38 @@ p {
 	}
 }
 
+header {
+	width: 100%;
+	display: block;
+	height: 60px;
+	background: $dusky;
+	@include clearfix();
+
+	ul.main-controls {
+		float: right;
+		padding: 10px 30px;
+
+		li {
+			color: #f9f9f9;
+			text-shadow: none;
+			display: inline-block;
+			line-height: 40px;
+			cursor: pointer;
+			text-align: center;
+			padding-right: 25px;
+			border: 1px solid transparent;
+
+			&:before {
+				padding: 0 10px; 
+			}
+
+			&:hover {
+				text-shadow: 0px 1px 2px #fff;
+			}
+		}
+	}
+}
+
 .container {
 	display: block;
 	width:  calc(100% - 356px);
@@ -346,17 +378,19 @@ ul li.selected-choice {
 }
 
 .section-builder-wrap { 
-	padding: 40px 19% 12px 65px;
+	padding: 40px 10px 12px 19%;
 	height: 100%;
 	@include transition(padding .3s ease-in-out);
 
 	&.no-sidebar {
-		padding-right: 10px;
+		padding-left: 10px;
 
 		.toolbelt {
 			right: 30px;
 		}
 	}
+
+	&.config-panel { padding-top: 10px; }
 }
 
 .dark-sidebar {
@@ -368,7 +402,7 @@ ul li.selected-choice {
 	top: 0;
 	width: 55px;
 	background: $dusky;
-	height: 100%;
+	height: calc(100% - 59px);
 	color: #f9f9f9;
 	text-shadow: none;
 	@include transition(width .3s ease-in-out);
@@ -409,22 +443,10 @@ ul li.selected-choice {
 		width: 90%;
 		@include border-radius(3px);
 	}
-
-	&.main-controls {
-		left: 0;
-
-		li {
-			height: 80px;
-			padding-top: 45px;
-
-			li {
-				height: auto;
-			}
-		}
-	}
 	&.existing-sections-layouts {
 		border-left: 1px solid #222;
-		right: 0;
+		left: 0;
+		top: 60px;
 		overflow: auto;
 		width: 18%;
 		list-style: none !important; 
@@ -446,7 +468,7 @@ ul li.selected-choice {
 		}
 	}
 	&.accessories {
-		right: 0;
+		left: 0;
 		width: 18%;
 	}
 
@@ -513,6 +535,7 @@ ul li.selected-choice {
 }
 
 .accessories {
+	top: 60px;
 
     &.hidden-sidebar :not(".hide-sidebar") {
     	display: none;
@@ -559,7 +582,20 @@ ul li.selected-choice {
 	}
 }
 
-.section-title span:last-of-type { color: #777; font-size: 1rem; padding-top: 5px; padding-left: 20px;}
+.section-title{
+	cursor: pointer;
+	padding: 15px 0 15px 10px;
+	text-decoration: underline;
+	color: $sky;
+	text-shadow: none;
+
+	span:last-of-type { 
+		color: #999; 
+		font-size: 1rem;
+		padding-top: 5px;
+		padding-left: 20px;
+	}
+} 
 
 [data-tooltip] {
 	position: relative;
