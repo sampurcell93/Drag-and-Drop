@@ -4,7 +4,7 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   $(document).ready(function() {
-    var adjs, allLayouts, nouns, randomDict, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+    var adjs, allLayouts, nouns, randomDict, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
     adjs = ["autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark", "summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter", "patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue", "billowing", "broken", "cold", "damp", "falling", "frosty", "green", "long", "late", "lingering", "bold", "little", "morning", "muddy", "old", "red", "rough", "still", "small", "sparkling", "throbbing", "shy", "wandering", "withered", "wild", "black", "young", "holy", "solitary", "fragrant", "aged", "snowy", "proud", "floral", "restless", "divine", "polished", "ancient", "purple", "lively", "nameless", "protected", "fierce", "snowy", "floating", "serene", "placid", "afternoon", "calm", "cryptic", "desolate", "falling", "glacial", "limitless", "murmuring", "pacific", "whispering"];
     nouns = ["waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning", "snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter", "forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook", "butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly", "feather", "grass", "haze", "mountain", "night", "pond", "darkness", "snowflake", "silence", "sound", "sky", "shape", "surf", "thunder", "violet", "water", "wildflower", "wave", "water", "resonance", "sun", "wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper", "frog", "smoke", "star", "savannah", "quarry", "mountainside", "riverbank", "canopy", "tree", "monastery", "frost", "shelf", "badlands", "crags", "lowlands", "badlands", "woodlands", "eyrie", "beach", "temple"];
     String.prototype.firstUpperCase = function() {
@@ -81,11 +81,16 @@
         self = this;
         _.bindAll(this, "afterRender", "bindDrop", "appendChild");
         this.$el.addClass("layout-wrapper");
-        this.listenTo(this.model.get("child_els"), "add", function(m, c, o) {
-          if ((c != null) && c.length) {
-            return self.$el.children(".placeholder").hide();
-          } else {
-            return self.$el.children(".placeholder").show();
+        this.listenTo(this.model.get("child_els"), {
+          "add": function(m, c, o) {
+            if ((c != null) && c.length) {
+              return self.$el.children(".placeholder").hide();
+            }
+          },
+          "remove": function(m, c, o) {
+            if ((c != null) && !c.length) {
+              return self.$el.children(".placeholder").show();
+            }
           }
         });
         this.listenTo(this.model, {
@@ -137,26 +142,27 @@
           $el.addClass("selected-element");
         }
         view = child.get("view") || "draggableElement";
-        if (child.get("inFlow") === true) {
-          i = currIndex;
-          draggable = $(new views[view]({
-            model: child,
-            index: i,
-            parent: this.$el
-          }).render().el).addClass("builder-child");
-          if ((opts != null) && (opts.at == null)) {
-            $el.append(draggable);
+        i = window.currIndex;
+        draggable = $(new views[view]({
+          model: child,
+          index: i,
+          parent: this.$el
+        }).render().el).addClass("builder-child");
+        if (child.get("inFlow") === false) {
+          draggable.hide();
+        }
+        if ((opts != null) && (opts.at == null)) {
+          $el.append(draggable);
+        } else {
+          builderChildren = $el.children(".builder-element");
+          if (builderChildren.eq(opts.at).length) {
+            builderChildren.eq(opts.at).before(draggable);
           } else {
-            builderChildren = $el.children(".builder-element");
-            if (builderChildren.eq(opts.at).length) {
-              builderChildren.eq(opts.at).before(draggable);
-            } else {
-              $el.append(draggable);
-            }
+            $el.append(draggable);
           }
-          if (allSections.at(currIndex).get("builder") != null) {
-            return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
-          }
+        }
+        if (allSections.at(currIndex).get("builder") != null) {
+          return allSections.at(currIndex).get("builder").removeExtraPlaceholders();
         }
       };
 
@@ -217,25 +223,47 @@
         }
       };
 
-      layout.prototype.barLayout = function(sidebar, content) {
-        var contentChildren, elChildren, first, self, sidebarChildren;
+      layout.prototype.unbindLayout = function() {
+        var layout_items, self, temp;
+        layout_items = this.model.get("child_els");
         self = this;
-        sidebar = new models.Element(sidebar);
-        content = new models.Element(content);
-        elChildren = self.model.get("child_els");
-        contentChildren = new collections.Elements();
-        first = elChildren.at(0);
-        sidebarChildren = sidebar.get("child_els");
-        sidebarChildren.add(first);
-        elChildren.remove(first);
-        _.each(elChildren.models, function(model, i) {
-          return contentChildren.add(model);
+        temp = [];
+        _.each(layout_items.models, function(item) {
+          var children;
+          temp.push(item);
+          console.log(item);
+          children = item.get("child_els");
+          return _.each(children.models, function(child) {
+            console.log(child);
+            return self.model.blend(child);
+          });
         });
-        sidebar.set("child_els", sidebarChildren);
-        elChildren.reset();
-        elChildren.add(sidebar);
-        content.set("child_els", contentChildren);
-        return elChildren.add(content);
+        return _.each(temp, function(dest) {
+          return dest.destroy();
+        });
+      };
+
+      layout.prototype.barLayout = function(sidebar, content) {
+        var elChildren, first, model, self;
+        self = this;
+        model = this.model;
+        this.model.set("title", "Bar Layout");
+        sidebar = new window.models.Element(sidebar);
+        content = new window.models.Element(content);
+        elChildren = self.model.get("child_els");
+        first = elChildren.at(0);
+        console.log(first);
+        sidebar.blend(first);
+        _.each(elChildren, function(child, i) {
+          return content.blend(child);
+        });
+        if (content.view === "RightBar") {
+          model.blend(content);
+          return model.blend(sidebar);
+        } else {
+          model.blend(sidebar);
+          return model.blend(content);
+        }
       };
 
       layout.prototype.formPresetLayout = function(layout) {
@@ -245,8 +273,12 @@
         }
         layout_logic = {
           "right-bar": this.layouts.rightBar,
-          "left-bar": this.layouts.leftBar
+          "left-bar": this.layouts.leftBar,
+          "header-left-bar": this.layouts.headerLeftBar,
+          "header-right-bar": this.layouts.headerLeftBar,
+          "header-split": this.layouts.headerSplit
         };
+        this.unbindLayout();
         return layout_logic[layout](this);
       };
 
@@ -254,20 +286,78 @@
         "rightBar": function(self) {
           return self.barLayout({
             view: 'RightBar',
-            type: "Right Bar"
+            type: "Dynamic Layout",
+            title: 'Right Sidebar'
           }, {
             view: 'LeftContent',
-            type: "Left Content"
+            type: "Dynamic Layout",
+            title: 'Left Content'
           });
         },
         "leftBar": function(self) {
           return self.barLayout({
             view: 'LeftBar',
-            type: "Left Bar"
+            type: "Dynamic Layout",
+            title: 'Left Sidebar'
           }, {
             view: 'RightContent',
-            type: "Right Content"
+            type: "Dynamic Layout",
+            title: 'Right Content'
           });
+        },
+        "headerLeftBar": function(self) {
+          var layout;
+          layout = new models.Element({
+            layout: true,
+            type: 'Dynamic Layout',
+            view: "DynamicLayout",
+            title: 'Header'
+          });
+          self.barLayout({
+            view: 'LeftBar',
+            type: "Dynamic Layout",
+            title: 'Left Sidebar'
+          }, {
+            view: 'RightContent',
+            type: "Dynamic Layout",
+            title: 'Right Content'
+          });
+          return self.model.blend(layout);
+        },
+        "headerRightBar": function(self) {
+          var layout;
+          layout = new models.Element({
+            layout: true,
+            type: 'Dynamic Layout',
+            view: "DynamicLayout",
+            title: 'Header'
+          });
+          self.barLayout({
+            view: 'RightBar',
+            type: "Dynamic Layout",
+            title: 'Right Sidebar'
+          }, {
+            view: 'LeftContent',
+            type: "Dynamic Layout",
+            title: 'Left Content Sidebar'
+          });
+          return self.model.blend(layout);
+        },
+        "headerSplit": function(self) {
+          var half, layout;
+          layout = new models.Element({
+            layout: true,
+            type: 'Dynamic Layout',
+            view: "DynamicLayout",
+            title: 'Header'
+          });
+          half = {
+            view: 'HalfContent',
+            type: "Dynamic Layout",
+            title: 'Half Content'
+          };
+          self.barLayout(half, half);
+          return self.model.blend(layout);
         }
       };
 
@@ -456,7 +546,6 @@
         "keyup h3:first-child": function(e) {
           var $t;
           $t = $(e.currentTarget);
-          console.log($t);
           return this.model.set("title", $t.text());
         },
         "click": "showTabContent"
@@ -558,7 +647,6 @@
         cc("tabs after rendering");
         tabs = this.model.get("child_els");
         self = this;
-        console.log(tabs.models);
         return _.each(tabs.models, function(tab) {
           return self.formatNewModel(tab);
         });
@@ -604,7 +692,7 @@
       return _Class;
 
     })(views['layout']);
-    views['RightBar'] = (function(_super) {
+    views["LayoutItem"] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -612,14 +700,19 @@
         return _ref10;
       }
 
-      _Class.prototype.className = 'builder-element w35 fr border-left';
+      _Class.prototype.bindDrag = function() {};
 
-      _Class.prototype.template = "";
+      _Class.prototype.initialize = function(opts) {
+        _Class.__super__.initialize.apply(this, arguments);
+        if ((opts != null) && (opts.placeholder != null)) {
+          return this.placeholder = opts.placeholder;
+        }
+      };
 
       return _Class;
 
     })(views['layout']);
-    views['LeftContent'] = (function(_super) {
+    views['RightBar'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -627,14 +720,14 @@
         return _ref11;
       }
 
-      _Class.prototype.className = 'builder-element w6 fl';
+      _Class.prototype.className = 'builder-element w35 fr border-left m10';
 
-      _Class.prototype.template = "";
+      _Class.prototype.template = "<p class='placeholder'>Right Bar</p>";
 
       return _Class;
 
-    })(views['layout']);
-    views['LeftBar'] = (function(_super) {
+    })(views['LayoutItem']);
+    views['LeftContent'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -642,14 +735,14 @@
         return _ref12;
       }
 
-      _Class.prototype.className = 'builder-element w35 fl border-right';
+      _Class.prototype.className = 'builder-element w6 fl m10';
 
-      _Class.prototype.template = "";
+      _Class.prototype.template = "<p class='placeholder'>Left Content</p>";
 
       return _Class;
 
-    })(views['layout']);
-    return views['RightContent'] = (function(_super) {
+    })(views['LayoutItem']);
+    views['LeftBar'] = (function(_super) {
       __extends(_Class, _super);
 
       function _Class() {
@@ -657,13 +750,43 @@
         return _ref13;
       }
 
-      _Class.prototype.className = 'builder-element w6 fr';
+      _Class.prototype.className = 'builder-element w35 fl m10 border-right';
 
-      _Class.prototype.template = "";
+      _Class.prototype.template = "<p class='placeholder'>Left Bar</p>";
 
       return _Class;
 
-    })(views['layout']);
+    })(views['LayoutItem']);
+    views['RightContent'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref14 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref14;
+      }
+
+      _Class.prototype.className = 'builder-element w6 fr m10';
+
+      _Class.prototype.template = "<p class='placeholder'>Right Content</p>";
+
+      return _Class;
+
+    })(views['LayoutItem']);
+    return views['HalfContent'] = (function(_super) {
+      __extends(_Class, _super);
+
+      function _Class() {
+        _ref15 = _Class.__super__.constructor.apply(this, arguments);
+        return _ref15;
+      }
+
+      _Class.prototype.className = 'builder-element w5 fl';
+
+      _Class.prototype.template = "<p class='placeholder'>Half Content</p>";
+
+      return _Class;
+
+    })(views['LayoutItem']);
   });
 
 }).call(this);

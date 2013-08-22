@@ -4,6 +4,8 @@
     padding: 4px 0 4px;
     display: block;
 
+    .placeholder { text-align: center; padding: 10px; }
+
     &:hover {
         background: #FBF9DE;
         @include box-shadow(none);
@@ -11,20 +13,20 @@
 
     &.column.one > .droppable-placeholder {
         width: 100%;
-        display: block !important;
+        display: block ;
         height: 10px;
     }
 
     &.column {
         
         > ul.children > .builder-element { 
-            display: inline-block !important; 
-            margin: 2px 0 1px 0;
+            display: inline-block ; 
+            margin: 2px 1%;
         }
         > ul.children > .droppable-placeholder { 
             width: 1% !important; 
             background: orange;
-            display: inline-block !important; 
+            display: inline-block ; 
             margin: 0;
             min-height: 41px;
         }
@@ -39,23 +41,28 @@
         //     margin-left: 1% !important;
         // }
         &.two > ul.children > .builder-element { 
-            width: 48.5%; 
+            // width: 48.5%; 
+            width: 48%;
         }
 
         &.three > ul.children > .builder-element { 
-            width: 32%; 
+            // width: 32%; 
+            width: 31.3333%;
         }
     
         &.four > ul.children > .builder-element { 
-            width: 23.75%; 
+            // width: 23.75%; 
+            width: 23%;
         }
 
         &.five > ul.children > .builder-element { 
-            width: 18.8%; 
+            // width: 18.8%; 
+            width: 18%;
         }
 
         &.six > ul.children > .builder-element { 
-            width: 15.5%; 
+            // width: 15.5%; 
+            width: 14.6667%;
         }
     }
 }

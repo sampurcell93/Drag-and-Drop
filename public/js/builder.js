@@ -417,13 +417,11 @@
             self.$el.next(".droppable-placeholder").remove();
             return self.remove();
           },
-          "sorting": function() {
-            return self.$el.addClass("selected-element");
+          "link-feedback": function() {
+            return self.$el.addClass("link-feedback");
           },
-          "end-sorting": function() {
-            if (self.$el.hasClass("ui-selected") === false) {
-              return self.$el.removeClass("selected-element");
-            }
+          "end-feedback": function() {
+            return self.$el.removeClass("link-feedback");
           },
           "renderBase": function() {
             return self.render(false);

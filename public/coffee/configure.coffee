@@ -461,6 +461,10 @@ $(document).ready ->
                 $t = $(e.currentTarget)
                 $t.find("span").toggleClass("flipped")
                 $t.siblings("li").fadeToggle("fast")
+            "click .select-all": ->
+                @$el.find("input").trigger "click"
+
+
     })
 
     # A list of all the properties a user wants in their application view.

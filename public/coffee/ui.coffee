@@ -5,7 +5,7 @@ $(document).ready ->
     window.propertyLink = $("#property-link").html()
     if !localStorage.settings? then localStorage.settings = {}
     window.settings = {
-        history_length: localStorage.settings.history_length || 15
+        history_length: localStorage.settings.history_length || 100
     }
 
     window.globals =

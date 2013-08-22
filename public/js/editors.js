@@ -16,7 +16,7 @@
 
       _Class.prototype.change_queue = [];
 
-      _Class.prototype.tagName = "div class='modal'";
+      _Class.prototype.className = 'modal';
 
       _Class.prototype.templates = [
         {
@@ -24,6 +24,19 @@
           templates: [$("#change-styles").html()]
         }
       ];
+
+      _Class.prototype.standards = [
+        {
+          tab: 'Element Styling',
+          templates: [$("#change-styles").html()]
+        }
+      ];
+
+      _Class.prototype.initialize = function() {
+        this.templates = this.standards;
+        console.log("standards: ", this.standards);
+        return console.log("super templates:", this.templates);
+      };
 
       _Class.prototype.render = function() {
         var editor_content, self, tabs;
@@ -157,29 +170,29 @@
       ];
 
       _Class.prototype.initialize = function() {
+        var self;
+        self = this;
         return _.extend(this.events, {
           "click .select-one li": function(e) {
             return $(e.currentTarget).addClass("selected-choice").siblings().removeClass("selected-choice");
           },
           "click [data-columns]": function(e) {
-            var $t, cols, coltypes, self;
+            var $t, cols, coltypes;
             coltypes = ["two", "three", "four", "five", "six"];
             $t = $(e.currentTarget);
             cols = $t.data("columns");
-            self = this;
-            if (this.model != null) {
-              this.enqueue("columns", function() {
+            if (self.model != null) {
+              self.enqueue("columns", function() {
                 var classes;
                 self.model.set("columns", cols);
                 classes = self.model.get("classes");
                 classes.push("column " + cols);
-                return self.model.set("classes", classes);
+                self.model.set("classes", classes);
+                return console.log("applying column to ", self.model);
               });
             }
-            _.each(coltypes, function(type) {
-              return self.enqueue("remove_col_classes-" + type, function() {
-                return $(self.link_el).removeClass("column " + type);
-              });
+            self.enqueue("remove_col_classes", function() {
+              return $(self.link_el).removeClass("column two three four five six");
             });
             if (cols !== "") {
               return this.enqueue("add_col_classes", function() {
@@ -188,10 +201,9 @@
             }
           },
           "click [data-layout]": function(e) {
-            var $t, layout, self;
+            var $t, layout;
             $t = $(e.currentTarget);
             layout = $t.data("layout");
-            self = this;
             return this.enqueue("view", function() {
               self.model.set({
                 "layout": true,
@@ -202,16 +214,13 @@
             });
           },
           "click .preset-layouts li": function(e) {
-            var $t, className, classes, self;
+            var $t, className;
             $t = $(e.currentTarget);
             className = $t.data("class");
             self = this;
-            classes = this.model.get("classes");
-            classes.push(className);
             return this.enqueue("presetlayout", function() {
               self.model.set("presetlayout", className);
-              self.model.set("classes", classes);
-              return $(self.link_el).addClass(className);
+              return $(self.link_el).addClass(className).removeClass("column two three four five six");
             });
           }
         });
@@ -227,6 +236,12 @@
         _ref2 = _Class.__super__.constructor.apply(this, arguments);
         return _ref2;
       }
+
+      _Class.prototype.initialize = function() {
+        _Class.__super__.initialize.apply(this, arguments);
+        console.log("base templates", this.templates);
+        return this.addTemplate($("#button-editor").html(), 0);
+      };
 
       _Class.prototype.render = function() {
         var modal;

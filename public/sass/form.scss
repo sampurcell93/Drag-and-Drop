@@ -20,7 +20,7 @@ input[type='text'], textarea {
 }
 
 textarea {
-	margin:5px 0;
+	margin: 5px auto;
   display: block;
   padding: 5px;
 }
@@ -231,8 +231,4 @@ button {
 
 label {
 	font-weight: bold;
-}
-
-.ui-slider {
-  display: block;
 }

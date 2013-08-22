@@ -1,11 +1,11 @@
 /*
 Syntax error: Undefined mixin 'box-shadow'.
-        on line 9 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss, in `box-shadow'
-        from line 9 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss
+        on line 11 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss, in `box-shadow'
+        from line 11 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss
 
 Backtrace:
-/Users/spurcell/Drag-and-Drop/public/sass/layouts.scss:9:in `box-shadow'
-/Users/spurcell/Drag-and-Drop/public/sass/layouts.scss:9
+/Users/spurcell/Drag-and-Drop/public/sass/layouts.scss:11:in `box-shadow'
+/Users/spurcell/Drag-and-Drop/public/sass/layouts.scss:11
 /Library/Ruby/Gems/1.8/gems/sass-3.2.9/lib/sass/../sass/tree/visitors/perform.rb:253:in `visit_mixin'
 /Library/Ruby/Gems/1.8/gems/sass-3.2.9/lib/sass/../sass/tree/visitors/base.rb:37:in `send'
 /Library/Ruby/Gems/1.8/gems/sass-3.2.9/lib/sass/../sass/tree/visitors/base.rb:37:in `visit'
@@ -90,4 +90,4 @@ Backtrace:
 body:before {
   white-space: pre;
   font-family: monospace;
-  content: "Syntax error: Undefined mixin 'box-shadow'.\A         on line 9 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss, in `box-shadow'\A         from line 9 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss"; }
+  content: "Syntax error: Undefined mixin 'box-shadow'.\A         on line 11 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss, in `box-shadow'\A         from line 11 of /Users/spurcell/Drag-and-Drop/public/sass/layouts.scss"; }

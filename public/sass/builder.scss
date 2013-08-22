@@ -163,17 +163,22 @@ section.builder-container {
 // Represents a draggable item. Using custom clearfix to avoid overflow hidden problem
 .builder-element {
     position: relative;
-    padding: 6px 3px 2px;
-    margin: 0px 1%;
+    padding: 6px 5px 2px;
+    margin: 8px 0px;
     @include border-radius(3px);
     outline: 1px dashed $medblue;
     background: #fff;
     *zoom: 1;
     text-overflow: ellipsis;
     display: inline-block;
+    vertical-align: top;
     cursor: move;
     max-width: 100%;
     display: block;
+
+    &.link-feedback {
+        outline: 2px solid $pegaorange;
+    }
 
     ul, ol, dl {
         list-style-position: inside !important;
@@ -206,10 +211,6 @@ section.builder-container {
         > .config-menu-wrap  {
             visibility: visible;
         }
-    }
-
-    &.builder-child { 
-        outline: 1px dashed $medblue;
     }
 
     input { 
@@ -527,3 +528,5 @@ ol.generic-list {
     }
 
 } 
+
+.ui-datepicker { max-width: 100%; width: 100%; color: red; }

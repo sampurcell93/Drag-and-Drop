@@ -190,10 +190,10 @@ $(document).ready ->
                 @model.destroy()
                 e.stopPropagation()
             "mouseover": (e) ->
-                @model.trigger("sorting")
+                @model.trigger("link-feedback")
                 e.stopPropagation()
             "mouseout": (e) ->
                 if !@$el.hasClass("moving-sort")
-                   @model.trigger("end-sorting")
+                   @model.trigger("end-feedback")
                 e.stopPropagation()
     }

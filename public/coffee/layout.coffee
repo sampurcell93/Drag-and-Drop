@@ -91,11 +91,14 @@ $(document).ready ->
             self = @
             _.bindAll @, "afterRender", "bindDrop", "appendChild"
             @$el.addClass("layout-wrapper")
-            @listenTo @model.get("child_els"), "add", (m,c,o)->
-                if c? and c.length
-                    self.$el.children(".placeholder").hide()
-                else 
-                    self.$el.children(".placeholder").show()
+            @listenTo @model.get("child_els"), {
+                "add": (m,c,o)->
+                    if c? and c.length
+                        self.$el.children(".placeholder").hide()
+                "remove": (m, c, o) ->
+                    if c? and !c.length
+                        self.$el.children(".placeholder").show()
+                }
             @listenTo @model, {
                 "change:presetlayout": (model,attr,opts)->
                     self.formPresetLayout(attr)
@@ -134,18 +137,18 @@ $(document).ready ->
             if $el.length == 0 then $el = $el.find(".children").first()
             if child['layout-element'] is true then $el.addClass("selected-element")
             view = child.get("view") || "draggableElement"
-            if child.get("inFlow") is true
-                i = currIndex
-                draggable = $(new views[view]({model: child, index: i, parent: @$el}).render().el).addClass("builder-child")
-                if (opts? and !opts.at?)
-                    $el.append(draggable)
-                else 
-                    builderChildren = $el.children(".builder-element")
-                    if builderChildren.eq(opts.at).length 
-                        builderChildren.eq(opts.at).before(draggable)
-                    else $el.append(draggable)
-                if allSections.at(currIndex).get("builder")?
-                    allSections.at(currIndex).get("builder").removeExtraPlaceholders()
+            i = window.currIndex
+            draggable = $(new views[view]({model: child, index: i, parent: @$el}).render().el).addClass("builder-child")
+            if child.get("inFlow") is false then draggable.hide()
+            if (opts? and !opts.at?)
+                $el.append(draggable)
+            else 
+                builderChildren = $el.children(".builder-element")
+                if builderChildren.eq(opts.at).length 
+                    builderChildren.eq(opts.at).before(draggable)
+                else $el.append(draggable)
+            if allSections.at(currIndex).get("builder")?
+                allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrop: ->
             that = this
             @$el.droppable {
@@ -187,36 +190,74 @@ $(document).ready ->
         afterRender: ->
             if @model.get("child_els").length > 0
                 @$el.children(".placeholder").hide()
-        barLayout: (sidebar, content) ->
+        unbindLayout: ->
+            # Get all direct children
+            layout_items = @model.get("child_els")
             self = @
-            sidebar = new models.Element(sidebar)
-            content = new models.Element(content)
+            temp = []
+            # Iterate each direct child
+            _.each layout_items.models, (item) ->
+                temp.push item
+                console.log item
+                # Get all children
+                children = item.get "child_els"
+                # Remove each model from the layout item and put it in the layout
+                _.each children.models, (child) ->
+                    console.log child
+                    self.model.blend child
+            # Finally, destroy the layout items
+            _.each temp, (dest) ->
+                dest.destroy()
+        barLayout: (sidebar, content) ->
+            self     = @
+            model    = @model
+            @model.set "title", "Bar Layout"
+            sidebar  = new window.models.Element(sidebar)
+            content  = new window.models.Element(content)
             elChildren = self.model.get("child_els")
-            contentChildren = new collections.Elements()
-            first = elChildren.at(0)
-            sidebarChildren = sidebar.get "child_els"
-            sidebarChildren.add first
-            elChildren.remove first
-            _.each elChildren.models, (model, i) ->
-                contentChildren.add model
-            sidebar.set "child_els", sidebarChildren
-            elChildren.reset()
-            elChildren.add sidebar
-            content.set("child_els", contentChildren)
-            elChildren.add content
+            first    = elChildren.at 0
+            console.log first
+            sidebar.blend first
+            _.each elChildren, (child, i) ->
+                content.blend child
+            if content.view == "RightBar"
+                model.blend content
+                model.blend sidebar
+            else
+                model.blend sidebar
+                model.blend content
         formPresetLayout: (layout) ->
             if !layout? then return false
             layout_logic = {
                 "right-bar": @layouts.rightBar
                 "left-bar": @layouts.leftBar
+                "header-left-bar": @layouts.headerLeftBar
+                "header-right-bar": @layouts.headerLeftBar
+                "header-split": @layouts.headerSplit
+
             }
+            # Make sure we're not adding layouts to each other - return the layout to a blank state
+            @unbindLayout()
+            # Apply the new logic
             layout_logic[layout](@)
         layouts: {
             "rightBar": (self) ->
-               self.barLayout({view: 'RightBar', type: "Right Bar"},{view: 'LeftContent', type: "Left Content"})
+               self.barLayout({view: 'RightBar', type: "Dynamic Layout", title: 'Right Sidebar'},{view: 'LeftContent', type: "Dynamic Layout", title: 'Left Content'})
             "leftBar": (self) ->
-               self.barLayout({view: 'LeftBar', type: "Left Bar"},{view: 'RightContent', type: "Right Content"})
-
+               self.barLayout({view: 'LeftBar', type: "Dynamic Layout", title: 'Left Sidebar'},{view: 'RightContent',type: "Dynamic Layout", title: 'Right Content'})
+            "headerLeftBar": (self) ->
+                layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
+                self.barLayout({view: 'LeftBar', type: "Dynamic Layout", title: 'Left Sidebar'},{view: 'RightContent', type: "Dynamic Layout", title: 'Right Content'})
+                self.model.blend layout
+            "headerRightBar": (self) ->
+                layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
+                self.barLayout({view: 'RightBar',type: "Dynamic Layout", title: 'Right Sidebar'},{view: 'LeftContent',type: "Dynamic Layout", title: 'Left Content Sidebar'})
+                self.model.blend layout
+            "headerSplit": (self) ->
+                layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
+                half   = {view: 'HalfContent', type: "Dynamic Layout", title: 'Half Content'}
+                self.barLayout(half,half)
+                self.model.blend layout
         }
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
@@ -319,7 +360,6 @@ $(document).ready ->
         events: 
             "keyup h3:first-child": (e) ->    
                 $t = $(e.currentTarget)
-                console.log $t
                 @model.set "title", $t.text()
             "click": "showTabContent"                
         tabOffset: ->
@@ -379,7 +419,6 @@ $(document).ready ->
             cc "tabs after rendering"
             tabs = @model.get "child_els"
             self = @
-            console.log tabs.models
             _.each tabs.models, (tab) ->
                 self.formatNewModel tab
         formatNewModel: (model, collection, options) ->
@@ -397,20 +436,28 @@ $(document).ready ->
     class views["RepeatingLayout"] extends views['layout']
 
 
-
+    class views["LayoutItem"] extends views['layout']
+        bindDrag: ->
+        initialize: (opts) ->
+            super
+            if opts? and opts.placeholder?
+                @placeholder = opts.placeholder
     # Layout component views
-    class views['RightBar'] extends views['layout']
-        className: 'builder-element w35 fr border-left'
-        template: ""
+    class views['RightBar'] extends views['LayoutItem']
+        className: 'builder-element w35 fr border-left m10'
+        template: "<p class='placeholder'>Right Bar</p>"
 
-    class views['LeftContent'] extends views['layout']
-        className: 'builder-element w6 fl'
-        template: ""
+    class views['LeftContent'] extends views['LayoutItem']
+        className: 'builder-element w6 fl m10'
+        template: "<p class='placeholder'>Left Content</p>"
 
-    class views['LeftBar'] extends views['layout']
-        className: 'builder-element w35 fl border-right'
-        template: ""
+    class views['LeftBar'] extends views['LayoutItem']
+        className: 'builder-element w35 fl m10 border-right'
+        template: "<p class='placeholder'>Left Bar</p>"
 
-    class views['RightContent'] extends views['layout']
-        className: 'builder-element w6 fr'
-        template: ""
+    class views['RightContent'] extends views['LayoutItem']
+        className: 'builder-element w6 fr m10'
+        template: "<p class='placeholder'>Right Content</p>"
+    class views['HalfContent'] extends views['LayoutItem']
+        className: 'builder-element w5 fl'
+        template: "<p class='placeholder'>Half Content</p>"

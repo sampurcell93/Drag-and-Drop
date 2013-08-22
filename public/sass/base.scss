@@ -44,6 +44,7 @@ $pegaorange: #F6733D;
 .p15 { padding: 15px; }
 .p30 { padding: 30px !important;}
 .pointer { cursor: pointer; }
+.no-drag { cursor: auto; }
 .border-simple { border: 1px solid #ccc; }
 .no-show { @include opacity(0);}
 .show {@include opacity(1);}
@@ -93,6 +94,7 @@ $pegaorange: #F6733D;
 .w10 { width: 100%; }
 .icon { font-family: 'icons'; }
 .white { color: #fff; }
+
 
 .w1-6 { width: 15.5% !important; }
 .w5-6 { width: 82% !important; }

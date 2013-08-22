@@ -250,12 +250,12 @@
           return e.stopPropagation();
         },
         "mouseover": function(e) {
-          this.model.trigger("sorting");
+          this.model.trigger("link-feedback");
           return e.stopPropagation();
         },
         "mouseout": function(e) {
           if (!this.$el.hasClass("moving-sort")) {
-            this.model.trigger("end-sorting");
+            this.model.trigger("end-feedback");
           }
           return e.stopPropagation();
         }

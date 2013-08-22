@@ -283,11 +283,10 @@ $(document).ready ->
                 "remove": ->
                     self.$el.next(".droppable-placeholder").remove()
                     self.remove()
-                "sorting": ->
-                    self.$el.addClass("selected-element")
-                "end-sorting": ->
-                    if (self.$el.hasClass("ui-selected") is false)
-                        self.$el.removeClass("selected-element")
+                "link-feedback": ->
+                    self.$el.addClass("link-feedback")
+                "end-feedback": ->
+                    self.$el.removeClass("link-feedback")
                 "renderBase": ->
                     self.render(false)
                 "render": ->
@@ -440,7 +439,7 @@ $(document).ready ->
             menu = $(".context-menu") 
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
             menu.remove()
-        showConfigModal: (e) ->
+        showConfigModal: (e) ->     
             defaultEditor = if @model.get("layout") == true then "BaseLayoutEditor" else "BaseEditor"
             editor = views.editors[@edit_view || @model.get("view") || defaultEditor]
             if editor? then editor = new editor({model: @model, link_el: @el}).render()

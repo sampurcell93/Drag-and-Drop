@@ -519,6 +519,9 @@
           $t = $(e.currentTarget);
           $t.find("span").toggleClass("flipped");
           return $t.siblings("li").fadeToggle("fast");
+        },
+        "click .select-all": function() {
+          return this.$el.find("input").trigger("click");
         }
       }
     });

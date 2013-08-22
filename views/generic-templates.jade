@@ -16,7 +16,7 @@ script(type='text/template')#custom-text
     <%= typeof title  !== "undefined" ? title : null %>
     </textarea>
 script(type='text/template')#custom-header
-    <% var value = typeof customHeader !== "undefined" ? customHeader : ""  %>
+    <% var value = typeof title !== "undefined" ? title : ""  %>
     <input type='text' placeholder="Enter your header here" value ="<%= value %>" class='no-drag title-setter big-input generic-header' />
 script(type='text/template')#custom-link
     <a href="<%= typeof link_href !== 'undefined' ? link_href : '#' %>" title="<%= typeof title !== 'undefined' ? title : 'Link' %>"><%= typeof title !== "undefined" ? title : 'Link' %></a>

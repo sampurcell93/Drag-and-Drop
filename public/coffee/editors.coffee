@@ -6,7 +6,7 @@ $ ->
 
     class editors["BaseEditor"] extends Backbone.View
         change_queue: []
-        tagName: "div class='modal'"
+        className: 'modal'
         # TODO: change the format of editor templates to be arrays of objects. In this way
         #, each object and its templates can represent a single tab in the editor.
         templates: [
@@ -20,6 +20,18 @@ $ ->
                 ]
             }
         ]
+        standards: [
+            {
+                tab: 'Element Styling'
+                templates: [
+                    $("#change-styles").html()
+                ]
+            }
+        ]
+        initialize: ->
+            @templates = @standards
+            console.log "standards: ", @standards
+            console.log "super templates:", @templates
         render: ->
             # A pointer to the linked element in the builder.
             self     = @
@@ -122,6 +134,7 @@ $ ->
             }
         ]
         initialize: ->
+            self = @
             _.extend @events, {
                 "click .select-one li": (e) ->
                     $(e.currentTarget).addClass("selected-choice").siblings().removeClass("selected-choice")
@@ -130,18 +143,17 @@ $ ->
                     coltypes = ["two", "three", "four", "five", "six"]
                     $t       = $ e.currentTarget
                     cols     = $t.data("columns")
-                    self     = @
-                    if @model?
-                        @enqueue("columns", ->
+                    if self.model?
+                        self.enqueue("columns", ->
                             self.model.set "columns", cols
                             classes = self.model.get "classes"
                             classes.push("column " + cols) 
                             self.model.set "classes", classes
+                            console.log "applying column to ", self.model
                         )
-                    _.each coltypes, (type) ->
-                        self.enqueue("remove_col_classes-" + type, ->
-                            $(self.link_el).removeClass("column " + type)
-                        )
+                    self.enqueue("remove_col_classes", ->
+                        $(self.link_el).removeClass("column two three four five six")
+                    )
                     unless cols == ""
                         @enqueue("add_col_classes", ->
                             $(self.link_el).addClass("column " + cols)
@@ -149,7 +161,6 @@ $ ->
                 "click [data-layout]": (e) ->
                     $t      = $ e.currentTarget
                     layout  = $t.data("layout")
-                    self    = @
                     @enqueue("view", ->
                         self.model.set({
                             "layout": true
@@ -162,12 +173,9 @@ $ ->
                     $t = $ e.currentTarget
                     className = $t.data("class")
                     self = @
-                    classes = @model.get "classes"
-                    classes.push className
                     @enqueue("presetlayout", ->
                         self.model.set("presetlayout", className)
-                        self.model.set("classes", classes)
-                        $(self.link_el).addClass className
+                        $(self.link_el).addClass(className).removeClass("column two three four five six")
                     )
 
 
@@ -178,6 +186,10 @@ $ ->
             }
 
     class editors["Button"] extends editors["BaseEditor"]
+        initialize: ->
+            super
+            console.log "base templates", @templates
+            @addTemplate($("#button-editor").html(), 0)
         render: ->
             super
             @cq = @change_queue
