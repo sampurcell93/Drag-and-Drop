@@ -73,7 +73,11 @@ $(document).ready ->
                 this.$el.children(".list-header").after(itemView)
             else 
                 this.$el.children().eq(pos).before(itemView)
-
+        events:
+            "click .hide-sidebar": (e) ->
+                @$el.closest(".accessories").toggleClass("hidden-sidebar")
+                @$el.closest(".section-builder-wrap").last().toggleClass("no-sidebar")
+                $(e.currentTarget).toggleClass("flipped")
 
     }); 
 

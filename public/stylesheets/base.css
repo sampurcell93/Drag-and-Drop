@@ -427,3 +427,23 @@
   margin: 0;
   padding: 0;
 }
+
+/* line 115, ../sass/base.scss */
+.border-right {
+  border-right: 2px solid #ccc;
+}
+
+/* line 116, ../sass/base.scss */
+.border-left {
+  border-left: 2px solid #ccc;
+}
+
+/* line 117, ../sass/base.scss */
+.border-top {
+  border-top: 2px solid #ccc;
+}
+
+/* line 118, ../sass/base.scss */
+.border-bottom {
+  border-bottom: 2px solid #ccc;
+}

@@ -173,10 +173,6 @@ $(document).ready ->
                         $(".history-length-label").text(ui.value)
 
                 })
-            "click .hide-sidebar": (e) ->
-                @$(".accessories").toggleClass("hidden-sidebar")
-                @$el.find(".section-builder-wrap").last().toggleClass("no-sidebar")
-                $(e.currentTarget).toggleClass("flipped")
         setProps: ->
             that = @
             if !opts? 

@@ -142,11 +142,6 @@
               return $(".history-length-label").text(ui.value);
             }
           });
-        },
-        "click .hide-sidebar": function(e) {
-          this.$(".accessories").toggleClass("hidden-sidebar");
-          this.$el.find(".section-builder-wrap").last().toggleClass("no-sidebar");
-          return $(e.currentTarget).toggleClass("flipped");
         }
       },
       setProps: function() {

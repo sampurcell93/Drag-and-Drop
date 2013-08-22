@@ -22,6 +22,8 @@ $(document).ready ->
         else if this.toLowerCase() == "true"
             return true
         null
+    String.prototype.dirty = ->
+        this.toLowerCase().replace(/\s+/g,"")
     
     # Uses point slope form to compute the slope
     getSlope = (y1,y,x1,x) ->
@@ -46,8 +48,6 @@ $(document).ready ->
             revert: 'invalid'
             start: (e, ui) ->
                 ui.helper.addClass("moved")
-            stop: (e, ui) ->
-
             snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)'
             cancel: '.close-arrow'
             containment: '.container'
@@ -158,23 +158,26 @@ $(document).ready ->
         e.stopPropagation()
         false
 $(window).scroll ->
-    $wrap = $(".container")
-    # window scroll pos
-    scrollpos = $(@).scrollTop()
-    # toolbelt at top of container
-    toolbelt = $wrap.offset().top
-    if $(".control-section").eq(window.currIndex).find(".section-builder-wrap").hasClass("no-sidebar")
-        right = "30px"
-    else
-        right = ($wrap.width()*.18) + "px"
-    if scrollpos >= toolbelt
-        # if sticky needed, add fixed class and calc repositioning
-        $(".toolbelt").addClass("sticky").css({
-            "left": 55 + $wrap.offset().left + "px"
-            "right": right
-        })
-    else 
-        $(".toolbelt").removeClass("sticky").css("left", "55px")
+    # $wrap = $(".container")
+    # # window scroll pos
+    # scrollpos = $(@).scrollTop()
+    # # toolbelt at top of container
+    # toolbelt = $wrap.offset().top + 60
+    # console.log 55 + $wrap.offset().left + "px"
+    # if $(".control-section").eq(window.currIndex).find(".section-builder-wrap").hasClass("no-sidebar")
+    #     left = $wrap.offset().left + 30 + "px"
+    #     console.log left
+    # else
+    #     left = ($wrap.offset().left) + ($wrap.width()*.18) + "px !important"
+    #     console.log left
+    # if scrollpos >= toolbelt
+    #     # if sticky needed, add fixed class and calc repositioning
+    #     $(".toolbelt").addClass("sticky").css({
+    #         "left": left
+    #         "right": 0
+    #     })
+    # else 
+        # $(".toolbelt").removeClass("sticky").css("left", "18% !important")
 window.onbeforeunload = ->
     saved = true
     _.each allSections.models, (section) ->

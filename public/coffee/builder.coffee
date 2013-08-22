@@ -556,7 +556,7 @@ $(document).ready ->
                 @append @scaffold = new models.Element({view: "BuilderWrapper"})
         append: (element, opts) ->
             view = element.get("view")
-            element.set("child_els", @collection)
+            element.set("child_els", @collection.add(new models.Element({type: "Button", view: 'Button'})))
             @$el.append draggable = $(new views[view]({model: element, parent: @$el}).render().el)
             @removeExtraPlaceholders()
             draggable

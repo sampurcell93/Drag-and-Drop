@@ -210,7 +210,6 @@ section.builder-container {
 
     &.builder-child { 
         outline: 1px dashed $medblue;
-        width: auto;
     }
 
     input { 
@@ -412,7 +411,6 @@ ol.generic-list {
     background: $dusky;
     border-left: 1px solid #333;
     z-index: 998;
-    top: 60px;
 
     .ui-sortable-placeholder {
         border: 1px solid #333;

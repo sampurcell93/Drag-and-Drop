@@ -29,15 +29,15 @@
             min-height: 41px;
         }
     
-        // Necessary to compensate for unbalanced placeholders which skew the page view.
-        &.two > ul.children > .builder-element:nth-of-type(4n+6) ,
-        &.three > ul.children > .builder-element:nth-of-type(6n+8), 
-        &.four > ul.children > .builder-element:nth-of-type(8n+10),
-        &.five > ul.children > .builder-element:nth-of-type(10n+12),
-        &.six > ul.children > .builder-element:nth-of-type(12n+14)
-        {
-            margin-left: 1% !important;
-        }
+        // // Necessary to compensate for unbalanced placeholders which skew the page view.
+        // &.two > ul.children > .builder-element:nth-of-type(4n+6) ,
+        // &.three > ul.children > .builder-element:nth-of-type(6n+8), 
+        // &.four > ul.children > .builder-element:nth-of-type(8n+10),
+        // &.five > ul.children > .builder-element:nth-of-type(10n+12),
+        // &.six > ul.children > .builder-element:nth-of-type(12n+14)
+        // {
+        //     margin-left: 1% !important;
+        // }
         &.two > ul.children > .builder-element { 
             width: 48.5%; 
         }
@@ -59,6 +59,7 @@
         }
     }
 }
+
 
 .tab-layout {
     position: relative;

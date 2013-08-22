@@ -93,6 +93,13 @@
         } else {
           return this.$el.children().eq(pos).before(itemView);
         }
+      },
+      events: {
+        "click .hide-sidebar": function(e) {
+          this.$el.closest(".accessories").toggleClass("hidden-sidebar");
+          this.$el.closest(".section-builder-wrap").last().toggleClass("no-sidebar");
+          return $(e.currentTarget).toggleClass("flipped");
+        }
       }
     });
     return window.views.SortableElementItem = Backbone.View.extend({

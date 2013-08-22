@@ -144,7 +144,6 @@ $(document).ready ->
                     if builderChildren.eq(opts.at).length 
                         builderChildren.eq(opts.at).before(draggable)
                     else $el.append(draggable)
-                globals.setPlaceholders($(draggable), @model.get("child_els"))
                 if allSections.at(currIndex).get("builder")?
                     allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrop: ->
@@ -188,31 +187,35 @@ $(document).ready ->
         afterRender: ->
             if @model.get("child_els").length > 0
                 @$el.children(".placeholder").hide()
+        barLayout: (sidebar, content) ->
+            self = @
+            sidebar = new models.Element(sidebar)
+            content = new models.Element(content)
+            elChildren = self.model.get("child_els")
+            contentChildren = new collections.Elements()
+            first = elChildren.at(0)
+            sidebarChildren = sidebar.get "child_els"
+            sidebarChildren.add first
+            elChildren.remove first
+            _.each elChildren.models, (model, i) ->
+                contentChildren.add model
+            sidebar.set "child_els", sidebarChildren
+            elChildren.reset()
+            elChildren.add sidebar
+            content.set("child_els", contentChildren)
+            elChildren.add content
         formPresetLayout: (layout) ->
             if !layout? then return false
             layout_logic = {
                 "right-bar": @layouts.rightBar
+                "left-bar": @layouts.leftBar
             }
-            console.log layout
-            console.log layout_logic[layout]
             layout_logic[layout](@)
         layouts: {
             "rightBar": (self) ->
-                sidebar = new models.Element({view: 'RightBar', type: "Right Bar"})
-                content = new models.Element({view: 'LeftContent', type: "Left Content"})
-                elChildren = self.model.get("child_els")
-                contentChildren = new collections.Elements()
-                first = elChildren.at(0)
-                sidebarChildren = sidebar.get "child_els"
-                sidebarChildren.add first
-                elChildren.remove first
-                _.each elChildren.models, (model, i) ->
-                    contentChildren.add model
-                sidebar.set "child_els", sidebarChildren
-                elChildren.reset()
-                elChildren.add sidebar
-                content.set("child_els", contentChildren)
-                elChildren.add content
+               self.barLayout({view: 'RightBar', type: "Right Bar"},{view: 'LeftContent', type: "Left Content"})
+            "leftBar": (self) ->
+               self.barLayout({view: 'LeftBar', type: "Left Bar"},{view: 'RightContent', type: "Right Content"})
 
         }
     ### Inherited view events are triggered first - so if an indentical event binder is
@@ -397,9 +400,17 @@ $(document).ready ->
 
     # Layout component views
     class views['RightBar'] extends views['layout']
-        className: 'builder-element w35 fr'
+        className: 'builder-element w35 fr border-left'
         template: ""
 
     class views['LeftContent'] extends views['layout']
         className: 'builder-element w6 fl'
+        template: ""
+
+    class views['LeftBar'] extends views['layout']
+        className: 'builder-element w35 fl border-right'
+        template: ""
+
+    class views['RightContent'] extends views['layout']
+        className: 'builder-element w6 fr'
         template: ""

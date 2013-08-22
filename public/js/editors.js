@@ -18,32 +18,59 @@
 
       _Class.prototype.tagName = "div class='modal'";
 
-      _Class.prototype.standards = [$("#change-styles").html()];
-
-      _Class.prototype.initialize = function() {
-        if (this.templates == null) {
-          this.templates = [];
+      _Class.prototype.templates = [
+        {
+          tab: 'Element Styling',
+          templates: [$("#change-styles").html()]
         }
-        return this.templates = this.templates.concat(this.standards);
-      };
+      ];
 
       _Class.prototype.render = function() {
-        var editor_content, self;
-        if (this.templates == null) {
-          this.templates = [];
-        }
+        var editor_content, self, tabs;
         self = this;
         this.link_el = this.options.link_el;
-        editor_content = "";
-        this.templates = this.templates.concat([$("#finalize-editing").html()]);
-        _.each(this.templates, function(template) {
-          return editor_content += _.template(template, self.model.toJSON());
+        editor_content = "<ul class='tabs'>";
+        tabs = _.pluck(this.templates, "tab");
+        _.each(tabs, function(tab, i) {
+          var sel;
+          if (i === 0) {
+            sel = "current-tab";
+          } else {
+            sel = "";
+          }
+          return editor_content += "<li class='" + sel + "' rel='" + tab.dirty() + "'>" + tab + "</li>";
         });
+        editor_content += "</ul>";
+        _.each(this.templates, function(tabcontent, i) {
+          editor_content += "<div class='modal-tab' id='" + tabcontent.tab.dirty() + "'>";
+          _.each(tabcontent.templates, function(template) {
+            return editor_content += _.template(template, self.model.toJSON());
+          });
+          editor_content += "</div>";
+          return true;
+        });
+        editor_content += _.template($("#finalize-editing").html(), {});
         return this.$el.appendTo(document.body).html(editor_content);
       };
 
       _Class.prototype.enqueue = function(name, func) {
         return this.change_queue[name] = func;
+      };
+
+      _Class.prototype.addTemplate = function(template, index, inner_index) {
+        if (!inner_index) {
+          return this.templates[index].templates.push(template);
+        } else {
+          return this.templates[index].templates.splice(inner_index, 0, template);
+        }
+      };
+
+      _Class.prototype.addTab = function(obj, index) {
+        if (index != null) {
+          return this.templates.splice(index, 0, obj);
+        } else {
+          return this.templates.push(obj);
+        }
       };
 
       _Class.prototype.events = {
@@ -66,7 +93,6 @@
           var self, width;
           width = $(e.currentTarget).val();
           self = this;
-          console.log;
           return this.enqueue("width-change", function() {
             var classes;
             $(self.link_el).addClass(width);
@@ -97,6 +123,15 @@
           $(document.body).removeClass("active-modal");
           this.change_queue = [];
           return this.remove();
+        },
+        "click .tabs li": function(e) {
+          var $el, $t, rel;
+          $t = $(e.currentTarget);
+          $el = this.$el;
+          rel = "#" + $t.attr("rel");
+          this.$(".modal-tab").not(rel).hide();
+          $(rel).show();
+          return $t.addClass("current-tab").siblings().removeClass("current-tab");
         }
       };
 
@@ -111,13 +146,17 @@
         return _ref1;
       }
 
-      _Class.prototype.standards = [$("#layout-changer").html(), $("#skins").html(), $("#column-picker").html(), $("#preset-layouts").html()];
+      _Class.prototype.templates = [
+        {
+          tab: 'Free Form Divisions',
+          templates: [$("#column-picker").html()]
+        }, {
+          tab: 'Preset Layouts',
+          templates: [$("#layout-changer").html(), $("#skins").html(), $("#preset-layouts").html()]
+        }
+      ];
 
       _Class.prototype.initialize = function() {
-        if (this.templates == null) {
-          this.templates = [];
-        }
-        this.templates = this.templates.concat(this.standards);
         return _.extend(this.events, {
           "click .select-one li": function(e) {
             return $(e.currentTarget).addClass("selected-choice").siblings().removeClass("selected-choice");
@@ -188,8 +227,6 @@
         _ref2 = _Class.__super__.constructor.apply(this, arguments);
         return _ref2;
       }
-
-      _Class.prototype.templates = [$("#button-editor").html()];
 
       _Class.prototype.render = function() {
         var modal;

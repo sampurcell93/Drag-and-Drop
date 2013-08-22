@@ -9,29 +9,54 @@ $ ->
         tagName: "div class='modal'"
         # TODO: change the format of editor templates to be arrays of objects. In this way
         #, each object and its templates can represent a single tab in the editor.
-        standards: [
-            $("#change-styles").html()
+        templates: [
+            # Standard elements, can be concatenated to with the addTemplate function.
+            # Each object in the array represents a tab, the tab property defines its name
+            # and the templates array defines its content.
+            {
+                tab: 'Element Styling'
+                templates: [
+                    $("#change-styles").html()
+                ]
+            }
         ]
-        initialize: ->
-            if !@templates? then @templates = []
-            @templates = @templates.concat @standards
         render: ->
-            if !@templates?
-                @templates = []
             # A pointer to the linked element in the builder.
             self     = @
             @link_el = @options.link_el 
-            editor_content  = ""
+            editor_content  = "<ul class='tabs'>"
+            tabs = _.pluck @templates,  "tab"
+            _.each tabs, (tab, i) ->
+                if i == 0 then sel = "current-tab"
+                else sel = ""
+                editor_content += "<li class='" + sel + "' rel='" + tab.dirty() + "'>" + tab + "</li>"
+            editor_content += "</ul>"
+            _.each @templates, (tabcontent, i) ->
+                editor_content += "<div class='modal-tab' id='" + tabcontent.tab.dirty() + "'>"
+                _.each tabcontent.templates, (template) ->
+                    editor_content += _.template template, self.model.toJSON()
+                editor_content += "</div>"
+                true
             # This is not optional, the controls must be there 
-            @templates = @templates.concat [$("#finalize-editing").html()]
-            # template data, and append results to the element.
-            _.each @templates, (template) ->
-                editor_content += _.template template, self.model.toJSON()
-            # Append editor to body - making it a true modal is not within the purvue of this class
+            editor_content += _.template $("#finalize-editing").html(), {}
             @$el.appendTo(document.body).html(editor_content)
         # Put a new event into the queue, executed only if the user clicks .confirm
         enqueue: (name, func) ->
              @change_queue[name] = func
+        # A helper function for adding templates anywhere in the tab architecture.
+        # Args: the template to be added, the tab index you want it at, and 
+        # optionally the index within that tab
+        addTemplate: (template, index, inner_index) ->
+            if !inner_index
+                @templates[index].templates.push template
+            else
+                @templates[index].templates.splice inner_index, 0, template
+        # Pass in a tab object of form { tab: 'Title', templates: [...]}, index optional.
+        addTab: (obj, index) ->
+            if index?
+                @templates.splice index, 0, obj
+            else 
+                @templates.push obj
         events:
             "change [data-attr]": (e) ->
                 $t   = $ e.currentTarget
@@ -49,7 +74,6 @@ $ ->
             "change .set-width": (e) ->
                 width = $(e.currentTarget).val()
                 self = @
-                console.log 
                 @enqueue("width-change", ->
                     $(self.link_el).addClass(width)
                     classes = self.model.get "classes"
@@ -71,18 +95,33 @@ $ ->
                 $(document.body).removeClass("active-modal")
                 @change_queue = []
                 do @remove
+            "click .tabs li": (e) ->
+                $t = $ e.currentTarget
+                $el = @$el
+                rel = "#" + $t.attr "rel"
+                @$(".modal-tab").not(rel).hide()
+                $(rel).show()
+                $t.addClass("current-tab").siblings().removeClass("current-tab")
 
     class editors["BaseLayoutEditor"] extends editors["BaseEditor"]
         # Put in order to reflect the order they are appended in. Tab functionality... later.
-        standards: [
-            $("#layout-changer").html()
-            $("#skins").html(),
-            $("#column-picker").html()
-            $("#preset-layouts").html()
+        templates: [
+            {
+                tab: 'Free Form Divisions'
+                templates: [
+                    $("#column-picker").html()
+                ]
+            }
+            {
+                tab: 'Preset Layouts'
+                templates: [
+                    $("#layout-changer").html()
+                    $("#skins").html()
+                    $("#preset-layouts").html()
+                ]
+            }
         ]
         initialize: ->
-            if !@templates? then @templates = []
-            @templates = @templates.concat @standards
             _.extend @events, {
                 "click .select-one li": (e) ->
                     $(e.currentTarget).addClass("selected-choice").siblings().removeClass("selected-choice")
@@ -139,7 +178,6 @@ $ ->
             }
 
     class editors["Button"] extends editors["BaseEditor"]
-        templates: [$("#button-editor").html()]
         render: ->
             super
             @cq = @change_queue

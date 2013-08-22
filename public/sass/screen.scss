@@ -151,6 +151,7 @@ header {
 			cursor: pointer;
 			text-align: center;
 			padding-right: 25px;
+			font-size: 1.3em;
 			border: 1px solid transparent;
 
 			&:before {
@@ -386,7 +387,7 @@ ul li.selected-choice {
 		padding-left: 10px;
 
 		.toolbelt {
-			right: 30px;
+			left: 30px !important;
 		}
 	}
 
@@ -408,7 +409,7 @@ ul li.selected-choice {
 	@include transition(width .3s ease-in-out);
 
     &.hidden-sidebar {
-        top: 0px;
+        top: 60px;
         width: 30px !important; 
 		height:31px;
 		overflow: hidden;

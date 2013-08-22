@@ -33,6 +33,9 @@
       }
       return null;
     };
+    String.prototype.dirty = function() {
+      return this.toLowerCase().replace(/\s+/g, "");
+    };
     getSlope = function(y1, y, x1, x) {
       return (y - y1) / (x - x1);
     };
@@ -60,7 +63,6 @@
         start: function(e, ui) {
           return ui.helper.addClass("moved");
         },
-        stop: function(e, ui) {},
         snap: '.section-builder-wrap:not(:hidden), .sidebar-controls:not(:hidden), .organize-elements:not(:hidden), .draggable-modal:not(:hidden)',
         cancel: '.close-arrow',
         containment: '.container',
@@ -175,25 +177,7 @@
     });
   });
 
-  $(window).scroll(function() {
-    var $wrap, right, scrollpos, toolbelt;
-    $wrap = $(".container");
-    scrollpos = $(this).scrollTop();
-    toolbelt = $wrap.offset().top;
-    if ($(".control-section").eq(window.currIndex).find(".section-builder-wrap").hasClass("no-sidebar")) {
-      right = "30px";
-    } else {
-      right = ($wrap.width() * .18) + "px";
-    }
-    if (scrollpos >= toolbelt) {
-      return $(".toolbelt").addClass("sticky").css({
-        "left": 55 + $wrap.offset().left + "px",
-        "right": right
-      });
-    } else {
-      return $(".toolbelt").removeClass("sticky").css("left", "55px");
-    }
-  });
+  $(window).scroll(function() {});
 
   window.onbeforeunload = function() {
     var saved;

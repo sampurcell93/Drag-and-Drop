@@ -51,6 +51,18 @@ body {
         margin: 20px 0 10px;
     }
 
+    .tabs {
+        position: static;
+        margin: 0 0 15px 0;
+
+        li {
+            padding: 0 10px;
+            font-size: 1.15em;
+        }
+    }
+    
+    .modal-tab:nth-of-type(n+2) { display: none; }
+
 }
 
 
@@ -217,7 +229,7 @@ body {
     left: 18% !important;
     height: 32px;
     overflow: visible;
-    @include transition(right .3s ease-in-out);
+    @include transition(left .3s ease-in-out);
     z-index: 999;
 
     &.sticky {
