@@ -3,6 +3,12 @@
   $(function() {
     var history;
     history = window.views.history = {};
+    if (localStorage.settings == null) {
+      localStorage.settings = {};
+    }
+    window.settings = {
+      history_length: localStorage.settings.history_length || 50
+    };
     window.models.Snap = Backbone.Model.extend();
     window.collections.Snapshots = Backbone.Collection.extend({
       model: window.models.Snap,
@@ -135,6 +141,7 @@
       },
       makeHistory: function(operation, subject, collection, options) {
         var clone, e, op, ops, snap;
+        console.log(arguments);
         ops = ["change", "add", "remove", "destroy"];
         if (ops.indexOf(operation) === -1) {
           return;
@@ -181,7 +188,6 @@
           this.snapshots.add(snap);
           this.append(snap);
           this.last_snap = this.snapshots.length - 2;
-          this.$el.scrollTop(this.$el.height());
         }
         return this;
       },
@@ -217,7 +223,7 @@
           controller: this.controller,
           current: this
         });
-        $el.append(SnapItem.render().el);
+        $el.prepend(SnapItem.render().el);
         $el.children().last().addClass("selected-history");
         return this;
       }

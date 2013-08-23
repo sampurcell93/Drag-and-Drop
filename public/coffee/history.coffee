@@ -1,5 +1,9 @@
 $ ->
     history = window.views.history = {}
+    if !localStorage.settings? then localStorage.settings = {}
+    window.settings = {
+        history_length: localStorage.settings.history_length || 50
+    }
 
     window.models.Snap = Backbone.Model.extend()
 
@@ -125,6 +129,7 @@ $ ->
         makeHistory: (operation, subject, collection, options) ->
             # By using "all" instead of delegating to the desired events,
             # we can keep parameters the same.
+            console.log arguments
             ops = ["change", "add", "remove", "destroy"]
             if ops.indexOf(operation) == -1 then return
             if operation == "change"
@@ -161,7 +166,7 @@ $ ->
                 @append snap
                 @last_snap = @snapshots.length - 2
                 # Scroll to bottom of history panel if overflow
-                @$el.scrollTop(@$el.height());
+                # @$el.scrollTop(@$el.height());
             @
         deleteForwardChanges: ->
             # Get all snapshots ahead of the current state
@@ -184,6 +189,6 @@ $ ->
             @$(".placeholder").hide()
             @$(".selected-history").removeClass("selected-history")
             SnapItem = new history.Snapshot({model: snapshot, controller: @controller, current: @})
-            $el.append SnapItem.render().el
+            $el.prepend SnapItem.render().el
             $el.children().last().addClass("selected-history")
             @

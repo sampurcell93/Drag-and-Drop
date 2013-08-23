@@ -5,13 +5,6 @@
     window.models = {};
     window.views = {};
     window.collections = {};
-    window.propertyLink = $("#property-link").html();
-    if (localStorage.settings == null) {
-      localStorage.settings = {};
-    }
-    window.settings = {
-      history_length: localStorage.settings.history_length || 100
-    };
     window.globals = {
       setPlaceholders: function(draggable, collection) {
         var after, before;

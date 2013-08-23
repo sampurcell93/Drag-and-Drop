@@ -2,11 +2,6 @@ $(document).ready ->
     window.models = {}
     window.views = {}
     window.collections = {} 
-    window.propertyLink = $("#property-link").html()
-    if !localStorage.settings? then localStorage.settings = {}
-    window.settings = {
-        history_length: localStorage.settings.history_length || 100
-    }
 
     window.globals =
          setPlaceholders: (draggable, collection) ->

@@ -86,7 +86,7 @@ $(document).ready ->
     class window.views.layout extends window.views.draggableElement
         # Calls the parent initialize function - mimicry of classical inheritance.
         initialize: -> 
-            @model.set("layout", true)
+            @model.set("layout", true, {no_history: true })
             super
             self = @
             _.bindAll @, "afterRender", "bindDrop", "appendChild"
@@ -111,7 +111,7 @@ $(document).ready ->
                     children = model.get("child_els")
                     parent   = model.collection
                     for child, i in children.models
-                        child['layout-item'] = false
+                        child['selected'] = false
                         # Unlink each model from the collection
                         child.collection = null
                         # Simply adding at position would insert elements in reverse order
@@ -135,18 +135,17 @@ $(document).ready ->
             $el = @$el.children(".children")
             # For table layouts, sometimes things are wrapped in a tbody
             if $el.length == 0 then $el = $el.find(".children").first()
-            if child['layout-element'] is true then $el.addClass("selected-element")
+            if child['layout-item'] is true then $el.addClass "selected-element"
             view = child.get("view") || "draggableElement"
-            i = window.currIndex
-            draggable = $(new views[view]({model: child, index: i, parent: @$el}).render().el).addClass("builder-child")
+            draggable = $(new views[view]({model: child, index: window.currIndex, parent: @$el}).render().el).addClass("builder-child")
             if child.get("inFlow") is false then draggable.hide()
             if (opts? and !opts.at?)
                 $el.append(draggable)
             else 
-                builderChildren = $el.children(".builder-element")
+                builderChildren = $el.children ".builder-element"
                 if builderChildren.eq(opts.at).length 
-                    builderChildren.eq(opts.at).before(draggable)
-                else $el.append(draggable)
+                    builderChildren.eq(opts.at).before draggable
+                else $el.append draggable
             if allSections.at(currIndex).get("builder")?
                 allSections.at(currIndex).get("builder").removeExtraPlaceholders()
         bindDrop: ->
@@ -205,8 +204,8 @@ $(document).ready ->
                 # Remove each model from the layout item and put it in the layout
                 _.each children.models, (child) ->
                     self.model.blend child
-            # Finally, destroy the layout items
-            console.log temp
+            # Finally, destroy the layout items - can't do this in _.each 
+            # because it will break the function by changing the array
             _.each temp, (dest) ->
                 dest.destroy()
         barLayout: (sidebar, content) ->
@@ -241,17 +240,20 @@ $(document).ready ->
                self.barLayout({view: 'LeftBar', type: "Dynamic Layout", title: 'Left Sidebar'},{view: 'RightContent',type: "Dynamic Layout", title: 'Right Content'})
             "header-left-bar": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
+                layout.layoutItem = true
                 self.barLayout({view: 'LeftBar', type: "Dynamic Layout", title: 'Left Sidebar'},{view: 'RightContent', type: "Dynamic Layout", title: 'Right Content'})
-                self.model.blend layout
+                self.model.blend layout, 0
             "header-right-bar": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
+                layout.layoutItem = true
                 self.barLayout({view: 'RightBar',type: "Dynamic Layout", title: 'Right Sidebar'},{view: 'LeftContent',type: "Dynamic Layout", title: 'Left Content Sidebar'})
-                self.model.blend layout
+                self.model.blend layout, 0
             "header-split": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
+                layout.layoutItem = true
                 half   = {view: 'HalfContent', type: "Dynamic Layout", title: 'Half Content'}
                 self.barLayout(half,half)
-                self.model.blend layout
+                self.model.blend layout, 0
         }
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
@@ -327,19 +329,6 @@ $(document).ready ->
     class window.views["DynamicLayout"] extends window.views["layout"]
         configTemplate: $("#dynamic-layout-setup").html()
         template: $("#dynamic-layout").html()
-        initialize: ->
-            _.bindAll @, "afterRender"
-            super
-        afterRender: ->
-            @$el.addClass("blank-layout")
-
-        # beforeRender: ->
-        #     self = @
-        #     if $(".modal").length is 0
-        #         modal = window.launchModal(_.template(@configTemplate, @model.toJSON()))
-        #     else 
-        #         modal = $(".modal").first()
-        #     modal.delegate ".submit", "click", ->
 
 
     class window.views["dynamicContainer"] extends window.views["layout"]

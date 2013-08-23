@@ -72,7 +72,7 @@ $(document).ready ->
             $el = @$el
             _.each @collection.models, (el) ->
                 $el.append new views.OutsideDraggableItem({model: el}).render().el
-            this
+            @
     }
 
     window.views.OutsideDraggableItem = Backbone.View.extend {
@@ -112,8 +112,8 @@ $(document).ready ->
                 child_els = new collections.Elements()
                 toAdd = new models.Element(@model.toJSON())
                 child_els.model = toAdd
-                toAdd.set("child_els", child_els)
-                allSections.at(currIndex).get("currentSection").add toAdd, {at: 0}
+                toAdd.set("child_els", child_els, {no_history: true})
+                allSections.at(window.currIndex).get("currentSection").blend toAdd, {at: 0, no_history: true}
     }
 
     class window.views.genericElement extends window.views.draggableElement

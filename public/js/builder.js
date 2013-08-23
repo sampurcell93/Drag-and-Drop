@@ -804,10 +804,7 @@
       append: function(element, opts) {
         var draggable, view;
         view = element.get("view");
-        element.set("child_els", this.collection.add(new models.Element({
-          type: "Button",
-          view: 'Button'
-        })));
+        element.set("child_els", this.collection);
         this.$el.append(draggable = $(new views[view]({
           model: element,
           parent: this.$el

@@ -98,9 +98,12 @@
           child_els = new collections.Elements();
           toAdd = new models.Element(this.model.toJSON());
           child_els.model = toAdd;
-          toAdd.set("child_els", child_els);
-          return allSections.at(currIndex).get("currentSection").add(toAdd, {
-            at: 0
+          toAdd.set("child_els", child_els, {
+            no_history: true
+          });
+          return allSections.at(window.currIndex).get("currentSection").blend(toAdd, {
+            at: 0,
+            no_history: true
           });
         }
       }

@@ -76,7 +76,9 @@
 
       layout.prototype.initialize = function() {
         var self;
-        this.model.set("layout", true);
+        this.model.set("layout", true, {
+          no_history: true
+        });
         layout.__super__.initialize.apply(this, arguments);
         self = this;
         _.bindAll(this, "afterRender", "bindDrop", "appendChild");
@@ -108,7 +110,7 @@
             _ref2 = children.models;
             for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
               child = _ref2[i];
-              child['layout-item'] = false;
+              child['selected'] = false;
               child.collection = null;
               parent.add(child, {
                 at: position + i
@@ -133,19 +135,18 @@
       };
 
       layout.prototype.appendChild = function(child, opts) {
-        var $el, builderChildren, draggable, i, view;
+        var $el, builderChildren, draggable, view;
         $el = this.$el.children(".children");
         if ($el.length === 0) {
           $el = $el.find(".children").first();
         }
-        if (child['layout-element'] === true) {
+        if (child['layout-item'] === true) {
           $el.addClass("selected-element");
         }
         view = child.get("view") || "draggableElement";
-        i = window.currIndex;
         draggable = $(new views[view]({
           model: child,
-          index: i,
+          index: window.currIndex,
           parent: this.$el
         }).render().el).addClass("builder-child");
         if (child.get("inFlow") === false) {
@@ -238,7 +239,6 @@
             return self.model.blend(child);
           });
         });
-        console.log(temp);
         return _.each(temp, function(dest) {
           return dest.destroy();
         });
@@ -306,6 +306,7 @@
             view: "DynamicLayout",
             title: 'Header'
           });
+          layout.layoutItem = true;
           self.barLayout({
             view: 'LeftBar',
             type: "Dynamic Layout",
@@ -315,7 +316,7 @@
             type: "Dynamic Layout",
             title: 'Right Content'
           });
-          return self.model.blend(layout);
+          return self.model.blend(layout, 0);
         },
         "header-right-bar": function(self) {
           var layout;
@@ -325,6 +326,7 @@
             view: "DynamicLayout",
             title: 'Header'
           });
+          layout.layoutItem = true;
           self.barLayout({
             view: 'RightBar',
             type: "Dynamic Layout",
@@ -334,7 +336,7 @@
             type: "Dynamic Layout",
             title: 'Left Content Sidebar'
           });
-          return self.model.blend(layout);
+          return self.model.blend(layout, 0);
         },
         "header-split": function(self) {
           var half, layout;
@@ -344,13 +346,14 @@
             view: "DynamicLayout",
             title: 'Header'
           });
+          layout.layoutItem = true;
           half = {
             view: 'HalfContent',
             type: "Dynamic Layout",
             title: 'Half Content'
           };
           self.barLayout(half, half);
-          return self.model.blend(layout);
+          return self.model.blend(layout, 0);
         }
       };
 
@@ -494,15 +497,6 @@
       _Class.prototype.configTemplate = $("#dynamic-layout-setup").html();
 
       _Class.prototype.template = $("#dynamic-layout").html();
-
-      _Class.prototype.initialize = function() {
-        _.bindAll(this, "afterRender");
-        return _Class.__super__.initialize.apply(this, arguments);
-      };
-
-      _Class.prototype.afterRender = function() {
-        return this.$el.addClass("blank-layout");
-      };
 
       return _Class;
 
