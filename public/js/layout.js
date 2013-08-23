@@ -230,21 +230,22 @@
         temp = [];
         _.each(layout_items.models, function(item) {
           var children;
-          temp.push(item);
-          console.log(item);
+          if (item.layoutItem === true) {
+            temp.push(item);
+          }
           children = item.get("child_els");
           return _.each(children.models, function(child) {
-            console.log(child);
             return self.model.blend(child);
           });
         });
+        console.log(temp);
         return _.each(temp, function(dest) {
           return dest.destroy();
         });
       };
 
       layout.prototype.barLayout = function(sidebar, content) {
-        var elChildren, first, model, self;
+        var elChildren, first, model, rest, self;
         self = this;
         model = this.model;
         this.model.set("title", "Bar Layout");
@@ -252,11 +253,11 @@
         content = new window.models.Element(content);
         elChildren = self.model.get("child_els");
         first = elChildren.at(0);
-        console.log(first);
+        rest = elChildren.slice(1);
+        sidebar.layoutItem = true;
+        content.layoutItem = true;
         sidebar.blend(first);
-        _.each(elChildren, function(child, i) {
-          return content.blend(child);
-        });
+        content.blend(rest);
         if (content.view === "RightBar") {
           model.blend(content);
           return model.blend(sidebar);
@@ -267,23 +268,15 @@
       };
 
       layout.prototype.formPresetLayout = function(layout) {
-        var layout_logic;
         if (layout == null) {
           return false;
         }
-        layout_logic = {
-          "right-bar": this.layouts.rightBar,
-          "left-bar": this.layouts.leftBar,
-          "header-left-bar": this.layouts.headerLeftBar,
-          "header-right-bar": this.layouts.headerLeftBar,
-          "header-split": this.layouts.headerSplit
-        };
         this.unbindLayout();
-        return layout_logic[layout](this);
+        return this.layouts[layout](this);
       };
 
       layout.prototype.layouts = {
-        "rightBar": function(self) {
+        "right-bar": function(self) {
           return self.barLayout({
             view: 'RightBar',
             type: "Dynamic Layout",
@@ -294,7 +287,7 @@
             title: 'Left Content'
           });
         },
-        "leftBar": function(self) {
+        "left-bar": function(self) {
           return self.barLayout({
             view: 'LeftBar',
             type: "Dynamic Layout",
@@ -305,7 +298,7 @@
             title: 'Right Content'
           });
         },
-        "headerLeftBar": function(self) {
+        "header-left-bar": function(self) {
           var layout;
           layout = new models.Element({
             layout: true,
@@ -324,7 +317,7 @@
           });
           return self.model.blend(layout);
         },
-        "headerRightBar": function(self) {
+        "header-right-bar": function(self) {
           var layout;
           layout = new models.Element({
             layout: true,
@@ -343,7 +336,7 @@
           });
           return self.model.blend(layout);
         },
-        "headerSplit": function(self) {
+        "header-split": function(self) {
           var half, layout;
           layout = new models.Element({
             layout: true,
@@ -726,7 +719,7 @@
 
       return _Class;
 
-    })(views['LayoutItem']);
+    })(window.views['LayoutItem']);
     views['LeftContent'] = (function(_super) {
       __extends(_Class, _super);
 
@@ -741,7 +734,7 @@
 
       return _Class;
 
-    })(views['LayoutItem']);
+    })(window.views['LayoutItem']);
     views['LeftBar'] = (function(_super) {
       __extends(_Class, _super);
 
@@ -756,7 +749,7 @@
 
       return _Class;
 
-    })(views['LayoutItem']);
+    })(window.views['LayoutItem']);
     views['RightContent'] = (function(_super) {
       __extends(_Class, _super);
 
@@ -771,7 +764,7 @@
 
       return _Class;
 
-    })(views['LayoutItem']);
+    })(window.views['LayoutItem']);
     return views['HalfContent'] = (function(_super) {
       __extends(_Class, _super);
 
@@ -786,7 +779,7 @@
 
       return _Class;
 
-    })(views['LayoutItem']);
+    })(window.views['LayoutItem']);
   });
 
 }).call(this);

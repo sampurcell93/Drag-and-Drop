@@ -101,7 +101,6 @@ $(document).ready ->
         model: models.Element
         url: '/section/'
         blend: (putIn, at) ->
-            cc "blending"
             if !putIn? then return false
             if $.isArray(putIn) is true and putIn.length > 1
                  _.each putIn, (model) ->
@@ -126,7 +125,7 @@ $(document).ready ->
         # Returns an array of all models that match the property, recursively. Defaults to layout item search
         gather: (prop) ->
             # Normally would use _.filter() here but we are looking for model properties - not their .get()/.set() attributes
-            prop = prop || "layout-item"
+            prop = prop || "selected"
             models = []
             self = @
             # check each model in collection
@@ -302,7 +301,7 @@ $(document).ready ->
             (@beforeRender || -> {})()
             that = @
             model = @model
-            model["layout-item"] = false
+            model["selected"] = false
             children = model.get "child_els" 
             $el =  @$el
             $el.html(_.template @template, model.toJSON())
@@ -427,7 +426,7 @@ $(document).ready ->
             pageY = e.pageY - $el.offset().top
             item =  @model.toJSON()
             item.selected = false
-            if @model["layout-item"] is true then item.selected = true 
+            if @model["selected"] is true then item.selected = true 
             # Remove all other right click menus
             $("<ul />").html(_.template(@contextMenu, item)).
             addClass("context-menu").
@@ -446,7 +445,7 @@ $(document).ready ->
             else editor = new views.editors[defaultEditor]({model: @model, link_el: @el}).render()
             $(editor.el).launchModal()
         selectEl: ->
-            layout = @model["layout-item"]
+            layout = @model["selected"]
             if (layout is false or typeof layout is "undefined")
                 @$el.trigger("select")
             else 
@@ -507,12 +506,12 @@ $(document).ready ->
             "click .config-panel": "showConfigModal"
             "select" : (e) ->
                 # Setting this property will not affect rendering immediately, so make it silent. 
-                @model["layout-item"] = true
+                @model["selected"] = true
                 @$el.addClass("selected-element")
                 e.stopPropagation()
                 e.stopImmediatePropagation()
             "deselect": (e) ->
-                @model["layout-item"] = false
+                @model["selected"] = false
                 @$el.removeClass("selected-element")
                 e.stopPropagation()
                 e.stopImmediatePropagation()

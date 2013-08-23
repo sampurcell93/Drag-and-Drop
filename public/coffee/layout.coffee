@@ -197,15 +197,16 @@ $(document).ready ->
             temp = []
             # Iterate each direct child
             _.each layout_items.models, (item) ->
-                temp.push item
-                console.log item
+                # If this is a layout component, flag it for removal
+                if item.layoutItem is true 
+                    temp.push item
                 # Get all children
                 children = item.get "child_els"
                 # Remove each model from the layout item and put it in the layout
                 _.each children.models, (child) ->
-                    console.log child
                     self.model.blend child
             # Finally, destroy the layout items
+            console.log temp
             _.each temp, (dest) ->
                 dest.destroy()
         barLayout: (sidebar, content) ->
@@ -216,10 +217,11 @@ $(document).ready ->
             content  = new window.models.Element(content)
             elChildren = self.model.get("child_els")
             first    = elChildren.at 0
-            console.log first
+            rest = elChildren.slice(1)
+            sidebar.layoutItem = true
+            content.layoutItem = true
             sidebar.blend first
-            _.each elChildren, (child, i) ->
-                content.blend child
+            content.blend rest
             if content.view == "RightBar"
                 model.blend content
                 model.blend sidebar
@@ -228,32 +230,24 @@ $(document).ready ->
                 model.blend content
         formPresetLayout: (layout) ->
             if !layout? then return false
-            layout_logic = {
-                "right-bar": @layouts.rightBar
-                "left-bar": @layouts.leftBar
-                "header-left-bar": @layouts.headerLeftBar
-                "header-right-bar": @layouts.headerLeftBar
-                "header-split": @layouts.headerSplit
-
-            }
             # Make sure we're not adding layouts to each other - return the layout to a blank state
             @unbindLayout()
             # Apply the new logic
-            layout_logic[layout](@)
+            @layouts[layout](@)
         layouts: {
-            "rightBar": (self) ->
+            "right-bar": (self) ->
                self.barLayout({view: 'RightBar', type: "Dynamic Layout", title: 'Right Sidebar'},{view: 'LeftContent', type: "Dynamic Layout", title: 'Left Content'})
-            "leftBar": (self) ->
+            "left-bar": (self) ->
                self.barLayout({view: 'LeftBar', type: "Dynamic Layout", title: 'Left Sidebar'},{view: 'RightContent',type: "Dynamic Layout", title: 'Right Content'})
-            "headerLeftBar": (self) ->
+            "header-left-bar": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
                 self.barLayout({view: 'LeftBar', type: "Dynamic Layout", title: 'Left Sidebar'},{view: 'RightContent', type: "Dynamic Layout", title: 'Right Content'})
                 self.model.blend layout
-            "headerRightBar": (self) ->
+            "header-right-bar": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
                 self.barLayout({view: 'RightBar',type: "Dynamic Layout", title: 'Right Sidebar'},{view: 'LeftContent',type: "Dynamic Layout", title: 'Left Content Sidebar'})
                 self.model.blend layout
-            "headerSplit": (self) ->
+            "header-split": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
                 half   = {view: 'HalfContent', type: "Dynamic Layout", title: 'Half Content'}
                 self.barLayout(half,half)
@@ -443,21 +437,21 @@ $(document).ready ->
             if opts? and opts.placeholder?
                 @placeholder = opts.placeholder
     # Layout component views
-    class views['RightBar'] extends views['LayoutItem']
+    class views['RightBar'] extends window.views['LayoutItem']
         className: 'builder-element w35 fr border-left m10'
         template: "<p class='placeholder'>Right Bar</p>"
 
-    class views['LeftContent'] extends views['LayoutItem']
+    class views['LeftContent'] extends window.views['LayoutItem']
         className: 'builder-element w6 fl m10'
         template: "<p class='placeholder'>Left Content</p>"
 
-    class views['LeftBar'] extends views['LayoutItem']
+    class views['LeftBar'] extends window.views['LayoutItem']
         className: 'builder-element w35 fl m10 border-right'
         template: "<p class='placeholder'>Left Bar</p>"
 
-    class views['RightContent'] extends views['LayoutItem']
+    class views['RightContent'] extends window.views['LayoutItem']
         className: 'builder-element w6 fr m10'
         template: "<p class='placeholder'>Right Content</p>"
-    class views['HalfContent'] extends views['LayoutItem']
+    class views['HalfContent'] extends window.views['LayoutItem']
         className: 'builder-element w5 fl'
         template: "<p class='placeholder'>Half Content</p>"

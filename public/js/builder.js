@@ -146,7 +146,6 @@
       model: models.Element,
       url: '/section/',
       blend: function(putIn, at) {
-        cc("blending");
         if (putIn == null) {
           return false;
         }
@@ -195,7 +194,7 @@
       },
       gather: function(prop) {
         var models, self;
-        prop = prop || "layout-item";
+        prop = prop || "selected";
         models = [];
         self = this;
         _.each(this.models, function(model) {
@@ -444,7 +443,7 @@
         })();
         that = this;
         model = this.model;
-        model["layout-item"] = false;
+        model["selected"] = false;
         children = model.get("child_els");
         $el = this.$el;
         $el.html(_.template(this.template, model.toJSON()));
@@ -623,7 +622,7 @@
         pageY = e.pageY - $el.offset().top;
         item = this.model.toJSON();
         item.selected = false;
-        if (this.model["layout-item"] === true) {
+        if (this.model["selected"] === true) {
           item.selected = true;
         }
         $("<ul />").html(_.template(this.contextMenu, item)).addClass("context-menu").css({
@@ -663,7 +662,7 @@
 
       draggableElement.prototype.selectEl = function() {
         var layout;
-        layout = this.model["layout-item"];
+        layout = this.model["selected"];
         if (layout === false || typeof layout === "undefined") {
           return this.$el.trigger("select");
         } else {
@@ -738,13 +737,13 @@
         "flowRemoveViaDrag": "removeFromFlow",
         "click .config-panel": "showConfigModal",
         "select": function(e) {
-          this.model["layout-item"] = true;
+          this.model["selected"] = true;
           this.$el.addClass("selected-element");
           e.stopPropagation();
           return e.stopImmediatePropagation();
         },
         "deselect": function(e) {
-          this.model["layout-item"] = false;
+          this.model["selected"] = false;
           this.$el.removeClass("selected-element");
           e.stopPropagation();
           return e.stopImmediatePropagation();
