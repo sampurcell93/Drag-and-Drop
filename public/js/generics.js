@@ -101,7 +101,8 @@
           toAdd.set("child_els", child_els, {
             no_history: true
           });
-          return allSections.at(window.currIndex).get("currentSection").blend(toAdd, {
+          console.log(allSections.at(window.currIndex));
+          return allSections.at(window.currIndex).get("builder").scaffold.get("child_els").add(toAdd, {
             at: 0,
             no_history: true
           });

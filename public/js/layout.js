@@ -707,7 +707,7 @@
         return _ref11;
       }
 
-      _Class.prototype.className = 'builder-element w35 fr border-left m10';
+      _Class.prototype.className = 'builder-element sidebar-wrapper fr';
 
       _Class.prototype.template = "<p class='placeholder'>Right Bar</p>";
 
@@ -722,7 +722,7 @@
         return _ref12;
       }
 
-      _Class.prototype.className = 'builder-element w6 fl m10';
+      _Class.prototype.className = 'builder-element content-wrapper fl';
 
       _Class.prototype.template = "<p class='placeholder'>Left Content</p>";
 
@@ -737,7 +737,7 @@
         return _ref13;
       }
 
-      _Class.prototype.className = 'builder-element w35 fl m10 border-right';
+      _Class.prototype.className = 'builder-element sidebar-wrapper fl';
 
       _Class.prototype.template = "<p class='placeholder'>Left Bar</p>";
 
@@ -752,7 +752,7 @@
         return _ref14;
       }
 
-      _Class.prototype.className = 'builder-element w6 fr m10';
+      _Class.prototype.className = 'builder-element content-wrapper fr';
 
       _Class.prototype.template = "<p class='placeholder'>Right Content</p>";
 
@@ -767,7 +767,7 @@
         return _ref15;
       }
 
-      _Class.prototype.className = 'builder-element w5 fl';
+      _Class.prototype.className = 'builder-element half-content fl';
 
       _Class.prototype.template = "<p class='placeholder'>Half Content</p>";
 

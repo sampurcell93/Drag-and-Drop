@@ -427,20 +427,20 @@ $(document).ready ->
                 @placeholder = opts.placeholder
     # Layout component views
     class views['RightBar'] extends window.views['LayoutItem']
-        className: 'builder-element w35 fr border-left m10'
+        className: 'builder-element sidebar-wrapper fr'
         template: "<p class='placeholder'>Right Bar</p>"
 
     class views['LeftContent'] extends window.views['LayoutItem']
-        className: 'builder-element w6 fl m10'
+        className: 'builder-element content-wrapper fl'
         template: "<p class='placeholder'>Left Content</p>"
 
     class views['LeftBar'] extends window.views['LayoutItem']
-        className: 'builder-element w35 fl m10 border-right'
+        className: 'builder-element sidebar-wrapper fl'
         template: "<p class='placeholder'>Left Bar</p>"
 
     class views['RightContent'] extends window.views['LayoutItem']
-        className: 'builder-element w6 fr m10'
+        className: 'builder-element content-wrapper fr'
         template: "<p class='placeholder'>Right Content</p>"
     class views['HalfContent'] extends window.views['LayoutItem']
-        className: 'builder-element w5 fl'
+        className: 'builder-element half-content fl'
         template: "<p class='placeholder'>Half Content</p>"

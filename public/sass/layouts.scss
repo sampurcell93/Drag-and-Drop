@@ -140,9 +140,23 @@
 }
 
 .list-layout {
-
-
     > ul.children > .builder-element {
         list-style: disc !important;
     }
+}
+
+
+.sidebar-wrapper {
+    width: 33%; 
+    margin: 10px 1%;
+}
+
+.content-wrapper {
+    width: 63%;
+    margin: 10px 1%;
+}
+
+.half-content {
+    width: 48%; 
+    margin: 10px 1%;
 }

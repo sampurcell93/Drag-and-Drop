@@ -214,7 +214,7 @@
         return this;
       },
       append: function(snapshot) {
-        var $el, SnapItem;
+        var $el, SnapItem, item;
         $el = this.$el;
         this.$(".placeholder").hide();
         this.$(".selected-history").removeClass("selected-history");
@@ -223,8 +223,8 @@
           controller: this.controller,
           current: this
         });
-        $el.prepend(SnapItem.render().el);
-        $el.children().last().addClass("selected-history");
+        $el.prepend(item = SnapItem.render().el);
+        $(item).addClass("selected-history");
         return this;
       }
     });

@@ -25,25 +25,13 @@
         }
       ];
 
-      _Class.prototype.standards = [
-        {
-          tab: 'Element Styling',
-          templates: [$("#change-styles").html()]
-        }
-      ];
-
-      _Class.prototype.initialize = function() {
-        this.templates = this.standards;
-        console.log("standards: ", this.standards);
-        return console.log("super templates:", this.templates);
-      };
-
       _Class.prototype.render = function() {
-        var editor_content, self, tabs;
+        var editor_content, self, tabs, templates;
         self = this;
         this.link_el = this.options.link_el;
         editor_content = "<ul class='tabs'>";
         tabs = _.pluck(this.templates, "tab");
+        templates = this.instance_templates || this.templates;
         _.each(tabs, function(tab, i) {
           var sel;
           if (i === 0) {
@@ -54,7 +42,7 @@
           return editor_content += "<li class='" + sel + "' rel='" + tab.dirty() + "'>" + tab + "</li>";
         });
         editor_content += "</ul>";
-        _.each(this.templates, function(tabcontent, i) {
+        _.each(templates, function(tabcontent, i) {
           editor_content += "<div class='modal-tab' id='" + tabcontent.tab.dirty() + "'>";
           _.each(tabcontent.templates, function(template) {
             return editor_content += _.template(template, self.model.toJSON());
@@ -71,19 +59,27 @@
       };
 
       _Class.prototype.addTemplate = function(template, index, inner_index) {
-        if (!inner_index) {
-          return this.templates[index].templates.push(template);
-        } else {
-          return this.templates[index].templates.splice(inner_index, 0, template);
+        if (this.instance_templates == null) {
+          return false;
         }
+        if (!inner_index) {
+          this.instance_templates[index].templates.push(template);
+        } else {
+          this.instance_templates[index].templates.splice(inner_index, 0, template);
+        }
+        return true;
       };
 
       _Class.prototype.addTab = function(obj, index) {
-        if (index != null) {
-          return this.templates.splice(index, 0, obj);
-        } else {
-          return this.templates.push(obj);
+        if (this.instance_templates == null) {
+          return false;
         }
+        if (index != null) {
+          this.instance_templates.splice(index, 0, obj);
+        } else {
+          this.instance_templates.push(obj);
+        }
+        return true;
       };
 
       _Class.prototype.events = {
@@ -239,7 +235,7 @@
 
       _Class.prototype.initialize = function() {
         _Class.__super__.initialize.apply(this, arguments);
-        console.log("base templates", this.templates);
+        this.instance_templates = $.extend(true, {}, this.templates);
         return this.addTemplate($("#button-editor").html(), 0);
       };
 

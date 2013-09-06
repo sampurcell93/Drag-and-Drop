@@ -20,30 +20,19 @@ $ ->
                 ]
             }
         ]
-        standards: [
-            {
-                tab: 'Element Styling'
-                templates: [
-                    $("#change-styles").html()
-                ]
-            }
-        ]
-        initialize: ->
-            @templates = @standards
-            console.log "standards: ", @standards
-            console.log "super templates:", @templates
         render: ->
             # A pointer to the linked element in the builder.
             self     = @
             @link_el = @options.link_el 
             editor_content  = "<ul class='tabs'>"
             tabs = _.pluck @templates,  "tab"
+            templates = @instance_templates || @templates
             _.each tabs, (tab, i) ->
                 if i == 0 then sel = "current-tab"
                 else sel = ""
                 editor_content += "<li class='" + sel + "' rel='" + tab.dirty() + "'>" + tab + "</li>"
             editor_content += "</ul>"
-            _.each @templates, (tabcontent, i) ->
+            _.each templates, (tabcontent, i) ->
                 editor_content += "<div class='modal-tab' id='" + tabcontent.tab.dirty() + "'>"
                 _.each tabcontent.templates, (template) ->
                     editor_content += _.template template, self.model.toJSON()
@@ -59,16 +48,20 @@ $ ->
         # Args: the template to be added, the tab index you want it at, and 
         # optionally the index within that tab
         addTemplate: (template, index, inner_index) ->
+            if !@instance_templates? then return false
             if !inner_index
-                @templates[index].templates.push template
+                @instance_templates[index].templates.push template
             else
-                @templates[index].templates.splice inner_index, 0, template
+                @instance_templates[index].templates.splice inner_index, 0, template
+            true
         # Pass in a tab object of form { tab: 'Title', templates: [...]}, index optional.
         addTab: (obj, index) ->
+            if !@instance_templates? then return false
             if index?
-                @templates.splice index, 0, obj
+                @instance_templates.splice index, 0, obj
             else 
-                @templates.push obj
+                @instance_templates.push obj
+            true
         events:
             "change [data-attr]": (e) ->
                 $t   = $ e.currentTarget
@@ -188,7 +181,9 @@ $ ->
     class editors["Button"] extends editors["BaseEditor"]
         initialize: ->
             super
-            console.log "base templates", @templates
+            # Because in the prototype model, modifying the parent modifies all descendants, we 
+            # must create a copy of the base template set and modify that
+            @instance_templates = $.extend(true, {}, @templates)
             @addTemplate($("#button-editor").html(), 0)
         render: ->
             super

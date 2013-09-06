@@ -189,6 +189,6 @@ $ ->
             @$(".placeholder").hide()
             @$(".selected-history").removeClass("selected-history")
             SnapItem = new history.Snapshot({model: snapshot, controller: @controller, current: @})
-            $el.prepend SnapItem.render().el
-            $el.children().last().addClass("selected-history")
+            $el.prepend item = SnapItem.render().el
+            $(item).addClass("selected-history")
             @
