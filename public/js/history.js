@@ -141,7 +141,6 @@
       },
       makeHistory: function(operation, subject, collection, options) {
         var clone, e, op, ops, snap;
-        console.log(arguments);
         ops = ["change", "add", "remove", "destroy"];
         if (ops.indexOf(operation) === -1) {
           return;

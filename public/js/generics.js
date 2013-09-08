@@ -102,7 +102,7 @@
             no_history: true
           });
           console.log(allSections.at(window.currIndex));
-          return allSections.at(window.currIndex).get("builder").scaffold.get("child_els").add(toAdd, {
+          return allSections.at(window.currIndex).get("builder").scaffold.blend(toAdd, {
             at: 0,
             no_history: true
           });

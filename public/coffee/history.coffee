@@ -129,7 +129,7 @@ $ ->
         makeHistory: (operation, subject, collection, options) ->
             # By using "all" instead of delegating to the desired events,
             # we can keep parameters the same.
-            console.log arguments
+            # console.log arguments
             ops = ["change", "add", "remove", "destroy"]
             if ops.indexOf(operation) == -1 then return
             if operation == "change"

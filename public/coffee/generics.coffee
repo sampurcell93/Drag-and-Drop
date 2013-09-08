@@ -114,7 +114,7 @@ $(document).ready ->
                 child_els.model = toAdd
                 toAdd.set("child_els", child_els, {no_history: true})
                 console.log allSections.at(window.currIndex)
-                allSections.at(window.currIndex).get("builder").scaffold.get("child_els").add toAdd, {at: 0, no_history: true}
+                allSections.at(window.currIndex).get("builder").scaffold.blend toAdd, {at: 0, no_history: true}
     }
 
     class window.views.genericElement extends window.views.draggableElement
