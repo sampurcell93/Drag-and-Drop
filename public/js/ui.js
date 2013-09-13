@@ -86,7 +86,7 @@
       return !isNaN(parseInt(num));
     };
     window.cc = function(msg, color) {
-      return console.log("%c" + msg, "color:" + color + ";font-weight:bold;");
+      return console.log(msg);
     };
     $(this).delegate(".close-modal", "click", function() {
       $(this).closest(".modal").remove();

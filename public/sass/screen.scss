@@ -1,4 +1,3 @@
-
 @import "compass/reset";
 @import "compass/css3";
 @import "compass/utilities/general/clearfix";
@@ -63,8 +62,8 @@ p {
 	background: none;
 	display: block;
 	position: relative;
-	width: calc(100% - 356px);
-	left: 356px;
+	width: 100%;
+	// left: 356px;
 	margin: 40px 0 0 0;
 
 	.add-section {
@@ -167,8 +166,8 @@ header {
 
 .container {
 	display: block;
-	width:  calc(100% - 356px);
-	margin-left: 356px;
+	width:  100%;
+	// margin-left: 356px;
 	min-height: 90%;
 	background: #eee;
 	position: relative;
@@ -187,6 +186,8 @@ ul.select-properties {
 	.hide-properties { cursor: pointer; }
 
 	li{
+		.icon-caret-up { display: inline-block;}
+
 		display: block;
 		min-height: 40px;
 		line-height: 40px;
@@ -287,7 +288,7 @@ ul.select-properties {
 			color: #aaa;
 			z-index: 13;
 		}
-		.icon-caret-up { display: block; }
+
 	}
 }
 .flipped {

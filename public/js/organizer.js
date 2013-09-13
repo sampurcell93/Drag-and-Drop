@@ -40,6 +40,9 @@
         that = this;
         return this.listenTo(this.collection, {
           "add": function(model, collection, options) {
+            cc(model);
+            cc(collection);
+            cc(options);
             if (!((options.organizer != null) && options.organizer.render === false)) {
               return that.append(model, options);
             }
@@ -84,6 +87,8 @@
       appendAt: function(element, opts) {
         var itemView, pos;
         pos = opts.at + 1;
+        cc(pos);
+        cc(this.collection.length);
         opts.model = element;
         itemView = new views.SortableElementItem(opts).render().el;
         if (pos >= this.collection.length) {

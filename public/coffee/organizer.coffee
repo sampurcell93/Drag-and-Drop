@@ -34,7 +34,10 @@ $(document).ready ->
             @stopListening()
             that = @
             @listenTo(@collection, {
-                "add": (model, collection, options) -> 
+                "add": (model, collection, options) ->  
+                    cc model
+                    cc collection
+                    cc options
                     unless (options.organizer? and options.organizer.render is false)
                         that.append(model, options)
                 "remove": ->
@@ -65,6 +68,8 @@ $(document).ready ->
                 this.$el.append(itemView.render().el)
         appendAt: (element, opts) ->
             pos = opts.at + 1
+            cc pos
+            cc @collection.length
             opts.model = element
             itemView = new views.SortableElementItem(opts).render().el
             if pos >= @collection.length

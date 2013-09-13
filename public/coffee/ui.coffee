@@ -74,7 +74,7 @@ $(document).ready ->
         !isNaN(parseInt(num))
 
     window.cc = (msg, color) ->
-        console.log "%c" + msg, "color:" + color + ";font-weight:bold;"
+        console.log msg
 
     $(@).delegate ".close-modal", "click", ->
         $(@).closest(".modal").remove()
