@@ -2,10 +2,11 @@
 script(type='text/template')#element-sortable-item
     .sort-element.icon-move
     div.destroy-element.icon-remove
-    <span class='element-title'>
-    <%= (typeof title !== "undefined" && title !== "") ?  title.clean(true) : "Default Title" %>
-    </span>
-    <%= (typeof type !== "undefined" && type !== "") ?  " - " + type : "" %>
+    //- <span class='element-title'>
+    //- <%= (typeof title !== "undefined" && title !== "") ?  title.clean(true) : "Default Title" %>
+    //- </span>
+    i.icon-caret-down.toggle-children
+    <%= (typeof type !== "undefined" && type !== "") ?  type : "" %>
     ul.child-list
 script(type='text/template')#draggable-element
     h3 <%= typeof title !== "undefined" ? title.clean() : type.clean() %>
@@ -25,21 +26,24 @@ script(type='text/template')#property-link
     span(contentEditable='false').property-link <%= property_name  %> 
         i.icon.remove-property-link g
 script(type='text/template')#context-menu-default
-    <li class='select-this'>
     <% if (selected == false) { %>
-    | Select Element
+    li.icon-checkmark.select-this Select
     <% } else { %>
-    | Unselect Element
+    li.icon-multiply.select-this Unselect
     <% } %>
-    </li>
-    li.group-elements Group selected
-    li.copy-element Copy Element
+    li.copy-element.icon-docs Copy
+    li.cut-element.icon-scissors-2 Cut 
     <% if (typeof window.copiedModel !== "undefined" && typeof layout !== "undefined" && window.copiedModel != null) {%>
-    li.paste-element Paste Element
+    li.paste-element.icon-paste Paste
+    <% } else { %>
+    li.paste-element.icon-paste.disabled Paste
     <% } %>
-    li.destroy-element Delete Element
+    li.icon-remove.destroy-element Delete
+
+    li.group-elements.icon-rectangleselection Make Group
 script(type='text/template')#snapshot
-    |<%= opname.clean() + (opname.slice(-1) == "e"?"d":"ed") %>
+    |<%= opname.clean() + " " %>
+    //- + (opname.slice(-1) == "e"?"d":"ed")
     |<%= type %>
 
 script(type='text/template')#placeholder-context

@@ -63,8 +63,10 @@ $(document).ready ->
             _.each response.currentSection, (element) ->
                 section.push self.modelify(element)
             response
-        blend: (putIn, at) ->
+        blend: (putIn, opts) ->
             if !putIn? then return false
+            defaults = opname: "change", at: 0
+            options = _.extend defaults, opts || {}
             # If put in is a collection
             if $.isArray(putIn) is true and putIn.length > 1
                 if putIn.indexOf(@) != -1
@@ -78,38 +80,32 @@ $(document).ready ->
                 putIn.collection.remove putIn, {no_history: true}
             # Get all current child elements, add the dropped element(s)
             # and put the collection back in
-            children = @get "child_els"
-            # We don't need to validate "at" because backbone will simply append if "at" is undefined
-            children.add(putIn, {at: at, opname: "switch"})
-            @set "child_els", children
+            @get("child_els").add putIn, options
             true
         deepCopy: ->
             model = @
             clone = model.clone()
-            if clone.get("child_els").models? 
-                children = clone.get("child_els").clone()
-            else 
-                children = new collections.Elements(clone.get("child_els")).clone()
-            self = @
+            for attr of clone.toJSON()
+                console.log attr + "is the key"
+                attr = clone.attributes[attr]
+                console.log attr + " is the value"
+                console.log typeof attr
+                if $.isArray attr
+                    cc "HELLO, we have an array " + model.get("type")
+                    attr = attr.clone()
+                else if typeof attr == "object"
+                    attr = _.extend {}, attr
+            children = clone.get("child_els").clone()
             _.each children.models, (child) ->
                 child = child.deepCopy()
-            clone.set("child_els", children)
+            clone.set("child_els", children, silent: true)
             clone
 
 
     window.collections.Elements = Backbone.Collection.extend {
         model: models.Element
         url: '/section/'
-        blend: (putIn, at) ->
-            if !putIn? then return false
-            if $.isArray(putIn) is true and putIn.length > 1
-                 _.each putIn, (model) ->
-                    model.collection.remove model, {no_history: true}
-            else if putIn.collection?
-                putIn.collection.remove putIn, {no_history: true}
-            @add putIn, {at: at}
-            true
-         # Takes in a new index, an origin index, and an optional collection
+        # Takes in a new index, an origin index, and an optional collection
         # When collection is ommitted, the collection uses this.collection
         reorder: (newIndex, originalIndex, collection, options) ->
             if options? and options.opname? then op = options.opname
@@ -211,7 +207,7 @@ $(document).ready ->
                         return
                     parent = self.collection.model 
                     if typeof parent is "function" or !parent? then parent = self.collection
-                    parent.blend(curr, insertAt)
+                    parent.blend(curr, {at: insertAt})
                     delete window.currentDraggingModel
                     window.currentDraggingModel = null
                     ui.helper.fadeOut(300)
@@ -435,6 +431,7 @@ $(document).ready ->
             e.stopPropagation()
             false
         unbindContextMenu: (e) ->
+            cc "unbinding context menu"
             menu = $(".context-menu") 
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
             menu.remove()
@@ -452,12 +449,19 @@ $(document).ready ->
                 @$el.trigger("deselect")
         # Default events for any draggable - basically configuration settings.
         events: 
+            "click .context-menu li": (e) ->
+                cc "click context item"
+                $t = $(e.currentTarget)
+                unless $t.hasClass("disabled")
+                    # Stop the context menu from closing
+                    @unbindContextMenu()
+                e.stopPropagation()
+                e.stopImmediatePropagation()
             # for debugging
             "dblclick": (e) ->
                 console.log @model.toJSON()
                 @showConfigModal()
                 e.stopPropagation()
-            # for right click functionality users expect
             "click": (e) ->
                 @unbindContextMenu(e)
                 @$el.find(".dropdown").hide()
@@ -466,20 +470,23 @@ $(document).ready ->
                 e.preventDefault()
                 e.stopPropagation()
                 false
+            # for right click functionality users expect
             "contextmenu": "bindContextMenu"
+            # Copy the element to the "clipboard"
             "click .context-menu > li.copy-element": ->
                 copy = @model.deepCopy()
                 window.copiedModel = copy
+            "click .context-menu > li.cut-element": ->
+                copy = @model.deepCopy()
+                window.copiedModel = copy
+                # Cut the element
+                @model.collection.remove @model, {opname: 'Cut'}
             "click .context-menu > li.select-this": ->
                 @selectEl()
             "click .group-elements": "blankLayout"
             "click .export": "exportAsSection"
             "click .destroy-element": ->
                 @model.destroy()
-            "click .context-menu": (e) ->
-                # Stop the context menu from closing
-                $(e.currentTarget).remove()
-                e.stopPropagation()
             "click .set-options": (e) ->
                 @unbindContextMenu(e)
                 $t = $(e.currentTarget)

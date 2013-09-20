@@ -368,6 +368,7 @@ ol.generic-list {
 }
 
 
+
 .context-menu {
     position: absolute;
     background: #f9f9f9;
@@ -386,8 +387,9 @@ ol.generic-list {
     cursor: pointer;
 
     li {
-        text-align: center;
+        text-align: left;
         padding: 10px;
+        padding-left: 20px;
         
         &:first-of-type {
             @include border-radius(3px 3px 0 0);
@@ -400,6 +402,10 @@ ol.generic-list {
             background: $strongblue;
             color: #f9f9f9;
             text-shadow: none;
+        }
+        &:before {
+            position: absolute;
+            right: 10px;
         }
     }
 }
@@ -424,6 +430,13 @@ ol.generic-list {
         border-top: 1px solid $lightdusk;
         border-bottom: 1px solid #222;
         background: $dusky;
+
+        i.toggle-children {
+            position: absolute;
+            right: 5px;
+            top: 8px;
+            display: none;
+        }
     }
 
     .hide-sidebar { 

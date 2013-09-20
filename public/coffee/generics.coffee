@@ -88,11 +88,12 @@ $(document).ready ->
                     # $(new window.views[self.model.get("view")]({model: self.model}).render().el).css("width","500px")
                 cursor: "move"
                 start: (e, ui) ->
-                    $(ui.helper).addClass("dragging")
-                    child_els = new collections.Elements()
-                    toAdd = new models.Element(baseModel)
-                    child_els.model = toAdd
-                    toAdd.set("child_els", child_els)
+                    $(ui.helper).addClass("dragging").data("opname", "create")
+                    # child_els = new collections.Elements()
+                    drag = new models.Element baseModel
+                    toAdd = drag.deepCopy()
+                    # child_els.model = toAdd
+                    # toAdd.set("child_els", child_els)
                     # Give the builder an acceptable element.
                     window.currentDraggingModel = toAdd
                 stop: (e, ui) ->
@@ -114,7 +115,7 @@ $(document).ready ->
                 child_els.model = toAdd
                 toAdd.set("child_els", child_els, {no_history: true})
                 console.log allSections.at(window.currIndex)
-                cc allSections.at(window.currIndex).get("currentSection").blend toAdd, 0
+                cc allSections.at(window.currIndex).get("builder").scaffold.blend toAdd, at: 0, opname: 'create'
     }
 
     class window.views.genericElement extends window.views.draggableElement

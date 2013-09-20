@@ -93,11 +93,16 @@
         return response;
       };
 
-      Element.prototype.blend = function(putIn, at) {
-        var children;
+      Element.prototype.blend = function(putIn, opts) {
+        var defaults, options;
         if (putIn == null) {
           return false;
         }
+        defaults = {
+          opname: "change",
+          at: 0
+        };
+        options = _.extend(defaults, opts || {});
         if ($.isArray(putIn) === true && putIn.length > 1) {
           if (putIn.indexOf(this) !== -1) {
             alert("you may not drag shit into itself. DIVIDE BY ZERO");
@@ -113,29 +118,33 @@
             no_history: true
           });
         }
-        children = this.get("child_els");
-        children.add(putIn, {
-          at: at,
-          opname: "switch"
-        });
-        this.set("child_els", children);
+        this.get("child_els").add(putIn, options);
         return true;
       };
 
       Element.prototype.deepCopy = function() {
-        var children, clone, model, self;
+        var attr, children, clone, model;
         model = this;
         clone = model.clone();
-        if (clone.get("child_els").models != null) {
-          children = clone.get("child_els").clone();
-        } else {
-          children = new collections.Elements(clone.get("child_els")).clone();
+        for (attr in clone.toJSON()) {
+          console.log(attr + "is the key");
+          attr = clone.attributes[attr];
+          console.log(attr + " is the value");
+          console.log(typeof attr);
+          if ($.isArray(attr)) {
+            cc("HELLO, we have an array " + model.get("type"));
+            attr = attr.clone();
+          } else if (typeof attr === "object") {
+            attr = _.extend({}, attr);
+          }
         }
-        self = this;
+        children = clone.get("child_els").clone();
         _.each(children.models, function(child) {
           return child = child.deepCopy();
         });
-        clone.set("child_els", children);
+        clone.set("child_els", children, {
+          silent: true
+        });
         return clone;
       };
 
@@ -145,26 +154,6 @@
     window.collections.Elements = Backbone.Collection.extend({
       model: models.Element,
       url: '/section/',
-      blend: function(putIn, at) {
-        if (putIn == null) {
-          return false;
-        }
-        if ($.isArray(putIn) === true && putIn.length > 1) {
-          _.each(putIn, function(model) {
-            return model.collection.remove(model, {
-              no_history: true
-            });
-          });
-        } else if (putIn.collection != null) {
-          putIn.collection.remove(putIn, {
-            no_history: true
-          });
-        }
-        this.add(putIn, {
-          at: at
-        });
-        return true;
-      },
       reorder: function(newIndex, originalIndex, collection, options) {
         var op, temp;
         if ((options != null) && (options.opname != null)) {
@@ -311,7 +300,9 @@
             if (typeof parent === "function" || (parent == null)) {
               parent = self.collection;
             }
-            parent.blend(curr, insertAt);
+            parent.blend(curr, {
+              at: insertAt
+            });
             delete window.currentDraggingModel;
             window.currentDraggingModel = null;
             return ui.helper.fadeOut(300);
@@ -635,6 +626,7 @@
 
       draggableElement.prototype.unbindContextMenu = function(e) {
         var menu;
+        cc("unbinding context menu");
         menu = $(".context-menu");
         if ((e != null) && $(e.currentTarget).hasClass("context-menu")) {
           return false;
@@ -671,6 +663,16 @@
       };
 
       draggableElement.prototype.events = {
+        "click .context-menu li": function(e) {
+          var $t;
+          cc("click context item");
+          $t = $(e.currentTarget);
+          if (!$t.hasClass("disabled")) {
+            this.unbindContextMenu();
+          }
+          e.stopPropagation();
+          return e.stopImmediatePropagation();
+        },
         "dblclick": function(e) {
           console.log(this.model.toJSON());
           this.showConfigModal();
@@ -692,6 +694,14 @@
           copy = this.model.deepCopy();
           return window.copiedModel = copy;
         },
+        "click .context-menu > li.cut-element": function() {
+          var copy;
+          copy = this.model.deepCopy();
+          window.copiedModel = copy;
+          return this.model.collection.remove(this.model, {
+            opname: 'Cut'
+          });
+        },
         "click .context-menu > li.select-this": function() {
           return this.selectEl();
         },
@@ -699,10 +709,6 @@
         "click .export": "exportAsSection",
         "click .destroy-element": function() {
           return this.model.destroy();
-        },
-        "click .context-menu": function(e) {
-          $(e.currentTarget).remove();
-          return e.stopPropagation();
         },
         "click .set-options": function(e) {
           var $t, dropdown;

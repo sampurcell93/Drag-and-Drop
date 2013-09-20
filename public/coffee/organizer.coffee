@@ -35,9 +35,6 @@ $(document).ready ->
             that = @
             @listenTo(@collection, {
                 "add": (model, collection, options) ->  
-                    cc model
-                    cc collection
-                    cc options
                     unless (options.organizer? and options.organizer.render is false)
                         that.append(model, options)
                 "remove": ->
@@ -68,8 +65,6 @@ $(document).ready ->
                 this.$el.append(itemView.render().el)
         appendAt: (element, opts) ->
             pos = opts.at + 1
-            cc pos
-            cc @collection.length
             opts.model = element
             itemView = new views.SortableElementItem(opts).render().el
             if pos >= @collection.length
@@ -112,6 +107,9 @@ $(document).ready ->
                 "add": (model,collection,opts)->
                     unless (opts.organizer? and opts.organizer.itemRender is false)
                         that.append(model, opts)
+                "remove": ->
+                    if that.model.get("child_els").length is 0
+                        that.$el.children(".toggle-children").hide()
                 'reset': @render
             }
         render: ->
@@ -153,17 +151,17 @@ $(document).ready ->
             @
         append: ( child, opts )->
             $el = @$el
+            $el.children(".toggle-children").show()
             if opts? and opts.at?
                 @appendAt(child, opts)
                 return this
             if !opts? then opts = {}
             childList = $el.children(".child-list")
             elementItem = new views.SortableElementItem({model: child, index: @options.index}).render().el
-            if child.get("inFlow") is false  
-                opts.outOfFlow = true
-                $el.addClass("out-of-flow")
-                $("<div />").addClass("activate-element").text("m").prependTo($el)
-                $("<div />").addClass("destroy-element").text("g").prependTo($el)
+            # if child.get("inFlow") is false  
+            #     opts.outOfFlow = true
+            #     $el.addClass("out-of-flow")
+            #     $("<div />").addClass("destroy-element").text("g").prependTo($el
             childList.append elementItem
         appendAt: (child, opts) ->
             self = @
@@ -201,4 +199,7 @@ $(document).ready ->
                 if !@$el.hasClass("moving-sort")
                    @model.trigger("end-feedback")
                 e.stopPropagation()
+            "click .toggle-children": (e) ->
+                @$el.children(".child-list").slideToggle "fast"
+                $(e.currentTarget).toggleClass "flipped"
     }

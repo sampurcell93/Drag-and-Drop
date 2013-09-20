@@ -17,6 +17,7 @@ $ ->
                 "type": "New Section"
             })
             @add snap
+            @
 
     history.Snapshot = Backbone.View.extend
         tagName: 'li'
@@ -82,7 +83,6 @@ $ ->
             @$el.html(_.template @template, @model.toJSON())
             @
 
-
     history.HistoryList = Backbone.View.extend
         tagName: 'div'
         className: 'history-modal'
@@ -108,9 +108,10 @@ $ ->
             @
         # Add watcher to each model in the collection
         bindIndividualListener: (model) ->
+            cc "calling bindIndividualListener"
             children = model.get("child_els")
             self     = @
-            @listenTo model, "all", @makeHistory
+            @listenTo model, "change", @modelChange
             @listenTo children, "all", @makeHistory
             _.each children.models, (child) ->
                 self.bindIndividualListener child
@@ -126,10 +127,18 @@ $ ->
             # Shit may have been destroyed - check that the snap is still there
             if last < @snapshots.length and last >= 0
                 @snapshots.at(last).trigger("select")
+            @
+        modelChange: (model, options) ->
+            console.log model, options, "changed"
+            @takeSnapshot("change")
         makeHistory: (operation, subject, collection, options) ->
             # By using "all" instead of delegating to the desired events,
             # we can keep parameters the same.
-            # console.log arguments
+
+            # if a new model was added to a collection, listen to it as well.
+            if operation == "add"
+                @bindIndividualListener subject
+
             ops = ["change", "add", "remove", "destroy"]
             if ops.indexOf(operation) == -1 then return
             if operation == "change"
@@ -141,33 +150,33 @@ $ ->
                     @deleteForwardChanges()
                     @snapshots.detached_head = false
                 # Copy current state
-                if @controller.model.get("currentSection")?
-                    try 
-                        clone = @controller.model.get("currentSection").clone()
-                    catch e
-                        return false;
-                if @snapshots.length and clone.compare(@snapshots.last())
-                    cc "SAME"
-                snap = new models.Snap({snapshot: clone})
-                snap.set({
-                    "opname": op
-                    "title": subject.get "title" || null
-                    "type": subject.get "type" || null
-                })
-                # For memory management purposes, destroy the oldest change.
-                if @snapshots.length >= window.settings.history_length and @snapshots.at(0)?
-                    @snapshots.at(0).destroy({no_history: true})
-                if op == "add"
-                    @bindIndividualListener subject
-
+                snap = @takeSnapshot(op, subject)
                 # Add that state, or snapshot, to this ocllection and
                 # display it in a list of history, a la photoshop
                 @snapshots.add snap
                 @append snap
-                @last_snap = @snapshots.length - 2
                 # Scroll to bottom of history panel if overflow
                 # @$el.scrollTop(@$el.height());
             @
+        takeSnapshot: (op, subject) ->
+            if !subject? then subject = new models.Element()
+            clone = null
+            if @controller.model.get("currentSection")?
+                try 
+                    clone = @controller.model.get("currentSection").clone()
+                catch e
+                    return false
+            snap = new models.Snap({snapshot: clone})
+            snap.set({
+                "opname": op
+                "title": subject.get "title" || null
+                "type": subject.get "type" || "Element"
+            })
+            # For memory management purposes, destroy the oldest change.
+            if @snapshots.length >= window.settings.history_length and @snapshots.at(0)?
+                @snapshots.at(0).destroy()
+            snap
+
         deleteForwardChanges: ->
             # Get all snapshots ahead of the current state
             ahead = _.filter @snapshots.models, (snap, i) ->

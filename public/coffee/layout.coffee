@@ -122,10 +122,7 @@ $(document).ready ->
                     model.destroy()
                 "click .paste-element": ->
                     copy = window.copiedModel
-                    if copy?
-                        window.copiedModel = copy.deepCopy()
-                        @model.get("child_els").add copy
-                    else alert("Something went wrong.....")
+                    if copy? then @model.blend copy, opname: 'paste'
                 }
             do @bindDrop
             @
@@ -169,14 +166,14 @@ $(document).ready ->
                 if !$.isArray(draggingModel) and draggingModel.get("inFlow") is false
                     draggingModel.set("inFlow", true)
                     return
-
                 sect_interface = allSections.at(that.index || currIndex)
                 section = sect_interface.get("currentSection")
                 builder = sect_interface.get("builder")
                 model = that.model
+                opts = opname: $(ui.helper).data("opname") || null
                 # if the dragged element is a direct child of its new parent, do nothing
                 unless draggingModel.collection is model.get("child_els")
-                 if model.blend(draggingModel) is true
+                 if model.blend(draggingModel, opts) is true
                     $(ui.helper).remove()
                     # Lets the drag element know that it was a success
                     ui.draggable.data('dropped', true)
@@ -203,11 +200,11 @@ $(document).ready ->
                 children = item.get "child_els"
                 # Remove each model from the layout item and put it in the layout
                 _.each children.models, (child) ->
-                    self.model.blend child
+                    self.model.blend child, no_history: true
             # Finally, destroy the layout items - can't do this in _.each 
             # because it will break the function by changing the array
             _.each temp, (dest) ->
-                dest.destroy()
+                dest.destroy no_history: true
         barLayout: (sidebar, content) ->
             self     = @
             model    = @model
@@ -219,14 +216,16 @@ $(document).ready ->
             rest = elChildren.slice(1)
             sidebar.layoutItem = true
             content.layoutItem = true
-            sidebar.blend first
-            content.blend rest
+            none = no_history: true
+            sidebar.blend first, none
+            content.blend rest, none
             if content.view == "RightBar"
-                model.blend content
-                model.blend sidebar
+                model.blend content, none
+                model.blend sidebar, none
             else
-                model.blend sidebar
-                model.blend content
+                model.blend sidebar, none
+                model.blend content, none
+            model.trigger "change"
         formPresetLayout: (layout) ->
             if !layout? then return false
             # Make sure we're not adding layouts to each other - return the layout to a blank state
@@ -242,18 +241,18 @@ $(document).ready ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
                 layout.layoutItem = true
                 self.barLayout({view: 'LeftBar', type: "Dynamic Layout", title: 'Left Sidebar'},{view: 'RightContent', type: "Dynamic Layout", title: 'Right Content'})
-                self.model.blend layout, 0
+                self.model.blend layout, at: 0
             "header-right-bar": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
                 layout.layoutItem = true
                 self.barLayout({view: 'RightBar',type: "Dynamic Layout", title: 'Right Sidebar'},{view: 'LeftContent',type: "Dynamic Layout", title: 'Left Content Sidebar'})
-                self.model.blend layout, 0
+                self.model.blend layout, at: 0
             "header-split": (self) ->
                 layout = new models.Element({layout: true, type: 'Dynamic Layout', view: "DynamicLayout", title: 'Header'})
                 layout.layoutItem = true
                 half   = {view: 'HalfContent', type: "Dynamic Layout", title: 'Half Content'}
                 self.barLayout(half,half)
-                self.model.blend layout, 0
+                self.model.blend layout, at: 0
         }
     ### Inherited view events are triggered first - so if an indentical event binder is
         applied to a descendant, we can use event.stopPropagation() in order to stop the 
@@ -421,6 +420,7 @@ $(document).ready ->
 
     class views["LayoutItem"] extends views['layout']
         bindDrag: ->
+        controls: null
         initialize: (opts) ->
             super
             if opts? and opts.placeholder?

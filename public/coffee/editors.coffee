@@ -25,8 +25,8 @@ $ ->
             self     = @
             @link_el = @options.link_el 
             editor_content  = "<ul class='tabs'>"
-            tabs = _.pluck @templates,  "tab"
             templates = @instance_templates || @templates
+            tabs = _.pluck templates, "tab"
             _.each tabs, (tab, i) ->
                 if i == 0 then sel = "current-tab"
                 else sel = ""
@@ -49,10 +49,12 @@ $ ->
         # optionally the index within that tab
         addTemplate: (template, index, inner_index) ->
             if !@instance_templates? then return false
-            if !inner_index
+            cc "Adding a template"
+            if !inner_index?
                 @instance_templates[index].templates.push template
             else
                 @instance_templates[index].templates.splice inner_index, 0, template
+            console.log @instance_templates
             true
         # Pass in a tab object of form { tab: 'Title', templates: [...]}, index optional.
         addTab: (obj, index) ->
@@ -182,14 +184,10 @@ $ ->
         initialize: ->
             super
             # Because in the prototype model, modifying the parent modifies all descendants, we 
-            # must create a copy of the base template set and modify that
-            @instance_templates = $.extend(true, {}, @templates)
+            # must create a copy of the base template set and modify that.
+            @instance_templates = @templates.clone()
+            console.log @instance_templates == @templates
             @addTemplate($("#button-editor").html(), 0)
-        render: ->
-            super
-            @cq = @change_queue
-            modal = @el || $(".modal").first()
-            @$el = $(@el)
     class editors['Link'] extends editors["BaseEditor"]
         templates: [$("#link-editor").html()]
         initialize: ->

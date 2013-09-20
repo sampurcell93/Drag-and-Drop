@@ -40,9 +40,6 @@
         that = this;
         return this.listenTo(this.collection, {
           "add": function(model, collection, options) {
-            cc(model);
-            cc(collection);
-            cc(options);
             if (!((options.organizer != null) && options.organizer.render === false)) {
               return that.append(model, options);
             }
@@ -87,8 +84,6 @@
       appendAt: function(element, opts) {
         var itemView, pos;
         pos = opts.at + 1;
-        cc(pos);
-        cc(this.collection.length);
         opts.model = element;
         itemView = new views.SortableElementItem(opts).render().el;
         if (pos >= this.collection.length) {
@@ -136,6 +131,11 @@
           "add": function(model, collection, opts) {
             if (!((opts.organizer != null) && opts.organizer.itemRender === false)) {
               return that.append(model, opts);
+            }
+          },
+          "remove": function() {
+            if (that.model.get("child_els").length === 0) {
+              return that.$el.children(".toggle-children").hide();
             }
           },
           'reset': this.render
@@ -192,6 +192,7 @@
       append: function(child, opts) {
         var $el, childList, elementItem;
         $el = this.$el;
+        $el.children(".toggle-children").show();
         if ((opts != null) && (opts.at != null)) {
           this.appendAt(child, opts);
           return this;
@@ -204,12 +205,6 @@
           model: child,
           index: this.options.index
         }).render().el;
-        if (child.get("inFlow") === false) {
-          opts.outOfFlow = true;
-          $el.addClass("out-of-flow");
-          $("<div />").addClass("activate-element").text("m").prependTo($el);
-          $("<div />").addClass("destroy-element").text("g").prependTo($el);
-        }
         return childList.append(elementItem);
       },
       appendAt: function(child, opts) {
@@ -263,6 +258,10 @@
             this.model.trigger("end-feedback");
           }
           return e.stopPropagation();
+        },
+        "click .toggle-children": function(e) {
+          this.$el.children(".child-list").slideToggle("fast");
+          return $(e.currentTarget).toggleClass("flipped");
         }
       }
     });

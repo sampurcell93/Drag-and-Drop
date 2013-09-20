@@ -58,16 +58,17 @@ body {
         position: static;
         margin: -2px 0 15px 0;
         height: 60px;
+        padding-top: 5px;
 
         li {
-            line-height: 60px;
+            line-height: 55px;
             position: relative;
-            border: 1px solid transparent;
-            background: #eee;
+            border: 1px solid #ccc;
             bottom: -2px;
             padding: 0 10px;
             font-size: 1.15em;
             color: #222;
+            background: #eee;
             border-bottom: 2px solid #ccc;
 
             &:hover {
@@ -77,7 +78,8 @@ body {
             &.current-tab { 
                 background: transparent;
                 color: #222;
-                border: 1px solid $pegaorange;
+                background: #f9f9f9;
+                color: $pegaorange;
                 border-bottom: 2px solid #f9f9f9;
             }
         }

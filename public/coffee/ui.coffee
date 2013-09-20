@@ -19,10 +19,20 @@ $(document).ready ->
         null
     String.prototype.dirty = ->
         this.toLowerCase().replace(/\s+/g,"")
-    
-    # Uses point slope form to compute the slope
-    getSlope = (y1,y,x1,x) ->
-        (y-y1)/(x-x1)
+
+    # Makes deep copies of all objects in array
+    Array.prototype.deepClone = ->
+        clone = []
+        _.each @, (item) ->
+            if typeof item == "object"
+                clone.push $.extend true, {}, item
+                console.log "Cloning object in array.clone()"
+            else
+                clone.push item
+        clone
+    # Shallow copy of array. 
+    Array.prototype.copy = ->
+        @slice 0
 
     # If an array of template data is passed in loop through and append each in order
     window.launchModal =  (content) ->
@@ -75,6 +85,9 @@ $(document).ready ->
 
     window.cc = (msg, color) ->
         console.log msg
+
+    $(@).on "click", ->
+        $(".context-menu").remove()
 
     $(@).delegate ".close-modal", "click", ->
         $(@).closest(".modal").remove()

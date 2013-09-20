@@ -46,10 +46,16 @@ window.onload = function() {
 			'icon-layout-5' : '&#xe023;',
 			'icon-layout-6' : '&#xe024;',
 			'icon-layout-7' : '&#xe025;',
-			'icon-layout-8' : '&#xe026;'
+			'icon-layout-8' : '&#xe026;',
+			'icon-cut' : '&#xf0ca;',
+			'icon-scissors' : '&#xe027;',
+			'icon-rectangleselection' : '&#xf1b0;',
+			'icon-docs' : '&#xe029;',
+			'icon-scissors-2' : '&#xe028;',
+			'icon-paste' : '&#xf0ea;'
 		},
 		els = document.getElementsByTagName('*'),
-		i, attr, html, c, el;
+		i, attr, c, el;
 	for (i = 0; ; i += 1) {
 		el = els[i];
 		if(!el) {

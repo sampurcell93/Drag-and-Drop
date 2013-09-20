@@ -68,12 +68,10 @@
           helper: "clone",
           cursor: "move",
           start: function(e, ui) {
-            var child_els, toAdd;
-            $(ui.helper).addClass("dragging");
-            child_els = new collections.Elements();
-            toAdd = new models.Element(baseModel);
-            child_els.model = toAdd;
-            toAdd.set("child_els", child_els);
+            var drag, toAdd;
+            $(ui.helper).addClass("dragging").data("opname", "create");
+            drag = new models.Element(baseModel);
+            toAdd = drag.deepCopy();
             return window.currentDraggingModel = toAdd;
           },
           stop: function(e, ui) {
@@ -102,7 +100,10 @@
             no_history: true
           });
           console.log(allSections.at(window.currIndex));
-          return cc(allSections.at(window.currIndex).get("currentSection").blend(toAdd, 0));
+          return cc(allSections.at(window.currIndex).get("builder").scaffold.blend(toAdd, {
+            at: 0,
+            opname: 'create'
+          }));
         }
       }
     });

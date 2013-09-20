@@ -123,10 +123,9 @@
             var copy;
             copy = window.copiedModel;
             if (copy != null) {
-              window.copiedModel = copy.deepCopy();
-              return this.model.get("child_els").add(copy);
-            } else {
-              return alert("Something went wrong.....");
+              return this.model.blend(copy, {
+                opname: 'paste'
+              });
             }
           }
         });
@@ -184,7 +183,7 @@
             return $(e.target).removeClass("over").parents().removeClass("over");
           },
           drop: function(e, ui) {
-            var builder, draggingModel, model, sect_interface, section;
+            var builder, draggingModel, model, opts, sect_interface, section;
             $(e.target).removeClass("over").parents().removeClass("over");
             if ($(document.body).hasClass("active-modal")) {
               return false;
@@ -203,8 +202,11 @@
             section = sect_interface.get("currentSection");
             builder = sect_interface.get("builder");
             model = that.model;
+            opts = {
+              opname: $(ui.helper).data("opname") || null
+            };
             if (draggingModel.collection !== model.get("child_els")) {
-              if (model.blend(draggingModel) === true) {
+              if (model.blend(draggingModel, opts) === true) {
                 $(ui.helper).remove();
                 ui.draggable.data('dropped', true);
                 delete window.currentDraggingModel;
@@ -236,16 +238,20 @@
           }
           children = item.get("child_els");
           return _.each(children.models, function(child) {
-            return self.model.blend(child);
+            return self.model.blend(child, {
+              no_history: true
+            });
           });
         });
         return _.each(temp, function(dest) {
-          return dest.destroy();
+          return dest.destroy({
+            no_history: true
+          });
         });
       };
 
       layout.prototype.barLayout = function(sidebar, content) {
-        var elChildren, first, model, rest, self;
+        var elChildren, first, model, none, rest, self;
         self = this;
         model = this.model;
         this.model.set("title", "Bar Layout");
@@ -256,15 +262,19 @@
         rest = elChildren.slice(1);
         sidebar.layoutItem = true;
         content.layoutItem = true;
-        sidebar.blend(first);
-        content.blend(rest);
+        none = {
+          no_history: true
+        };
+        sidebar.blend(first, none);
+        content.blend(rest, none);
         if (content.view === "RightBar") {
-          model.blend(content);
-          return model.blend(sidebar);
+          model.blend(content, none);
+          model.blend(sidebar, none);
         } else {
-          model.blend(sidebar);
-          return model.blend(content);
+          model.blend(sidebar, none);
+          model.blend(content, none);
         }
+        return model.trigger("change");
       };
 
       layout.prototype.formPresetLayout = function(layout) {
@@ -316,7 +326,9 @@
             type: "Dynamic Layout",
             title: 'Right Content'
           });
-          return self.model.blend(layout, 0);
+          return self.model.blend(layout, {
+            at: 0
+          });
         },
         "header-right-bar": function(self) {
           var layout;
@@ -336,7 +348,9 @@
             type: "Dynamic Layout",
             title: 'Left Content Sidebar'
           });
-          return self.model.blend(layout, 0);
+          return self.model.blend(layout, {
+            at: 0
+          });
         },
         "header-split": function(self) {
           var half, layout;
@@ -353,7 +367,9 @@
             title: 'Half Content'
           };
           self.barLayout(half, half);
-          return self.model.blend(layout, 0);
+          return self.model.blend(layout, {
+            at: 0
+          });
         }
       };
 
@@ -688,6 +704,8 @@
       }
 
       _Class.prototype.bindDrag = function() {};
+
+      _Class.prototype.controls = null;
 
       _Class.prototype.initialize = function(opts) {
         _Class.__super__.initialize.apply(this, arguments);

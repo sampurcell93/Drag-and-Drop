@@ -22,7 +22,8 @@
           "opname": "Open",
           "type": "New Section"
         });
-        return this.add(snap);
+        this.add(snap);
+        return this;
       }
     });
     history.Snapshot = Backbone.View.extend({
@@ -119,9 +120,10 @@
       },
       bindIndividualListener: function(model) {
         var children, self;
+        cc("calling bindIndividualListener");
         children = model.get("child_els");
         self = this;
-        this.listenTo(model, "all", this.makeHistory);
+        this.listenTo(model, "change", this.modelChange);
         this.listenTo(children, "all", this.makeHistory);
         _.each(children.models, function(child) {
           return self.bindIndividualListener(child);
@@ -136,11 +138,19 @@
         var last;
         last = this.last_snap;
         if (last < this.snapshots.length && last >= 0) {
-          return this.snapshots.at(last).trigger("select");
+          this.snapshots.at(last).trigger("select");
         }
+        return this;
+      },
+      modelChange: function(model, options) {
+        console.log(model, options, "changed");
+        return this.takeSnapshot("change");
       },
       makeHistory: function(operation, subject, collection, options) {
-        var clone, e, op, ops, snap;
+        var op, ops, snap;
+        if (operation === "add") {
+          this.bindIndividualListener(subject);
+        }
         ops = ["change", "add", "remove", "destroy"];
         if (ops.indexOf(operation) === -1) {
           return;
@@ -157,38 +167,38 @@
             this.deleteForwardChanges();
             this.snapshots.detached_head = false;
           }
-          if (this.controller.model.get("currentSection") != null) {
-            try {
-              clone = this.controller.model.get("currentSection").clone();
-            } catch (_error) {
-              e = _error;
-              return false;
-            }
-          }
-          if (this.snapshots.length && clone.compare(this.snapshots.last())) {
-            cc("SAME");
-          }
-          snap = new models.Snap({
-            snapshot: clone
-          });
-          snap.set({
-            "opname": op,
-            "title": subject.get("title" || null),
-            "type": subject.get("type" || null)
-          });
-          if (this.snapshots.length >= window.settings.history_length && (this.snapshots.at(0) != null)) {
-            this.snapshots.at(0).destroy({
-              no_history: true
-            });
-          }
-          if (op === "add") {
-            this.bindIndividualListener(subject);
-          }
+          snap = this.takeSnapshot(op, subject);
           this.snapshots.add(snap);
           this.append(snap);
-          this.last_snap = this.snapshots.length - 2;
         }
         return this;
+      },
+      takeSnapshot: function(op, subject) {
+        var clone, e, snap;
+        if (subject == null) {
+          subject = new models.Element();
+        }
+        clone = null;
+        if (this.controller.model.get("currentSection") != null) {
+          try {
+            clone = this.controller.model.get("currentSection").clone();
+          } catch (_error) {
+            e = _error;
+            return false;
+          }
+        }
+        snap = new models.Snap({
+          snapshot: clone
+        });
+        snap.set({
+          "opname": op,
+          "title": subject.get("title" || null),
+          "type": subject.get("type" || "Element")
+        });
+        if (this.snapshots.length >= window.settings.history_length && (this.snapshots.at(0) != null)) {
+          this.snapshots.at(0).destroy();
+        }
+        return snap;
       },
       deleteForwardChanges: function() {
         var ahead;

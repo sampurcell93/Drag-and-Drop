@@ -30,8 +30,8 @@
         self = this;
         this.link_el = this.options.link_el;
         editor_content = "<ul class='tabs'>";
-        tabs = _.pluck(this.templates, "tab");
         templates = this.instance_templates || this.templates;
+        tabs = _.pluck(templates, "tab");
         _.each(tabs, function(tab, i) {
           var sel;
           if (i === 0) {
@@ -62,11 +62,13 @@
         if (this.instance_templates == null) {
           return false;
         }
-        if (!inner_index) {
+        cc("Adding a template");
+        if (inner_index == null) {
           this.instance_templates[index].templates.push(template);
         } else {
           this.instance_templates[index].templates.splice(inner_index, 0, template);
         }
+        console.log(this.instance_templates);
         return true;
       };
 
@@ -235,16 +237,9 @@
 
       _Class.prototype.initialize = function() {
         _Class.__super__.initialize.apply(this, arguments);
-        this.instance_templates = $.extend(true, {}, this.templates);
+        this.instance_templates = this.templates.clone();
+        console.log(this.instance_templates === this.templates);
         return this.addTemplate($("#button-editor").html(), 0);
-      };
-
-      _Class.prototype.render = function() {
-        var modal;
-        _Class.__super__.render.apply(this, arguments);
-        this.cq = this.change_queue;
-        modal = this.el || $(".modal").first();
-        return this.$el = $(this.el);
       };
 
       return _Class;
