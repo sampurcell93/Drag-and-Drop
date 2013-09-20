@@ -203,7 +203,7 @@
             builder = sect_interface.get("builder");
             model = that.model;
             opts = {
-              opname: $(ui.helper).data("opname") || null
+              opname: $(ui.helper).data("opname") || "Added"
             };
             if (draggingModel.collection !== model.get("child_els")) {
               if (model.blend(draggingModel, opts) === true) {
@@ -251,30 +251,30 @@
       };
 
       layout.prototype.barLayout = function(sidebar, content) {
-        var elChildren, first, model, none, rest, self;
-        self = this;
+        var elChildren, first, model, none, rest;
         model = this.model;
         this.model.set("title", "Bar Layout");
         sidebar = new window.models.Element(sidebar);
         content = new window.models.Element(content);
-        elChildren = self.model.get("child_els");
+        elChildren = this.model.get("child_els");
         first = elChildren.at(0);
         rest = elChildren.slice(1);
-        sidebar.layoutItem = true;
-        content.layoutItem = true;
+        sidebar.layoutItem = content.layoutItem = true;
         none = {
           no_history: true
         };
-        sidebar.blend(first, none);
-        content.blend(rest, none);
         if (content.view === "RightBar") {
-          model.blend(content, none);
-          model.blend(sidebar, none);
+          model.blend([content, sidebar], none);
+          sidebar.blend(first, none);
+          return content.blend(rest, none);
         } else {
-          model.blend(sidebar, none);
-          model.blend(content, none);
+          model.blend([sidebar, content], {
+            no_history: true,
+            opname: 'columnize'
+          });
+          sidebar.blend(rest, none);
+          return content.blend(first, none);
         }
-        return model.trigger("change");
       };
 
       layout.prototype.formPresetLayout = function(layout) {

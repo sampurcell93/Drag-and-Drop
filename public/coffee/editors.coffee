@@ -185,7 +185,8 @@ $ ->
             super
             # Because in the prototype model, modifying the parent modifies all descendants, we 
             # must create a copy of the base template set and modify that.
-            @instance_templates = @templates.clone()
+            @instance_templates = $.map @templates, (obj) ->
+                $.extend(true, {}, obj)
             console.log @instance_templates == @templates
             @addTemplate($("#button-editor").html(), 0)
     class editors['Link'] extends editors["BaseEditor"]
@@ -193,7 +194,6 @@ $ ->
         initialize: ->
 
     class editors['Radio'] extends editors["BaseEditor"]
-        templates: [$("#radio-editor").html()]
         initialize: ->
             super
             self = @
@@ -211,11 +211,5 @@ $ ->
             }
 
     class editors["DateTime"] extends editors["BaseEditor"]
-        templates: [$("#icon-or-full").html()]
-
     class editors["Property"] extends editors["BaseEditor"]
-        templates: [$("#property-editor").html()]
-
     class editors["accordion"] extends editors["BaseLayoutEditor"]
-        templates: [$("#accordion-layout").html()]
-    # new editors["Button"]().render()

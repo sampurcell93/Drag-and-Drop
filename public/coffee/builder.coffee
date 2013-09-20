@@ -67,38 +67,48 @@ $(document).ready ->
             if !putIn? then return false
             defaults = opname: "change", at: 0
             options = _.extend defaults, opts || {}
+            console.log options
+            children = @get("child_els")
+            hide = {no_history: true}
             # If put in is a collection
             if $.isArray(putIn) is true and putIn.length > 1
+                # If we're adding an array of models, change the opname to reflect
+                options.opname += " " + putIn.length + " "
                 if putIn.indexOf(@) != -1
                     alert("you may not drag shit into itself. DIVIDE BY ZERO")
                     return false
                 # Remove each model from its collection so that events are triggered
-                _.each putIn, (model) ->
-                    model.collection.remove model, {no_history: true}
+                # loop is necessary because of disjoint selection
+                _.each putIn, (model, i) ->
+                    if model.collection? 
+                        model.collection.remove model, hide
+                    options.no_history = true
+                    if i < putIn.length - 1
+                        children.add model, options
+                    else
+                        options.no_history = false
+                        children.add model, options
+                return
             # Remove the model from its current collection, if there is such.
             else if putIn.collection?
-                putIn.collection.remove putIn, {no_history: true}
-            # Get all current child elements, add the dropped element(s)
-            # and put the collection back in
-            @get("child_els").add putIn, options
+                putIn.collection.remove putIn, hide
+            children.add putIn, options
+
+            # Usually we could simply pass in the array of models - but in orde
+            # to streamline history, we need to control the operation more closely.
+
             true
         deepCopy: ->
             model = @
             clone = model.clone()
-            for attr of clone.toJSON()
-                console.log attr + "is the key"
-                attr = clone.attributes[attr]
-                console.log attr + " is the value"
-                console.log typeof attr
-                if $.isArray attr
-                    cc "HELLO, we have an array " + model.get("type")
-                    attr = attr.clone()
-                else if typeof attr == "object"
-                    attr = _.extend {}, attr
-            children = clone.get("child_els").clone()
+            if clone.get("child_els").models?
+                children = clone.get("child_els").clone()
+            else 
+                children = new collections.Elements(clone.get("child_els")).clone()
+            self = @
             _.each children.models, (child) ->
                 child = child.deepCopy()
-            clone.set("child_els", children, silent: true)
+            clone.set("child_els", children)
             clone
 
 
@@ -431,7 +441,7 @@ $(document).ready ->
             e.stopPropagation()
             false
         unbindContextMenu: (e) ->
-            cc "unbinding context menu"
+            cc "unbinding"
             menu = $(".context-menu") 
             if e? and $(e.currentTarget).hasClass("context-menu") then return false
             menu.remove()
@@ -449,14 +459,25 @@ $(document).ready ->
                 @$el.trigger("deselect")
         # Default events for any draggable - basically configuration settings.
         events: 
+            # Copy the element to the "clipboard"
+            "click .context-menu > li.copy-element": ->
+                copy = @model.deepCopy()
+                window.copiedModel = copy
+            "click .context-menu > li.cut-element": ->
+                copy = @model.deepCopy()
+                window.copiedModel = copy
+                # Cut the element
+                @model.collection.remove @model, {opname: 'Cut'}
+            "click .context-menu > li.select-this": ->
+                @selectEl()
+            "click .group-elements": "blankLayout"
+            "click .destroy-element": ->
+                @model.destroy()
             "click .context-menu li": (e) ->
-                cc "click context item"
                 $t = $(e.currentTarget)
                 unless $t.hasClass("disabled")
                     # Stop the context menu from closing
                     @unbindContextMenu()
-                e.stopPropagation()
-                e.stopImmediatePropagation()
             # for debugging
             "dblclick": (e) ->
                 console.log @model.toJSON()
@@ -472,21 +493,7 @@ $(document).ready ->
                 false
             # for right click functionality users expect
             "contextmenu": "bindContextMenu"
-            # Copy the element to the "clipboard"
-            "click .context-menu > li.copy-element": ->
-                copy = @model.deepCopy()
-                window.copiedModel = copy
-            "click .context-menu > li.cut-element": ->
-                copy = @model.deepCopy()
-                window.copiedModel = copy
-                # Cut the element
-                @model.collection.remove @model, {opname: 'Cut'}
-            "click .context-menu > li.select-this": ->
-                @selectEl()
-            "click .group-elements": "blankLayout"
             "click .export": "exportAsSection"
-            "click .destroy-element": ->
-                @model.destroy()
             "click .set-options": (e) ->
                 @unbindContextMenu(e)
                 $t = $(e.currentTarget)

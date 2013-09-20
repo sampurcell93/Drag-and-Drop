@@ -168,15 +168,17 @@
             this.snapshots.detached_head = false;
           }
           snap = this.takeSnapshot(op, subject);
-          this.snapshots.add(snap);
-          this.append(snap);
+          if (snap !== null) {
+            this.snapshots.add(snap);
+            this.append(snap);
+          }
         }
         return this;
       },
       takeSnapshot: function(op, subject) {
         var clone, e, snap;
-        if (subject == null) {
-          subject = new models.Element();
+        if ((subject == null) || (op == null)) {
+          return null;
         }
         clone = null;
         if (this.controller.model.get("currentSection") != null) {
@@ -192,7 +194,6 @@
         });
         snap.set({
           "opname": op,
-          "title": subject.get("title" || null),
           "type": subject.get("type" || "Element")
         });
         if (this.snapshots.length >= window.settings.history_length && (this.snapshots.at(0) != null)) {

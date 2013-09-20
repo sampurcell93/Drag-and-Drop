@@ -237,7 +237,9 @@
 
       _Class.prototype.initialize = function() {
         _Class.__super__.initialize.apply(this, arguments);
-        this.instance_templates = this.templates.clone();
+        this.instance_templates = $.map(this.templates, function(obj) {
+          return $.extend(true, {}, obj);
+        });
         console.log(this.instance_templates === this.templates);
         return this.addTemplate($("#button-editor").html(), 0);
       };
@@ -267,8 +269,6 @@
         _ref4 = _Class.__super__.constructor.apply(this, arguments);
         return _ref4;
       }
-
-      _Class.prototype.templates = [$("#radio-editor").html()];
 
       _Class.prototype.initialize = function() {
         var self;
@@ -303,8 +303,6 @@
         return _ref5;
       }
 
-      _Class.prototype.templates = [$("#icon-or-full").html()];
-
       return _Class;
 
     })(editors["BaseEditor"]);
@@ -316,8 +314,6 @@
         return _ref6;
       }
 
-      _Class.prototype.templates = [$("#property-editor").html()];
-
       return _Class;
 
     })(editors["BaseEditor"]);
@@ -328,8 +324,6 @@
         _ref7 = _Class.__super__.constructor.apply(this, arguments);
         return _ref7;
       }
-
-      _Class.prototype.templates = [$("#accordion-layout").html()];
 
       return _Class;
 

@@ -94,7 +94,7 @@
       };
 
       Element.prototype.blend = function(putIn, opts) {
-        var defaults, options;
+        var children, defaults, hide, options;
         if (putIn == null) {
           return false;
         }
@@ -103,48 +103,51 @@
           at: 0
         };
         options = _.extend(defaults, opts || {});
+        console.log(options);
+        children = this.get("child_els");
+        hide = {
+          no_history: true
+        };
         if ($.isArray(putIn) === true && putIn.length > 1) {
+          options.opname += " " + putIn.length + " ";
           if (putIn.indexOf(this) !== -1) {
             alert("you may not drag shit into itself. DIVIDE BY ZERO");
             return false;
           }
-          _.each(putIn, function(model) {
-            return model.collection.remove(model, {
-              no_history: true
-            });
+          _.each(putIn, function(model, i) {
+            if (model.collection != null) {
+              model.collection.remove(model, hide);
+            }
+            options.no_history = true;
+            if (i < putIn.length - 1) {
+              return children.add(model, options);
+            } else {
+              options.no_history = false;
+              return children.add(model, options);
+            }
           });
+          return;
         } else if (putIn.collection != null) {
-          putIn.collection.remove(putIn, {
-            no_history: true
-          });
+          putIn.collection.remove(putIn, hide);
         }
-        this.get("child_els").add(putIn, options);
+        children.add(putIn, options);
         return true;
       };
 
       Element.prototype.deepCopy = function() {
-        var attr, children, clone, model;
+        var children, clone, model, self;
         model = this;
         clone = model.clone();
-        for (attr in clone.toJSON()) {
-          console.log(attr + "is the key");
-          attr = clone.attributes[attr];
-          console.log(attr + " is the value");
-          console.log(typeof attr);
-          if ($.isArray(attr)) {
-            cc("HELLO, we have an array " + model.get("type"));
-            attr = attr.clone();
-          } else if (typeof attr === "object") {
-            attr = _.extend({}, attr);
-          }
+        if (clone.get("child_els").models != null) {
+          children = clone.get("child_els").clone();
+        } else {
+          children = new collections.Elements(clone.get("child_els")).clone();
         }
-        children = clone.get("child_els").clone();
+        self = this;
         _.each(children.models, function(child) {
           return child = child.deepCopy();
         });
-        clone.set("child_els", children, {
-          silent: true
-        });
+        clone.set("child_els", children);
         return clone;
       };
 
@@ -626,7 +629,7 @@
 
       draggableElement.prototype.unbindContextMenu = function(e) {
         var menu;
-        cc("unbinding context menu");
+        cc("unbinding");
         menu = $(".context-menu");
         if ((e != null) && $(e.currentTarget).hasClass("context-menu")) {
           return false;
@@ -663,32 +666,6 @@
       };
 
       draggableElement.prototype.events = {
-        "click .context-menu li": function(e) {
-          var $t;
-          cc("click context item");
-          $t = $(e.currentTarget);
-          if (!$t.hasClass("disabled")) {
-            this.unbindContextMenu();
-          }
-          e.stopPropagation();
-          return e.stopImmediatePropagation();
-        },
-        "dblclick": function(e) {
-          console.log(this.model.toJSON());
-          this.showConfigModal();
-          return e.stopPropagation();
-        },
-        "click": function(e) {
-          this.unbindContextMenu(e);
-          this.$el.find(".dropdown").hide();
-          if (e.shiftKey === true || e.ctrlKey === true) {
-            this.selectEl();
-          }
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        },
-        "contextmenu": "bindContextMenu",
         "click .context-menu > li.copy-element": function() {
           var copy;
           copy = this.model.deepCopy();
@@ -706,10 +683,33 @@
           return this.selectEl();
         },
         "click .group-elements": "blankLayout",
-        "click .export": "exportAsSection",
         "click .destroy-element": function() {
           return this.model.destroy();
         },
+        "click .context-menu li": function(e) {
+          var $t;
+          $t = $(e.currentTarget);
+          if (!$t.hasClass("disabled")) {
+            return this.unbindContextMenu();
+          }
+        },
+        "dblclick": function(e) {
+          console.log(this.model.toJSON());
+          this.showConfigModal();
+          return e.stopPropagation();
+        },
+        "click": function(e) {
+          this.unbindContextMenu(e);
+          this.$el.find(".dropdown").hide();
+          if (e.shiftKey === true || e.ctrlKey === true) {
+            this.selectEl();
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        },
+        "contextmenu": "bindContextMenu",
+        "click .export": "exportAsSection",
         "click .set-options": function(e) {
           var $t, dropdown;
           this.unbindContextMenu(e);

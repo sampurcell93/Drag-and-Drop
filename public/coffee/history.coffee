@@ -134,7 +134,6 @@ $ ->
         makeHistory: (operation, subject, collection, options) ->
             # By using "all" instead of delegating to the desired events,
             # we can keep parameters the same.
-
             # if a new model was added to a collection, listen to it as well.
             if operation == "add"
                 @bindIndividualListener subject
@@ -153,13 +152,16 @@ $ ->
                 snap = @takeSnapshot(op, subject)
                 # Add that state, or snapshot, to this ocllection and
                 # display it in a list of history, a la photoshop
-                @snapshots.add snap
-                @append snap
-                # Scroll to bottom of history panel if overflow
-                # @$el.scrollTop(@$el.height());
+                if snap isnt null
+                    @snapshots.add snap
+                    @append snap
+                    # Scroll to bottom of history panel if overflow
+                    # @$el.scrollTop(@$el.height());
             @
+        # Pass in an opcode and the model that was being operated on
         takeSnapshot: (op, subject) ->
-            if !subject? then subject = new models.Element()
+            # Need both in order to generate a good message
+            if !subject? or !op? then return null
             clone = null
             if @controller.model.get("currentSection")?
                 try 
@@ -169,7 +171,7 @@ $ ->
             snap = new models.Snap({snapshot: clone})
             snap.set({
                 "opname": op
-                "title": subject.get "title" || null
+                # "title": subject.get "title" || null
                 "type": subject.get "type" || "Element"
             })
             # For memory management purposes, destroy the oldest change.

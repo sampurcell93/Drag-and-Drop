@@ -170,7 +170,7 @@ $(document).ready ->
                 section = sect_interface.get("currentSection")
                 builder = sect_interface.get("builder")
                 model = that.model
-                opts = opname: $(ui.helper).data("opname") || null
+                opts = opname: $(ui.helper).data("opname") || "Added"
                 # if the dragged element is a direct child of its new parent, do nothing
                 unless draggingModel.collection is model.get("child_els")
                  if model.blend(draggingModel, opts) is true
@@ -206,26 +206,23 @@ $(document).ready ->
             _.each temp, (dest) ->
                 dest.destroy no_history: true
         barLayout: (sidebar, content) ->
-            self     = @
             model    = @model
             @model.set "title", "Bar Layout"
             sidebar  = new window.models.Element(sidebar)
             content  = new window.models.Element(content)
-            elChildren = self.model.get("child_els")
+            elChildren = @model.get("child_els")
             first    = elChildren.at 0
             rest = elChildren.slice(1)
-            sidebar.layoutItem = true
-            content.layoutItem = true
+            sidebar.layoutItem = content.layoutItem = true
             none = no_history: true
-            sidebar.blend first, none
-            content.blend rest, none
             if content.view == "RightBar"
-                model.blend content, none
-                model.blend sidebar, none
+                model.blend [content, sidebar], none
+                sidebar.blend first, none
+                content.blend rest, none
             else
-                model.blend sidebar, none
-                model.blend content, none
-            model.trigger "change"
+                model.blend [sidebar, content], no_history: true, opname: 'columnize'
+                sidebar.blend rest, none
+                content.blend first, none
         formPresetLayout: (layout) ->
             if !layout? then return false
             # Make sure we're not adding layouts to each other - return the layout to a blank state
