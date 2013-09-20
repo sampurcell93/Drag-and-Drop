@@ -43,8 +43,9 @@ script(type='text/template')#context-menu-default
     li.group-elements.icon-rectangleselection Make Group
 script(type='text/template')#snapshot
     |<%= opname.clean() + " " %>
-    //- + (opname.slice(-1) == "e"?"d":"ed")
-    |<%= type %>
+    // Print the type and check if a number was in the string.
+    // If so, it was probs a group, and we need to pluralize.
+    |<%= type + (opname.hasNumber() ? "s" : "") %>
 
 script(type='text/template')#placeholder-context
     <% if (window.copiedModel != null) { %>

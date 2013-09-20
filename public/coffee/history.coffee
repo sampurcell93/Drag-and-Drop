@@ -13,8 +13,8 @@ $ ->
             @detached_head = false
             snap = new models.Snap({snapshot: new collections.Elements()})
             snap.set({
-                "opname": "Open"
-                "type": "New Section"
+                "opname": "Opened"
+                "type": "Section Builder"
             })
             @add snap
             @
@@ -94,6 +94,7 @@ $ ->
             do @bindListeners
             @
         # Add watcher to collection
+        # args: a collection to bind to
         bindListeners: (collection) ->
             @stopListening()
             coll = collection || @collection
@@ -107,6 +108,7 @@ $ ->
                 self.bindIndividualListener model
             @
         # Add watcher to each model in the collection
+        # Args: a model to bind to
         bindIndividualListener: (model) ->
             cc "calling bindIndividualListener"
             children = model.get("child_els")
@@ -119,6 +121,7 @@ $ ->
         # Bug fix - when the head is detached the history is linked to a collection already in the history.
         # When this snapshot is edited, the changes apply to the current state, and ALSO make a new, identical state, 
         # resulting in state duplication. This offsets the collection.
+        # args: an instance of collections.Elements
         oneAhead: (snapshot)->
             @collection = snapshot
             @ 
@@ -128,16 +131,26 @@ $ ->
             if last < @snapshots.length and last >= 0
                 @snapshots.at(last).trigger("select")
             @
+        # Args: the model being changed, the options
         modelChange: (model, options) ->
+            options = _.extend {}, options
             console.log model, options, "changed"
-            @takeSnapshot("change")
+            unless options.no_history is true
+                @deleteForwardChanges()
+                snap = @takeSnapshot(options.opname || "Modified", model)
+                @snapshots.add snap
+                @append snap
+                return @
+            @
+        # Called from the "all" event
+        # args: the default operation title, the model being opped, [collection], [options]
         makeHistory: (operation, subject, collection, options) ->
             # By using "all" instead of delegating to the desired events,
             # we can keep parameters the same.
             # if a new model was added to a collection, listen to it as well.
             if operation == "add"
                 @bindIndividualListener subject
-
+            console.log "Storing history with operator " + operation
             ops = ["change", "add", "remove", "destroy"]
             if ops.indexOf(operation) == -1 then return
             if operation == "change"
@@ -145,9 +158,8 @@ $ ->
             if !options? then options = {}
             unless (options? and options.no_history is true)
                 op = options.opname || operation
-                if @snapshots.detached_head is true
-                    @deleteForwardChanges()
-                    @snapshots.detached_head = false
+                subject = options.subject || subject
+                @deleteForwardChanges()
                 # Copy current state
                 snap = @takeSnapshot(op, subject)
                 # Add that state, or snapshot, to this ocllection and
@@ -158,10 +170,12 @@ $ ->
                     # Scroll to bottom of history panel if overflow
                     # @$el.scrollTop(@$el.height());
             @
-        # Pass in an opcode and the model that was being operated on
+        # args: An opcode and the model that was being operated on
         takeSnapshot: (op, subject) ->
             # Need both in order to generate a good message
             if !subject? or !op? then return null
+            if subject instanceof models.Element is true
+                subject = subject.get "type"
             clone = null
             if @controller.model.get("currentSection")?
                 try 
@@ -171,21 +185,23 @@ $ ->
             snap = new models.Snap({snapshot: clone})
             snap.set({
                 "opname": op
-                # "title": subject.get "title" || null
-                "type": subject.get "type" || "Element"
+                "type": subject || "element"
             })
             # For memory management purposes, destroy the oldest change.
             if @snapshots.length >= window.settings.history_length and @snapshots.at(0)?
                 @snapshots.at(0).destroy()
             snap
-
+        # When the head is detached and an event occurs, delete all forwards
+        # Using both filter and each because destroying models inside of each causes indexing errors
         deleteForwardChanges: ->
-            # Get all snapshots ahead of the current state
-            ahead = _.filter @snapshots.models, (snap, i) ->
-                snap.get("aheadOfFlow") == true
-            # Destroy all of them. Woo! No garbage!
-            _.each ahead, (snap) ->
-                snap.destroy()
+            if @snapshots.detached_head is true
+                @snapshots.detached_head = false
+                # Get all snapshots ahead of the current state
+                ahead = _.filter @snapshots.models, (snap, i) ->
+                    snap.get("aheadOfFlow") == true
+                # Destroy all of them. Woo! No garbage!
+                _.each ahead, (snap) ->
+                    snap.destroy()
             @
         render: ->
             self = @

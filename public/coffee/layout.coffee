@@ -211,16 +211,20 @@ $(document).ready ->
             sidebar  = new window.models.Element(sidebar)
             content  = new window.models.Element(content)
             elChildren = @model.get("child_els")
+            # get the first child
             first    = elChildren.at 0
-            rest = elChildren.slice(1)
+            # and the rest
+            rest = elChildren.slice 1
             sidebar.layoutItem = content.layoutItem = true
             none = no_history: true
             if content.view == "RightBar"
                 model.blend [content, sidebar], none
+                # blend existing models into new layout
                 sidebar.blend first, none
                 content.blend rest, none
             else
                 model.blend [sidebar, content], no_history: true, opname: 'columnize'
+                # blend existing models into new layout
                 sidebar.blend rest, none
                 content.blend first, none
         formPresetLayout: (layout) ->

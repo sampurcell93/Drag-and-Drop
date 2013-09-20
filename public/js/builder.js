@@ -94,7 +94,7 @@
       };
 
       Element.prototype.blend = function(putIn, opts) {
-        var children, defaults, hide, options;
+        var children, defaults, hide, options, type;
         if (putIn == null) {
           return false;
         }
@@ -114,7 +114,11 @@
             alert("you may not drag shit into itself. DIVIDE BY ZERO");
             return false;
           }
+          type = putIn[0].get("type");
           _.each(putIn, function(model, i) {
+            if (model.get("type") !== type) {
+              options.subject = "element";
+            }
             if (model.collection != null) {
               model.collection.remove(model, hide);
             }
@@ -126,7 +130,7 @@
               return children.add(model, options);
             }
           });
-          return;
+          return true;
         } else if (putIn.collection != null) {
           putIn.collection.remove(putIn, hide);
         }
@@ -135,15 +139,26 @@
       };
 
       Element.prototype.deepCopy = function() {
-        var children, clone, model, self;
+        var attr, children, clone, key, model, val;
         model = this;
         clone = model.clone();
-        if (clone.get("child_els").models != null) {
-          children = clone.get("child_els").clone();
-        } else {
-          children = new collections.Elements(clone.get("child_els")).clone();
+        children = clone.get("child_els");
+        if ($.isArray(children)) {
+          children = new collections.Elements(children);
         }
-        self = this;
+        children = children.clone();
+        for (attr in clone.attributes) {
+          if (attr === "child_els") {
+            continue;
+          }
+          key = attr;
+          val = clone.attributes[attr];
+          if ($.isArray(val)) {
+            clone.attributes[attr] = val.deepClone();
+          } else if (typeof val === "object") {
+            clone.attributes[attr] = $.extend(true, {}, val);
+          }
+        }
         _.each(children.models, function(child) {
           return child = child.deepCopy();
         });
@@ -518,17 +533,17 @@
       };
 
       draggableElement.prototype.removeFromFlow = function(e) {
-        var destroy, that;
+        var out, that;
         that = this;
-        destroy = function() {
+        out = function() {
           return that.model.set("inFlow", false, {
-            opname: "Flow Out"
+            no_history: true
           });
         };
         if (e.type === "flowRemoveViaDrag") {
-          this.$el.toggle("clip", 300, destroy);
+          this.$el.toggle("clip", 300, out);
         } else {
-          destroy();
+          out();
         }
         e.stopPropagation();
         return e.stopImmediatePropagation();
@@ -736,10 +751,7 @@
           button = $(".quick-props").find(".close-arrow");
           return button.trigger("click");
         },
-        "click .remove-from-flow": function(e) {
-          e.stopPropagation();
-          return this.removeFromFlow(e);
-        },
+        "click .remove-from-flow": "removeFromFlow",
         "flowRemoveViaDrag": "removeFromFlow",
         "click .config-panel": "showConfigModal",
         "select": function(e) {

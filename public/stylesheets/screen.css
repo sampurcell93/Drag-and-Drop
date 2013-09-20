@@ -1194,6 +1194,7 @@ ol.generic-list {
 .layout-wrapper .placeholder {
   text-align: center;
   padding: 10px;
+  color: #777;
 }
 /* line 9, ../sass/layouts.scss */
 .layout-wrapper:hover {
@@ -2190,42 +2191,48 @@ body.active-modal::after {
 /* line 19, ../sass/modal.scss */
 .modal {
   display: block;
-  width: 900px;
+  width: 95%;
   position: fixed;
-  left: 50%;
+  left: 2.5%;
+  top: 5%;
   z-index: 9912;
-  margin-left: -400px;
   top: 100px;
+  overflow: auto;
   background: #f9f9f9;
   padding: 0 20px 10px;
   -webkit-box-shadow: 0px 0px 7px #222222;
   -moz-box-shadow: 0px 0px 7px #222222;
   box-shadow: 0px 0px 7px #222222;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
 }
-/* line 32, ../sass/modal.scss */
-.modal .close-modal {
+/* line 34, ../sass/modal.scss */
+.modal .close-modal, .modal .hide-modal {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 10px;
+  right: 10px;
   cursor: pointer;
 }
-/* line 39, ../sass/modal.scss */
+/* line 41, ../sass/modal.scss */
 .modal ul.visible-tools {
   border: 1px solid #ccc;
   padding: 8px;
 }
-/* line 42, ../sass/modal.scss */
+/* line 44, ../sass/modal.scss */
 .modal ul.visible-tools li {
   padding: 4px 10px 4px 0;
   display: inline-block;
   border-right: 1px solid #ccc;
 }
-/* line 49, ../sass/modal.scss */
+/* line 51, ../sass/modal.scss */
 .modal h2 {
   border-bottom: 1px solid #ccc;
   margin: 20px 0 10px;
 }
-/* line 54, ../sass/modal.scss */
+/* line 56, ../sass/modal.scss */
 .modal .tabs {
   width: 100%;
   display: block;
@@ -2235,7 +2242,7 @@ body.active-modal::after {
   height: 60px;
   padding-top: 5px;
 }
-/* line 63, ../sass/modal.scss */
+/* line 65, ../sass/modal.scss */
 .modal .tabs li {
   line-height: 55px;
   position: relative;
@@ -2247,11 +2254,11 @@ body.active-modal::after {
   background: #eee;
   border-bottom: 2px solid #ccc;
 }
-/* line 74, ../sass/modal.scss */
+/* line 76, ../sass/modal.scss */
 .modal .tabs li:hover {
   background: #eee;
 }
-/* line 78, ../sass/modal.scss */
+/* line 80, ../sass/modal.scss */
 .modal .tabs li.current-tab {
   background: transparent;
   color: #222;
@@ -2259,12 +2266,12 @@ body.active-modal::after {
   color: #f6733d;
   border-bottom: 2px solid #f9f9f9;
 }
-/* line 88, ../sass/modal.scss */
+/* line 90, ../sass/modal.scss */
 .modal .modal-tab:nth-of-type(n+2) {
   display: none;
 }
 
-/* line 93, ../sass/modal.scss */
+/* line 95, ../sass/modal.scss */
 .draggable-modal {
   color: #f9f9f9;
   text-shadow: none;
@@ -2275,7 +2282,7 @@ body.active-modal::after {
   cursor: move;
   border-top: 1px solid #5b747f;
 }
-/* line 103, ../sass/modal.scss */
+/* line 105, ../sass/modal.scss */
 .draggable-modal h2.drag-handle {
   position: absolute;
   content: attr(data-modal-name);
@@ -2290,28 +2297,28 @@ body.active-modal::after {
   background: #3e4951;
   border-bottom: 1px solid #000;
 }
-/* line 118, ../sass/modal.scss */
+/* line 120, ../sass/modal.scss */
 .draggable-modal .icon-move {
   position: absolute;
   left: 4px;
 }
-/* line 123, ../sass/modal.scss */
+/* line 125, ../sass/modal.scss */
 .draggable-modal .close-arrow {
   position: absolute;
   top: 6px;
   right: 5px;
   font-size: .9em;
 }
-/* line 130, ../sass/modal.scss */
+/* line 132, ../sass/modal.scss */
 .draggable-modal .icon {
   color: #83a2af;
 }
-/* line 134, ../sass/modal.scss */
+/* line 136, ../sass/modal.scss */
 .draggable-modal .history-modal {
   max-height: 400px;
   overflow: auto;
 }
-/* line 139, ../sass/modal.scss */
+/* line 141, ../sass/modal.scss */
 .draggable-modal > ul, .draggable-modal .history-modal {
   width: 100%;
   margin: 1px auto 0;
@@ -2323,7 +2330,7 @@ body.active-modal::after {
   -o-border-radius: 0 0 2px 2px;
   border-radius: 0 0 2px 2px;
 }
-/* line 146, ../sass/modal.scss */
+/* line 148, ../sass/modal.scss */
 .draggable-modal > ul li, .draggable-modal .history-modal li {
   text-align: left;
   text-indent: 10px;
@@ -2331,40 +2338,44 @@ body.active-modal::after {
   list-style: none;
   padding: 3px 5px 3px 10px;
 }
-/* line 155, ../sass/modal.scss */
+/* line 157, ../sass/modal.scss */
 .draggable-modal > ul li:last-child, .draggable-modal .history-modal li:last-child {
   border-bottom: none;
 }
-/* line 156, ../sass/modal.scss */
+/* line 158, ../sass/modal.scss */
 .draggable-modal > ul li:first-child, .draggable-modal .history-modal li:first-child {
   border-top: none;
   padding-top: 4px;
 }
-/* line 161, ../sass/modal.scss */
+/* line 163, ../sass/modal.scss */
+.draggable-modal > ul li:hover, .draggable-modal .history-modal li:hover {
+  background: #5b747f;
+}
+/* line 167, ../sass/modal.scss */
 .draggable-modal > ul li.selected-history, .draggable-modal .history-modal li.selected-history {
   background: #5b747f;
 }
-/* line 163, ../sass/modal.scss */
+/* line 169, ../sass/modal.scss */
 .draggable-modal > ul li ul, .draggable-modal .history-modal li ul {
   padding-top: 10px;
   width: 100%;
 }
-/* line 168, ../sass/modal.scss */
+/* line 174, ../sass/modal.scss */
 .draggable-modal > ul li ul > li:hover, .draggable-modal .history-modal li ul > li:hover {
   background: #3e4951;
 }
-/* line 172, ../sass/modal.scss */
+/* line 178, ../sass/modal.scss */
 .draggable-modal > ul li ul li:empty, .draggable-modal .history-modal li ul li:empty {
   background: #333;
   border: none;
 }
 
-/* line 184, ../sass/modal.scss */
+/* line 190, ../sass/modal.scss */
 .hidden-modal ul, .hidden-modal div {
   display: none;
 }
 
-/* line 191, ../sass/modal.scss */
+/* line 197, ../sass/modal.scss */
 .preset-layouts li {
   display: inline-block;
   width: 19%;
@@ -2373,7 +2384,7 @@ body.active-modal::after {
   position: relative;
   padding-bottom: 20px;
 }
-/* line 199, ../sass/modal.scss */
+/* line 205, ../sass/modal.scss */
 .preset-layouts li:after {
   content: attr(data-title);
   position: absolute;
@@ -2384,7 +2395,7 @@ body.active-modal::after {
   font-size: 1rem;
 }
 
-/* line 213, ../sass/modal.scss */
+/* line 219, ../sass/modal.scss */
 .choose-columns li {
   width: 16%;
   text-shadow: none;
@@ -2396,49 +2407,49 @@ body.active-modal::after {
   background: url("../images/columnsprite.png") no-repeat center;
   cursor: pointer;
 }
-/* line 224, ../sass/modal.scss */
+/* line 230, ../sass/modal.scss */
 .choose-columns li:nth-child(1) {
   background: #c5d4e8;
 }
-/* line 225, ../sass/modal.scss */
+/* line 231, ../sass/modal.scss */
 .choose-columns li:nth-child(2) {
   background-position: 0 0px;
 }
-/* line 226, ../sass/modal.scss */
+/* line 232, ../sass/modal.scss */
 .choose-columns li:nth-child(3) {
   background-position: 0 -79px;
 }
-/* line 227, ../sass/modal.scss */
+/* line 233, ../sass/modal.scss */
 .choose-columns li:nth-child(4) {
   background-position: 0 -159px;
 }
-/* line 228, ../sass/modal.scss */
+/* line 234, ../sass/modal.scss */
 .choose-columns li:nth-child(5) {
   background-position: 0 -240px;
 }
-/* line 229, ../sass/modal.scss */
+/* line 235, ../sass/modal.scss */
 .choose-columns li:nth-child(6) {
   background-position: 0 -320px;
 }
 
-/* line 233, ../sass/modal.scss */
+/* line 239, ../sass/modal.scss */
 .choose-layout {
   width: 95%;
   margin: 0 auto;
 }
-/* line 237, ../sass/modal.scss */
+/* line 243, ../sass/modal.scss */
 .choose-layout li {
   display: inline-block;
   height: 85px;
   width: 85px;
   text-align: center;
 }
-/* line 243, ../sass/modal.scss */
+/* line 249, ../sass/modal.scss */
 .choose-layout li[data-layout="tabs"] {
   background: url("../images/tabicon.jpg") no-repeat center 15px;
 }
 
-/* line 249, ../sass/modal.scss */
+/* line 255, ../sass/modal.scss */
 .toolbelt {
   position: absolute;
   top: 60px;
@@ -2452,37 +2463,37 @@ body.active-modal::after {
   transition: left 0.3s ease-in-out;
   z-index: 999;
 }
-/* line 260, ../sass/modal.scss */
+/* line 266, ../sass/modal.scss */
 .toolbelt.sticky .draggable-modal {
   border-top: none;
 }
-/* line 265, ../sass/modal.scss */
+/* line 271, ../sass/modal.scss */
 .toolbelt .draggable-modal {
   display: inline-block;
   vertical-align: top;
   width: 25%;
 }
-/* line 270, ../sass/modal.scss */
+/* line 276, ../sass/modal.scss */
 .toolbelt .draggable-modal h2 {
   border-right: 1px solid #5b747f;
   border-left: 1px solid #222;
 }
-/* line 275, ../sass/modal.scss */
+/* line 281, ../sass/modal.scss */
 .toolbelt .draggable-modal:first-of-type h2 {
   border-left: none;
 }
-/* line 276, ../sass/modal.scss */
+/* line 282, ../sass/modal.scss */
 .toolbelt .draggable-modal:last-of-type h2 {
   border-right: none;
 }
-/* line 278, ../sass/modal.scss */
+/* line 284, ../sass/modal.scss */
 .toolbelt .draggable-modal li {
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
 }
 
-/* line 286, ../sass/modal.scss */
+/* line 292, ../sass/modal.scss */
 .view-full-config {
   padding: 4px;
   margin-top: 5px;
@@ -2490,7 +2501,7 @@ body.active-modal::after {
   background: #333;
   cursor: pointer;
 }
-/* line 293, ../sass/modal.scss */
+/* line 299, ../sass/modal.scss */
 .view-full-config:hover {
   text-decoration: underline;
 }
@@ -2869,7 +2880,7 @@ ul.property-editor:before {
   width: 50%;
   left: 50%;
   margin-left: -25%;
-  background: #eee;
+  background: #f9f9f9;
   padding: 0 15px;
   text-align: center;
   font-size: 1.4em;

@@ -85,6 +85,10 @@
         return this;
       },
       events: {
+        'click .config-section': function() {
+          this.$(".config-panel").show();
+          return $(document.body).addClass("active-modal");
+        },
         'click .generate-section': 'generateSection',
         'click .save-section': 'saveSection',
         'click .view-layouts': function() {
@@ -292,6 +296,7 @@
         });
         this.$el.append($(view.render().el));
         view.setProps().renderComponents(["builder", "organizer"]);
+        view.$(".config-panel").launchModal($(view.render.el));
         return this;
       }
     });

@@ -236,11 +236,15 @@
         "mouseup .sort-element": function(e) {
           return this.model.trigger("dropped");
         },
+        "click .toggle-children": function(e) {
+          this.$el.children(".child-list").slideToggle("fast");
+          $(e.currentTarget).toggleClass("flipped");
+          return e.stopPropagation();
+        },
         "click": function(e) {
           if (this.$el.hasClass("out-of-flow")) {
             this.model.set("inFlow", true, {
-              e: e,
-              opname: 'Flow In'
+              no_history: true
             });
           }
           return e.stopPropagation();
@@ -258,10 +262,6 @@
             this.model.trigger("end-feedback");
           }
           return e.stopPropagation();
-        },
-        "click .toggle-children": function(e) {
-          this.$el.children(".child-list").slideToggle("fast");
-          return $(e.currentTarget).toggleClass("flipped");
         }
       }
     });

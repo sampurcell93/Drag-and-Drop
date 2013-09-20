@@ -131,8 +131,11 @@ $(document).ready ->
                             model.set("inFlow", false)
                     else 
                         models.set("inFlow", false)
-            this
+            @
         events: 
+            'click .config-section': ->
+                @$(".config-panel").show()
+                $(document.body).addClass "active-modal"
             'click .generate-section': 'generateSection'
             'click .save-section': 'saveSection'
             'click .view-layouts': ->
@@ -298,6 +301,7 @@ $(document).ready ->
             view = new views.SectionControllerView({model: model})
             @$el.append($(view.render().el))
             view.setProps().renderComponents(["builder","organizer"])
+            view.$(".config-panel").launchModal($(view.render.el))
             @
     }
 

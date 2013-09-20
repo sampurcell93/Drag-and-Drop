@@ -79,8 +79,11 @@ $(document).ready ->
                     return false
                 # Remove each model from its collection so that events are triggered
                 # loop is necessary because of disjoint selection
+                type = putIn[0].get("type")
                 _.each putIn, (model, i) ->
-                    if model.collection? 
+                    if model.get("type") != type
+                        options.subject = "element"
+                    if model.collection?
                         model.collection.remove model, hide
                     options.no_history = true
                     if i < putIn.length - 1
@@ -88,24 +91,33 @@ $(document).ready ->
                     else
                         options.no_history = false
                         children.add model, options
-                return
+                return true
             # Remove the model from its current collection, if there is such.
             else if putIn.collection?
                 putIn.collection.remove putIn, hide
             children.add putIn, options
 
-            # Usually we could simply pass in the array of models - but in orde
-            # to streamline history, we need to control the operation more closely.
-
             true
         deepCopy: ->
             model = @
             clone = model.clone()
-            if clone.get("child_els").models?
-                children = clone.get("child_els").clone()
-            else 
-                children = new collections.Elements(clone.get("child_els")).clone()
-            self = @
+            # Shallow clone the model 
+            children = clone.get("child_els")
+            if $.isArray children
+                children = new collections.Elements children
+            children = children.clone()
+            # check each settable value
+            for attr of clone.attributes
+                if attr == "child_els" then continue
+                key = attr
+                val = clone.attributes[attr]
+                # For arrays, deep copy the array and set
+                if $.isArray val
+                    clone.attributes[attr] = val.deepClone()
+                # Deep copy objects, too
+                else if typeof val == "object"
+                    clone.attributes[attr] = $.extend true, {}, val
+            # deep copy each child model
             _.each children.models, (child) ->
                 child = child.deepCopy()
             clone.set("child_els", children)
@@ -369,11 +381,11 @@ $(document).ready ->
                     $(ui.helper).removeClass("dragging")
         removeFromFlow: (e) ->        #  When they click the "X" in the config - remove the el from the builder
             that = @
-            destroy = ->
-                that.model.set("inFlow", false, {opname: "Flow Out"})
+            out = ->
+                that.model.set("inFlow", false, no_history: true )
             if e.type == "flowRemoveViaDrag"
-                @$el.toggle("clip",  300, destroy)
-            else do destroy
+                @$el.toggle("clip",  300, out)
+            else do out
             e.stopPropagation()
             e.stopImmediatePropagation()  
         checkPlaceholder: ->
@@ -512,10 +524,7 @@ $(document).ready ->
                 if e? and e.isTrigger is true then return 
                 button = $(".quick-props").find(".close-arrow")
                 button.trigger "click"
-            "click .remove-from-flow": (e) ->
-                e.stopPropagation()
-                # e.stopImmediatePropagation()
-                @removeFromFlow(e)
+            "click .remove-from-flow": "removeFromFlow"
             "flowRemoveViaDrag": "removeFromFlow" 
             "click .config-panel": "showConfigModal"
             "select" : (e) ->

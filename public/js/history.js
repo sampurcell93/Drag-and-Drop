@@ -19,8 +19,8 @@
           snapshot: new collections.Elements()
         });
         snap.set({
-          "opname": "Open",
-          "type": "New Section"
+          "opname": "Opened",
+          "type": "Section Builder"
         });
         this.add(snap);
         return this;
@@ -143,14 +143,24 @@
         return this;
       },
       modelChange: function(model, options) {
+        var snap;
+        options = _.extend({}, options);
         console.log(model, options, "changed");
-        return this.takeSnapshot("change");
+        if (options.no_history !== true) {
+          this.deleteForwardChanges();
+          snap = this.takeSnapshot(options.opname || "Modified", model);
+          this.snapshots.add(snap);
+          this.append(snap);
+          return this;
+        }
+        return this;
       },
       makeHistory: function(operation, subject, collection, options) {
         var op, ops, snap;
         if (operation === "add") {
           this.bindIndividualListener(subject);
         }
+        console.log("Storing history with operator " + operation);
         ops = ["change", "add", "remove", "destroy"];
         if (ops.indexOf(operation) === -1) {
           return;
@@ -163,10 +173,8 @@
         }
         if (!((options != null) && options.no_history === true)) {
           op = options.opname || operation;
-          if (this.snapshots.detached_head === true) {
-            this.deleteForwardChanges();
-            this.snapshots.detached_head = false;
-          }
+          subject = options.subject || subject;
+          this.deleteForwardChanges();
           snap = this.takeSnapshot(op, subject);
           if (snap !== null) {
             this.snapshots.add(snap);
@@ -179,6 +187,9 @@
         var clone, e, snap;
         if ((subject == null) || (op == null)) {
           return null;
+        }
+        if (subject instanceof models.Element === true) {
+          subject = subject.get("type");
         }
         clone = null;
         if (this.controller.model.get("currentSection") != null) {
@@ -194,7 +205,7 @@
         });
         snap.set({
           "opname": op,
-          "type": subject.get("type" || "Element")
+          "type": subject || "element"
         });
         if (this.snapshots.length >= window.settings.history_length && (this.snapshots.at(0) != null)) {
           this.snapshots.at(0).destroy();
@@ -203,12 +214,15 @@
       },
       deleteForwardChanges: function() {
         var ahead;
-        ahead = _.filter(this.snapshots.models, function(snap, i) {
-          return snap.get("aheadOfFlow") === true;
-        });
-        _.each(ahead, function(snap) {
-          return snap.destroy();
-        });
+        if (this.snapshots.detached_head === true) {
+          this.snapshots.detached_head = false;
+          ahead = _.filter(this.snapshots.models, function(snap, i) {
+            return snap.get("aheadOfFlow") === true;
+          });
+          _.each(ahead, function(snap) {
+            return snap.destroy();
+          });
+        }
         return this;
       },
       render: function() {

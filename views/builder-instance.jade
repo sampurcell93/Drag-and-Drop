@@ -13,12 +13,12 @@ include builder.jade
                 span.title-wrap <%= typeof section_title !== "undefined" ? section_title : "Default Section Title" %>
                 span.fr (Click to change section title) 
             ul.main-controls
-                li.icon-uniF47C(data-switch-text='Config', data-switch-icon='icon-wrench').generate-section Build
+                li.icon-uniF47C.config-section Config
                 li.icon-download.save-section Save
                 li.icon-cogs.settings Settings
             //- li.help Help
 
-        .section-builder-wrap.config-panel
+        .config-panel.p30
             p.nice-dialog
                 | Configure your data in this area. Start by choosing data properties to include in 
                 | your section.
@@ -32,11 +32,11 @@ include builder.jade
             div.fl.w4.m30
                 ul.property-editor
                     li.center.p10.placeholder You have not selected any data yet.
-            ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr
+            ul.existing-sections-layouts.dark-sidebar.sidebar-controls.w15.fr.hidden
                 li.list-header.p10 Recent Sections
                 li.p10.placeholder There are no sections.
             .clear  
-        .section-builder-wrap.hidden
+        .section-builder-wrap
             div.toolbelt
             //-  Generic elements to drag into the builder
             div.dark-sidebar.sidebar-controls.accessories
@@ -64,12 +64,18 @@ include builder.jade
             section.builder-container
             //- The UI architecture panel, which shows the overall structure of the section.
             .clear
-
-            //- button.fr.view-layouts(data-icon='d') View Layouts
-
-//- header
-       //-      <h1 class='section-title w4 inline'><%= typeof title !== "undefined" ? title : "Default Section Title"%></h1>
-       //-      button.fr.view-sections(data-icon='i') View Sections
-       //-      button.fr.configure-interface.icon e
-       //-      button.fr.orange.save-section(data-icon='m') Save Section
-       //-      ul#existing-sections.hidden
+script(src='js/jquery.js')
+script(src='js/underscore.js')
+script(src='js/backbone.js')
+script(src='js/jquery-ui.js')
+script(type='text/javascript', src='js/ui.js')
+script(type='text/javascript', src='js/history.js')
+script(type='text/javascript', src='js/organizer.js')
+script(type='text/javascript', src='js/toolbelt.js')
+script(type='text/javascript', src='js/editors.js')
+script(type='text/javascript', src='js/builder.js')
+script(type='text/javascript', src='js/layout.js')
+script(type='text/javascript', src='js/generics.js')
+script(type='text/javascript', src='js/configure.js')
+script(type='text/javascript', src='js/existing.js')
+script(type='text/javascript', src='js/router.js')

@@ -20,6 +20,9 @@ $(document).ready ->
     String.prototype.dirty = ->
         this.toLowerCase().replace(/\s+/g,"")
 
+    String.prototype.hasNumber = ->
+        matches = @match(/\d+/g)
+        if matches != null then true else false
     # Makes deep copies of all objects in array
     Array.prototype.deepClone = ->
         clone = []
@@ -27,6 +30,8 @@ $(document).ready ->
             if typeof item == "object"
                 clone.push $.extend true, {}, item
                 console.log "Cloning object in array.clone()"
+            else if $.isArray item
+                clone.push item.deepClone()
             else
                 clone.push item
         clone
@@ -65,8 +70,11 @@ $(document).ready ->
         modal.append($("<div/>").addClass("close-arrow icon-caret-up icon pointer"))
         modal
 
-    $.fn.launchModal = (content) ->
-        @addClass("modal").prependTo($("body").addClass("active-modal"))
+    $.fn.launchModal = (parent) ->
+        @prepend("<i class='hide-modal icon-multiply'></i>")
+        @addClass("modal").prependTo($(parent || "body"))
+        $(document.body).addClass("active-modal")
+        @
 
     $.fn.showTooltip = ->
         # Get text
@@ -91,6 +99,10 @@ $(document).ready ->
 
     $(@).delegate ".close-modal", "click", ->
         $(@).closest(".modal").remove()
+        $("body").removeClass("active-modal")
+
+    $(@).delegate ".hide-modal", "click", ->
+        $(@).closest(".modal").hide()
         $("body").removeClass("active-modal")
 
     $(@).delegate ".modal .confirm", "click", ->

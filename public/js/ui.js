@@ -29,6 +29,15 @@
     String.prototype.dirty = function() {
       return this.toLowerCase().replace(/\s+/g, "");
     };
+    String.prototype.hasNumber = function() {
+      var matches;
+      matches = this.match(/\d+/g);
+      if (matches !== null) {
+        return true;
+      } else {
+        return false;
+      }
+    };
     Array.prototype.deepClone = function() {
       var clone;
       clone = [];
@@ -36,6 +45,8 @@
         if (typeof item === "object") {
           clone.push($.extend(true, {}, item));
           return console.log("Cloning object in array.clone()");
+        } else if ($.isArray(item)) {
+          return clone.push(item.deepClone());
         } else {
           return clone.push(item);
         }
@@ -82,8 +93,11 @@
       modal.append($("<div/>").addClass("close-arrow icon-caret-up icon pointer"));
       return modal;
     };
-    $.fn.launchModal = function(content) {
-      return this.addClass("modal").prependTo($("body").addClass("active-modal"));
+    $.fn.launchModal = function(parent) {
+      this.prepend("<i class='hide-modal icon-multiply'></i>");
+      this.addClass("modal").prependTo($(parent || "body"));
+      $(document.body).addClass("active-modal");
+      return this;
     };
     $.fn.showTooltip = function() {
       var el, tooltip_text;
@@ -106,6 +120,10 @@
     });
     $(this).delegate(".close-modal", "click", function() {
       $(this).closest(".modal").remove();
+      return $("body").removeClass("active-modal");
+    });
+    $(this).delegate(".hide-modal", "click", function() {
+      $(this).closest(".modal").hide();
       return $("body").removeClass("active-modal");
     });
     $(this).delegate(".modal .confirm", "click", function() {

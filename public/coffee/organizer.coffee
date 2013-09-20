@@ -185,9 +185,13 @@ $(document).ready ->
                 @model.trigger("dragging")
             "mouseup .sort-element": (e) ->
                 @model.trigger("dropped")
+            "click .toggle-children": (e) ->
+                @$el.children(".child-list").slideToggle "fast"
+                $(e.currentTarget).toggleClass "flipped"
+                e.stopPropagation()
             "click": (e) ->
                 if @$el.hasClass("out-of-flow")
-                    @model.set "inFlow", true, {e: e, opname: 'Flow In'}
+                    @model.set "inFlow", true, no_history: true
                 e.stopPropagation()
             "click .destroy-element": (e) ->
                 @model.destroy()
@@ -199,7 +203,4 @@ $(document).ready ->
                 if !@$el.hasClass("moving-sort")
                    @model.trigger("end-feedback")
                 e.stopPropagation()
-            "click .toggle-children": (e) ->
-                @$el.children(".child-list").slideToggle "fast"
-                $(e.currentTarget).toggleClass "flipped"
     }
